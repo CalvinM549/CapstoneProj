@@ -1,0 +1,160 @@
+using System.Collections;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerMovement : MonoBehaviour
+{
+    [SerializeField] private PlayerData data;
+
+    private InputSystem_Actions inputActions;
+    private Rigidbody2D rb;
+
+
+    private Vector2 _moveDirection;
+
+    private int currentDashCharges;
+    private float[] dashRechargeTimers;
+    private Vector2 lastMoveDirection = Vector2.right;
+
+    private bool _isDashing;
+    public bool isDashing => _isDashing;
+
+
+
+    private void Awake()
+    {
+        inputActions = InputManager.Instance.inputActions;
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+
+    private void OnEnable()
+    {
+        inputActions.Player.Move.performed += OnPlayerMove;
+        inputActions.Player.Move.canceled += OnPlayerStop;
+
+        inputActions.Player.Dash.performed += OnPlayerDash;
+    }
+
+    private void OnDisable()
+    {
+        inputActions.Player.Move.performed -= OnPlayerMove;
+        inputActions.Player.Move.canceled -= OnPlayerStop;
+    }
+
+    private void Start()
+    {
+        currentDashCharges = data.maxDashCharges;
+        dashRechargeTimers = new float[data.maxDashCharges];
+    }
+
+    private void Update()
+    {
+        HandleDashRecharge();
+    }
+
+    private void FixedUpdate()
+    {
+        if(!isDashing)  
+            ApplyMovement();
+    }
+
+    #region BaseMovement
+
+    private void OnPlayerMove(InputAction.CallbackContext ctx)
+    {
+        _moveDirection = ctx.ReadValue<Vector2>();
+    }
+
+    private void OnPlayerStop(InputAction.CallbackContext ctx)
+    {
+        _moveDirection = Vector2.zero;
+    }
+
+    private void OnPlayerDash(InputAction.CallbackContext ctx)
+    {
+        if (currentDashCharges > 0 && !isDashing)
+            StartDash();
+    }
+
+    private void ApplyMovement()
+    {
+        if (_moveDirection.magnitude > 0.1f)
+        {
+            lastMoveDirection = _moveDirection.normalized;
+            float accel = GetAcceleration();
+            Vector2 targetVelocity = _moveDirection.normalized * data.maxSpeed;
+            rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, accel * Time.fixedDeltaTime);
+        }
+        else
+        {
+            rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, Vector2.zero, data.deceleration);
+        }
+    }
+
+    private float GetAcceleration()
+    {
+        bool isTurning = Vector2.Dot(rb.linearVelocity.normalized, _moveDirection.normalized) < -0.3f;
+        return data.acceleration * (isTurning ? data.turnMultiplier : 1.0f);
+    }
+
+    #endregion
+
+    #region DashFunctions
+
+    private void StartDash()
+    {
+        Vector2 dashDir = _moveDirection.magnitude > 0.1f ? _moveDirection.normalized : lastMoveDirection;
+
+        currentDashCharges--;
+        StartCoroutine(DashRoutine(dashDir));
+    }
+
+    private IEnumerator DashRoutine(Vector2 direction)
+    {
+        _isDashing = true;
+
+        rb.linearVelocity = direction * data.dashSpeed;
+
+        yield return new WaitForSeconds(data.dashIFrameDuration);
+
+        yield return new WaitForSeconds(data.dashDuration - data.dashIFrameDuration);
+
+        _isDashing = false;
+        rb.linearVelocity *= data.dashExitMultiplier;
+
+        StartDashRecharge();
+    }
+
+    private void StartDashRecharge()
+    {
+        for (int i = 0; i < dashRechargeTimers.Length; i++)
+        {
+            if (dashRechargeTimers[i] <= 0)
+            {
+                dashRechargeTimers[i] = data.dashRechargeTime;
+                return;
+            }
+        }
+    }
+
+    private void HandleDashRecharge()
+    {
+        float rechargeRate = 1.0f;
+
+        for (int i = 0; i < dashRechargeTimers.Length; i++)
+        {
+            if (dashRechargeTimers[i] <= 0) continue;
+
+            dashRechargeTimers[i] -= Time.deltaTime * rechargeRate;
+
+            if (dashRechargeTimers[i] <= 0)
+            {
+                dashRechargeTimers[i] = 0;
+                currentDashCharges = Mathf.Min(currentDashCharges + 1, data.maxDashCharges);
+            }
+        }
+    }
+
+    #endregion
+}
