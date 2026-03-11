@@ -12,10 +12,10 @@ public class Hitbox : MonoBehaviour
 
     public event Action<Collider2D, AttackType> OnHitDetected;
 
-    public void Activate(AttackType type)
+    public void Activate()
     {
         active = true;
-        currentType = type;
+        //currentType = type;
         hitTargets.Clear();
     }
 
@@ -29,7 +29,7 @@ public class Hitbox : MonoBehaviour
     {
         if (!active) return;
         if (hitTargets.Contains(collision)) return;
-        if (!collision.CompareTag("Enemy") && !collision.CompareTag("Hurtbox")) return;
+        if (!collision.CompareTag("Enemy") || !collision.CompareTag("Hurtbox")) return;
 
         hitTargets.Add(collision);
         OnHitDetected.Invoke(collision, currentType);

@@ -2,9 +2,5 @@ using UnityEngine;
 
 public interface IDamageable
 {
-    void TakeDamage()
-    {
-
-    }
-
+    void TakeDamage(DamageData damage);
 }

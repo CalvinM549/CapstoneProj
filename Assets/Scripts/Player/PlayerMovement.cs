@@ -8,31 +8,29 @@ public class PlayerMovement : MonoBehaviour
 
     private InputSystem_Actions inputActions;
     private Rigidbody2D rb;
-
+    private SpriteRenderer sr;
 
     private Vector2 _moveDirection;
+    private Vector2 lastMoveDirection = Vector2.right;
 
     private int currentDashCharges;
     private float[] dashRechargeTimers;
-    private Vector2 lastMoveDirection = Vector2.right;
 
     private bool _isDashing;
     public bool isDashing => _isDashing;
 
-
-
     private void Awake()
     {
-        inputActions = InputManager.Instance.inputActions;
+        sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
     }
 
-
     private void OnEnable()
     {
+        inputActions = InputManager.Instance.inputActions;
+
         inputActions.Player.Move.performed += OnPlayerMove;
         inputActions.Player.Move.canceled += OnPlayerStop;
-
         inputActions.Player.Dash.performed += OnPlayerDash;
     }
 
@@ -40,6 +38,7 @@ public class PlayerMovement : MonoBehaviour
     {
         inputActions.Player.Move.performed -= OnPlayerMove;
         inputActions.Player.Move.canceled -= OnPlayerStop;
+        inputActions.Player.Dash.performed -= OnPlayerDash;
     }
 
     private void Start()
@@ -83,7 +82,7 @@ public class PlayerMovement : MonoBehaviour
         {
             lastMoveDirection = _moveDirection.normalized;
             float accel = GetAcceleration();
-            Vector2 targetVelocity = _moveDirection.normalized * data.maxSpeed;
+            Vector2 targetVelocity = _moveDirection.normalized * data.baseSpeed;
             rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, accel * Time.fixedDeltaTime);
         }
         else
@@ -116,7 +115,12 @@ public class PlayerMovement : MonoBehaviour
 
         rb.linearVelocity = direction * data.dashSpeed;
 
+        sr.color = Color.red;
+
         yield return new WaitForSeconds(data.dashIFrameDuration);
+
+        // Iframe end
+        sr.color = Color.white;
 
         yield return new WaitForSeconds(data.dashDuration - data.dashIFrameDuration);
 
@@ -136,6 +140,7 @@ public class PlayerMovement : MonoBehaviour
                 return;
             }
         }
+        print("SHOULD NOT REACH");
     }
 
     private void HandleDashRecharge()

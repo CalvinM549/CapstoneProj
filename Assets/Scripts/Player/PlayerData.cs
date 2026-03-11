@@ -4,8 +4,7 @@ using UnityEngine;
 public class PlayerData : ScriptableObject
 {
     [Header("Base Movement")]
-    public float movementSpeed;
-    public float maxSpeed;
+    public float baseSpeed;
     public float acceleration;
     public float deceleration;
     public float turnMultiplier;

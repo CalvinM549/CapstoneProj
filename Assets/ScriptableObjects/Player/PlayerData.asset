@@ -12,14 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af60bba6c7078e448a3050d677c41dc, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: Assembly-CSharp::PlayerData
-  movementSpeed: 9
-  maxSpeed: 8
-  acceleration: 60
+  baseSpeed: 12
+  acceleration: 80
   deceleration: 45
   turnMultiplier: 2.5
-  dashSpeed: 35
+  dashSpeed: 40
   dashDuration: 0.12
   dashExitMultiplier: 0.4
   maxDashCharges: 2
-  dashRechargeTime: 0.9
+  dashRechargeTime: 1.5
   dashIFrameDuration: 0.1

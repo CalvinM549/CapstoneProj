@@ -8,9 +8,11 @@ public enum AttackType
     Secondary
 }
 
-public enum DamageType
+public enum DamageType // Mainly for death effects?
 {
-
+    Default,
+    Explosive,
+    Electric
 }
 
 public enum CombatState
