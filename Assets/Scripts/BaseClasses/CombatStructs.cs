@@ -17,7 +17,10 @@ public enum DamageType // Mainly for death effects?
 
 public enum CombatState
 {
-
+    Idle,
+    Startup,
+    Active,
+    Recovery
 }
 
 public class DamageData
