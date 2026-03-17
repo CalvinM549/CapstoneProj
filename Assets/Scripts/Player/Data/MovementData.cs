@@ -1,7 +1,7 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PlayerData", menuName = "Player/NewPlayerData", order = 1)]
-public class PlayerData : ScriptableObject
+[CreateAssetMenu(fileName = "MovementData", menuName = "Player/NewMovementData", order = 1)]
+public class MovementData : ScriptableObject
 {
     [Header("Base Movement")]
     public float baseSpeed;

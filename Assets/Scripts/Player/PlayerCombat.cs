@@ -7,9 +7,16 @@ public class PlayerCombat : MonoBehaviour
 
     public WeaponData weaponData;
 
-    public PlayerMovement movement;
+    [SerializeField] private PlayerMovement movement;
+    [SerializeField] private PlayerHealth health;
+    
+    [SerializeField] private AttackHitboxes hitboxes;
 
     private InputSystem_Actions inputActions;
+
+    private IPlayerTool equippedTool;
+
+    public CombatState CurrentState => state;
 
     private CombatState state = CombatState.Idle;
     
@@ -21,40 +28,49 @@ public class PlayerCombat : MonoBehaviour
     private bool heavyConnected = false;
     private bool dashAttackUsedInDash = false;
 
-
+    public int ComboStep => comboStep;
 
 
     private void Awake()
     {
         inputActions = InputManager.Instance.inputActions;
+        // Link hitboxes to handle hit detection
     }
 
     private void OnEnable()
     {
-        inputActions.Player.Attack.performed += OnLightAttackInput;
+        // Inputs
+        inputActions.Player.LightAttack.performed += OnLightAttackInput;
+        inputActions.Player.HeavyAttack.performed += OnHeavyAttackInput;
 
-        // Link hitboxes to handle hit detection
+        // Events
+        hitboxes.OnPlayerHitboxContact += HandleHitDetection;
     }
 
     private void OnDisable()
     {
-        
+        inputActions.Player.LightAttack.performed -= OnLightAttackInput;
+        inputActions.Player.HeavyAttack.performed -= OnHeavyAttackInput;
+
     }
 
     private void Update()
     {
-        
+        UpdateComboWindow();
     }
 
     private void OnLightAttackInput(InputAction.CallbackContext ctx)
     {
+        Debug.Log("Light Attack Pressed!");
+
+        if (!CheckCanAttack()) return;
+
         if (CheckForDashAttack())
         {
             PerformDashAttack();
             return;
         }
-
-        if (CheckCanAttack())
+        else
         {
             InterruptRecovery();
             PerformLightAttack();
@@ -63,13 +79,16 @@ public class PlayerCombat : MonoBehaviour
 
     private void OnHeavyAttackInput(InputAction.CallbackContext ctx)
     {
+        Debug.Log("Heavy Attack Pressed!");
+
+        if (!CheckCanAttack()) return;
+
         if (CheckForDashAttack())
         {
             PerformDashAttack();
             return;
         }
-
-        if (CheckCanAttack())
+        else
         {
             InterruptRecovery();
             PerformHeavyAttack();
@@ -83,9 +102,9 @@ public class PlayerCombat : MonoBehaviour
 
     private bool CheckCanAttack()
     {
-        return state == CombatState.Idle || state == CombatState.Recovery;
+        return (state == CombatState.Idle || state == CombatState.Recovery)
+            && !health.IsHitstunned;
     }
-
 
     private void PerformLightAttack()
     {
@@ -99,7 +118,8 @@ public class PlayerCombat : MonoBehaviour
         if(currentAttackRoutine != null)
             StopCoroutine(currentAttackRoutine);
 
-        currentAttackRoutine = StartCoroutine(AttackRoutine(weaponData.lightAttacks[comboStep - 1], comboStep - 1));
+        Debug.Log("Performing Light Attack!");
+        currentAttackRoutine = StartCoroutine(AttackRoutine(weaponData.lightAttacks[comboStep - 1]));
     }
 
     private void PerformHeavyAttack()
@@ -111,7 +131,8 @@ public class PlayerCombat : MonoBehaviour
         if (currentAttackRoutine != null)
             StopCoroutine(currentAttackRoutine);
 
-        currentAttackRoutine = StartCoroutine(AttackRoutine(weaponData.heavyAttack, 0));
+        Debug.Log("Performing Heavy Attack!");
+        currentAttackRoutine = StartCoroutine(AttackRoutine(weaponData.heavyAttack));
 
     }
 
@@ -120,17 +141,17 @@ public class PlayerCombat : MonoBehaviour
         dashAttackUsedInDash = true;
         comboStep = 0;
         comboWindowTimer = 0;
-        // Cancel dash in movement
 
         if (currentAttackRoutine != null)
             StopCoroutine(currentAttackRoutine);
 
-        currentAttackRoutine = StartCoroutine(AttackRoutine(weaponData.dashAttack, 0));
+        Debug.Log("Performing Dash Attack!");
+        currentAttackRoutine = StartCoroutine(AttackRoutine(weaponData.dashAttack));
     }
 
     // Attack Routine
 
-    private IEnumerator AttackRoutine(HitInfo attack, int step)
+    private IEnumerator AttackRoutine(AttackInfo attack)
     {
         currentAttackType = attack.type;
         // Trigger attack start event
@@ -142,15 +163,15 @@ public class PlayerCombat : MonoBehaviour
         if (currentAttackType != attack.type) yield break;
 
         state = CombatState.Active;
-        // Hitbox Enabling idk
+        hitboxes.EnableHitBox(attack, comboStep);
 
         yield return new WaitForSeconds(attack.activeTime);
-
-        // De-activate hitbox
+        
+        hitboxes.ResetHitboxes();
 
         if (attack.type == AttackType.Heavy && !heavyConnected)
             print("Heavy Whiff");
-        // Whiff event
+            // Whiff event
 
         state = CombatState.Recovery;
 
@@ -163,24 +184,43 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    private void HandleHitDetection(Collider2D hit, HitInfo attack)
+    private void HandleHitDetection(Collider2D hit, AttackInfo attack)
     {
+        print("Hit Detected");
+
+        IDamageable target = hit.GetComponentInParent<IDamageable>();
+        if (target == null || !target.IsAlive) return;
+
         Vector2 knockbackDir = (hit.transform.position - transform.position).normalized;
 
-        DamageData damageData = new DamageData()
+        HitData damageData = new HitData()
         {
             damage = attack.damage,
             attackType = attack.type,
             sourcePos = transform.position,
             knockbackDirection = knockbackDir,
             knockbackForce = attack.knockback,
-            isPlayerAttack = true
+            hitstopTime = attack.hitstopDuration,
+            isPlayerAttack = true,
+            isParryable = false
         };
 
-        // Fire events
+        if(attack.type == AttackType.Heavy)
+            heavyConnected = true;
 
-        heavyConnected = attack.type == AttackType.Heavy ? true : heavyConnected;
+        GameEvents.HitConfirmed(damageData);
+
+        target.RecieveHit(damageData);
     }
+
+    // returns false if hit is ignored
+    public bool HandlePlayerHit(HitData damage)
+    {
+        return true;
+    }
+
+
+    #region Utility
 
     private void InterruptRecovery()
     {
@@ -191,4 +231,33 @@ public class PlayerCombat : MonoBehaviour
         // remove hitbox
         state = CombatState.Idle;
     }
+
+    private void UpdateComboWindow()
+    {
+        if (comboWindowTimer > 0)
+        {
+            comboWindowTimer -= Time.deltaTime;
+        }
+        else if (state == CombatState.Idle)
+        {
+            comboStep = 0;
+        }
+    }
+
+    private void RestartRoutine(IEnumerator routine)
+    {
+        StopCurrentRoutine();
+        currentAttackRoutine = StartCoroutine(routine);
+    }
+
+    private void StopCurrentRoutine()
+    {
+        if (currentAttackRoutine != null)
+        {
+            StopCoroutine(currentAttackRoutine);
+            currentAttackRoutine = null;
+        }
+    }
+
+    #endregion
 }

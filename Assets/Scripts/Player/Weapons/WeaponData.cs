@@ -1,21 +1,17 @@
 using System;
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "WeaponData", menuName = "Player/NewWeaponData", order = 2)]
 public class WeaponData : ScriptableObject
 {
     [Header("Light Attacks")]
-    public HitInfo[] lightAttacks;
+    public AttackInfo[] lightAttacks;
 
     [Header("Heavy Attack")]
-    public HitInfo heavyAttack;
+    public AttackInfo heavyAttack;
 
     [Header("Dash Attack")]
-    public HitInfo dashAttack;
-
-    [Header("Hitstop")]
-    public float hitstopTimescale;
-
-    [Header("Knockback")]
+    public AttackInfo dashAttack;
 
     [Header("Other")]
     public float comboWindow;
@@ -25,11 +21,11 @@ public class WeaponData : ScriptableObject
 }
 
 [Serializable]
-public class HitInfo
+public class AttackInfo
 {
     public AttackType type;
 
-    public float damage;
+    public int damage;
     public float startupTime;
     public float activeTime;
     public float recoveryTime;

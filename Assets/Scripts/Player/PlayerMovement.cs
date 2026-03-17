@@ -4,11 +4,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private PlayerData data;
+    [SerializeField] private MovementData data;
+
+    [SerializeField] private PlayerCombat combat;
+    [SerializeField] private PlayerHealth health;
 
     private InputSystem_Actions inputActions;
     private Rigidbody2D rb;
-    private SpriteRenderer sr;
+    private SpriteRenderer sr; // For Testing
 
     private Vector2 _moveDirection;
     private Vector2 lastMoveDirection = Vector2.right;
@@ -78,16 +81,35 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyMovement()
     {
+        switch (combat.CurrentState)
+        {
+            case CombatState.Startup:
+            case CombatState.Active:
+                rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, Vector2.zero, data.deceleration * 2.0f * Time.fixedDeltaTime);
+                break;
+
+            case CombatState.Recovery:
+                ApplyModifiedMovement(0.35f);
+                break;
+
+            default:
+                ApplyModifiedMovement();
+                break;
+        }
+    }
+
+    private void ApplyModifiedMovement(float multiplier = 1.0f)
+    {
         if (_moveDirection.magnitude > 0.1f)
         {
             lastMoveDirection = _moveDirection.normalized;
-            float accel = GetAcceleration();
-            Vector2 targetVelocity = _moveDirection.normalized * data.baseSpeed;
+            float accel = GetAcceleration() * multiplier;
+            Vector2 targetVelocity = _moveDirection.normalized * data.baseSpeed * multiplier;
             rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, accel * Time.fixedDeltaTime);
         }
         else
         {
-            rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, Vector2.zero, data.deceleration);
+            rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, Vector2.zero, data.deceleration * Time.fixedDeltaTime);
         }
     }
 
@@ -115,14 +137,9 @@ public class PlayerMovement : MonoBehaviour
 
         rb.linearVelocity = direction * data.dashSpeed;
 
-        sr.color = Color.red;
+        health.GrantIFrames(data.dashIFrameDuration);
 
-        yield return new WaitForSeconds(data.dashIFrameDuration);
-
-        // Iframe end
-        sr.color = Color.white;
-
-        yield return new WaitForSeconds(data.dashDuration - data.dashIFrameDuration);
+        yield return new WaitForSeconds(data.dashDuration);
 
         _isDashing = false;
         rb.linearVelocity *= data.dashExitMultiplier;

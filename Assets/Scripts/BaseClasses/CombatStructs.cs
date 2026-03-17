@@ -23,9 +23,9 @@ public enum CombatState
     Recovery
 }
 
-public class DamageData
+public class HitData
 {
-    public float damage;
+    public int damage;
     public AttackType attackType;
     public DamageType damageType;
 
@@ -33,14 +33,7 @@ public class DamageData
     public Vector2 knockbackDirection;
 
     public float knockbackForce;
+    public float hitstopTime;
     public bool isPlayerAttack;
-
-}
-
-public class HitboxData
-{
-    public Vector2 offset;
-    public Vector2 size;
-    public AttackType attackType;
-    public int comboStep;
+    public bool isParryable;
 }

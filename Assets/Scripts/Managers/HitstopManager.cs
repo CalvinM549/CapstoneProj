@@ -22,12 +22,12 @@ public class HitstopManager : MonoBehaviour
 
     private void OnEnable()
     {
-        
+        GameEvents.OnHitConfirmed += TriggerHitstop;
     }
 
     private void OnDisable()
     {
-        
+        GameEvents.OnHitConfirmed -= TriggerHitstop;
     }
 
     public void TriggerHitstop(float duration)
@@ -38,6 +38,11 @@ public class HitstopManager : MonoBehaviour
         }
 
         currentHitstopRoutine = StartCoroutine(HitstopRoutine(duration));
+    }
+
+    public void TriggerHitstop(HitData damage)
+    {
+        TriggerHitstop(damage.hitstopTime);
     }
 
     public void CancelHitstop()
