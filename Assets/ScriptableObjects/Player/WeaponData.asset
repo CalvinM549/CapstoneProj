@@ -15,7 +15,7 @@ MonoBehaviour:
   lightAttacks:
   - type: 0
     damage: 1
-    startupTime: 0.1
+    startupTime: 0.2
     activeTime: 0.2
     recoveryTime: 0.1
     hitstopDuration: 0.05
@@ -28,10 +28,10 @@ MonoBehaviour:
     hitstopDuration: 0.05
     knockback: 1
   - type: 0
-    damage: 1
+    damage: 2
     startupTime: 0.1
     activeTime: 0.2
-    recoveryTime: 0.1
+    recoveryTime: 0.5
     hitstopDuration: 0.05
     knockback: 1
   heavyAttack:

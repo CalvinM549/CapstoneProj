@@ -16,11 +16,15 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 _moveDirection;
     private Vector2 lastMoveDirection = Vector2.right;
 
+    public Vector2 LastMoveDirection => lastMoveDirection;
+
     private int currentDashCharges;
     private float[] dashRechargeTimers;
 
     private bool _isDashing;
     public bool isDashing => _isDashing;
+
+    public bool lateDashCheck {  get; private set; }
 
     private void Awake()
     {
@@ -134,6 +138,7 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator DashRoutine(Vector2 direction)
     {
         _isDashing = true;
+        lateDashCheck = true;
 
         rb.linearVelocity = direction * data.dashSpeed;
 
@@ -145,6 +150,10 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity *= data.dashExitMultiplier;
 
         StartDashRecharge();
+
+        yield return new WaitForSeconds(0.1f);
+
+        lateDashCheck = false;
     }
 
     private void StartDashRecharge()

@@ -25,18 +25,10 @@ public class AttackHitboxes : MonoBehaviour
         SubscribeHitbox(dashHitbox);    
     }
 
-    private void RotateToMouse()
+    private void RotateToDir(Vector3 direction)
     {
-        Vector3 mousePos = InputManager.Instance.inputActions.Player.PointerPosition.ReadValue<Vector2>();
-
-        Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane));
-        mousePosWorld.z = 0f;
-
-        Vector3 direction = mousePosWorld - transform.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
         facingPivot.rotation = Quaternion.Euler(new Vector3(0,0, angle));
-
     }
 
     private void SubscribeHitbox(Hitbox hitbox)
@@ -46,12 +38,12 @@ public class AttackHitboxes : MonoBehaviour
         hitbox.OnHitDetected += col => OnPlayerHitboxContact?.Invoke(col, currentAttack);
     }
 
-    public void EnableHitBox(AttackInfo attack, int comboCount = 1)
+    public void EnableHitBox(AttackInfo attack, Vector3 attackDirection, int comboCount = 1)
     {
         ResetHitboxes();
         currentAttack = attack;
 
-        RotateToMouse();
+        RotateToDir(attackDirection);
 
         switch (attack.type)
         {

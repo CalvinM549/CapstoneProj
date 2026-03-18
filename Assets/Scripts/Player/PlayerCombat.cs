@@ -163,7 +163,7 @@ public class PlayerCombat : MonoBehaviour
         if (currentAttackType != attack.type) yield break;
 
         state = CombatState.Active;
-        hitboxes.EnableHitBox(attack, comboStep);
+        hitboxes.EnableHitBox(attack, GetAttackDirection(attack.type), comboStep);
 
         yield return new WaitForSeconds(attack.activeTime);
         
@@ -176,6 +176,8 @@ public class PlayerCombat : MonoBehaviour
         state = CombatState.Recovery;
 
         yield return new WaitForSeconds(attack.recoveryTime);
+
+        dashAttackUsedInDash = false;
 
         if (state == CombatState.Recovery)
         {
@@ -193,7 +195,7 @@ public class PlayerCombat : MonoBehaviour
 
         Vector2 knockbackDir = (hit.transform.position - transform.position).normalized;
 
-        HitData damageData = new HitData()
+        HitData hitData = new HitData()
         {
             damage = attack.damage,
             attackType = attack.type,
@@ -208,9 +210,9 @@ public class PlayerCombat : MonoBehaviour
         if(attack.type == AttackType.Heavy)
             heavyConnected = true;
 
-        GameEvents.HitConfirmed(damageData);
+        GameEvents.HitConfirmed(hitData);
 
-        target.RecieveHit(damageData);
+        target.RecieveHit(hitData);
     }
 
     // returns false if hit is ignored
@@ -256,6 +258,25 @@ public class PlayerCombat : MonoBehaviour
         {
             StopCoroutine(currentAttackRoutine);
             currentAttackRoutine = null;
+        }
+    }
+
+    private Vector2 GetAttackDirection(AttackType type)
+    {
+        if (type == AttackType.DashAttack)
+        {
+            return movement.LastMoveDirection;
+        }
+
+        else
+        {
+            Vector3 mousePos = InputManager.Instance.inputActions.Player.PointerPosition.ReadValue<Vector2>();
+
+            Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane));
+            mousePosWorld.z = 0f;
+
+            Vector3 direction = mousePosWorld - transform.position;
+            return direction;
         }
     }
 

@@ -31,7 +31,6 @@ public class MomentumSystem : MonoBehaviour
     {
         
     }
-
     public void AddMomentum(float amount)
     {
         if (amount <= 0) return;

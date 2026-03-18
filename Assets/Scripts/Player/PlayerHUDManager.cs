@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerUIManager : MonoBehaviour
+public class PlayerHUDManager : MonoBehaviour
 {
     public Image[] dashCooldowns;
 
-    public GameObject hitPrefab;
+    public GameObject healthPointPrefab;
     public Transform healthContainer;
 
     private List<Image> healthPoints = new();
@@ -15,6 +15,10 @@ public class PlayerUIManager : MonoBehaviour
     private int maxHealth;
     private int currentHealth;
 
+    private void Awake()
+    {
+        
+    }
 
     private void OnEnable()
     {
@@ -25,6 +29,8 @@ public class PlayerUIManager : MonoBehaviour
     {
         
     }
+
+    #region Health Bar
 
     public void ManageHealthChange(int newHealth, int max)
     {
@@ -56,7 +62,7 @@ public class PlayerUIManager : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            var healthPoint = Instantiate(hitPrefab, healthContainer);
+            var healthPoint = Instantiate(healthPointPrefab, healthContainer);
             healthPoints.Add(healthPoint.GetComponent<Image>());
         }
 
@@ -72,5 +78,19 @@ public class PlayerUIManager : MonoBehaviour
             // Swap image sprites based on amount of health
         }
     }
+
+    #endregion
+
+    #region DashCharges
+
+
+
+    #endregion
+
+    #region MomentumBar
+
+
+
+    #endregion
 
 }
