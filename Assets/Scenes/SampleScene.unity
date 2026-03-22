@@ -311,6 +311,7 @@ MonoBehaviour:
   weaponData: {fileID: 11400000, guid: 171630233c2c87c4793c847c2352d9ba, type: 2}
   movement: {fileID: 22530088}
   health: {fileID: 22530092}
+  momentum: {fileID: 0}
   hitboxes: {fileID: 1957935269}
 --- !u!114 &22530092
 MonoBehaviour:
@@ -403,6 +404,60 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &214707047
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 214707049}
+  - component: {fileID: 214707048}
+  m_Layer: 0
+  m_Name: PlayerUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &214707048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214707047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd006a8a32cd1c9488b31a81fee039e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MomentumUI
+  fillBar: {fileID: 1344013799}
+  currentZoneLabel: {fileID: 0}
+  gainLerpSpeed: 9
+  drainLerpSpeed: 5
+  emptyColour: {r: 0, g: 0, b: 0, a: 1}
+  lowColour: {r: 0, g: 0, b: 0, a: 1}
+  midColour: {r: 0, g: 0, b: 0, a: 1}
+  highColour: {r: 0, g: 0, b: 0, a: 1}
+  colourLerpSpeed: 5
+--- !u!4 &214707049
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214707047}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 960, y: 540, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1551018079}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &243460027
@@ -2476,7 +2531,7 @@ RectTransform:
   - {fileID: 1344013798}
   - {fileID: 243460028}
   - {fileID: 437283232}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 214707049}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3109,7 +3164,7 @@ SceneRoots:
   - {fileID: 619394802}
   - {fileID: 746229264}
   - {fileID: 1971178798}
-  - {fileID: 1551018079}
+  - {fileID: 214707049}
   - {fileID: 65672064}
   - {fileID: 1994592270}
   - {fileID: 1013388412}

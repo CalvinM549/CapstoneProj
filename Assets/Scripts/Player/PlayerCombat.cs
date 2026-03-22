@@ -9,6 +9,7 @@ public class PlayerCombat : MonoBehaviour
 
     [SerializeField] private PlayerMovement movement;
     [SerializeField] private PlayerHealth health;
+    [SerializeField] private MomentumSystem momentum;
     
     [SerializeField] private AttackHitboxes hitboxes;
 
@@ -278,6 +279,11 @@ public class PlayerCombat : MonoBehaviour
             Vector3 direction = mousePosWorld - transform.position;
             return direction;
         }
+    }
+
+    private float GetDamageMultiplier()
+    {
+        return 0;
     }
 
     #endregion
