@@ -24,13 +24,22 @@ public class MomentumSystem : MonoBehaviour
 
     private void OnEnable()
     {
-        
+        GameEvents.OnHitConfirmed += HandleHitConfirmed;
+        GameEvents.OnEnemyKilled += HandleEnemyKilled;
+
+        GameEvents.OnPlayerHit += HandlePlayerHit;
+        GameEvents.OnHeavyAttackWhiff += HandleHeavyWhiff;
     }
 
     private void OnDisable()
     {
-        
+        GameEvents.OnHitConfirmed -= HandleHitConfirmed;
+        GameEvents.OnEnemyKilled -= HandleEnemyKilled;
+
+        GameEvents.OnPlayerHit -= HandlePlayerHit;
+        GameEvents.OnHeavyAttackWhiff -= HandleHeavyWhiff;
     }
+
     public void AddMomentum(float amount)
     {
         if (amount <= 0) return;
@@ -50,6 +59,46 @@ public class MomentumSystem : MonoBehaviour
         GameEvents.MomentumChange(PercentMomentum);
     }
 
+    #region Event Handlers
+
+    // Gainers
+
+    private void HandleHitConfirmed(HitData hit)
+    {
+        if (!hit.isPlayerAttack) return;
+
+        float gain = hit.attackType switch
+        {
+            AttackType.Light => data.lightAttackGain,
+            AttackType.Heavy => data.heavyAttackGain,
+            AttackType.DashAttack => data.dashAttackGain,
+            _ => data.lightAttackGain
+        };
+
+        AddMomentum(gain);
+    }
+
+    private void HandleEnemyKilled(EnemyBase enemy)
+    {
+        AddMomentum(data.killGain);
+    }
+
+    // Drainers
+
+    private void HandlePlayerHit(HitData hit)
+    {
+        DrainMomentum(data.hitTakenDrain);
+    }
+
+    private void HandleHeavyWhiff()
+    {
+        DrainMomentum(data.heavyWhiffDrain);
+    }
+
+    #endregion
+
+
+    #region Utilities
     private void CheckZoneTransition()
     {
         MomentumZone newZone = PercentMomentum switch
@@ -74,5 +123,7 @@ public class MomentumSystem : MonoBehaviour
         }
         GameEvents.MomentumZoneChange(oldZone, currentZone);
     }
+
+    #endregion
 
 }

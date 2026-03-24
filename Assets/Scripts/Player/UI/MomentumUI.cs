@@ -30,12 +30,14 @@ public class MomentumUI : MonoBehaviour
 
     private void OnEnable()
     {
-        
+        GameEvents.OnMomentumChange += HandleMomentumChanged;
+        GameEvents.OnMomentumZoneChange += HandleMomentumZoneChange;
     }
 
     private void OnDisable()
     {
-        
+        GameEvents.OnMomentumChange -= HandleMomentumChanged;
+        GameEvents.OnMomentumZoneChange -= HandleMomentumZoneChange;
     }
 
     private void Update()
@@ -50,6 +52,8 @@ public class MomentumUI : MonoBehaviour
 
         float speed = targetValue > displayValue ? gainLerpSpeed : drainLerpSpeed;
         displayValue = Mathf.Lerp(displayValue, targetValue, speed * Time.deltaTime);
+
+        fillBar.fillAmount = displayValue;
     }
 
     private void UpdateColour()

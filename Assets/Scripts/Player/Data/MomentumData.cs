@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "MomentumData", menuName = "Player/NewMomentumData", order = 3)]
 public class MomentumData : ScriptableObject
 {
     public float capacity;

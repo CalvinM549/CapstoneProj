@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 22530088}
   - component: {fileID: 22530091}
   - component: {fileID: 22530092}
+  - component: {fileID: 22530093}
   - component: {fileID: 22530089}
   - component: {fileID: 22530090}
   m_Layer: 0
@@ -311,7 +312,7 @@ MonoBehaviour:
   weaponData: {fileID: 11400000, guid: 171630233c2c87c4793c847c2352d9ba, type: 2}
   movement: {fileID: 22530088}
   health: {fileID: 22530092}
-  momentum: {fileID: 0}
+  momentum: {fileID: 22530093}
   hitboxes: {fileID: 1957935269}
 --- !u!114 &22530092
 MonoBehaviour:
@@ -327,6 +328,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   combat: {fileID: 22530091}
   movement: {fileID: 22530088}
+--- !u!114 &22530093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22530084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d3e0d781064893468259fceb43bd3d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MomentumSystem
+  data: {fileID: 11400000, guid: c90d4e6819cee8342a9aa487067c8bd5, type: 2}
 --- !u!1 &65672061
 GameObject:
   m_ObjectHideFlags: 0
@@ -440,9 +454,9 @@ MonoBehaviour:
   gainLerpSpeed: 9
   drainLerpSpeed: 5
   emptyColour: {r: 0, g: 0, b: 0, a: 1}
-  lowColour: {r: 0, g: 0, b: 0, a: 1}
-  midColour: {r: 0, g: 0, b: 0, a: 1}
-  highColour: {r: 0, g: 0, b: 0, a: 1}
+  lowColour: {r: 1, g: 0.1660026, b: 0, a: 1}
+  midColour: {r: 1, g: 0.8193936, b: 0, a: 1}
+  highColour: {r: 0.29495454, g: 1, b: 0, a: 1}
   colourLerpSpeed: 5
 --- !u!4 &214707049
 Transform:

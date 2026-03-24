@@ -171,8 +171,7 @@ public class PlayerCombat : MonoBehaviour
         hitboxes.ResetHitboxes();
 
         if (attack.type == AttackType.Heavy && !heavyConnected)
-            print("Heavy Whiff");
-            // Whiff event
+            GameEvents.HeavyAttackWhiff();
 
         state = CombatState.Recovery;
 
