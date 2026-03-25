@@ -4,6 +4,9 @@ using UnityEngine;
 public class MomentumData : ScriptableObject
 {
     public float capacity;
+    public float timeUntilDrain;
+    public float drainSpeed;
+
 
     public float emptyThreshold;
     public float lowThreshold;

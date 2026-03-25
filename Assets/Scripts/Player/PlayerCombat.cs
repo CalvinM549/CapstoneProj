@@ -9,7 +9,7 @@ public class PlayerCombat : MonoBehaviour
 
     [SerializeField] private PlayerMovement movement;
     [SerializeField] private PlayerHealth health;
-    [SerializeField] private MomentumSystem momentum;
+    [SerializeField] private PlayerMomentum momentum;
     
     [SerializeField] private AttackHitboxes hitboxes;
 
@@ -98,7 +98,7 @@ public class PlayerCombat : MonoBehaviour
 
     private bool CheckForDashAttack()
     {
-        return movement.isDashing && !dashAttackUsedInDash;
+        return movement.IsDashing && !dashAttackUsedInDash;
     }
 
     private bool CheckCanAttack()
@@ -125,9 +125,9 @@ public class PlayerCombat : MonoBehaviour
 
     private void PerformHeavyAttack()
     {
+        heavyConnected = false;
         comboStep = 0;
         comboWindowTimer = 0;
-        heavyConnected = false;
 
         if (currentAttackRoutine != null)
             StopCoroutine(currentAttackRoutine);
@@ -155,7 +155,7 @@ public class PlayerCombat : MonoBehaviour
     private IEnumerator AttackRoutine(AttackInfo attack)
     {
         currentAttackType = attack.type;
-        // Trigger attack start event
+        GameEvents.AttackStarted(attack.type);
 
         state = CombatState.Startup;
 
@@ -164,6 +164,7 @@ public class PlayerCombat : MonoBehaviour
         if (currentAttackType != attack.type) yield break;
 
         state = CombatState.Active;
+        movement.PushPlayer(GetAttackDirection(attack.type), 5, attack.activeTime);
         hitboxes.EnableHitBox(attack, GetAttackDirection(attack.type), comboStep);
 
         yield return new WaitForSeconds(attack.activeTime);
@@ -224,15 +225,7 @@ public class PlayerCombat : MonoBehaviour
 
     #region Utility
 
-    private void InterruptRecovery()
-    {
-        if (state != CombatState.Recovery) return;
-        if (currentAttackRoutine != null)
-            StopCoroutine(currentAttackRoutine);
 
-        // remove hitbox
-        state = CombatState.Idle;
-    }
 
     private void UpdateComboWindow()
     {
@@ -246,10 +239,12 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    private void RestartRoutine(IEnumerator routine)
+    private void InterruptRecovery()
     {
+        if (state != CombatState.Recovery) return;
+
         StopCurrentRoutine();
-        currentAttackRoutine = StartCoroutine(routine);
+        state = CombatState.Idle;
     }
 
     private void StopCurrentRoutine()
@@ -258,15 +253,14 @@ public class PlayerCombat : MonoBehaviour
         {
             StopCoroutine(currentAttackRoutine);
             currentAttackRoutine = null;
+            hitboxes.ResetHitboxes();
         }
     }
 
     private Vector2 GetAttackDirection(AttackType type)
     {
         if (type == AttackType.DashAttack)
-        {
             return movement.LastMoveDirection;
-        }
 
         else
         {
@@ -276,13 +270,8 @@ public class PlayerCombat : MonoBehaviour
             mousePosWorld.z = 0f;
 
             Vector3 direction = mousePosWorld - transform.position;
-            return direction;
+            return direction.normalized;
         }
-    }
-
-    private float GetDamageMultiplier()
-    {
-        return 0;
     }
 
     #endregion

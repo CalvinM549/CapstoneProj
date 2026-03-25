@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: MomentumData
   m_EditorClassIdentifier: Assembly-CSharp::MomentumData
   capacity: 100
+  timeUntilDrain: 3
+  drainSpeed: 5
   emptyThreshold: 0.15
   lowThreshold: 0.33
   highThreshold: 0.66

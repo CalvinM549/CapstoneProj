@@ -7,22 +7,24 @@ public class PlayerHUDManager : MonoBehaviour
 {
     public Image[] dashCooldowns;
 
-    public GameObject healthPointPrefab;
+    public Image healthPointPrefab;
     public Transform healthContainer;
 
-    private List<Image> healthPoints = new();
+    private List<Image> activeHealthPoints = new();
+
+    private ObjectPool<Image> healthPointPool;
 
     private int maxHealth;
     private int currentHealth;
 
     private void Awake()
     {
-        
+        healthPointPool = new ObjectPool<Image>(healthPointPrefab, 10, healthContainer);
     }
 
     private void OnEnable()
     {
-        
+        GameEvents.OnPlayerHealthChange += HandlePlayerHealthChange;
     }
 
     private void OnDisable()
@@ -32,7 +34,7 @@ public class PlayerHUDManager : MonoBehaviour
 
     #region Health Bar
 
-    public void ManageHealthChange(int newHealth, int max)
+    public void HandlePlayerHealthChange(int newHealth, int max)
     {
         bool tookDamage = newHealth < currentHealth;
 
@@ -51,19 +53,17 @@ public class PlayerHUDManager : MonoBehaviour
 
     private void BuildHealthBar(int count)
     {
-        foreach (var hit in healthPoints)
+        foreach (var hit in activeHealthPoints)
         {
-            if (hit != null) Destroy(hit);
+            healthPointPool.ReturnToPool(hit);
+            activeHealthPoints.Remove(hit);
         }
-        healthPoints.Clear();
-
 
         healthContainer.gameObject.SetActive(true);
 
         for (int i = 0; i < count; i++)
         {
-            var healthPoint = Instantiate(healthPointPrefab, healthContainer);
-            healthPoints.Add(healthPoint.GetComponent<Image>());
+            activeHealthPoints.Add(healthPointPool.Get());
         }
 
         RefreshHealthBar(count);
@@ -72,22 +72,19 @@ public class PlayerHUDManager : MonoBehaviour
     private void RefreshHealthBar(int currentHealth)
     {
 
-        for (int i = 0; i < healthPoints.Count; i++)
+        for (int i = activeHealthPoints.Count; i > currentHealth; i--)
         {
-            if (healthPoints[i] == null) continue;
-            // Swap image sprites based on amount of health
+            healthPointPool.ReturnToPool(activeHealthPoints[i]);
+            activeHealthPoints.RemoveAt(i);
         }
+
+
+        // Depending on current health, add effects, i.e. shake health when low
     }
 
     #endregion
 
     #region DashCharges
-
-
-
-    #endregion
-
-    #region MomentumBar
 
 
 

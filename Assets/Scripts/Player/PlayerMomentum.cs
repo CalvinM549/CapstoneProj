@@ -8,7 +8,7 @@ public enum MomentumZone
     High
 }
 
-public class MomentumSystem : MonoBehaviour
+public class PlayerMomentum : MonoBehaviour
 {
     [SerializeField] private MomentumData data;
 
@@ -17,6 +17,8 @@ public class MomentumSystem : MonoBehaviour
 
     private float gainMultiplier = 1.0f;
     private float drainMultiplier = 1.0f;
+
+    private float momentumTimer;
 
     public float CurrentMomentum => currentMomentum;
     public float PercentMomentum => currentMomentum / data.capacity;
@@ -40,11 +42,18 @@ public class MomentumSystem : MonoBehaviour
         GameEvents.OnHeavyAttackWhiff -= HandleHeavyWhiff;
     }
 
+    private void Update()
+    {
+        UpdateMomentumDrain();
+    }
+
     public void AddMomentum(float amount)
     {
         if (amount <= 0) return;
 
         currentMomentum = Mathf.Clamp(currentMomentum + (amount * gainMultiplier), 0f, data.capacity);
+        momentumTimer = data.timeUntilDrain;
+
         CheckZoneTransition();
         GameEvents.MomentumChange(PercentMomentum);
     }
@@ -57,6 +66,18 @@ public class MomentumSystem : MonoBehaviour
 
         CheckZoneTransition();
         GameEvents.MomentumChange(PercentMomentum);
+    }
+
+    private void UpdateMomentumDrain()
+    {
+        if (momentumTimer > 0)
+        {
+            momentumTimer -= Time.deltaTime;
+        }
+        else if(currentMomentum > 0)
+        {
+            currentMomentum -= data.drainSpeed * Time.deltaTime;
+        }
     }
 
     #region Event Handlers

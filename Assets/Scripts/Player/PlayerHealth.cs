@@ -69,7 +69,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         IsIframe = true;
         sr.color = Color.red;
-        // modify hurtbox
 
         yield return new WaitForSeconds(duration);
 

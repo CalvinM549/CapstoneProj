@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer sr; // For Testing
 
-    private Vector2 _moveDirection;
+    private Vector2 moveDirection;
     private Vector2 lastMoveDirection = Vector2.right;
 
     public Vector2 LastMoveDirection => lastMoveDirection;
@@ -21,8 +21,12 @@ public class PlayerMovement : MonoBehaviour
     private int currentDashCharges;
     private float[] dashRechargeTimers;
 
-    private bool _isDashing;
-    public bool isDashing => _isDashing;
+    private bool isDashing;
+    private bool isPushed;
+
+    public bool IsDashing => isDashing;
+
+    private Coroutine currentPushRoutine;
 
     public bool lateDashCheck {  get; private set; }
 
@@ -61,7 +65,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!isDashing)  
+        if(!IsDashing && !isPushed)  
             ApplyMovement();
     }
 
@@ -69,17 +73,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnPlayerMove(InputAction.CallbackContext ctx)
     {
-        _moveDirection = ctx.ReadValue<Vector2>();
+        moveDirection = ctx.ReadValue<Vector2>();
     }
 
     private void OnPlayerStop(InputAction.CallbackContext ctx)
     {
-        _moveDirection = Vector2.zero;
+        moveDirection = Vector2.zero;
     }
 
     private void OnPlayerDash(InputAction.CallbackContext ctx)
     {
-        if (currentDashCharges > 0 && !isDashing)
+        if (currentDashCharges > 0 && !IsDashing)
             StartDash();
     }
 
@@ -104,11 +108,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyModifiedMovement(float multiplier = 1.0f)
     {
-        if (_moveDirection.magnitude > 0.1f)
+        if (moveDirection.magnitude > 0.1f)
         {
-            lastMoveDirection = _moveDirection.normalized;
+            lastMoveDirection = moveDirection.normalized;
             float accel = GetAcceleration() * multiplier;
-            Vector2 targetVelocity = _moveDirection.normalized * data.baseSpeed * multiplier;
+            Vector2 targetVelocity = moveDirection.normalized * data.baseSpeed * multiplier;
             rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, accel * Time.fixedDeltaTime);
         }
         else
@@ -119,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
 
     private float GetAcceleration()
     {
-        bool isTurning = Vector2.Dot(rb.linearVelocity.normalized, _moveDirection.normalized) < -0.3f;
+        bool isTurning = Vector2.Dot(rb.linearVelocity.normalized, moveDirection.normalized) < -0.3f;
         return data.acceleration * (isTurning ? data.turnMultiplier : 1.0f);
     }
 
@@ -129,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void StartDash()
     {
-        Vector2 dashDir = _moveDirection.magnitude > 0.1f ? _moveDirection.normalized : lastMoveDirection;
+        Vector2 dashDir = moveDirection.magnitude > 0.1f ? moveDirection.normalized : lastMoveDirection;
 
         currentDashCharges--;
         StartCoroutine(DashRoutine(dashDir));
@@ -137,7 +141,7 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator DashRoutine(Vector2 direction)
     {
-        _isDashing = true;
+        isDashing = true;
         lateDashCheck = true;
 
         rb.linearVelocity = direction * data.dashSpeed;
@@ -146,7 +150,7 @@ public class PlayerMovement : MonoBehaviour
 
         yield return new WaitForSeconds(data.dashDuration);
 
-        _isDashing = false;
+        isDashing = false;
         rb.linearVelocity *= data.dashExitMultiplier;
 
         StartDashRecharge();
@@ -185,6 +189,34 @@ public class PlayerMovement : MonoBehaviour
                 currentDashCharges = Mathf.Min(currentDashCharges + 1, data.maxDashCharges);
             }
         }
+    }
+
+    #endregion
+
+    #region Utilities
+
+    public void PushPlayer(Vector2 direction, float force, float duration)
+    {
+        if (currentPushRoutine != null)
+        {
+            StopCoroutine(currentPushRoutine);
+            isPushed = false;
+        }
+
+        currentPushRoutine = StartCoroutine(PushRoutine(direction, force, duration));
+    }
+
+    private IEnumerator PushRoutine(Vector2 direction, float force, float duration)
+    {
+        isPushed = true;
+        
+        rb.linearVelocity = direction * force;
+
+        yield return new WaitForSeconds(duration);
+
+        rb.linearVelocity *= 0.4f;
+        
+        isPushed = false;
     }
 
     #endregion

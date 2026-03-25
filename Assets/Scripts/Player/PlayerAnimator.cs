@@ -2,15 +2,22 @@ using UnityEngine;
 
 public class PlayerAnimator : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    private SpriteRenderer sr;
+    private Animator animator;
+
+
+
+    private void HandleMovementAnimation()
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
+
+    public void PlayAttackAnimation(AttackType attackType, Vector2 direction)
     {
-        
+        // Convert direction to cardinals
+
+        // Play animation based on attack type
     }
 }

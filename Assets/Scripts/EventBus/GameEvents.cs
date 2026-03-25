@@ -59,10 +59,6 @@ public static class GameEvents
     #endregion
 
 
-
-
-
-
     // Heat
 
     // Draft
