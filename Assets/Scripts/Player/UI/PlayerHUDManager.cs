@@ -5,31 +5,53 @@ using UnityEngine.UI;
 
 public class PlayerHUDManager : MonoBehaviour
 {
-    public Image[] dashCooldowns;
-
-    public Image healthPointPrefab;
-    public Transform healthContainer;
+    [Header("Health")]
+    [SerializeField] private Image healthPointPrefab;
+    [SerializeField] private Transform healthContainer;
 
     private List<Image> activeHealthPoints = new();
 
-    private ObjectPool<Image> healthPointPool;
-
-    private int maxHealth;
     private int currentHealth;
+
+
+    [Header("Dash Charges")]
+    [SerializeField] private Image dashChargePrefab;
+    [SerializeField] private Transform dashChargeContainer;
+
+    private List<Image> activeDashCharges = new();
+    private int maxDashCharges;
+
+
+    private ObjectPool<Image> healthPointPool;
+    private ObjectPool<Image> dashChargePool;
 
     private void Awake()
     {
         healthPointPool = new ObjectPool<Image>(healthPointPrefab, 10, healthContainer);
+        dashChargePool = new ObjectPool<Image>(dashChargePrefab, 3, dashChargeContainer);
     }
 
     private void OnEnable()
     {
         GameEvents.OnPlayerHealthChange += HandlePlayerHealthChange;
+        GameEvents.OnDashChargeChange += HandleDashChargeChange;
     }
 
     private void OnDisable()
     {
-        
+        GameEvents.OnPlayerHealthChange -= HandlePlayerHealthChange;
+        GameEvents.OnDashChargeChange -= HandleDashChargeChange;
+    }
+
+    private void Start()
+    {
+        Initialize(3, 2);
+    }
+
+    public void Initialize(int maxHealth, int maxDashes)
+    {
+        BuildHealthBar(maxHealth);
+
     }
 
     #region Health Bar
@@ -44,11 +66,6 @@ public class PlayerHUDManager : MonoBehaviour
         }
 
         RefreshHealthBar(newHealth);
-    }
-
-    public void InititializeHealth(int health)
-    {
-        BuildHealthBar(health);
     }
 
     private void BuildHealthBar(int count)
@@ -86,7 +103,55 @@ public class PlayerHUDManager : MonoBehaviour
 
     #region DashCharges
 
+    private void HandleDashChargeChange(int currentCharges, int max, float[] rechargeTimers, float rechargeTime)
+    {
+        if (max != maxDashCharges)
+            BuildDashCharges(max);
 
+        for (int i = 0; i < activeDashCharges.Count; i++)
+        {
+            if (i < currentCharges)
+            {
+                activeDashCharges[i].fillAmount = 1f;
+                activeDashCharges[i].color = Color.white;
+            }
+            else
+            {
+                int timerIndex = i - currentCharges;
+                if (timerIndex < rechargeTimers.Length && rechargeTimers[timerIndex] > 0)
+                {
+                    float progress = 1f - (rechargeTimers[timerIndex] / rechargeTime);
+                    activeDashCharges[i].fillAmount = progress;
+                    activeDashCharges[i].color = Color.red;
+                }
+                else
+                {
+                    activeDashCharges[i].fillAmount = 0f;
+                    activeDashCharges[i].color = Color.red;
+                }
+            }
+        }
+    }
+
+    private void BuildDashCharges(int count)
+    {
+        maxDashCharges = count;
+
+        foreach (var charge in activeDashCharges)
+        {
+            dashChargePool.ReturnToPool(charge);
+            activeDashCharges.Remove(charge);
+        }
+
+        dashChargeContainer.gameObject.SetActive(true);
+
+        for (int i = 0; i < count; i++)
+        {
+            Image newCharge = dashChargePool.Get();
+            activeDashCharges.Add(newCharge);
+            newCharge.fillAmount = 1f;
+        }
+    }
 
     #endregion
 

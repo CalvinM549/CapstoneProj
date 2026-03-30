@@ -26,7 +26,7 @@ public class PlayerCombat : MonoBehaviour
 
     private int comboStep;
     private float comboWindowTimer = 0f;
-    private bool heavyConnected = false;
+    private bool currentAttackConnected = false;
     private bool dashAttackUsedInDash = false;
 
     public int ComboStep => comboStep;
@@ -125,7 +125,6 @@ public class PlayerCombat : MonoBehaviour
 
     private void PerformHeavyAttack()
     {
-        heavyConnected = false;
         comboStep = 0;
         comboWindowTimer = 0;
 
@@ -155,6 +154,9 @@ public class PlayerCombat : MonoBehaviour
     private IEnumerator AttackRoutine(AttackInfo attack)
     {
         currentAttackType = attack.type;
+
+        currentAttackConnected = false;
+
         GameEvents.AttackStarted(attack.type);
 
         state = CombatState.Startup;
@@ -164,15 +166,15 @@ public class PlayerCombat : MonoBehaviour
         if (currentAttackType != attack.type) yield break;
 
         state = CombatState.Active;
-        movement.PushPlayer(GetAttackDirection(attack.type), 5, attack.activeTime);
+        movement.PushPlayer(GetAttackDirection(attack.type), attack.dashForce, attack.activeTime);
         hitboxes.EnableHitBox(attack, GetAttackDirection(attack.type), comboStep);
 
         yield return new WaitForSeconds(attack.activeTime);
         
         hitboxes.ResetHitboxes();
 
-        if (attack.type == AttackType.Heavy && !heavyConnected)
-            GameEvents.HeavyAttackWhiff();
+        if (!currentAttackConnected)
+            GameEvents.AttackWhiff(currentAttackType);
 
         state = CombatState.Recovery;
 
@@ -208,8 +210,7 @@ public class PlayerCombat : MonoBehaviour
             isParryable = false
         };
 
-        if(attack.type == AttackType.Heavy)
-            heavyConnected = true;
+        currentAttackConnected = true;
 
         GameEvents.HitConfirmed(hitData);
 

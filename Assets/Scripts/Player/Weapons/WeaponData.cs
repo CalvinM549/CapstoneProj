@@ -30,6 +30,8 @@ public class AttackInfo
     public float activeTime;
     public float recoveryTime;
 
+    public float dashForce;
+
     public float hitstopDuration;
     public float knockback;
 }

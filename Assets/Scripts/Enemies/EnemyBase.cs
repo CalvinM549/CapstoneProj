@@ -4,13 +4,21 @@ using UnityEngine;
 public class EnemyBase : MonoBehaviour, IDamageable
 {
     [Header("Stats")]
+    [SerializeField] private EnemyData data;
+
     [SerializeField] private float maxHealth;
     [SerializeField] private float currentHealth;
 
     [SerializeField] private float knockbackMultiplier;
 
     private SpriteRenderer sr;
+    private Material originalMaterial;
+
+    [SerializeField] private Material damageMaterial;
+    [SerializeField] private Sprite damageSprite;
     [SerializeField] private GameObject particles;
+
+    private Coroutine hitFXRoutine;
 
     public bool IsAlive { get; set; }
 
@@ -24,18 +32,32 @@ public class EnemyBase : MonoBehaviour, IDamageable
         IsAlive = true;
     }
 
+    protected virtual void Update()
+    {
+        
+    }
+
     public void RecieveHit(HitData hit)
     {
         if (!IsAlive) return;
+        if (!hit.isPlayerAttack) return;
 
         ApplyDamage(hit);
         ApplyKnockback(hit.knockbackDirection, hit.knockbackForce);
         
-        if (IsAlive) StartCoroutine(HitFXRoutine());
-        
+        GameEvents.EnemyHit(this, hit);
+
+        if (IsAlive)
+        {
+            if(hitFXRoutine != null)
+                StopCoroutine(hitFXRoutine);
+            hitFXRoutine = StartCoroutine(HitFXRoutine());
+        }
+        if (currentHealth <= 0)
+            Die();
     }
 
-    private void ApplyDamage(HitData hit)
+    protected void ApplyDamage(HitData hit)
     {
 
         currentHealth = Mathf.Max(0, currentHealth - hit.damage);
@@ -44,9 +66,6 @@ public class EnemyBase : MonoBehaviour, IDamageable
                   $"— damage: {hit.damage} " +
                   $"— HP: {currentHealth}/{maxHealth}");
 
-
-        if (currentHealth <= 0)
-            Die();
     }
 
     private void ApplyKnockback(Vector2 direction, float force)
@@ -65,13 +84,26 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
     private IEnumerator HitFXRoutine()
     {
+        if (rb.linearVelocity.x > 0)
+        {
+            sr.flipX = false;
+        }
+        else if (rb.linearVelocity.x < 0)
+        {
+            sr.flipX = true;
+        }
+
         Instantiate(particles, transform.position, Quaternion.identity);
-        Color oldcolour = sr.color;
-        sr.color = Color.white;
+        originalMaterial = sr.material;
+        Sprite baseSprite = sr.sprite;
+
+        sr.sprite = damageSprite;
+        sr.material = damageMaterial;
 
         yield return new WaitForSeconds(0.15f);
 
-        sr.color = oldcolour;
+        sr.sprite = baseSprite;
+        sr.material = originalMaterial;
     }
 
 #if UNITY_EDITOR

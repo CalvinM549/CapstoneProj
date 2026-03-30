@@ -30,7 +30,7 @@ public class PlayerMomentum : MonoBehaviour
         GameEvents.OnEnemyKilled += HandleEnemyKilled;
 
         GameEvents.OnPlayerHit += HandlePlayerHit;
-        GameEvents.OnHeavyAttackWhiff += HandleHeavyWhiff;
+        GameEvents.OnAttackWhiff += HandleAttackWhiff;
     }
 
     private void OnDisable()
@@ -39,7 +39,7 @@ public class PlayerMomentum : MonoBehaviour
         GameEvents.OnEnemyKilled -= HandleEnemyKilled;
 
         GameEvents.OnPlayerHit -= HandlePlayerHit;
-        GameEvents.OnHeavyAttackWhiff -= HandleHeavyWhiff;
+        GameEvents.OnAttackWhiff -= HandleAttackWhiff;
     }
 
     private void Update()
@@ -111,9 +111,17 @@ public class PlayerMomentum : MonoBehaviour
         DrainMomentum(data.hitTakenDrain);
     }
 
-    private void HandleHeavyWhiff()
+    private void HandleAttackWhiff(AttackType type)
     {
-        DrainMomentum(data.heavyWhiffDrain);
+        float drainAmount = type switch
+        {
+            AttackType.Light => data.lightWhiffDrain, 
+            AttackType.Heavy => data.heavyWhiffDrain,
+            AttackType.DashAttack => data.dashWhiffDrain,
+            _ => data.lightWhiffDrain
+        };
+
+        DrainMomentum(drainAmount);
     }
 
     #endregion

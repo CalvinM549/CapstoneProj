@@ -1,0 +1,111 @@
+using System;
+using System.Collections;
+using UnityEngine;
+
+public class Projectile : MonoBehaviour
+{
+    private ProjectileData data;
+
+    private Vector2 direction;
+    private bool isPlayerProjectile;
+    private Rigidbody2D rb;
+
+    private bool hitTarget;
+
+    private Action<Projectile> returnToPool;
+    private Coroutine lifetimeRoutine;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = 0f;
+    }
+
+    public void Initalize(ProjectileData data, Vector2 direction, Action<Projectile> returnToPool, bool playerProjectile)
+    {
+        this.data = data;
+        this.direction = direction;
+        this.returnToPool = returnToPool;
+        isPlayerProjectile = playerProjectile;
+
+        hitTarget = false;
+
+        rb.linearVelocity = direction * data.speed;
+
+        float angle = Mathf.Atan2(this.direction.y, this.direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
+        if(lifetimeRoutine != null)
+            StopCoroutine(lifetimeRoutine);
+
+        lifetimeRoutine = StartCoroutine(LifetimeRoutine());
+    }
+
+    private IEnumerator LifetimeRoutine()
+    {
+        yield return new WaitForSeconds(data.lifetime);
+        ReturnToPool();
+    }
+
+    private void ReturnToPool()
+    {
+        if (lifetimeRoutine != null)
+        {
+            StopCoroutine(lifetimeRoutine);
+            lifetimeRoutine = null;
+        }
+
+        rb.linearVelocity = Vector2.zero;
+
+        returnToPool?.Invoke(this);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (hitTarget) return;
+
+        if (isPlayerProjectile && (collision.CompareTag("Player") || collision.CompareTag("PlayerHurtbox")))
+            return;
+
+        if (!isPlayerProjectile && (collision.CompareTag("Enemy") || collision.CompareTag("Hurtbox")))
+            return;
+
+        IDamageable target = collision.GetComponent<IDamageable>();
+        if (target == null || !target.IsAlive) 
+            return;
+
+        hitTarget = true;
+        HandleHit(target);
+    }
+
+    private void HandleHit(IDamageable target)
+    {
+        HitData hit = new HitData()
+        {
+            damage = data.damage,
+            attackType = AttackType.Secondary,
+            sourcePos = transform.position,
+            knockbackDirection = direction,
+            knockbackForce = data.knockback,
+            hitstopTime = data.hitstopDuration,
+            isPlayerAttack = isPlayerProjectile,
+            isParryable = data.isParryable
+        };
+
+        // Fire Event
+        
+        target.RecieveHit(hit);
+
+        rb.linearVelocity = Vector2.zero;
+
+        if (data.impactVFXPrefab != null)
+            Instantiate(data.impactVFXPrefab, transform.position, Quaternion.identity);
+
+        ReturnToPool();
+
+    }
+
+
+}
+
+

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d2ea96110920c234b8f238fa163d69a5
+guid: 9d7e6a30aacc6f443a4d9e2d3137fb59
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2360111408817960916
-    second: VAGRANT_0
+      213: -4401468539657488273
+    second: Hopper_2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: VAGRANT_0
+      name: Hopper_2_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 30
-        height: 49
+        width: 15
+        height: 24
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c280f079d233f3fd0800000000000000
-      internalID: -2360111408817960916
+      spriteID: f6878a3eea7dae2c0800000000000000
+      internalID: -4401468539657488273
       vertices: []
       indices: 
       edges: []
@@ -126,7 +126,7 @@ TextureImporter:
     physicsShape: []
     bones: []
     spriteID: 5e97eb03825dee720800000000000000
-    internalID: 1537655665
+    internalID: 0
     vertices: []
     indices: 
     edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      VAGRANT_0: -2360111408817960916
+      Hopper_2_0: -4401468539657488273
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

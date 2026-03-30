@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private PlayerCombat combat;
     [SerializeField] private PlayerHealth health;
+    [SerializeField] private PlayerVFX vfx;
 
     private InputSystem_Actions inputActions;
     private Rigidbody2D rb;
@@ -22,13 +24,17 @@ public class PlayerMovement : MonoBehaviour
     private float[] dashRechargeTimers;
 
     private bool isDashing;
-    private bool isPushed;
+    private bool isPushing;
+    public bool lateDashCheck { get; private set; }
 
     public bool IsDashing => isDashing;
+    public float TimeStopped;
 
+    private Coroutine currentDashRoutine;
     private Coroutine currentPushRoutine;
 
-    public bool lateDashCheck {  get; private set; }
+    private int lastBroadcastCharges = -1;
+    private float lastBroadcastTimerSum = -1f;
 
     private void Awake()
     {
@@ -61,11 +67,12 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         HandleDashRecharge();
+        TryBroadcastDashState();
     }
 
     private void FixedUpdate()
     {
-        if(!IsDashing && !isPushed)  
+        if(!IsDashing && !isPushing)  
             ApplyMovement();
     }
 
@@ -79,6 +86,7 @@ public class PlayerMovement : MonoBehaviour
     private void OnPlayerStop(InputAction.CallbackContext ctx)
     {
         moveDirection = Vector2.zero;
+        // call stop movement
     }
 
     private void OnPlayerDash(InputAction.CallbackContext ctx)
@@ -136,7 +144,7 @@ public class PlayerMovement : MonoBehaviour
         Vector2 dashDir = moveDirection.magnitude > 0.1f ? moveDirection.normalized : lastMoveDirection;
 
         currentDashCharges--;
-        StartCoroutine(DashRoutine(dashDir));
+        currentDashRoutine = StartCoroutine(DashRoutine(dashDir));
     }
 
     private IEnumerator DashRoutine(Vector2 direction)
@@ -147,6 +155,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = direction * data.dashSpeed;
 
         health.GrantIFrames(data.dashIFrameDuration);
+        vfx.PlayDashTrail();
 
         yield return new WaitForSeconds(data.dashDuration);
 
@@ -157,6 +166,16 @@ public class PlayerMovement : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
 
+        lateDashCheck = false;
+    }
+
+    private void CancelDash()
+    {
+        if (!isDashing) return;
+        if(currentDashRoutine != null)
+            StopCoroutine(currentDashRoutine);
+
+        isDashing = false;
         lateDashCheck = false;
     }
 
@@ -187,6 +206,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 dashRechargeTimers[i] = 0;
                 currentDashCharges = Mathf.Min(currentDashCharges + 1, data.maxDashCharges);
+                BroadcastDashState();
             }
         }
     }
@@ -197,10 +217,12 @@ public class PlayerMovement : MonoBehaviour
 
     public void PushPlayer(Vector2 direction, float force, float duration)
     {
+        if (force <= 0) return;
+
         if (currentPushRoutine != null)
         {
             StopCoroutine(currentPushRoutine);
-            isPushed = false;
+            isPushing = false;
         }
 
         currentPushRoutine = StartCoroutine(PushRoutine(direction, force, duration));
@@ -208,7 +230,7 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator PushRoutine(Vector2 direction, float force, float duration)
     {
-        isPushed = true;
+        isPushing = true;
         
         rb.linearVelocity = direction * force;
 
@@ -216,7 +238,32 @@ public class PlayerMovement : MonoBehaviour
 
         rb.linearVelocity *= 0.4f;
         
-        isPushed = false;
+        isPushing = false;
+    }
+
+    private void TryBroadcastDashState()
+    {
+        float timerSum = 0f;
+        bool anyActive = false;
+        for (int i = 0; i < dashRechargeTimers.Length; i++)
+        {
+            timerSum += dashRechargeTimers[i];
+            if (dashRechargeTimers[i] > 0) anyActive = true;
+        }
+
+        if (!anyActive && currentDashCharges == lastBroadcastCharges) return;
+        if (currentDashCharges == lastBroadcastCharges &&
+            Mathf.Approximately(timerSum, lastBroadcastTimerSum)) return;
+
+        BroadcastDashState();
+        lastBroadcastTimerSum = timerSum;
+    }
+
+    private void BroadcastDashState()
+    {
+        lastBroadcastCharges = currentDashCharges;
+        GameEvents.DashChargeChange(currentDashCharges, data.maxDashCharges,
+                                    dashRechargeTimers, data.dashRechargeTime);
     }
 
     #endregion

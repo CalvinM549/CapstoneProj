@@ -28,12 +28,12 @@ public static class GameEvents
     public static event Action<AttackType> OnAttackEnded;
     public static event Action<HitData> OnHitConfirmed;
 
-    public static event Action OnHeavyAttackWhiff;
+    public static event Action<AttackType> OnAttackWhiff;
 
     public static void AttackStarted(AttackType type) => OnAttackStarted?.Invoke(type);
     public static void AttackEnded(AttackType type) => OnAttackEnded?.Invoke(type);
     public static void HitConfirmed(HitData hit) => OnHitConfirmed?.Invoke(hit);
-    public static void HeavyAttackWhiff() => OnHeavyAttackWhiff?.Invoke();
+    public static void AttackWhiff(AttackType type) => OnAttackWhiff?.Invoke(type);
 
     #endregion
 
@@ -41,7 +41,11 @@ public static class GameEvents
     public static event Action<HitData> OnPlayerHit;
     public static event Action OnPlayerDeath;
     public static event Action<int, int> OnPlayerHealthChange;
+    public static event Action<int, int, float[], float> OnDashChargeChange;
 
+    public static void DashChargeChange(int currentCharges, int maxCharges,
+                                        float[] rechargeTimers, float rechargeTime)
+        => OnDashChargeChange?.Invoke(currentCharges, maxCharges, rechargeTimers, rechargeTime);
     public static void PlayerHit(HitData hit) => OnPlayerHit?.Invoke(hit);
     public static void PlayerHealthChanged(int currentHealth, int maxHealth) => OnPlayerHealthChange?.Invoke(currentHealth, maxHealth);
     public static void PlayerDeath() => OnPlayerDeath?.Invoke();

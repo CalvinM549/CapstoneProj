@@ -24,4 +24,6 @@ MonoBehaviour:
   dashCancelGain: 0
   killGain: 12
   hitTakenDrain: 20
+  lightWhiffDrain: 3
+  dashWhiffDrain: 5
   heavyWhiffDrain: 12

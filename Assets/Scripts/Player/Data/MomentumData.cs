@@ -22,5 +22,7 @@ public class MomentumData : ScriptableObject
 
     [Header("Drain Values")]
     public float hitTakenDrain;
+    public float lightWhiffDrain;
+    public float dashWhiffDrain;
     public float heavyWhiffDrain;
 }

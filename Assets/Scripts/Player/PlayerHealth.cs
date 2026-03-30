@@ -56,6 +56,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             PlayerDeath();
     }
 
+    private void ApplyKnockback()
+    {
+
+    }
+
 
     public void GrantIFrames(float duration)
     {
@@ -95,6 +100,5 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         StopAllCoroutines();
 
         GameEvents.PlayerDeath();
-
     }
 }
