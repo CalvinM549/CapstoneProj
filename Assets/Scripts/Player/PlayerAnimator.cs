@@ -1,9 +1,15 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerAnimator : MonoBehaviour
 {
 
     [SerializeField] private PlayerMovement movement;
+
+    private Sprite baseSprite;
+    [SerializeField] private Sprite dashSprite;
+
+    public bool IsFacingRight {  get; private set; }
 
     private Animator animator;
 
@@ -14,6 +20,18 @@ public class PlayerAnimator : MonoBehaviour
     {
         sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
+
+        baseSprite = sr.sprite;
+    }
+
+    private void OnEnable()
+    {
+        GameEvents.OnPlayerDash += HandleDashAnimation;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnPlayerDash -= HandleDashAnimation;
     }
 
     private void Update()
@@ -36,11 +54,34 @@ public class PlayerAnimator : MonoBehaviour
         }
     }
 
+    private void HandleDashAnimation()
+    {
+        StartCoroutine(DashAnimationRoutine());
+    }
+
+    private IEnumerator DashAnimationRoutine()
+    {
+        sr.sprite = dashSprite;
+
+        while(movement.IsDashing)
+            yield return null;
+
+        sr.sprite = baseSprite;
+    }
 
     public void PlayAttackAnimation(AttackType attackType, Vector2 direction)
     {
         // Convert direction to cardinals
 
         // Play animation based on attack type
+    }
+
+    protected void FlipFacing()
+    {
+        IsFacingRight = !IsFacingRight;
+
+        Vector3 scaler = transform.localScale;
+        scaler.x *= -1;
+        transform.localScale = scaler;
     }
 }

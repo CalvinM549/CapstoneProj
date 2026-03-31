@@ -6,16 +6,17 @@ public class EnemyBase : MonoBehaviour, IDamageable
     [Header("Stats")]
     [SerializeField] private EnemyData data;
 
-    [SerializeField] private float currentHealth;
+    protected float currentHealth;
 
     protected SpriteRenderer sr;
     protected bool isFacingRight = true;
 
-    private Material originalMaterial;
+    private Material baseMaterial;
+    private Sprite baseSprite;
 
     [SerializeField] private Material damageMaterial;
     [SerializeField] private Sprite damageSprite;
-    [SerializeField] private GameObject particles;
+    [SerializeField] private GameObject damageParticles;
 
     private Coroutine hitFXRoutine;
 
@@ -29,6 +30,19 @@ public class EnemyBase : MonoBehaviour, IDamageable
         rb = GetComponent<Rigidbody2D>();
         currentHealth = data.maxHealth;
         IsAlive = true;
+
+        baseSprite = sr.sprite;
+        baseMaterial = sr.material;
+    }
+
+    protected virtual void OnEnable()
+    {
+
+    }
+
+    protected virtual void OnDisable()
+    {
+
     }
 
     protected virtual void Update()
@@ -86,9 +100,8 @@ public class EnemyBase : MonoBehaviour, IDamageable
             FlipFacing();
         }
 
-        Instantiate(particles, transform.position, Quaternion.identity);
-        originalMaterial = sr.material;
-        Sprite baseSprite = sr.sprite;
+        if(damageParticles != null)
+            Instantiate(damageParticles, transform.position, Quaternion.identity);
 
         sr.sprite = damageSprite;
         sr.material = damageMaterial;
@@ -96,7 +109,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
         yield return new WaitForSeconds(duration);
 
         sr.sprite = baseSprite;
-        sr.material = originalMaterial;
+        sr.material = baseMaterial;
     }
 
 

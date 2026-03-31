@@ -89,7 +89,7 @@ public class PlayerHUDManager : MonoBehaviour
     private void RefreshHealthBar(int currentHealth)
     {
 
-        for (int i = activeHealthPoints.Count - 1; i > currentHealth; i--)
+        for (int i = activeHealthPoints.Count - 1; i >= currentHealth; i--)
         {
             healthPointPool.ReturnToPool(activeHealthPoints[i]);
             activeHealthPoints.RemoveAt(i);

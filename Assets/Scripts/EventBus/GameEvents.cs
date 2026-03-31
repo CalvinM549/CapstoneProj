@@ -40,6 +40,7 @@ public static class GameEvents
     #region Player
     public static event Action<HitData> OnPlayerHit;
     public static event Action OnPlayerDeath;
+    public static event Action OnPlayerDash;
     public static event Action<int, int> OnPlayerHealthChange;
     public static event Action<int, int, float[], float> OnDashChargeChange;
 
@@ -49,6 +50,7 @@ public static class GameEvents
     public static void PlayerHit(HitData hit) => OnPlayerHit?.Invoke(hit);
     public static void PlayerHealthChanged(int currentHealth, int maxHealth) => OnPlayerHealthChange?.Invoke(currentHealth, maxHealth);
     public static void PlayerDeath() => OnPlayerDeath?.Invoke();
+    public static void PlayerDash() => OnPlayerDash?.Invoke();
 
     #endregion
 

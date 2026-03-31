@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6093590977073615755}
   - component: {fileID: 2139903254579165531}
   - component: {fileID: 5504260018375405214}
-  - component: {fileID: 7219167331215925711}
   - component: {fileID: 826248791013908811}
   - component: {fileID: 5575427297288343915}
   m_Layer: 0
@@ -64,7 +63,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -110,40 +109,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sentry
   data: {fileID: 11400000, guid: 7d3de8bc9675fbd4c99dbe75663d82dd, type: 2}
-  maxHealth: 20
-  currentHealth: 0
-  knockbackMultiplier: 2
   damageMaterial: {fileID: 2100000, guid: 59148e3b6fbfc0d4abc10ce34622bba0, type: 2}
   damageSprite: {fileID: 21300000, guid: 9d7e6a30aacc6f443a4d9e2d3137fb59, type: 3}
-  particles: {fileID: 5312974598286367443, guid: 5abe6e1fe1c8b6248941e8285faa0f75, type: 3}
+  damageParticles: {fileID: 5312974598286367443, guid: 5abe6e1fe1c8b6248941e8285faa0f75, type: 3}
   burstCount: 3
   burstInterval: 0.15
   attackCooldown: 5
   spreadAngle: 10
   firePoint: {fileID: 867217505944335187}
   bulletData: {fileID: 11400000, guid: 01066313aac4e63428ff95025550a777, type: 2}
-  projectilePrefab: {fileID: 7729453556227253415, guid: 4a391f20a74486744878638e83022756, type: 3}
-  bulletContainer: {fileID: 0}
   bulletFlashEffect: {fileID: 322882815777838680, guid: 55e175f5de6bcec488c252716af9914e, type: 3}
---- !u!114 &7219167331215925711
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3976120592726972888}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 825e247ddb29a9d418b78cb58b5ad400, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyBase
-  data: {fileID: 0}
-  maxHealth: 100
-  currentHealth: 0
-  knockbackMultiplier: 2
-  damageMaterial: {fileID: 2100000, guid: 59148e3b6fbfc0d4abc10ce34622bba0, type: 2}
-  damageSprite: {fileID: 21300000, guid: 9d7e6a30aacc6f443a4d9e2d3137fb59, type: 3}
-  particles: {fileID: 5312974598286367443, guid: 5abe6e1fe1c8b6248941e8285faa0f75, type: 3}
+  projectiles:
+  - {fileID: 11400000, guid: 01066313aac4e63428ff95025550a777, type: 2}
 --- !u!58 &826248791013908811
 CircleCollider2D:
   m_ObjectHideFlags: 0

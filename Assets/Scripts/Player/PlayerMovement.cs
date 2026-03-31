@@ -152,6 +152,8 @@ public class PlayerMovement : MonoBehaviour
         isDashing = true;
         lateDashCheck = true;
 
+        GameEvents.PlayerDash();
+
         rb.linearVelocity = direction * data.dashSpeed;
 
         health.GrantIFrames(data.dashIFrameDuration);

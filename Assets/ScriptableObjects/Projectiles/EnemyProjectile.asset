@@ -12,12 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9256ec1605044c45a51505cfa510668, type: 3}
   m_Name: EnemyProjectile
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
+  prefab: {fileID: 7729453556227253415, guid: 4a391f20a74486744878638e83022756, type: 3}
+  poolSize: 0
   lifetime: 10
   speed: 35
   damage: 1
+  damageType: 0
   knockback: 2
   hitstunTime: 0.1
   hitstopDuration: 1
-  damageType: 0
   isParryable: 1
   impactVFXPrefab: {fileID: 5312974598286367443, guid: 5abe6e1fe1c8b6248941e8285faa0f75, type: 3}
+  expireVFXPrefab: {fileID: 0}

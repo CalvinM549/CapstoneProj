@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Sentry : EnemyBase
+public class Sentry : EnemyBase, IProjectileEmitter
 {
     private Transform playerTransform;
 
@@ -15,22 +15,35 @@ public class Sentry : EnemyBase
     private bool isFiring = false;
     private float attackCooldownTimer;
 
-    private ObjectPool<Projectile> pool;
     [SerializeField] private Transform firePoint;
     [SerializeField] private ProjectileData bulletData;
-    [SerializeField] private Projectile projectilePrefab;
-    [SerializeField] private Transform bulletContainer;
 
     [SerializeField] private GameObject bulletFlashEffect;
+
+    [SerializeField] private ProjectileData[] projectiles;
+    public ProjectileData[] Projectiles => projectiles;
+
+    public bool IsPlayerProjectile => false;
+
+    public bool PoolRequested { get; set; }
 
     protected override void Awake()
     {
         base.Awake();
 
         playerTransform = GameObject.FindWithTag("Player").transform;
-        pool = new ObjectPool<Projectile>(projectilePrefab, 3, bulletContainer);
 
         attackCooldownTimer = Random.Range(0, attackCooldown);
+    }
+
+    protected override void OnEnable()
+    {
+        ProjectilePools.RequestPool(this);
+    }
+
+    protected override void OnDisable()
+    {
+        ProjectilePools.ReleasePool(this);
     }
 
     protected override void Update()
@@ -78,17 +91,19 @@ public class Sentry : EnemyBase
             else if (fireDir.x < 0 && isFacingRight) 
                 FlipFacing();
 
-            var projectile = pool.Get();
-            projectile.transform.position = firePoint.position;
-            projectile.Initalize(bulletData, fireDir, p => pool.ReturnToPool(p), false);
+            FireProjectile(Projectiles[0], firePoint.position, direction, false);
 
-            Instantiate(bulletFlashEffect, firePoint.position, Quaternion.identity);
-
-            if(i < burstCount - 1)
+            if (i < burstCount - 1)
                 yield return new WaitForSeconds(burstInterval);
         }
 
         attackCooldownTimer = attackCooldown;
         isFiring = false;
+    }
+
+    public void FireProjectile(ProjectileData projectile, Vector2 firePos, Vector2 direction, bool isPlayer)
+    {
+        ProjectileManager.Instance.FireProjectile(projectile, firePos, direction, isPlayer);
+        Instantiate(bulletFlashEffect, firePoint);
     }
 }

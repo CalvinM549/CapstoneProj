@@ -3,9 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Handles projectile pools and firing projectiles
+// KEEP ONE PER SCENE TO CLEAN BETWEEN FLOORS
 public class ProjectileManager : MonoBehaviour
 {
-    public static ProjectileManager Instance;
+    // Ask about preventing this from being called when other things are being disabled on scene unload
+
+    private static ProjectileManager _Instance;
+    public static ProjectileManager Instance
+    {
+        get
+        {
+            if (!_Instance)
+            {
+                _Instance = new GameObject().AddComponent<ProjectileManager>();
+                _Instance.name = _Instance.GetType().ToString();
+            }
+            return _Instance;
+        }
+    }
 
     private class PoolEntry
     {
@@ -15,13 +30,6 @@ public class ProjectileManager : MonoBehaviour
 
     private Dictionary<ProjectileData, PoolEntry> activePools = new();
 
-    private void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
-    }
 
     public void RequestPool(ProjectileData projectile)
     {
