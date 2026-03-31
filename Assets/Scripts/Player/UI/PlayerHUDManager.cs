@@ -45,7 +45,7 @@ public class PlayerHUDManager : MonoBehaviour
 
     private void Start()
     {
-        Initialize(3, 2);
+        Initialize(8, 2);
     }
 
     public void Initialize(int maxHealth, int maxDashes)
@@ -89,14 +89,14 @@ public class PlayerHUDManager : MonoBehaviour
     private void RefreshHealthBar(int currentHealth)
     {
 
-        for (int i = activeHealthPoints.Count; i > currentHealth; i--)
+        for (int i = activeHealthPoints.Count - 1; i > currentHealth; i--)
         {
             healthPointPool.ReturnToPool(activeHealthPoints[i]);
             activeHealthPoints.RemoveAt(i);
         }
 
 
-        // Depending on current health, add effects, i.e. shake health when low
+        //Depending on current health, add effects, i.e. shake health when low
     }
 
     #endregion

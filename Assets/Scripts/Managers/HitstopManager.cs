@@ -61,4 +61,6 @@ public class HitstopManager : MonoBehaviour
 
         Time.timeScale = 1.0f;
     }
+
 }
+

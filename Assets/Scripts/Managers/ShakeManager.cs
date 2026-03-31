@@ -1,6 +1,8 @@
 using UnityEngine;
 using Unity.Cinemachine;
 
+
+// MERGE WITH CAMERA MANAGER?
 public class ShakeManager : MonoBehaviour
 {
     public static ShakeManager Instance;

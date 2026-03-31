@@ -31,8 +31,10 @@ public class HitData
 
     public Vector2 sourcePos;
     public Vector2 knockbackDirection;
-
     public float knockbackForce;
+
+    public float hitstunTime;
+
     public float hitstopTime;
     public bool isPlayerAttack;
     public bool isParryable;

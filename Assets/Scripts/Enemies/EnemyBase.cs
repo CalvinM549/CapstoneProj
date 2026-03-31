@@ -6,12 +6,11 @@ public class EnemyBase : MonoBehaviour, IDamageable
     [Header("Stats")]
     [SerializeField] private EnemyData data;
 
-    [SerializeField] private float maxHealth;
     [SerializeField] private float currentHealth;
 
-    [SerializeField] private float knockbackMultiplier;
+    protected SpriteRenderer sr;
+    protected bool isFacingRight = true;
 
-    private SpriteRenderer sr;
     private Material originalMaterial;
 
     [SerializeField] private Material damageMaterial;
@@ -24,11 +23,11 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
     private Rigidbody2D rb;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
-        currentHealth = maxHealth;
+        currentHealth = data.maxHealth;
         IsAlive = true;
     }
 
@@ -51,7 +50,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
         {
             if(hitFXRoutine != null)
                 StopCoroutine(hitFXRoutine);
-            hitFXRoutine = StartCoroutine(HitFXRoutine());
+            hitFXRoutine = StartCoroutine(HitFXRoutine(hit.hitstunTime));
         }
         if (currentHealth <= 0)
             Die();
@@ -59,38 +58,32 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
     protected void ApplyDamage(HitData hit)
     {
-
         currentHealth = Mathf.Max(0, currentHealth - hit.damage);
-
-        Debug.Log($"[EnemyBase] Hit by {hit.attackType} " +
-                  $"— damage: {hit.damage} " +
-                  $"— HP: {currentHealth}/{maxHealth}");
-
     }
 
     private void ApplyKnockback(Vector2 direction, float force)
     {
         if (direction.magnitude < 0.1f) return;
 
-        rb.linearVelocity = (direction * force * knockbackMultiplier);
+        rb.linearVelocity = (direction * force * data.knockbackMultiplier);
     }
 
     private void Die()
     {
         Debug.Log("Enemy Killed");
         gameObject.SetActive(false);
-        currentHealth = maxHealth;
+        currentHealth = data.maxHealth;
     }
 
-    private IEnumerator HitFXRoutine()
+    private IEnumerator HitFXRoutine(float duration)
     {
-        if (rb.linearVelocity.x > 0)
+        if (rb.linearVelocity.x > 0 && isFacingRight)
         {
-            sr.flipX = false;
+            FlipFacing();
         }
-        else if (rb.linearVelocity.x < 0)
+        else if (rb.linearVelocity.x < 0 && !isFacingRight)
         {
-            sr.flipX = true;
+            FlipFacing();
         }
 
         Instantiate(particles, transform.position, Quaternion.identity);
@@ -100,26 +93,21 @@ public class EnemyBase : MonoBehaviour, IDamageable
         sr.sprite = damageSprite;
         sr.material = damageMaterial;
 
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(duration);
 
         sr.sprite = baseSprite;
         sr.material = originalMaterial;
     }
 
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
-    }
 
-    private void OnDrawGizmosSelected()
+    protected void FlipFacing()
     {
-        UnityEditor.Handles.Label(
-            transform.position + Vector3.up * 1.2f,
-            $"HP {currentHealth}/{maxHealth}"
-        );
+        isFacingRight = !isFacingRight;
+
+        Vector3 scaler = transform.localScale;
+        scaler.x *= -1;
+        transform.localScale = scaler;
     }
-#endif
 
 }
 

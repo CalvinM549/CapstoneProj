@@ -206,6 +206,7 @@ public class PlayerCombat : MonoBehaviour
             knockbackDirection = knockbackDir,
             knockbackForce = attack.knockback,
             hitstopTime = attack.hitstopDuration,
+            hitstunTime = attack.hitstunTime,
             isPlayerAttack = true,
             isParryable = false
         };

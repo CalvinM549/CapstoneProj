@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    private ProjectileData data;
+    public ProjectileData data;
 
     private Vector2 direction;
     private bool isPlayerProjectile;
@@ -30,10 +30,10 @@ public class Projectile : MonoBehaviour
 
         hitTarget = false;
 
-        rb.linearVelocity = direction * data.speed;
+        rb.linearVelocity = direction.normalized * data.speed;
 
         float angle = Mathf.Atan2(this.direction.y, this.direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0f, 0f, angle);
+        transform.rotation = Quaternion.Euler(0f, 0f, angle - 90);
 
         if(lifetimeRoutine != null)
             StopCoroutine(lifetimeRoutine);
@@ -64,6 +64,9 @@ public class Projectile : MonoBehaviour
     {
         if (hitTarget) return;
 
+        if (collision.CompareTag("Wall"))
+            DoImpact();
+
         if (isPlayerProjectile && (collision.CompareTag("Player") || collision.CompareTag("PlayerHurtbox")))
             return;
 
@@ -88,6 +91,8 @@ public class Projectile : MonoBehaviour
             knockbackDirection = direction,
             knockbackForce = data.knockback,
             hitstopTime = data.hitstopDuration,
+            hitstunTime = data.hitstunTime,
+
             isPlayerAttack = isPlayerProjectile,
             isParryable = data.isParryable
         };
@@ -96,13 +101,17 @@ public class Projectile : MonoBehaviour
         
         target.RecieveHit(hit);
 
+        DoImpact();
+    }
+
+    private void DoImpact()
+    {
         rb.linearVelocity = Vector2.zero;
 
         if (data.impactVFXPrefab != null)
             Instantiate(data.impactVFXPrefab, transform.position, Quaternion.identity);
 
         ReturnToPool();
-
     }
 
 

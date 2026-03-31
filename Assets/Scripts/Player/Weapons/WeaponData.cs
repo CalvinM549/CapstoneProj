@@ -34,4 +34,5 @@ public class AttackInfo
 
     public float hitstopDuration;
     public float knockback;
+    public float hitstunTime;
 }

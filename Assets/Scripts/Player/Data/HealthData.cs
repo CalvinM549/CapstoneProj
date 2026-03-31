@@ -1,9 +1,10 @@
 using UnityEngine;
 
 
+[CreateAssetMenu(fileName = "HealthData", menuName = "Player/NewHealthData")]
 public class HealthData : ScriptableObject
 {
     public int maxHealth;
-    public int hitIFrameDuration;
-    public int hitStunDuration;
+
+    public float hitIFrameDuration;
 }

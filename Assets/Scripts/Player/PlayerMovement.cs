@@ -91,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnPlayerDash(InputAction.CallbackContext ctx)
     {
-        if (currentDashCharges > 0 && !IsDashing)
+        if (currentDashCharges > 0 && !IsDashing && !isPushing)
             StartDash();
     }
 
@@ -218,6 +218,7 @@ public class PlayerMovement : MonoBehaviour
     public void PushPlayer(Vector2 direction, float force, float duration)
     {
         if (force <= 0) return;
+        if (direction.normalized.magnitude < 0.01f) return;
 
         if (currentPushRoutine != null)
         {
@@ -225,7 +226,7 @@ public class PlayerMovement : MonoBehaviour
             isPushing = false;
         }
 
-        currentPushRoutine = StartCoroutine(PushRoutine(direction, force, duration));
+        currentPushRoutine = StartCoroutine(PushRoutine(direction.normalized, force, duration));
     }
 
     private IEnumerator PushRoutine(Vector2 direction, float force, float duration)

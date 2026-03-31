@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: EnemyProjectile
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
   lifetime: 10
-  speed: 5
+  speed: 35
   damage: 1
   knockback: 2
-  hitstopDuration: 0.01
+  hitstunTime: 0.1
+  hitstopDuration: 1
   damageType: 0
   isParryable: 1
   impactVFXPrefab: {fileID: 5312974598286367443, guid: 5abe6e1fe1c8b6248941e8285faa0f75, type: 3}
