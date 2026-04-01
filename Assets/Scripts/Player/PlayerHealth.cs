@@ -118,7 +118,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         IsHitstunned = false;
     }
 
-    private IEnumerator HitStunRoutine()
+    private IEnumerator HitstunRoutine()
     {
         float duration = 0.1f;
 

@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 public class PlayerCombat : MonoBehaviour
 {
 
-    public WeaponData weaponData;
+    public WeaponData data;
 
     [SerializeField] private PlayerMovement movement;
     [SerializeField] private PlayerHealth health;
@@ -17,25 +17,28 @@ public class PlayerCombat : MonoBehaviour
 
     private IPlayerTool equippedTool;
 
-    public CombatState CurrentState => state;
+    public CombatState CurrentState => currentState;
 
-    private CombatState state = CombatState.Idle;
+    private CombatState currentState = CombatState.Idle;
     
     private Coroutine currentAttackRoutine;
     private AttackType currentAttackType;
+    private bool currentAttackConnected = false;
 
+    
+    public bool IsAttacking { get; private set; }
+
+    // Light Combos
+    public int ComboStep => comboStep;
     private int comboStep;
     private float comboWindowTimer = 0f;
-    private bool currentAttackConnected = false;
-    private bool dashAttackUsedInDash = false;
-
-    public int ComboStep => comboStep;
-
+    private float comboCooldownTimer = 0f;
+        
+    private bool dashAttackWindow;
 
     private void Awake()
     {
         inputActions = InputManager.Instance.inputActions;
-        // Link hitboxes to handle hit detection
     }
 
     private void OnEnable()
@@ -46,81 +49,75 @@ public class PlayerCombat : MonoBehaviour
 
         // Events
         hitboxes.OnPlayerHitboxContact += HandleHitDetection;
+
+        GameEvents.OnPlayerDashStart += HandleDashStart;
+        GameEvents.OnPlayerDashEnd += HandleDashEnd;
     }
 
     private void OnDisable()
     {
+        // Inputs
         inputActions.Player.LightAttack.performed -= OnLightAttackInput;
         inputActions.Player.HeavyAttack.performed -= OnHeavyAttackInput;
 
+        // Events
+        hitboxes.OnPlayerHitboxContact -= HandleHitDetection;
+
+        GameEvents.OnPlayerDashStart -= HandleDashStart;
+        GameEvents.OnPlayerDashEnd -= HandleDashEnd;
     }
 
     private void Update()
     {
         UpdateComboWindow();
+        UpdateComboCooldown();
     }
 
     private void OnLightAttackInput(InputAction.CallbackContext ctx)
     {
         Debug.Log("Light Attack Pressed!");
-
-        if (!CheckCanAttack()) return;
-
-        if (CheckForDashAttack())
-        {
-            PerformDashAttack();
-            return;
-        }
-        else
-        {
-            InterruptRecovery();
-            PerformLightAttack();
-        }
+        HandleAttackInput(true);
     }
 
     private void OnHeavyAttackInput(InputAction.CallbackContext ctx)
     {
         Debug.Log("Heavy Attack Pressed!");
+        HandleAttackInput(false);
+    }
 
-        if (!CheckCanAttack()) return;
+    private void HandleAttackInput(bool isLeftClick)
+    {
+        if (health.IsHitstunned) return;
+        if (comboCooldownTimer > 0) return;
+        if (currentState == CombatState.Active || currentState == CombatState.Startup) return;
+        if (currentState == CombatState.Recovery)
+            InterruptRecovery();
 
-        if (CheckForDashAttack())
-        {
+        if (dashAttackWindow)
             PerformDashAttack();
-            return;
-        }
         else
         {
-            InterruptRecovery();
-            PerformHeavyAttack();
+            if (isLeftClick)
+                PerformLightAttack();
+            else
+                PerformHeavyAttack();
         }
-    }
-
-    private bool CheckForDashAttack()
-    {
-        return movement.IsDashing && !dashAttackUsedInDash;
-    }
-
-    private bool CheckCanAttack()
-    {
-        return (state == CombatState.Idle || state == CombatState.Recovery)
-            && !health.IsHitstunned;
     }
 
     private void PerformLightAttack()
     {
-        if (comboWindowTimer > 0 && comboStep < weaponData.maxComboSteps)
+        if (comboWindowTimer > 0 && comboStep < data.maxComboSteps)
             comboStep++;
         else
             comboStep = 1;
 
-        comboWindowTimer = weaponData.comboWindow;
+        comboWindowTimer = data.comboWindow;
 
         if(currentAttackRoutine != null)
             StopCoroutine(currentAttackRoutine);
 
         Debug.Log("Performing Light Attack!");
-        currentAttackRoutine = StartCoroutine(AttackRoutine(weaponData.lightAttacks[comboStep - 1]));
+        currentAttackRoutine = StartCoroutine(AttackRoutine(data.lightAttacks[comboStep - 1]));
     }
 
     private void PerformHeavyAttack()
@@ -132,13 +129,13 @@ public class PlayerCombat : MonoBehaviour
             StopCoroutine(currentAttackRoutine);
 
         Debug.Log("Performing Heavy Attack!");
-        currentAttackRoutine = StartCoroutine(AttackRoutine(weaponData.heavyAttack));
+        currentAttackRoutine = StartCoroutine(AttackRoutine(data.heavyAttack));
 
     }
 
     private void PerformDashAttack()
     {
-        dashAttackUsedInDash = true;
+        dashAttackWindow = false; // set to false to prevent multiple attacks in same dash
         comboStep = 0;
         comboWindowTimer = 0;
 
@@ -146,7 +143,7 @@ public class PlayerCombat : MonoBehaviour
             StopCoroutine(currentAttackRoutine);
 
         Debug.Log("Performing Dash Attack!");
-        currentAttackRoutine = StartCoroutine(AttackRoutine(weaponData.dashAttack));
+        currentAttackRoutine = StartCoroutine(AttackRoutine(data.dashAttack));
     }
 
     // Attack Routine
@@ -154,19 +151,18 @@ public class PlayerCombat : MonoBehaviour
     private IEnumerator AttackRoutine(AttackInfo attack)
     {
         currentAttackType = attack.type;
-
         currentAttackConnected = false;
 
         GameEvents.AttackStarted(attack.type);
 
-        state = CombatState.Startup;
+        currentState = CombatState.Startup;
 
         yield return new WaitForSeconds(attack.startupTime);
 
-        if (currentAttackType != attack.type) yield break;
+        if (currentAttackType != attack.type) yield break; // Cancel attack if it changes somehow
 
-        state = CombatState.Active;
-        movement.PushPlayer(GetAttackDirection(attack.type), attack.dashForce, attack.activeTime);
+        currentState = CombatState.Active;
+        movement.PushPlayer(GetAttackDirection(attack.type), attack.dashForce, attack.activeTime, false);
         hitboxes.EnableHitBox(attack, GetAttackDirection(attack.type), comboStep);
 
         yield return new WaitForSeconds(attack.activeTime);
@@ -176,17 +172,17 @@ public class PlayerCombat : MonoBehaviour
         if (!currentAttackConnected)
             GameEvents.AttackWhiff(currentAttackType);
 
-        state = CombatState.Recovery;
+        if (comboStep == data.maxComboSteps)
+            comboCooldownTimer = data.comboCooldown;
+
+        GameEvents.AttackEnded(attack.type);
+
+        currentState = CombatState.Recovery;
 
         yield return new WaitForSeconds(attack.recoveryTime);
 
-        dashAttackUsedInDash = false;
-
-        if (state == CombatState.Recovery)
-        {
-            state = CombatState.Idle;
-            // End Attack event
-        }
+        if (currentState == CombatState.Recovery)
+            currentState = CombatState.Idle;
     }
 
     private void HandleHitDetection(Collider2D hit, AttackInfo attack)
@@ -235,21 +231,29 @@ public class PlayerCombat : MonoBehaviour
         {
             comboWindowTimer -= Time.deltaTime;
         }
-        else if (state == CombatState.Idle)
+        else if (currentState == CombatState.Idle)
         {
             comboStep = 0;
         }
     }
 
-    private void InterruptRecovery()
+    private void UpdateComboCooldown()
     {
-        if (state != CombatState.Recovery) return;
-
-        StopCurrentRoutine();
-        state = CombatState.Idle;
+        if(comboCooldownTimer > 0f)
+            comboCooldownTimer -= Time.deltaTime;
     }
 
-    private void StopCurrentRoutine()
+    private void InterruptRecovery()
+    {
+        if (currentState != CombatState.Recovery) return;
+
+        GameEvents.RecoveryCancel(currentAttackType);
+
+        StopAttackRoutine();
+        currentState = CombatState.Idle;
+    }
+
+    private void StopAttackRoutine()
     {
         if (currentAttackRoutine != null)
         {
@@ -274,6 +278,23 @@ public class PlayerCombat : MonoBehaviour
             Vector3 direction = mousePosWorld - transform.position;
             return direction.normalized;
         }
+    }
+
+    private void HandleDashStart()
+    {
+        dashAttackWindow = true;
+        InterruptRecovery();
+    }
+
+    private void HandleDashEnd()
+    {
+        StartCoroutine(DashWindowRoutine());
+    }
+
+    private IEnumerator DashWindowRoutine()
+    {
+        yield return new WaitForSeconds(data.dashExtraWindow);
+        dashAttackWindow = false;
     }
 
     #endregion

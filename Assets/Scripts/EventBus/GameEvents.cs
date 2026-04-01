@@ -24,15 +24,17 @@ public static class GameEvents
     #endregion
 
     #region Combat
-    public static event Action<AttackType> OnAttackStarted;
-    public static event Action<AttackType> OnAttackEnded;
+    public static event Action<AttackType> OnAttackStarted; // Player attacks only
+    public static event Action<AttackType> OnAttackEnded; // Player Attacks only
     public static event Action<HitData> OnHitConfirmed;
 
+    public static event Action<AttackType> OnRecoveryCancel;
     public static event Action<AttackType> OnAttackWhiff;
 
     public static void AttackStarted(AttackType type) => OnAttackStarted?.Invoke(type);
     public static void AttackEnded(AttackType type) => OnAttackEnded?.Invoke(type);
     public static void HitConfirmed(HitData hit) => OnHitConfirmed?.Invoke(hit);
+    public static void RecoveryCancel(AttackType type) => OnRecoveryCancel?.Invoke(type);
     public static void AttackWhiff(AttackType type) => OnAttackWhiff?.Invoke(type);
 
     #endregion
@@ -40,7 +42,8 @@ public static class GameEvents
     #region Player
     public static event Action<HitData> OnPlayerHit;
     public static event Action OnPlayerDeath;
-    public static event Action OnPlayerDash;
+    public static event Action OnPlayerDashStart;
+    public static event Action OnPlayerDashEnd;
     public static event Action<int, int> OnPlayerHealthChange;
     public static event Action<int, int, float[], float> OnDashChargeChange;
 
@@ -50,7 +53,8 @@ public static class GameEvents
     public static void PlayerHit(HitData hit) => OnPlayerHit?.Invoke(hit);
     public static void PlayerHealthChanged(int currentHealth, int maxHealth) => OnPlayerHealthChange?.Invoke(currentHealth, maxHealth);
     public static void PlayerDeath() => OnPlayerDeath?.Invoke();
-    public static void PlayerDash() => OnPlayerDash?.Invoke();
+    public static void PlayerDashStart() => OnPlayerDashStart?.Invoke();
+    public static void PlayerDashEnd() => OnPlayerDashEnd?.Invoke();
 
     #endregion
 

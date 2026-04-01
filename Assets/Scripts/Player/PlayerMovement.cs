@@ -13,7 +13,6 @@ public class PlayerMovement : MonoBehaviour
 
     private InputSystem_Actions inputActions;
     private Rigidbody2D rb;
-    private SpriteRenderer sr; // For Testing
 
     private Vector2 moveDirection;
     private Vector2 lastMoveDirection = Vector2.right;
@@ -25,7 +24,6 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isDashing;
     private bool isPushing;
-    public bool lateDashCheck { get; private set; }
 
     public bool IsDashing => isDashing;
     public float TimeStopped;
@@ -38,7 +36,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
-        sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -91,6 +88,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnPlayerDash(InputAction.CallbackContext ctx)
     {
+        if (combat.CurrentState == CombatState.Startup || combat.CurrentState == CombatState.Active) return;
+
         if (currentDashCharges > 0 && !IsDashing && !isPushing)
             StartDash();
     }
@@ -150,9 +149,8 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator DashRoutine(Vector2 direction)
     {
         isDashing = true;
-        lateDashCheck = true;
 
-        GameEvents.PlayerDash();
+        GameEvents.PlayerDashStart();
 
         rb.linearVelocity = direction * data.dashSpeed;
 
@@ -164,21 +162,21 @@ public class PlayerMovement : MonoBehaviour
         isDashing = false;
         rb.linearVelocity *= data.dashExitMultiplier;
 
+        GameEvents.PlayerDashEnd();
+
         StartDashRecharge();
-
-        yield return new WaitForSeconds(0.1f);
-
-        lateDashCheck = false;
     }
 
-    private void CancelDash()
+    private bool TryCancelDash()
     {
-        if (!isDashing) return;
+        if (!isDashing) return false;
         if(currentDashRoutine != null)
             StopCoroutine(currentDashRoutine);
 
+        rb.linearVelocity *= data.dashExitMultiplier;
+        GameEvents.PlayerDashEnd();
         isDashing = false;
-        lateDashCheck = false;
+        return true;
     }
 
     private void StartDashRecharge()
@@ -196,7 +194,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleDashRecharge()
     {
-        float rechargeRate = 1.0f;
+        float rechargeRate = 1.0f; // alter based on things ig
 
         for (int i = 0; i < dashRechargeTimers.Length; i++)
         {
@@ -215,12 +213,14 @@ public class PlayerMovement : MonoBehaviour
 
     #endregion
 
-    #region Utilities
+    #region Push / Hitstun
 
-    public void PushPlayer(Vector2 direction, float force, float duration)
+    public void PushPlayer(Vector2 direction, float force, float duration, bool isForcedMovement = true)
     {
         if (force <= 0) return;
         if (direction.normalized.magnitude < 0.01f) return;
+
+        TryCancelDash();
 
         if (currentPushRoutine != null)
         {
@@ -228,22 +228,30 @@ public class PlayerMovement : MonoBehaviour
             isPushing = false;
         }
 
-        currentPushRoutine = StartCoroutine(PushRoutine(direction.normalized, force, duration));
+        currentPushRoutine = StartCoroutine(PushRoutine(direction.normalized, force, duration, isForcedMovement));
     }
 
-    private IEnumerator PushRoutine(Vector2 direction, float force, float duration)
+    private IEnumerator PushRoutine(Vector2 direction, float force, float duration, bool isForcedMovement)
     {
         isPushing = true;
         
         rb.linearVelocity = direction * force;
 
+        if (isForcedMovement)
+            rb.linearVelocity *= data.knockbackMultiplier;
+
         yield return new WaitForSeconds(duration);
 
-        rb.linearVelocity *= 0.4f;
+        rb.linearVelocity *= data.pushExitMultiplier;
         
         isPushing = false;
     }
 
+    #endregion
+
+    #region Utilities
+
+    // Link dash to UI - need to redo better sometime
     private void TryBroadcastDashState()
     {
         float timerSum = 0f;

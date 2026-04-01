@@ -26,12 +26,12 @@ public class PlayerAnimator : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEvents.OnPlayerDash += HandleDashAnimation;
+        GameEvents.OnPlayerDashStart += HandleDashAnimation;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnPlayerDash -= HandleDashAnimation;
+        GameEvents.OnPlayerDashStart -= HandleDashAnimation;
     }
 
     private void Update()

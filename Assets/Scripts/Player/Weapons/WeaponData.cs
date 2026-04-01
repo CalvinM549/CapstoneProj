@@ -15,9 +15,11 @@ public class WeaponData : ScriptableObject
 
     [Header("Other")]
     public float comboWindow;
+    [Tooltip("Time after full combo, before player can attack again")]
+    public float comboCooldown;
     public int maxComboSteps;
 
-    public float dashCancelWindow;
+    public float dashExtraWindow;
 }
 
 [Serializable]

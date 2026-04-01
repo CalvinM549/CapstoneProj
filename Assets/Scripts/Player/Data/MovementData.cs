@@ -18,4 +18,8 @@ public class MovementData : ScriptableObject
 
     public float dashIFrameDuration;
 
+    [Header("Other Movement")]
+    public float knockbackMultiplier;
+    [Tooltip("Amount of the push retained on end")]
+    public float pushExitMultiplier;
 }

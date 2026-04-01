@@ -22,3 +22,5 @@ MonoBehaviour:
   maxDashCharges: 2
   dashRechargeTime: 1.5
   dashIFrameDuration: 0.1
+  knockbackMultiplier: 1
+  pushExitMultiplier: 0.4

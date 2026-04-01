@@ -15,7 +15,7 @@ MonoBehaviour:
   lightAttacks:
   - type: 0
     damage: 1
-    startupTime: 0
+    startupTime: 0.01
     activeTime: 0.2
     recoveryTime: 0.1
     dashForce: 4
@@ -33,13 +33,13 @@ MonoBehaviour:
     hitstunTime: 0.15
   - type: 0
     damage: 2
-    startupTime: 0.25
+    startupTime: 0.1
     activeTime: 0.2
-    recoveryTime: 0.5
-    dashForce: 5
+    recoveryTime: 0.3
+    dashForce: 6
     hitstopDuration: 0.05
     knockback: 1
-    hitstunTime: 0.15
+    hitstunTime: 0.2
   heavyAttack:
     type: 1
     damage: 3
@@ -48,12 +48,12 @@ MonoBehaviour:
     recoveryTime: 0.3
     dashForce: 6
     hitstopDuration: 0.1
-    knockback: 2
+    knockback: 3
     hitstunTime: 0.2
   dashAttack:
     type: 2
     damage: 1
-    startupTime: 0.1
+    startupTime: 0
     activeTime: 0.1
     recoveryTime: 0.1
     dashForce: 0
@@ -61,5 +61,6 @@ MonoBehaviour:
     knockback: 0.5
     hitstunTime: 0.1
   comboWindow: 1
+  comboCooldown: 0.2
   maxComboSteps: 3
-  dashCancelWindow: 0
+  dashExtraWindow: 0.1

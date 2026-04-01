@@ -9,15 +9,21 @@ public class ProjectileManager : MonoBehaviour
     // Ask about preventing this from being called when other things are being disabled on scene unload
 
     private static ProjectileManager _Instance;
+
+    private void Awake()
+    {
+        _Instance = this;
+    }
+
     public static ProjectileManager Instance
     {
         get
         {
-            if (!_Instance)
-            {
-                _Instance = new GameObject().AddComponent<ProjectileManager>();
-                _Instance.name = _Instance.GetType().ToString();
-            }
+            //if (!_Instance)
+            //{
+            //    _Instance = new GameObject().AddComponent<ProjectileManager>();
+            //    _Instance.name = _Instance.GetType().ToString();
+            //}
             return _Instance;
         }
     }
