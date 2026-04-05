@@ -214,10 +214,11 @@ public class PlayerCombat : MonoBehaviour
         target.RecieveHit(hitData);
     }
 
-    // returns false if hit is ignored
+    // returns true if hit is ignored
     public bool HandlePlayerHit(HitData damage)
     {
-        return true;
+        if (equippedTool == null) return true;
+        return equippedTool.TryIntercept(damage);
     }
 
 

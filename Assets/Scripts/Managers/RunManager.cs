@@ -39,6 +39,11 @@ public class RunManager : MonoBehaviour
         // load to room drafter
     }
 
+    public void EndRun(bool won)
+    {
+        // Display 
+    }
+
     #endregion
 
     #region Player Management
@@ -70,6 +75,8 @@ public class RunData
 
 }
 
+
+// Packed and saved after each room. Used to restore player when loading back into run.
 [Serializable]
 public class PlayerData
 {

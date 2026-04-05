@@ -4,11 +4,11 @@ public interface IPlayerTool
 {
     bool IsAvaliable { get; }
 
-    float CooldownProgress { get; }
-
-    bool UseSecondary(Vector2 facingDirection);
+    bool UseTool(Vector2 direction);
 
     bool TryIntercept(HitData incoming);
+
+    void UpdateTool();
 
     void OnEquipped();
 

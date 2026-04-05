@@ -51,7 +51,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         if (!IsAlive) return;
         if (IsIframe) return;
 
-        if (!combat.HandlePlayerHit(hit)) return;
+        if (combat.HandlePlayerHit(hit)) return;
 
         ApplyKnockback(hit);
         ApplyHitStun(hit);
