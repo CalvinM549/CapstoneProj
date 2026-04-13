@@ -21,13 +21,16 @@ public enum CombatState
     Startup,
     Active,
     Recovery
-}
-
-public class HitData
+}public class HitData
 {
     public int damage;
+    public int momentumCost;
     public AttackType attackType;
     public DamageType damageType;
+
+    public bool isPlayerAttack;
+    public bool isParryable;
+    public bool momentumCanBlock;
 
     public Vector2 sourcePos;
     public Vector2 knockbackDirection;
@@ -36,6 +39,4 @@ public class HitData
     public float hitstunTime;
 
     public float hitstopTime;
-    public bool isPlayerAttack;
-    public bool isParryable;
 }

@@ -1,12 +1,35 @@
+using NUnit.Framework;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
+    public class Structure
+    {
+        public int index;
+        public float maxHealth;
+        public float currentHealth;
+
+        public bool isDestroyed;
+
+        public Structure(int index, float maxHealth)
+        {
+            this.index = index;
+            this.maxHealth = maxHealth;
+            this.currentHealth = maxHealth;
+            this.isDestroyed = isDestroyed = false;
+        }
+    }
+
+    public List<Structure> structure;
+    private Structure activeStructure;
+
     [SerializeField] private HealthData data;
 
     [SerializeField] private PlayerCombat combat;
     [SerializeField] private PlayerMovement movement;
+    [SerializeField] private PlayerMomentum momentum;
 
     private Material baseMaterial;
     [SerializeField] private Material damageMaterial;
@@ -60,9 +83,22 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void ApplyDamage(HitData hit)
     {
+        GameEvents.PlayerHit(hit);
+
+        //float bleedThrough = hit.momentumCanBlock ? momentum.DrainAsBuffer(hit.momentumCost) : 1f;
+
+        //if (bleedThrough <= 0)
+        //{
+        //    GrantIFrames(data.hitIFrameDuration * 0.5f);
+        //    return;
+        //}
+
+        //float finalDamage = hit.damage * bleedThrough;
+
+
+        
         currentHealth = Mathf.Max(0, currentHealth - hit.damage);
 
-        GameEvents.PlayerHit(hit);
         GameEvents.PlayerHealthChanged(currentHealth, data.maxHealth);
 
         if (currentHealth <= 0)

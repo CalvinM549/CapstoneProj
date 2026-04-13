@@ -68,6 +68,27 @@ public class PlayerMomentum : MonoBehaviour
         GameEvents.MomentumChange(PercentMomentum);
     }
 
+    public float DrainAsBuffer(float momentumCost)
+    {
+        if (momentumCost <= 0) return 1.0f;
+
+        if (currentMomentum >= momentumCost)
+        {
+            DrainMomentum(momentumCost);
+            return 0.0f;
+        }
+        else if (currentMomentum > 0f)
+        {
+            float absorbed = currentMomentum / momentumCost;
+            float bleedThrough = 1f - absorbed;
+            DrainMomentum(currentMomentum);
+            return bleedThrough;
+        }
+        else
+            return 1.0f;
+
+    }
+
     private void UpdateMomentumDrain()
     {
         if (momentumTimer > 0)
