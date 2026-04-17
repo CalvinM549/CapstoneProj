@@ -5,22 +5,7 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
-    public class Structure
-    {
-        public int index;
-        public float maxHealth;
-        public float currentHealth;
 
-        public bool isDestroyed;
-
-        public Structure(int index, float maxHealth)
-        {
-            this.index = index;
-            this.maxHealth = maxHealth;
-            this.currentHealth = maxHealth;
-            this.isDestroyed = isDestroyed = false;
-        }
-    }
 
     public List<Structure> structure;
     private Structure activeStructure;
@@ -53,10 +38,21 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private void Awake()
     {
         sr = GetComponent<SpriteRenderer>();
-        currentHealth = data.maxHealth;
         IsAlive = true;
 
         baseMaterial = sr.material;
+    }
+
+    private void Start()
+    {
+
+        currentHealth = data.maxHealth;
+
+        for (int i = 0; i < data.integrityBaseCount; i++)
+        {
+            // Populate integrity lists
+        }
+
     }
 
     private void OnEnable()
@@ -74,7 +70,11 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         if (!IsAlive) return;
         if (IsIframe) return;
 
-        if (combat.HandlePlayerHit(hit)) return;
+        if (combat.HandlePlayerHit(hit))
+        {
+            Debug.Log("Hit Interrupted!");
+            return;
+        }
 
         ApplyKnockback(hit);
         ApplyHitStun(hit);

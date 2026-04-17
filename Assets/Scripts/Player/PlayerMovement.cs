@@ -24,6 +24,10 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isDashing;
     private bool isPushing;
+    private bool isParrying = false;
+
+    private int inputLockSources;
+    public bool InputLocked => inputLockSources > 0;
 
     public bool IsDashing => isDashing;
     public float TimeStopped;
@@ -46,6 +50,9 @@ public class PlayerMovement : MonoBehaviour
         inputActions.Player.Move.performed += OnPlayerMove;
         inputActions.Player.Move.canceled += OnPlayerStop;
         inputActions.Player.Dash.performed += OnPlayerDash;
+
+        GameEvents.OnPlayerParryStart += HandleParryStart;
+        GameEvents.OnPlayerParryEnd += HandleParryEnd;
     }
 
     private void OnDisable()
@@ -53,6 +60,9 @@ public class PlayerMovement : MonoBehaviour
         inputActions.Player.Move.performed -= OnPlayerMove;
         inputActions.Player.Move.canceled -= OnPlayerStop;
         inputActions.Player.Dash.performed -= OnPlayerDash;
+
+        GameEvents.OnPlayerParryStart -= HandleParryStart;
+        GameEvents.OnPlayerParryEnd -= HandleParryEnd;
     }
 
     private void Start()
@@ -69,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!IsDashing && !isPushing)  
+        if(!IsDashing && !isPushing && !isParrying)  
             ApplyMovement();
     }
 
@@ -250,6 +260,17 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Utilities
+
+    private void HandleParryStart()
+    {
+        isParrying = true;
+        rb.linearVelocity = Vector2.zero;
+    }
+
+    private void HandleParryEnd()
+    {
+        isParrying = false;
+    }
 
     // Link dash to UI - need to redo better sometime
     private void TryBroadcastDashState()

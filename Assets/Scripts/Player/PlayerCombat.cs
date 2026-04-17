@@ -10,6 +10,7 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private PlayerMovement movement;
     [SerializeField] private PlayerHealth health;
     [SerializeField] private PlayerMomentum momentum;
+    [SerializeField] private PlayerTools tools; 
     
     [SerializeField] private AttackHitboxes hitboxes;
 
@@ -215,10 +216,11 @@ public class PlayerCombat : MonoBehaviour
     }
 
     // returns true if hit is ignored
-    public bool HandlePlayerHit(HitData damage)
+    public bool HandlePlayerHit(HitData hit)
     {
-        if (equippedTool == null) return true;
-        return equippedTool.TryIntercept(damage);
+        if (!tools.ToolEquipped) return false;
+
+        return (tools.equippedTool.TryIntercept(hit));
     }
 
 

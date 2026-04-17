@@ -6,26 +6,17 @@ using UnityEngine;
 // KEEP ONE PER SCENE TO CLEAN BETWEEN FLOORS
 public class ProjectileManager : MonoBehaviour
 {
-    // Ask about preventing this from being called when other things are being disabled on scene unload
-
-    private static ProjectileManager _Instance;
+    public static ProjectileManager Instance;
 
     private void Awake()
     {
-        _Instance = this;
-    }
-
-    public static ProjectileManager Instance
-    {
-        get
+        if (Instance != null && Instance != this)
         {
-            //if (!_Instance)
-            //{
-            //    _Instance = new GameObject().AddComponent<ProjectileManager>();
-            //    _Instance.name = _Instance.GetType().ToString();
-            //}
-            return _Instance;
+            Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
     }
 
     private class PoolEntry

@@ -8,11 +8,12 @@ public enum UpgradeSlot
     None
 }
 
-public abstract class UpgradeBase : ScriptableObject
+public abstract class Upgrade : ScriptableObject
 {
     public UpgradeSlot slot;
     public string upgradeName;
     [TextArea] public string description;
 
-    public abstract void ApplyUpgrade(PlayerCore player);
+    public abstract void ApplyUpgrade();
+    public abstract void RemoveUpgrade();
 }

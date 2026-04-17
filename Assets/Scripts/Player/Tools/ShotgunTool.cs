@@ -43,8 +43,9 @@ public class ShotgunTool : PlayerTool, IProjectileEmitter
 
     public override bool TryIntercept(HitData incoming) => false;
 
-    public override void OnEquip()
+    public override void OnEquip(Transform currentTransform)
     {
+        playerTransform = currentTransform;
         ProjectilePools.RequestPool(this);
     }
 

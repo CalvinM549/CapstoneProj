@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "ParryTool", menuName = "Player/Tools/NewParryTool")]
 public class ParryTool : PlayerTool
 {
     [SerializeField] private float parryAngle; // width of the parry cone in degrees
@@ -15,35 +16,35 @@ public class ParryTool : PlayerTool
     public override bool UseTool(Vector2 direction)
     {
         if (cooldownTimer > 0f || parryActive) return false; // can't parry if on cooldown or already active
+
         parryActive = true;
         parryDirection = direction.normalized;
         parryTimer = parryDuration;
+
+        GameEvents.PlayerParryStart();
         return true;
     }
 
     public override bool TryIntercept(HitData incoming)
     {
         if (!parryActive) return false; // can't intercept if parry isn't active
-        Vector2 toIncoming = incoming.sourcePos - (Vector2)PlayerCore.Instance.transform.position;
+        Vector2 toIncoming = incoming.sourcePos - (Vector2)playerTransform.position; 
         float angleToIncoming = Vector2.Angle(parryDirection, toIncoming);
         if (angleToIncoming <= parryAngle / 2f)
         {
-            // Successful parry
-            parryActive = false; // end parry immediately after a successful block
-            cooldownTimer = cooldown; // start cooldown
             return true;
         }
         return false; // incoming attack is outside of parry cone
     }
 
-    public override void OnEquip()
+    public override void OnEquip(Transform currentTransform)
     {
-        // Optional: Add any initialization logic when the tool is equipped
+        playerTransform = currentTransform;
     }
 
     public override void OnUnequip()
     {
-        // Optional: Add any cleanup logic when the tool is unequipped
+        
     }
 
     public override void UpdateTool()
@@ -53,6 +54,7 @@ public class ParryTool : PlayerTool
             parryTimer -= Time.deltaTime;
             if (parryTimer <= 0f)
             {
+                GameEvents.PlayerParryEnd();
                 parryActive = false; // end parry when duration expires
                 cooldownTimer = cooldown; // start cooldown
             }

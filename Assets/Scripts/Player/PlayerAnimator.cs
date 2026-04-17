@@ -8,6 +8,7 @@ public class PlayerAnimator : MonoBehaviour
 
     private Sprite baseSprite;
     [SerializeField] private Sprite dashSprite;
+    [SerializeField] private Sprite parrySprite;
 
     public bool IsFacingRight {  get; private set; }
 
@@ -27,11 +28,15 @@ public class PlayerAnimator : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.OnPlayerDashStart += HandleDashAnimation;
+        GameEvents.OnPlayerParryStart += HandleParryAnimation;
+        GameEvents.OnPlayerParryEnd += HandleParryEnd;
     }
 
     private void OnDisable()
     {
         GameEvents.OnPlayerDashStart -= HandleDashAnimation;
+        GameEvents.OnPlayerParryStart -= HandleParryAnimation;
+        GameEvents.OnPlayerParryEnd -= HandleParryEnd;
     }
 
     private void Update()
@@ -66,6 +71,16 @@ public class PlayerAnimator : MonoBehaviour
         while(movement.IsDashing)
             yield return null;
 
+        sr.sprite = baseSprite;
+    }
+
+    private void HandleParryAnimation()
+    {
+        sr.sprite = parrySprite;
+    }
+
+    private void HandleParryEnd()
+    {
         sr.sprite = baseSprite;
     }
 

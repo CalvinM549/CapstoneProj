@@ -10,7 +10,12 @@ public class RunManager : MonoBehaviour
 
     public GameObject currentPlayer;
 
+    public RunData currentRun;
+
     public bool PlayerExists => currentPlayer != null;
+
+    public bool RunActive;
+
 
 
     private void Start()
@@ -29,6 +34,11 @@ public class RunManager : MonoBehaviour
     private void OnDisable()
     {
         
+    }
+
+    private void Update()
+    {
+        UpdateTimer();
     }
 
     #region Run Management
@@ -54,6 +64,18 @@ public class RunManager : MonoBehaviour
     }
 
     #endregion
+
+    #region Timer Management
+
+    public void UpdateTimer()
+    {
+        if (RunActive)
+        {
+            currentRun.RunDuration += Time.deltaTime;
+        }
+    }
+
+    #endregion
 }
 
 [Serializable]
@@ -61,9 +83,10 @@ public class RunData
 {
     // Run
     public int RunSeed;
+    public float runTimer;
 
     // Player    
-    PlayerData player;
+    public PlayerData player;
 
     // Rooms
     public float HeatLevel;
@@ -80,10 +103,11 @@ public class RunData
 [Serializable]
 public class PlayerData
 {
-    public int CurrentHits;
-    public int MaxHits;
+    // Structure info
 
+    // Momentum info
     public float CurrentMomentum;
 
+    // Upgrade info
     public List<string> UpgradesGained = new();
 }

@@ -10,4 +10,22 @@ public class HealthData : ScriptableObject
 
     public int integrityBaseCount;
     public int integrityBaseHealth;
+
+    public float integrityBreakIFrameDuration;
+}
+public class Structure
+{
+    public int index;
+    public float maxHealth;
+    public float currentHealth;
+
+    public bool isDestroyed;
+
+    public Structure(int index, float maxHealth)
+    {
+        this.index = index;
+        this.maxHealth = maxHealth;
+        this.currentHealth = maxHealth;
+        this.isDestroyed = isDestroyed = false;
+    }
 }

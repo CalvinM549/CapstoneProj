@@ -7,11 +7,13 @@ public abstract class PlayerTool : ScriptableObject
     public string ToolName;
     public string ToolDescription;
 
+    protected Transform playerTransform;
+
     public abstract bool UseTool(Vector2 direction);
 
     public abstract bool TryIntercept(HitData incoming);
 
-    public abstract void OnEquip();
+    public abstract void OnEquip(Transform currentTransform);
 
     public abstract void OnUnequip();
 

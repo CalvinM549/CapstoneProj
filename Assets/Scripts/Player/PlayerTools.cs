@@ -1,32 +1,18 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerCore : MonoBehaviour
+public class PlayerTools : MonoBehaviour
 {
-    public static PlayerCore Instance { get; private set; }
     private InputSystem_Actions inputActions;
-
-    public PlayerMovement movement;
-    public PlayerHealth health;
-    public PlayerCombat combat;
-    public PlayerMomentum momentum;
-    public PlayerAnimator playerAnimator;
 
     public bool ToolEquipped => equippedTool != null;
     public PlayerTool equippedTool;
 
-    // Mutable Stats
-    //
-
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
         inputActions = InputManager.Instance.inputActions;
+        if (equippedTool != null)
+            equippedTool.OnEquip(this.transform);
     }
 
     private void OnEnable()
@@ -41,7 +27,8 @@ public class PlayerCore : MonoBehaviour
 
     private void Update()
     {
-        if (ToolEquipped) // Update equipped tool
+        // Update equipped tool
+        if (ToolEquipped) 
             equippedTool.UpdateTool();
     }
 
@@ -57,7 +44,7 @@ public class PlayerCore : MonoBehaviour
 
         UnequipCurrentTool();
         equippedTool = tool;
-        equippedTool.OnEquip();
+        equippedTool.OnEquip(transform);
         // Fire Event
     }
 
@@ -71,13 +58,12 @@ public class PlayerCore : MonoBehaviour
         }
     }
 
-
-
     private void UseEquippedTool()
     {
         if (!ToolEquipped) return;
 
-        equippedTool.UseTool(GetMouseDirection());
+        if (equippedTool.UseTool(GetMouseDirection()))
+            Debug.Log($"{equippedTool.ToolName} used!");
     }
 
     #region Utlities

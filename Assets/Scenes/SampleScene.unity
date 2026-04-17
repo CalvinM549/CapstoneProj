@@ -135,6 +135,8 @@ GameObject:
   - component: {fileID: 22530094}
   - component: {fileID: 22530093}
   - component: {fileID: 22530095}
+  - component: {fileID: 22530097}
+  - component: {fileID: 22530096}
   - component: {fileID: 22530089}
   - component: {fileID: 22530090}
   m_Layer: 0
@@ -317,6 +319,7 @@ MonoBehaviour:
   movement: {fileID: 22530088}
   health: {fileID: 22530092}
   momentum: {fileID: 22530093}
+  tools: {fileID: 22530097}
   hitboxes: {fileID: 1957935269}
 --- !u!114 &22530092
 MonoBehaviour:
@@ -333,6 +336,7 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 515cc199b072aca489e001a8e8d5dbc4, type: 2}
   combat: {fileID: 22530091}
   movement: {fileID: 22530088}
+  momentum: {fileID: 0}
   damageMaterial: {fileID: 2100000, guid: 59148e3b6fbfc0d4abc10ce34622bba0, type: 2}
   isIframe: 0
 --- !u!114 &22530093
@@ -362,6 +366,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimator
   movement: {fileID: 22530088}
   dashSprite: {fileID: 21300000, guid: 6bcb08d8428ab4b49838b0875d3648a9, type: 3}
+  parrySprite: {fileID: 21300000, guid: fd132963cab32c74d901e7f81165205c, type: 3}
 --- !u!114 &22530095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -377,6 +382,32 @@ MonoBehaviour:
   movement: {fileID: 22530088}
   afterImagePrefab: {fileID: 6739747942197820569, guid: 03f0d82f061ac3c46aae952e2b282303, type: 3}
   vfxContainer: {fileID: 1065335216}
+--- !u!114 &22530096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22530084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7125058985e84f4e8e4834d72db6122, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerUpgrades
+  upgrades: []
+--- !u!114 &22530097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22530084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8e8cdfb5049e44bb3630631e68cab2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerTools
+  equippedTool: {fileID: 11400000, guid: 425e0ea21b8f72944a65017136c55f40, type: 2}
 --- !u!1 &65672061
 GameObject:
   m_ObjectHideFlags: 0

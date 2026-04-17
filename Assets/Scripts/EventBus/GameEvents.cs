@@ -4,6 +4,12 @@ using UnityEngine;
 public static class GameEvents
 {
 
+    #region Inputs
+
+
+
+    #endregion
+
     #region Momentum
     public static event Action<float> OnMomentumChange;
     public static event Action<MomentumZone, MomentumZone> OnMomentumZoneChange; // Old momentum, new momentum
@@ -56,7 +62,15 @@ public static class GameEvents
     public static void PlayerDashStart() => OnPlayerDashStart?.Invoke();
     public static void PlayerDashEnd() => OnPlayerDashEnd?.Invoke();
 
+    public static event Action OnPlayerParryStart;
+    public static event Action OnPlayerParryEnd;
+
+    public static void PlayerParryStart() => OnPlayerParryStart?.Invoke();
+    public static void PlayerParryEnd() => OnPlayerParryEnd?.Invoke();
+
     #endregion
+
+
 
     #region Enemy
 

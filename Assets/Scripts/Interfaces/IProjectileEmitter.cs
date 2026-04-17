@@ -15,6 +15,12 @@ public static class ProjectilePools
     {
         if (emitter.PoolRequested) return;
 
+        if (ProjectileManager.Instance == null)
+        {
+            Debug.LogError("NO PROJECTILE MANAGER IN SCENE");
+            return;
+        }
+
         foreach (var projectile in emitter.Projectiles)
             ProjectileManager.Instance.RequestPool(projectile);
 
