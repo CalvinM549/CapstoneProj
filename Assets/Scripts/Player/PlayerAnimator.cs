@@ -5,6 +5,9 @@ public class PlayerAnimator : MonoBehaviour
 {
 
     [SerializeField] private PlayerMovement movement;
+    [SerializeField] private SpriteRenderer sr;
+
+    public Sprite currentSprite => sr.sprite;
 
     private Sprite baseSprite;
     [SerializeField] private Sprite dashSprite;
@@ -13,13 +16,11 @@ public class PlayerAnimator : MonoBehaviour
     public bool IsFacingRight {  get; private set; }
 
     private Animator animator;
-
-    private SpriteRenderer sr;
+    
     private Rigidbody2D rb;
 
     private void Awake()
     {
-        sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
 
         baseSprite = sr.sprite;
@@ -48,13 +49,13 @@ public class PlayerAnimator : MonoBehaviour
     {
         if (rb.linearVelocity.magnitude > 0.1f)
         {
-            if (rb.linearVelocity.x > 0 && sr.flipX == false)
+            if (rb.linearVelocity.x > 0 && !IsFacingRight)
             {
-                sr.flipX = true;
+                FlipFacing();
             }
-            else if(rb.linearVelocity.x < 0 && sr.flipX == true)
+            else if(rb.linearVelocity.x < 0 && IsFacingRight)
             {
-                sr.flipX = false;
+                FlipFacing();
             }
         }
     }
@@ -95,8 +96,8 @@ public class PlayerAnimator : MonoBehaviour
     {
         IsFacingRight = !IsFacingRight;
 
-        Vector3 scaler = transform.localScale;
+        Vector3 scaler = sr.transform.localScale;
         scaler.x *= -1;
-        transform.localScale = scaler;
+        sr.transform.localScale = scaler;
     }
 }

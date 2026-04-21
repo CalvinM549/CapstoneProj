@@ -12,6 +12,8 @@ public class Sentry : EnemyBase, IProjectileEmitter
 
     [SerializeField] private float spreadAngle = 10f;
 
+    [SerializeField] private Sprite fireSprite;
+
     private bool isFiring = false;
     private float attackCooldownTimer;
 
@@ -19,6 +21,7 @@ public class Sentry : EnemyBase, IProjectileEmitter
     [SerializeField] private ProjectileData bulletData;
 
     [SerializeField] private GameObject bulletFlashEffect;
+    [SerializeField] private GameObject windupEffect;
 
     [SerializeField] private ProjectileData[] projectiles;
     public ProjectileData[] Projectiles => projectiles;
@@ -54,6 +57,16 @@ public class Sentry : EnemyBase, IProjectileEmitter
 
         if (attackCooldownTimer <= 0f && isFiring != true)
             DoBurst();
+
+        if (isFiring)
+        {
+            Vector2 direction = playerTransform.position - transform.position;
+
+            if (direction.x > 0 && !isFacingRight)
+                FlipFacing();
+            else if (direction.x < 0 && isFacingRight)
+                FlipFacing();
+        }
     }
 
     private void HandleCooldown()
@@ -73,11 +86,17 @@ public class Sentry : EnemyBase, IProjectileEmitter
 
     private IEnumerator FireBurstRoutine()
     {
-        // Do windup
-
-        // wait for it to end then fire
-
         isFiring = true;
+
+        // Windup
+
+        sr.sprite = fireSprite;
+
+        Instantiate(windupEffect, firePoint);
+
+        yield return new WaitForSeconds(0.5f);
+
+        // Firing
 
         for (int i = 0; i < burstCount; i++)
         {
@@ -99,6 +118,10 @@ public class Sentry : EnemyBase, IProjectileEmitter
 
         attackCooldownTimer = attackCooldown;
         isFiring = false;
+
+        yield return new WaitForSeconds(0.5f);
+
+        sr.sprite = baseSprite;
     }
 
     public void FireProjectile(ProjectileData projectile, Vector2 firePos, Vector2 direction, bool isPlayer)

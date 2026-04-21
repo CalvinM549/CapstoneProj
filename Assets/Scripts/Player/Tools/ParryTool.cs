@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ParryTool", menuName = "Player/Tools/NewParryTool")]
-public class ParryTool : PlayerTool
+public class ParryTool : PlayerTool // Setup dash parry cancel
 {
     [SerializeField] private float parryAngle; // width of the parry cone in degrees
     [SerializeField] private float parryDuration; // how long the parry is active

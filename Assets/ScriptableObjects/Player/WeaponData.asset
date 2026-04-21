@@ -16,7 +16,7 @@ MonoBehaviour:
   - type: 0
     damage: 1
     startupTime: 0.01
-    activeTime: 0.2
+    activeTime: 0.17
     recoveryTime: 0.1
     dashForce: 4
     hitstopDuration: 0.05
@@ -25,7 +25,7 @@ MonoBehaviour:
   - type: 0
     damage: 1
     startupTime: 0.05
-    activeTime: 0.2
+    activeTime: 0.17
     recoveryTime: 0.1
     dashForce: 4
     hitstopDuration: 0.05

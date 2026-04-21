@@ -98,6 +98,7 @@ public class PlayerMomentum : MonoBehaviour
         else if(currentMomentum > 0)
         {
             currentMomentum -= data.drainSpeed * Time.deltaTime;
+            GameEvents.MomentumChange(PercentMomentum);
         }
     }
 

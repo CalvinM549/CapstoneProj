@@ -37,7 +37,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void Awake()
     {
-        sr = GetComponent<SpriteRenderer>();
+        sr = GetComponentInChildren<SpriteRenderer>();
         IsAlive = true;
 
         baseMaterial = sr.material;

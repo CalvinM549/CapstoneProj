@@ -21,7 +21,9 @@ public enum CombatState
     Startup,
     Active,
     Recovery
-}public class HitData
+}
+
+public class HitData
 {
     public int damage;
     public int momentumCost;

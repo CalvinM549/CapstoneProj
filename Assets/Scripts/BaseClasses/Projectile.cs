@@ -44,7 +44,7 @@ public class Projectile : MonoBehaviour
     private IEnumerator LifetimeRoutine()
     {
         yield return new WaitForSeconds(data.lifetime);
-        ReturnToPool();
+        DoImpact();
     }
 
     private void ReturnToPool()

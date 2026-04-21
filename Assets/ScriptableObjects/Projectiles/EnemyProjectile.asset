@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
   prefab: {fileID: 7729453556227253415, guid: 4a391f20a74486744878638e83022756, type: 3}
   poolSize: 0
-  lifetime: 10
-  speed: 35
+  lifetime: 0.5
+  speed: 50
   damage: 1
   damageType: 0
   knockback: 2

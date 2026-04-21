@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -7,12 +8,15 @@ public class EnemyBase : MonoBehaviour, IDamageable
     [SerializeField] private EnemyData data;
 
     protected float currentHealth;
+    public float PercentHealth => currentHealth / data.maxHealth;
 
-    protected SpriteRenderer sr;
+    public event Action<float, float, HitData> OnHit;
+
+    [SerializeField] protected SpriteRenderer sr;
     protected bool isFacingRight = true;
 
     private Material baseMaterial;
-    private Sprite baseSprite;
+    protected Sprite baseSprite;
 
     [SerializeField] private Material damageMaterial;
     [SerializeField] private Sprite damageSprite;
@@ -26,7 +30,6 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
     protected virtual void Awake()
     {
-        sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
         currentHealth = data.maxHealth;
         IsAlive = true;
@@ -57,6 +60,8 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
         ApplyDamage(hit);
         ApplyKnockback(hit.knockbackDirection, hit.knockbackForce);
+
+        OnHit?.Invoke(currentHealth, data.maxHealth, hit);
         
         GameEvents.EnemyHit(this, hit);
 
@@ -117,9 +122,9 @@ public class EnemyBase : MonoBehaviour, IDamageable
     {
         isFacingRight = !isFacingRight;
 
-        Vector3 scaler = transform.localScale;
+        Vector3 scaler = sr.transform.localScale;
         scaler.x *= -1;
-        transform.localScale = scaler;
+        sr.transform.localScale = scaler;
     }
 
 }
