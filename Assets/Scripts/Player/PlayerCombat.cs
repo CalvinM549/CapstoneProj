@@ -86,11 +86,12 @@ public class PlayerCombat : MonoBehaviour
         HandleAttackInput(false);
     }
 
-    private void HandleAttackInput(bool isLeftClick)
+    private void HandleAttackInput(bool isLightInput)
     {
         if (health.IsHitstunned) return;
         if (comboCooldownTimer > 0) return;
         if (currentState == CombatState.Active || currentState == CombatState.Startup) return;
+
         if (currentState == CombatState.Recovery)
             InterruptRecovery();
 
@@ -98,7 +99,7 @@ public class PlayerCombat : MonoBehaviour
             PerformDashAttack();
         else
         {
-            if (isLeftClick)
+            if (isLightInput)
                 PerformLightAttack();
             else
                 PerformHeavyAttack();
@@ -154,15 +155,18 @@ public class PlayerCombat : MonoBehaviour
         currentAttackType = attack.type;
         currentAttackConnected = false;
 
-        GameEvents.AttackStarted(attack.type);
-
+        // STARTUP
         currentState = CombatState.Startup;
+        GameEvents.AttackStarted(attack.type);
 
         yield return new WaitForSeconds(attack.startupTime);
 
         if (currentAttackType != attack.type) yield break; // Cancel attack if it changes somehow
+        //
 
+        // ACTIVE
         currentState = CombatState.Active;
+        
         movement.PushPlayer(GetAttackDirection(attack.type), attack.dashForce, attack.activeTime, false);
         hitboxes.EnableHitBox(attack, GetAttackDirection(attack.type), comboStep);
 
@@ -177,13 +181,16 @@ public class PlayerCombat : MonoBehaviour
             comboCooldownTimer = data.comboCooldown;
 
         GameEvents.AttackEnded(attack.type);
-
+        //
+        
+        // RECOVERY
         currentState = CombatState.Recovery;
 
         yield return new WaitForSeconds(attack.recoveryTime);
 
         if (currentState == CombatState.Recovery)
             currentState = CombatState.Idle;
+        //
     }
 
     private void HandleHitDetection(Collider2D hit, AttackInfo attack)
@@ -215,18 +222,7 @@ public class PlayerCombat : MonoBehaviour
         target.RecieveHit(hitData);
     }
 
-    // returns true if hit is ignored
-    public bool HandlePlayerHit(HitData hit)
-    {
-        if (!tools.ToolEquipped) return false;
-
-        return (tools.equippedTool.TryIntercept(hit));
-    }
-
-
     #region Utility
-
-
 
     private void UpdateComboWindow()
     {

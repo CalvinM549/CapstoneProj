@@ -1,31 +1,32 @@
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
-
-
-    public List<Structure> structure;
-    private Structure activeStructure;
+    public List<HealthSegment> healthSegments;
+    public HealthSegment activeSegment;
 
     [SerializeField] private HealthData data;
 
     [SerializeField] private PlayerCombat combat;
+    [SerializeField] private PlayerTools tools;
     [SerializeField] private PlayerMovement movement;
     [SerializeField] private PlayerMomentum momentum;
+    [SerializeField] private PlayerAnimator animator;
 
     private Material baseMaterial;
     [SerializeField] private Material damageMaterial;
 
-    private SpriteRenderer sr;
+    [SerializeField] private SpriteRenderer sr;
 
     public bool IsAlive { get; set; }
     public bool IsIframe => isIframe;
     public bool IsHitstunned { get; private set; }
 
-    [SerializeField] private bool isIframe = false;
+    private bool isIframe = false;
 
 
     private int currentHealth;
@@ -37,7 +38,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void Awake()
     {
-        sr = GetComponentInChildren<SpriteRenderer>();
+
         IsAlive = true;
 
         baseMaterial = sr.material;
@@ -69,12 +70,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         if (!IsAlive) return;
         if (IsIframe) return;
-
-        if (combat.HandlePlayerHit(hit))
-        {
-            Debug.Log("Hit Interrupted!");
-            return;
-        }
+        if (tools.TryInterruptWithTool(hit)) return;
 
         ApplyKnockback(hit);
         ApplyHitStun(hit);
@@ -125,7 +121,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         if (iFrameRoutine != null)
             StopCoroutine(iFrameRoutine);
 
-        // Fire event
+        // Fire event?
 
         iFrameRoutine = StartCoroutine(IFrameRoutine(duration));
     }

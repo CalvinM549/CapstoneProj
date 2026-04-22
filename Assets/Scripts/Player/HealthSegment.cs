@@ -32,7 +32,7 @@ public class HealthSegment
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
     }
 
-    public void Restore()
+    public void RestoreSegment()
     {
         IsDestroyed = false;
         currentHealth = maxHealth;

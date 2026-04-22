@@ -19,6 +19,7 @@ public class PlayerMomentum : MonoBehaviour
     private float drainMultiplier = 1.0f;
 
     private float momentumTimer;
+    private bool passiveDrainActive = false;
 
     public float CurrentMomentum => currentMomentum;
     public float PercentMomentum => currentMomentum / data.capacity;
@@ -44,7 +45,7 @@ public class PlayerMomentum : MonoBehaviour
 
     private void Update()
     {
-        UpdateMomentumDrain();
+        UpdatePassiveDrain();
     }
 
     public void AddMomentum(float amount)
@@ -53,6 +54,12 @@ public class PlayerMomentum : MonoBehaviour
 
         currentMomentum = Mathf.Clamp(currentMomentum + (amount * gainMultiplier), 0f, data.capacity);
         momentumTimer = data.timeUntilDrain;
+
+        if (passiveDrainActive)
+        {
+            passiveDrainActive = false;
+            // Fire Event
+        }
 
         CheckZoneTransition();
         GameEvents.MomentumChange(PercentMomentum);
@@ -89,13 +96,18 @@ public class PlayerMomentum : MonoBehaviour
 
     }
 
-    private void UpdateMomentumDrain()
+    private void UpdatePassiveDrain()
     {
         if (momentumTimer > 0)
-        {
             momentumTimer -= Time.deltaTime;
+        
+        else if (!passiveDrainActive)
+        {
+            passiveDrainActive = true;
+            // Fire Event
         }
-        else if(currentMomentum > 0)
+
+        if (passiveDrainActive && currentMomentum > 0)
         {
             currentMomentum -= data.drainSpeed * Time.deltaTime;
             GameEvents.MomentumChange(PercentMomentum);

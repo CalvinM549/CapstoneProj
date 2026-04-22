@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum AttackType
@@ -41,4 +42,21 @@ public class HitData
     public float hitstunTime;
 
     public float hitstopTime;
+}
+
+[Serializable]
+public class AttackInfo
+{
+    public AttackType type;
+
+    public int damage;
+    public float startupTime;
+    public float activeTime;
+    public float recoveryTime;
+
+    public float dashForce;
+
+    public float hitstopDuration;
+    public float knockback;
+    public float hitstunTime;
 }

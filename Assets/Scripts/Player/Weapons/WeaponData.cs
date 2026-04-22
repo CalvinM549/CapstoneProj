@@ -22,19 +22,4 @@ public class WeaponData : ScriptableObject
     public float dashExtraWindow;
 }
 
-[Serializable]
-public class AttackInfo
-{
-    public AttackType type;
 
-    public int damage;
-    public float startupTime;
-    public float activeTime;
-    public float recoveryTime;
-
-    public float dashForce;
-
-    public float hitstopDuration;
-    public float knockback;
-    public float hitstunTime;
-}

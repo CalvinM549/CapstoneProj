@@ -66,6 +66,12 @@ public class PlayerTools : MonoBehaviour
             Debug.Log($"{equippedTool.ToolName} used!");
     }
 
+    public bool TryInterruptWithTool(HitData hit)
+    {
+        if (!ToolEquipped) return false;
+        return equippedTool.TryIntercept(hit);
+    }
+
     #region Utlities
 
     public Vector2 GetMouseDirection()

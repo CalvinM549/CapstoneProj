@@ -83,7 +83,7 @@ public class PlayerMovement : MonoBehaviour
             ApplyMovement();
     }
 
-    #region BaseMovement
+    #region Base Movement
 
     private void OnPlayerMove(InputAction.CallbackContext ctx)
     {
@@ -146,7 +146,7 @@ public class PlayerMovement : MonoBehaviour
 
     #endregion
 
-    #region DashFunctions
+    #region Dash Functions
 
     private void StartDash()
     {
@@ -177,16 +177,15 @@ public class PlayerMovement : MonoBehaviour
         StartDashRecharge();
     }
 
-    private bool TryCancelDash()
+    private void CancelDash()
     {
-        if (!isDashing) return false;
+        if (!isDashing) return;
         if(currentDashRoutine != null)
             StopCoroutine(currentDashRoutine);
 
         rb.linearVelocity *= data.dashExitMultiplier;
         GameEvents.PlayerDashEnd();
         isDashing = false;
-        return true;
     }
 
     private void StartDashRecharge()
@@ -230,7 +229,7 @@ public class PlayerMovement : MonoBehaviour
         if (force <= 0) return;
         if (direction.normalized.magnitude < 0.01f) return;
 
-        TryCancelDash();
+        CancelDash();
 
         if (currentPushRoutine != null)
         {
