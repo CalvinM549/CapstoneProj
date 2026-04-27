@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9d7e6a30aacc6f443a4d9e2d3137fb59
+guid: 712e32158bffd634d9a822c8b7779d48
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4401468539657488273
-    second: Hopper_2_0
+      213: 1995372159788988231
+    second: Random_Tower_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -49,7 +49,7 @@ TextureImporter:
   spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 0
+  alignment: 7
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Hopper_2_0
+      name: Random_Tower_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 15
-        height: 24
+        width: 30
+        height: 41
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f6878a3eea7dae2c0800000000000000
-      internalID: -4401468539657488273
+      spriteID: 7473dea486cf0bb10800000000000000
+      internalID: 1995372159788988231
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Hopper_2_0: -4401468539657488273
+      Random_Tower_0: 1995372159788988231
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -7,7 +7,6 @@ public class MomentumData : ScriptableObject
     public float timeUntilDrain;
     public float drainSpeed;
 
-
     public float emptyThreshold;
     public float lowThreshold;
     public float highThreshold;

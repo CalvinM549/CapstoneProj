@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class Sentry : EnemyBase, IProjectileEmitter
 {
+
+    [SerializeField] private Transform[] patrolPoints;
+    private int currentPoint = 0;
+
     private Transform playerTransform;
 
     [SerializeField] private int burstCount = 3;
@@ -52,6 +56,7 @@ public class Sentry : EnemyBase, IProjectileEmitter
     protected override void Update()
     {
         HandleCooldown();
+        UpdateMovement();
 
         base.Update();
 
@@ -73,8 +78,34 @@ public class Sentry : EnemyBase, IProjectileEmitter
     {
         if(attackCooldownTimer > 0f)
             attackCooldownTimer -= Time.deltaTime;
+    }
 
+    private void UpdateMovement()
+    {
+        if (isFiring)
+        {
+            animator.SetBool("IsWalking", false);
+            return;
+        }
 
+        animator.SetBool("IsWalking", true);
+
+        Vector3 targetPoint = patrolPoints[currentPoint].transform.position;
+
+        Vector2 direction = transform.position - targetPoint;
+        if (direction.x > 0 && isFacingRight)
+            FlipFacing();
+        else if(direction.x < 0 && !isFacingRight)
+            FlipFacing();
+
+            transform.position = Vector2.MoveTowards(transform.position, targetPoint, (data.moveSpeed * Time.deltaTime));
+        if (transform.position == targetPoint)
+        {
+            if (currentPoint >= patrolPoints.Length - 1)
+                currentPoint = 0;
+            else
+                currentPoint++;
+        }
     }
 
     private void DoBurst()
@@ -88,13 +119,14 @@ public class Sentry : EnemyBase, IProjectileEmitter
     {
         isFiring = true;
 
+        animator.Play("FireReady");
         // Windup
 
         sr.sprite = fireSprite;
 
         Instantiate(windupEffect, firePoint);
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.5f);
 
         // Firing
 
@@ -117,9 +149,15 @@ public class Sentry : EnemyBase, IProjectileEmitter
         }
 
         attackCooldownTimer = attackCooldown;
-        isFiring = false;
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.2f);
+
+        animator.Play("ReturnFromFire");
+
+        yield return new WaitForSeconds(1.5f);
+
+
+        isFiring = false;
 
         sr.sprite = baseSprite;
     }

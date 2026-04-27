@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyBase : MonoBehaviour, IDamageable
 {
     [Header("Stats")]
-    [SerializeField] private EnemyData data;
+    [SerializeField] protected EnemyData data;
 
     protected float currentHealth;
     public float PercentHealth => currentHealth / data.maxHealth;
@@ -13,6 +13,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
     public event Action<float, float, HitData> OnHit;
 
     [SerializeField] protected SpriteRenderer sr;
+    [SerializeField] protected Animator animator;
     protected bool isFacingRight = true;
 
     private Material baseMaterial;
@@ -108,12 +109,12 @@ public class EnemyBase : MonoBehaviour, IDamageable
         if(damageParticles != null)
             Instantiate(damageParticles, transform.position, Quaternion.identity);
 
-        sr.sprite = damageSprite;
+        animator.Play("Hit");
+
         sr.material = damageMaterial;
 
         yield return new WaitForSeconds(duration);
 
-        sr.sprite = baseSprite;
         sr.material = baseMaterial;
     }
 

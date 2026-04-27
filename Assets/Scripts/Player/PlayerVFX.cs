@@ -6,15 +6,14 @@ public class PlayerVFX : MonoBehaviour
     [SerializeField] private PlayerMovement movement;
     [SerializeField] private PlayerAnimator animator;
 
+    [SerializeField] private SpriteRenderer sr;
+
     private ObjectPool<FadingSprite> afterImagePool;
     [SerializeField] private FadingSprite afterImagePrefab;
     [SerializeField] private Transform vfxContainer;
 
-    private SpriteRenderer sr;
-
     private void Awake()
     {
-        sr = GetComponentInChildren<SpriteRenderer>();
 
         afterImagePool = new ObjectPool<FadingSprite>(afterImagePrefab, 5, vfxContainer);
     }
@@ -29,8 +28,8 @@ public class PlayerVFX : MonoBehaviour
         while (movement.IsDashing)
         {
             var afterImage = afterImagePool.Get();
-            afterImage.transform.position = transform.position;
-            afterImage.Initialize(animator.currentSprite, afterImagePool, sr.flipX);
+            afterImage.transform.position = sr.transform.position;
+            afterImage.Initialize(animator.currentSprite, afterImagePool, animator.IsFacingRight);
 
             yield return new WaitForSeconds(0.05f);
         }
