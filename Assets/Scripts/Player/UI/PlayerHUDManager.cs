@@ -33,19 +33,19 @@ public class PlayerHUDManager : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEvents.OnPlayerHealthChange += HandlePlayerHealthChange;
+        //GameEvents.OnPlayerHealthChange += HandlePlayerHealthChange;
         GameEvents.OnDashChargeChange += HandleDashChargeChange;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnPlayerHealthChange -= HandlePlayerHealthChange;
+        //GameEvents.OnPlayerHealthChange -= HandlePlayerHealthChange;
         GameEvents.OnDashChargeChange -= HandleDashChargeChange;
     }
 
     private void Start()
     {
-        Initialize(8, 2);
+        //Initialize(8, 2);
     }
 
     public void Initialize(int maxHealth, int maxDashes)

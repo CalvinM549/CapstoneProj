@@ -58,7 +58,7 @@ public class PlayerMomentum : MonoBehaviour
         if (passiveDrainActive)
         {
             passiveDrainActive = false;
-            // Fire Event
+            GameEvents.PassiveDrainEnd();
         }
 
         CheckZoneTransition();
@@ -70,6 +70,12 @@ public class PlayerMomentum : MonoBehaviour
         if (amount <= 0) return;
 
         currentMomentum = Mathf.Clamp(currentMomentum - (amount * drainMultiplier), 0f, data.capacity);
+
+        if (!passiveDrainActive)
+        {
+            passiveDrainActive = true;
+            GameEvents.PassiveDrainStart();
+        }
 
         CheckZoneTransition();
         GameEvents.MomentumChange(PercentMomentum);
@@ -104,6 +110,7 @@ public class PlayerMomentum : MonoBehaviour
         else if (!passiveDrainActive)
         {
             passiveDrainActive = true;
+            GameEvents.PassiveDrainStart();
             // Fire Event
         }
 

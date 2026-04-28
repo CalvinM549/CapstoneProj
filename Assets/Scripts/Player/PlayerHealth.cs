@@ -7,7 +7,9 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
     public List<HealthSegment> healthSegments;
-    public HealthSegment activeSegment;
+    private int activeHealthIndex;
+
+    public HealthSegment activeSegment => healthSegments[activeHealthIndex];
 
     [SerializeField] private HealthData data;
 
@@ -38,22 +40,16 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void Awake()
     {
-
         IsAlive = true;
 
         baseMaterial = sr.material;
+
+        InitializeSegments();
     }
 
     private void Start()
     {
-
-        currentHealth = data.maxHealth;
-
-        for (int i = 0; i < data.integrityBaseCount; i++)
-        {
-            // Populate integrity lists
-        }
-
+        //currentHealth = data.maxHealth;
     }
 
     private void OnEnable()
@@ -64,6 +60,20 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private void OnDisable()
     {
         
+    }
+
+    private void InitializeSegments()
+    {
+        healthSegments.Clear();
+
+        for (int i = 0; i < data.segmentBaseCount; i++)
+        {
+            healthSegments.Add(new HealthSegment(data.segmentMaxHealth));
+        }
+
+        activeHealthIndex = healthSegments.Count - 1;
+
+        GameEvents.PlayerHealthChanged(healthSegments);
     }
 
     public void RecieveHit(HitData hit)
@@ -81,27 +91,33 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         GameEvents.PlayerHit(hit);
 
-        //float bleedThrough = hit.momentumCanBlock ? momentum.DrainAsBuffer(hit.momentumCost) : 1f;
+        HealthSegment segment = activeSegment;
 
-        //if (bleedThrough <= 0)
+        float overflow = segment.ReduceHealth(hit.damage);
+
+        if (segment.IsDestroyed)
+        {
+            activeHealthIndex--;
+            if (activeHealthIndex >= healthSegments.Count - 1 || activeHealthIndex == -1)
+            {
+                PlayerDeath();
+                return;
+            }
+
+        }
+
+        GameEvents.PlayerHealthChanged(healthSegments);
+
+
+        //currentHealth = Mathf.Max(0, currentHealth - hit.damage);
+
+        //GameEvents.PlayerHealthChanged(currentHealth, data.maxHealth);
+
+        //if (currentHealth <= 0)
         //{
-        //    GrantIFrames(data.hitIFrameDuration * 0.5f);
+        //    PlayerDeath();
         //    return;
         //}
-
-        //float finalDamage = hit.damage * bleedThrough;
-
-
-        
-        currentHealth = Mathf.Max(0, currentHealth - hit.damage);
-
-        GameEvents.PlayerHealthChanged(currentHealth, data.maxHealth);
-
-        if (currentHealth <= 0)
-        {
-            PlayerDeath();
-            return;
-        }
 
         GrantIFrames(data.hitIFrameDuration);
     }

@@ -4,6 +4,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    [SerializeField] private GameObject player;
+    [SerializeField] private Canvas deathCanvas;
+
     public GameState CurrentState => currentState;
     private GameState currentState;
 
@@ -22,13 +25,25 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
-
+        GameEvents.OnPlayerDeath += HandlePlayerDeath;
     }
 
     private void OnDisable()
     {
+        GameEvents.OnPlayerDeath -= HandlePlayerDeath;
+    }
+
+    private void HandleEscPressed()
+    {
 
     }
+
+    private void HandlePlayerDeath()
+    {
+        player.SetActive(false);
+        deathCanvas.gameObject.SetActive(true);
+    }
+
 
     public void PauseGame()
     {

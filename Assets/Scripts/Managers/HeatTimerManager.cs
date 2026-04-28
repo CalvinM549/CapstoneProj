@@ -36,7 +36,8 @@ public class HeatTimerManager : MonoBehaviour
     {
         UpdateTimer();
 
-        image.fillAmount = Normalized;
+        if(image != null)
+            image.fillAmount = Normalized;
     }
 
     void UpdateTimer()

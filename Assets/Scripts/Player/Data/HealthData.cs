@@ -8,8 +8,6 @@ public class HealthData : ScriptableObject
 
     public float hitIFrameDuration;
 
-    public int integrityBaseCount;
-    public int integrityBaseHealth;
-
-    public float integrityBreakIFrameDuration;
+    public int segmentBaseCount;
+    public int segmentMaxHealth;
 }

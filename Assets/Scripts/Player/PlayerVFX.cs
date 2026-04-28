@@ -12,10 +12,25 @@ public class PlayerVFX : MonoBehaviour
     [SerializeField] private FadingSprite afterImagePrefab;
     [SerializeField] private Transform vfxContainer;
 
+    [SerializeField] private ParticleSystem steamParticles;
+
     private void Awake()
     {
 
         afterImagePool = new ObjectPool<FadingSprite>(afterImagePrefab, 5, vfxContainer);
+        StopSteamParticles();
+    }
+
+    private void OnEnable()
+    {
+        GameEvents.OnPassiveDrainStart += StartSteamParticles;
+        GameEvents.OnPassiveDrainEnd += StopSteamParticles;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnPassiveDrainStart -= StartSteamParticles;
+        GameEvents.OnPassiveDrainEnd -= StopSteamParticles;
     }
 
     public void PlayDashTrail()
@@ -33,6 +48,18 @@ public class PlayerVFX : MonoBehaviour
 
             yield return new WaitForSeconds(0.05f);
         }
+    }
+
+    private void StartSteamParticles()
+    {
+        if(!steamParticles.isPlaying)
+            steamParticles.Play();
+    }
+
+    private void StopSteamParticles()
+    {
+        if(steamParticles.isPlaying)
+            steamParticles.Stop();
     }
 
 }
