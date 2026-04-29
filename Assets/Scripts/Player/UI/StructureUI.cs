@@ -71,6 +71,7 @@ public class StructureUI : MonoBehaviour
 
     private void BuildSegments(IReadOnlyList<HealthSegment> segments)
     {
+
         uiSegments.Clear();
         foreach (var segment in segments)
         {

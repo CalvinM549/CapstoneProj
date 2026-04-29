@@ -34,13 +34,13 @@ public class PlayerHUDManager : MonoBehaviour
     private void OnEnable()
     {
         //GameEvents.OnPlayerHealthChange += HandlePlayerHealthChange;
-        GameEvents.OnDashChargeChange += HandleDashChargeChange;
+        //GameEvents.OnDashChargeChange += HandleDashChargeChange;
     }
 
     private void OnDisable()
     {
         //GameEvents.OnPlayerHealthChange -= HandlePlayerHealthChange;
-        GameEvents.OnDashChargeChange -= HandleDashChargeChange;
+        //GameEvents.OnDashChargeChange -= HandleDashChargeChange;
     }
 
     private void Start()

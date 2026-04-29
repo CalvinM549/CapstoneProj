@@ -59,11 +59,9 @@ public static class GameEvents
     public static event Action OnPlayerDashEnd;
     public static event Action<List<HealthSegment>> OnPlayerHealthChanged;
     //public static event Action<int, int> OnPlayerHealthChange;
-    public static event Action<int, int, float[], float> OnDashChargeChange;
+    public static event Action<float[]> OnDashChargeChange;
 
-    public static void DashChargeChange(int currentCharges, int maxCharges,
-                                        float[] rechargeTimers, float rechargeTime)
-        => OnDashChargeChange?.Invoke(currentCharges, maxCharges, rechargeTimers, rechargeTime);
+    public static void DashChargeChange(float[] rechargeStates) => OnDashChargeChange?.Invoke(rechargeStates);
     public static void PlayerHit(HitData hit) => OnPlayerHit?.Invoke(hit);
     public static void PlayerHealthChanged(List<HealthSegment> newHealth) => OnPlayerHealthChanged?.Invoke(newHealth);
     //public static void PlayerHealthChanged(int currentHealth, int maxHealth) => OnPlayerHealthChange?.Invoke(currentHealth, maxHealth);

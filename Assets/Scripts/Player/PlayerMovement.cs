@@ -69,12 +69,13 @@ public class PlayerMovement : MonoBehaviour
     {
         currentDashCharges = data.maxDashCharges;
         dashRechargeTimers = new float[data.maxDashCharges];
+        
     }
 
     private void Update()
     {
         HandleDashRecharge();
-        TryBroadcastDashState();
+        //TryBroadcastDashState();
     }
 
     private void FixedUpdate()
@@ -205,9 +206,16 @@ public class PlayerMovement : MonoBehaviour
     {
         float rechargeRate = 1.0f; // alter based on things ig
 
+        float[] dashPercentages = new float[dashRechargeTimers.Length];
+
         for (int i = 0; i < dashRechargeTimers.Length; i++)
         {
-            if (dashRechargeTimers[i] <= 0) continue;
+            if (dashRechargeTimers[i] <= 0)
+            {
+                dashPercentages[i] = 1f;
+                
+                continue;
+            }
 
             dashRechargeTimers[i] -= Time.deltaTime * rechargeRate;
 
@@ -215,9 +223,12 @@ public class PlayerMovement : MonoBehaviour
             {
                 dashRechargeTimers[i] = 0;
                 currentDashCharges = Mathf.Min(currentDashCharges + 1, data.maxDashCharges);
-                BroadcastDashState();
             }
+
+            dashPercentages[i] = Mathf.Abs((dashRechargeTimers[i] / data.dashRechargeTime) - 1);
         }
+
+        GameEvents.DashChargeChange(dashPercentages);
     }
 
     #endregion
@@ -271,31 +282,31 @@ public class PlayerMovement : MonoBehaviour
         isParrying = false;
     }
 
-    // Link dash to UI - need to redo better sometime
-    private void TryBroadcastDashState()
-    {
-        float timerSum = 0f;
-        bool anyActive = false;
-        for (int i = 0; i < dashRechargeTimers.Length; i++)
-        {
-            timerSum += dashRechargeTimers[i];
-            if (dashRechargeTimers[i] > 0) anyActive = true;
-        }
+    //Link dash to UI - need to redo better sometime
+    //private void TryBroadcastDashState()
+    //{
+    //    float timerSum = 0f;
+    //    bool anyActive = false;
+    //    for (int i = 0; i < dashRechargeTimers.Length; i++)
+    //    {
+    //        timerSum += dashRechargeTimers[i];
+    //        if (dashRechargeTimers[i] > 0) anyActive = true;
+    //    }
 
-        if (!anyActive && currentDashCharges == lastBroadcastCharges) return;
-        if (currentDashCharges == lastBroadcastCharges &&
-            Mathf.Approximately(timerSum, lastBroadcastTimerSum)) return;
+    //    if (!anyActive && currentDashCharges == lastBroadcastCharges) return;
+    //    if (currentDashCharges == lastBroadcastCharges &&
+    //        Mathf.Approximately(timerSum, lastBroadcastTimerSum)) return;
 
-        BroadcastDashState();
-        lastBroadcastTimerSum = timerSum;
-    }
+    //    BroadcastDashState();
+    //    lastBroadcastTimerSum = timerSum;
+    //}
 
-    private void BroadcastDashState()
-    {
-        lastBroadcastCharges = currentDashCharges;
-        GameEvents.DashChargeChange(currentDashCharges, data.maxDashCharges,
-                                    dashRechargeTimers, data.dashRechargeTime);
-    }
+    //private void BroadcastDashState()
+    //{
+    //    lastBroadcastCharges = currentDashCharges;
+    //    GameEvents.DashChargeChange(currentDashCharges, data.maxDashCharges,
+    //                                dashRechargeTimers, data.dashRechargeTime);
+    //}
 
     #endregion
 }

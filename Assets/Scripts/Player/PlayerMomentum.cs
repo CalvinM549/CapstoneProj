@@ -5,7 +5,8 @@ public enum MomentumZone
     Empty,
     Low,
     Mid,
-    High
+    High,
+    Full
 }
 
 public class PlayerMomentum : MonoBehaviour
@@ -53,6 +54,12 @@ public class PlayerMomentum : MonoBehaviour
         if (amount <= 0) return;
 
         currentMomentum = Mathf.Clamp(currentMomentum + (amount * gainMultiplier), 0f, data.capacity);
+
+        if (currentMomentum == data.capacity)
+        {
+            // Hit momentum cap
+        }
+
         momentumTimer = data.timeUntilDrain;
 
         if (passiveDrainActive)
@@ -117,6 +124,7 @@ public class PlayerMomentum : MonoBehaviour
         if (passiveDrainActive && currentMomentum > 0)
         {
             currentMomentum -= data.drainSpeed * Time.deltaTime;
+            CheckZoneTransition();
             GameEvents.MomentumChange(PercentMomentum);
         }
     }
@@ -173,6 +181,7 @@ public class PlayerMomentum : MonoBehaviour
     {
         MomentumZone newZone = PercentMomentum switch
         {
+            var n when n >= 1.0f => MomentumZone.Full,
             var n when n >= data.highThreshold => MomentumZone.High,
             var n when n >= data.lowThreshold => MomentumZone.Mid,
             var n when n >= data.emptyThreshold => MomentumZone.Low,
@@ -186,6 +195,7 @@ public class PlayerMomentum : MonoBehaviour
 
         switch (currentZone)
         {
+            case MomentumZone.Full: break;
             case MomentumZone.High: GameEvents.EnterHighMomentum(); break;
             case MomentumZone.Mid: GameEvents.EnterMidMomentum(); break;
             case MomentumZone.Low: GameEvents.EnterLowMomentum(); break;

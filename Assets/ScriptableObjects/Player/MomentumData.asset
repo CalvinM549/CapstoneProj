@@ -15,9 +15,9 @@ MonoBehaviour:
   capacity: 100
   timeUntilDrain: 3
   drainSpeed: 5
-  emptyThreshold: 0.15
-  lowThreshold: 0.33
-  highThreshold: 0.66
+  emptyThreshold: 0.3
+  lowThreshold: 0.01
+  highThreshold: 0.7
   lightAttackGain: 6
   heavyAttackGain: 14
   dashAttackGain: 20

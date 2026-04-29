@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class MomentumUI : MonoBehaviour
 {
     [SerializeField] private Image fillBar;
+    [SerializeField] private Image fillBar2;
     [SerializeField] private TextMeshProUGUI currentZoneLabel;
     
     
@@ -26,6 +27,7 @@ public class MomentumUI : MonoBehaviour
     {
         targetColour = emptyColour;
         if (fillBar != null) fillBar.color = targetColour;
+        if (fillBar2 != null) fillBar2.color = targetColour;
     }
 
     private void OnEnable()
@@ -54,6 +56,7 @@ public class MomentumUI : MonoBehaviour
         displayValue = Mathf.Lerp(displayValue, targetValue, speed * Time.deltaTime);
 
         fillBar.fillAmount = displayValue;
+        fillBar2.fillAmount = displayValue;
     }
 
     private void UpdateColour()
@@ -61,6 +64,7 @@ public class MomentumUI : MonoBehaviour
         if (fillBar == null) return;
 
         fillBar.color = Color.Lerp(fillBar.color, targetColour, colourLerpSpeed * Time.deltaTime);
+        fillBar2.color = Color.Lerp(fillBar.color, targetColour, colourLerpSpeed * Time.deltaTime);
     }
 
     private void HandleMomentumChanged(float normalized)
@@ -72,6 +76,7 @@ public class MomentumUI : MonoBehaviour
     {
         targetColour = to switch
         {
+            MomentumZone.Full => highColour,
             MomentumZone.High => highColour,
             MomentumZone.Mid => midColour,
             MomentumZone.Low => lowColour,
@@ -83,6 +88,7 @@ public class MomentumUI : MonoBehaviour
         {
             currentZoneLabel.text = to switch
             {
+                MomentumZone.Full => "FULL",
                 MomentumZone.High => "HIGH",
                 MomentumZone.Mid => "MID",
                 MomentumZone.Low => "LOW",
