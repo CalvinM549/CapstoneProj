@@ -35,9 +35,6 @@ public class PlayerMovement : MonoBehaviour
     private Coroutine currentDashRoutine;
     private Coroutine currentPushRoutine;
 
-    private int lastBroadcastCharges = -1;
-    private float lastBroadcastTimerSum = -1f;
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();

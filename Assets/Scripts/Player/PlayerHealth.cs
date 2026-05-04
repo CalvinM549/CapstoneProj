@@ -68,7 +68,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         for (int i = 0; i < data.segmentBaseCount; i++)
         {
-            healthSegments.Add(new HealthSegment(data.segmentMaxHealth));
+            bool isActive = i == data.segmentBaseCount - 1;
+            healthSegments.Add(new HealthSegment(data.segmentMaxHealth, isActive));
         }
 
         activeHealthIndex = healthSegments.Count - 1;
@@ -98,10 +99,16 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         if (segment.IsDestroyed)
         {
             activeHealthIndex--;
+            segment.IsActive = false;
+            
             if (activeHealthIndex >= healthSegments.Count - 1 || activeHealthIndex == -1)
             {
                 PlayerDeath();
                 return;
+            }
+            else
+            {
+                healthSegments[activeHealthIndex].IsActive = true;
             }
 
         }

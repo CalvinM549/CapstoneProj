@@ -26,7 +26,6 @@ public class DashUI : MonoBehaviour
 
     private void HandleChargeChanged(float[] newCharges)
     {
-        Debug.Log("1");
         if (newCharges.Length <= 0) return;
         if (newCharges.Length != charges.Count)
         {

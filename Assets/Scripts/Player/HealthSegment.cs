@@ -8,13 +8,16 @@ public class HealthSegment
     public float currentHealth;
 
     public bool IsDestroyed = false;
+    public bool IsActive = false;
+
     public float PercentHealth => maxHealth > 0 ? (currentHealth / maxHealth) : 0f;
 
-    public HealthSegment(float maxHealth)
+    public HealthSegment(float maxHealth, bool isActive)
     {
         this.maxHealth = maxHealth;
         currentHealth = maxHealth;
         IsDestroyed = false;
+        IsActive = isActive;
     }
 
     public float ReduceHealth(float amount)

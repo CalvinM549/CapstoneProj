@@ -1,19 +1,19 @@
 fileFormatVersion: 2
-guid: fe42491439a7d5f4ba8927ebd1ff889f
+guid: b334c92dd946c684793914ad659bac48
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3815041584750038532
-    second: black-and-yellow-caution-stripes-tape-seamless-pattern-texture-background-vector_0
+      213: -1169658723591062551
+    second: Walker_normals_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 0
-    sRGBTexture: 1
+    enableMipMap: 1
+    sRGBTexture: 0
     linearTexture: 0
     fadeOut: 0
-    borderMipMap: 0
+    borderMipMap: 1
     mipMapsPreserveCoverage: 0
     alphaTestReferenceValue: 0.5
     mipMapFadeDistanceStart: 1
@@ -46,18 +46,18 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 16
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 1
+  alphaIsTransparency: 0
   spriteTessellationDetail: -1
-  textureType: 8
+  textureType: 1
   textureShape: 1
   singleChannelComponent: 0
   flipbookRows: 1
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: black-and-yellow-caution-stripes-tape-seamless-pattern-texture-background-vector_0
+      name: Walker_normals_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1920
-        height: 480
+        x: 10
+        y: 10
+        width: 30
+        height: 36
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cf171a144ef3e0bc0800000000000000
-      internalID: -3815041584750038532
+      spriteID: 9ebfae7869984cfe0800000000000000
+      internalID: -1169658723591062551
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      black-and-yellow-caution-stripes-tape-seamless-pattern-texture-background-vector_0: -3815041584750038532
+      Walker_normals_0: -1169658723591062551
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
