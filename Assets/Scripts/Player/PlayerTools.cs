@@ -5,14 +5,18 @@ public class PlayerTools : MonoBehaviour
 {
     private InputSystem_Actions inputActions;
 
+    private Player p;
+
     public bool ToolEquipped => equippedTool != null;
     public PlayerTool equippedTool;
 
     private void Awake()
     {
+        p = GetComponent<Player>();
         inputActions = InputManager.Instance.inputActions;
+
         if (equippedTool != null)
-            equippedTool.OnEquip(this.transform);
+            equippedTool.OnEquip(p);
     }
 
     private void OnEnable()
@@ -44,15 +48,13 @@ public class PlayerTools : MonoBehaviour
 
         UnequipCurrentTool();
         equippedTool = tool;
-        equippedTool.OnEquip(transform);
-        // Fire Event
+        equippedTool.OnEquip(p);
     }
 
     public void UnequipCurrentTool()
     {
         if (equippedTool != null)
         {
-            // Fire Event
             equippedTool.OnUnequip();
             equippedTool = null;
         }
@@ -62,11 +64,11 @@ public class PlayerTools : MonoBehaviour
     {
         if (!ToolEquipped) return;
 
-        if (equippedTool.UseTool(GetMouseDirection()))
+        if (equippedTool.UseTool(p.GetMouseDirection()))
             Debug.Log($"{equippedTool.ToolName} used!");
     }
 
-    public bool TryInterruptWithTool(HitData hit)
+    public bool TryInterceptWithTool(HitData hit)
     {
         if (!ToolEquipped) return false;
         return equippedTool.TryIntercept(hit);
@@ -74,13 +76,6 @@ public class PlayerTools : MonoBehaviour
 
     #region Utlities
 
-    public Vector2 GetMouseDirection()
-    {
-        Vector3 mousePos = InputManager.Instance.inputActions.Player.PointerPosition.ReadValue<Vector2>();
-        Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousePos);
-        Vector3 direction = (mousePosWorld - transform.position).normalized;
-        return direction;
-    }
 
     #endregion
 }

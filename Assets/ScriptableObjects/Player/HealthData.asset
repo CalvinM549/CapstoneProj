@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HealthData
   maxHealth: 6
   hitIFrameDuration: 0.2
-  segmentBaseCount: 3
-  segmentMaxHealth: 10
+  segmentBaseCount: 5
+  segmentMaxHealth: 8

@@ -3,10 +3,7 @@ using UnityEngine;
 
 public class PlayerVFX : MonoBehaviour
 {
-    [SerializeField] private PlayerMovement movement;
-    [SerializeField] private PlayerAnimator animator;
-
-    [SerializeField] private SpriteRenderer sr;
+    private Player p;
 
     private ObjectPool<FadingSprite> afterImagePool;
     [SerializeField] private FadingSprite afterImagePrefab;
@@ -16,6 +13,7 @@ public class PlayerVFX : MonoBehaviour
 
     private void Awake()
     {
+        p = GetComponent<Player>();
 
         afterImagePool = new ObjectPool<FadingSprite>(afterImagePrefab, 5, vfxContainer);
         StopSteamParticles();
@@ -33,6 +31,8 @@ public class PlayerVFX : MonoBehaviour
         GameEvents.OnPassiveDrainEnd -= StopSteamParticles;
     }
 
+    #region Dash Trail
+
     public void PlayDashTrail()
     {
         StartCoroutine(DashTrailRoutine());
@@ -40,15 +40,19 @@ public class PlayerVFX : MonoBehaviour
 
     private IEnumerator DashTrailRoutine()
     {
-        while (movement.IsDashing)
+        while (p.Movement.IsDashing)
         {
             var afterImage = afterImagePool.Get();
-            afterImage.transform.position = sr.transform.position;
-            afterImage.Initialize(animator.currentSprite, afterImagePool, animator.IsFacingRight);
+            afterImage.transform.position = p.Animator.spritePos;
+            afterImage.Initialize(p.Animator.currentSprite, afterImagePool, p.Animator.IsFacingRight);
 
             yield return new WaitForSeconds(0.05f);
         }
     }
+
+    #endregion
+
+    #region Steam Emission
 
     private void StartSteamParticles()
     {
@@ -61,5 +65,7 @@ public class PlayerVFX : MonoBehaviour
         if(steamParticles.isPlaying)
             steamParticles.Stop();
     }
+
+    #endregion
 
 }

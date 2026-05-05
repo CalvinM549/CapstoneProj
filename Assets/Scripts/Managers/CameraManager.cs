@@ -1,12 +1,16 @@
+using System;
 using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
+    // Make Instance?
+
     [SerializeField] private CinemachineCamera defaultCamera;
 
     private CinemachineBrain brain;
+    private Transform player;
 
     [SerializeField] private BoxCollider2D roomBounds;
     
@@ -25,6 +29,8 @@ public class CameraManager : MonoBehaviour
     {
         brain = GetComponent<CinemachineBrain>();
         impulseSource = GetComponent<CinemachineImpulseSource>();
+
+        player = GameObject.FindWithTag("Player").transform;
     }
 
     private void OnEnable()
@@ -58,6 +64,8 @@ public class CameraManager : MonoBehaviour
 
     #endregion
 
+    #region CameraShake
+
     private void CameraShake(float magnitude, float duration = 0.2f)
     {
         if (impulseSource == null) return;
@@ -67,10 +75,10 @@ public class CameraManager : MonoBehaviour
         impulseSource.GenerateImpulse(magnitude);
     }
 
-    private void ReturnToDefault()
-    {
-        SetCamera(defaultCamera);
-    }
+    #endregion
+    #region Camera View Changing
+
+
 
     private void SetCamera(CinemachineCamera camera)
     {
@@ -81,11 +89,27 @@ public class CameraManager : MonoBehaviour
         currentCamera.Priority = 10;
     }
 
-    private IEnumerator CameraMoveEnd()
+    private void ReturnToDefault()
     {
-        yield return new WaitUntil(() => !brain.IsBlending);
-        // Send Event
+        SetCamera(defaultCamera);
+        SetTarget(player);
     }
 
+    private void SetTarget(Transform target, Action triggeredEvent = null)
+    {
+        currentCamera.Follow = target;
+
+        if (triggeredEvent != null)
+            CameraMoveEnd(triggeredEvent);
+    }
+
+
+    private IEnumerator CameraMoveEnd(Action triggeredEvent)
+    {
+        yield return new WaitUntil(() => !brain.IsBlending);
+        triggeredEvent?.Invoke();
+    }
+
+    #endregion
 
 }

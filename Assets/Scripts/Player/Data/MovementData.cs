@@ -5,6 +5,7 @@ public class MovementData : ScriptableObject
 {
     [Header("Base Movement")]
     public float baseSpeed;
+    public float maxSpeed;
     public float acceleration;
     public float deceleration;
     public float turnMultiplier;

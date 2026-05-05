@@ -26,6 +26,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
     private Coroutine hitFXRoutine;
 
     public bool IsAlive { get; set; }
+    public bool IsIFrame = false;
 
     private Rigidbody2D rb;
 
@@ -39,31 +40,20 @@ public class EnemyBase : MonoBehaviour, IDamageable
         baseMaterial = sr.material;
     }
 
-    protected virtual void OnEnable()
-    {
-
-    }
-
-    protected virtual void OnDisable()
-    {
-
-    }
-
-    protected virtual void Update()
-    {
-        
-    }
+    protected virtual void OnEnable() { }
+    protected virtual void OnDisable() { }
+    protected virtual void Update() { }
 
     public void RecieveHit(HitData hit)
     {
         if (!IsAlive) return;
+        if (IsIFrame) return;
         if (!hit.isPlayerAttack) return;
 
         ApplyDamage(hit);
         ApplyKnockback(hit.knockbackDirection, hit.knockbackForce);
 
         OnHit?.Invoke(currentHealth, data.maxHealth, hit);
-        
         GameEvents.EnemyHit(this, hit);
 
         if (IsAlive)
@@ -88,15 +78,18 @@ public class EnemyBase : MonoBehaviour, IDamageable
         rb.linearVelocity = (direction * force * data.knockbackMultiplier);
     }
 
-    private void Die()
+    protected virtual void Die()
     {
         Debug.Log("Enemy Killed");
+        IsAlive = false;
+        StopAllCoroutines();
         gameObject.SetActive(false);
-        currentHealth = data.maxHealth;
     }
 
     private IEnumerator HitFXRoutine(float duration)
     {
+        IsIFrame = true;
+
         if (rb.linearVelocity.x > 0 && isFacingRight)
         {
             FlipFacing();
@@ -116,6 +109,8 @@ public class EnemyBase : MonoBehaviour, IDamageable
         yield return new WaitForSeconds(duration);
 
         sr.material = baseMaterial;
+
+        IsIFrame = false;
     }
 
 

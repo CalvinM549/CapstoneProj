@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SentryData
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   enemyName: Sentry
-  maxHealth: 30
+  maxHealth: 15
   staggerThreshold: 100
   knockbackMultiplier: 2
   moveSpeed: 2

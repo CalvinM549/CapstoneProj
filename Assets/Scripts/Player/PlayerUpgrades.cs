@@ -1,16 +1,21 @@
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerUpgrades : MonoBehaviour
 {
-    public List<Upgrade> upgrades;
+    private Player p;
+
 
     public Dictionary<UpgradeSlot, Upgrade> slottedUpgrades;
+    public Dictionary<Upgrade, int> unslottedUpgrades;
+
+    public IEnumerable<Upgrade> ActiveUpgrades => slottedUpgrades.Values.Concat(unslottedUpgrades.Keys);
 
     private void Awake()
     {
-        
+        p = GetComponent<Player>();
     }
 
     private void OnEnable()
@@ -23,32 +28,41 @@ public class PlayerUpgrades : MonoBehaviour
 
     }
 
-    private void GrantUpgrade(string upgrade)
+    public bool TryGrantUpgrade(Upgrade upgrade)
     {
-        // Find upgrade as Upgrade type throguh database prolly
-
-        // GrantUpgrade(finalUpgrade)
+        return upgrade.slot == UpgradeSlot.None 
+            ? TryGrantSlotted(upgrade) 
+            : TryGrantAux(upgrade);
     }
 
-    private void GrantUpgrade(Upgrade upgrade)
+    private bool TryGrantSlotted(Upgrade upgrade)
     {
-        if (upgrade.slot != UpgradeSlot.None)
+        if (slottedUpgrades.TryGetValue(upgrade.slot, out var existing))
         {
-            if (slottedUpgrades[upgrade.slot] != null)
-                RemoveUpgrade(slottedUpgrades[upgrade.slot]);
-
-            slottedUpgrades[upgrade.slot] = upgrade;
+            existing.RemoveUpgrade();
+            // Ping event
         }
 
+        slottedUpgrades[upgrade.slot] = upgrade;
         upgrade.ApplyUpgrade();
-        upgrades.Add(upgrade);
+
+        //Ping Event
+        return true;
     }
 
-    private void RemoveUpgrade(Upgrade upgrade)
+    private bool TryGrantAux(Upgrade upgrade)
     {
-        if (!upgrades.Contains(upgrade)) return;
+        int current = unslottedUpgrades.TryGetValue(upgrade, out int c) ? c : 0;
 
-        upgrade.RemoveUpgrade();
-        upgrades.Remove(upgrade);
+        if (current >= upgrade.maxStacks)
+        {
+            return false;
+        }
+
+        unslottedUpgrades[upgrade] = current + 1;
+        upgrade.ApplyUpgrade();
+
+        // Ping Event
+        return true;
     }
 }

@@ -8,12 +8,22 @@ public enum UpgradeSlot
     None
 }
 
-public abstract class Upgrade : ScriptableObject
+public class Upgrade : ScriptableObject
 {
-    public UpgradeSlot slot;
+    [Header("Display")]
     public string upgradeName;
-    [TextArea] public string description;
+    [TextArea] public string flavourText;
+    [TextArea] public string effectText;
 
-    public abstract void ApplyUpgrade();
-    public abstract void RemoveUpgrade();
+    public Sprite icon;
+    // Rarity?
+
+    public UpgradeSlot slot;
+
+    public int maxStacks;
+
+    // Upgrade effects
+
+    public void ApplyUpgrade() { }
+    public void RemoveUpgrade() { }
 }

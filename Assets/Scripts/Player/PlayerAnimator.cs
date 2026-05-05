@@ -3,27 +3,41 @@ using UnityEngine;
 
 public class PlayerAnimator : MonoBehaviour
 {
+    private Player p;
 
-    [SerializeField] private PlayerMovement movement;
-    [SerializeField] private SpriteRenderer sr;
+    [SerializeField] 
+    private SpriteRenderer sr;
+    private Animator animator;
+    private Rigidbody2D rb;
 
+    private Coroutine hitRoutine = null;
+
+
+    public Vector2 spritePos => sr.transform.position;
     public Sprite currentSprite => sr.sprite;
+    public bool IsFacingRight { get; private set; }
 
+    [Header("Config")]
     private Sprite baseSprite;
+
+    [SerializeField] private Sprite idleSprite;
+    [SerializeField] private Sprite moveSprite;
+    [SerializeField] private Sprite decelSprite;
     [SerializeField] private Sprite dashSprite;
     [SerializeField] private Sprite parrySprite;
 
-    public bool IsFacingRight {  get; private set; }
+    private Material baseMaterial;
+    [SerializeField] private Material hitMaterial;
 
-    private Animator animator;
-    
-    private Rigidbody2D rb;
+
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        p = GetComponent<Player>();
 
         baseSprite = sr.sprite;
+        baseMaterial = sr.material;
     }
 
     private void OnEnable()
@@ -31,6 +45,8 @@ public class PlayerAnimator : MonoBehaviour
         GameEvents.OnPlayerDashStart += HandleDashAnimation;
         GameEvents.OnPlayerParryStart += HandleParryAnimation;
         GameEvents.OnPlayerParryEnd += HandleParryEnd;
+
+        GameEvents.OnPlayerHit += HandleHit;
     }
 
     private void OnDisable()
@@ -38,25 +54,46 @@ public class PlayerAnimator : MonoBehaviour
         GameEvents.OnPlayerDashStart -= HandleDashAnimation;
         GameEvents.OnPlayerParryStart -= HandleParryAnimation;
         GameEvents.OnPlayerParryEnd -= HandleParryEnd;
+
+        GameEvents.OnPlayerHit -= HandleHit;
     }
 
     private void Update()
     {
-        HandleMovementAnimation();
+        HandleAutoFlip();
+        HandleMovementSprite();
     }
 
-    private void HandleMovementAnimation()
+    private void HandleAutoFlip()
     {
-        if (rb.linearVelocity.magnitude > 0.1f)
+        if (p.Health.IsHitstunned) return;
+
+        if (p.Movement.IsMoving)
         {
-            if (rb.linearVelocity.x > 0 && !IsFacingRight)
+            if (rb.linearVelocity.x > 0 && IsFacingRight)
             {
                 FlipFacing();
             }
-            else if(rb.linearVelocity.x < 0 && IsFacingRight)
+            else if(rb.linearVelocity.x < 0 && !IsFacingRight)
             {
                 FlipFacing();
             }
+        }
+    }
+
+    private void HandleMovementSprite()
+    {
+        if (p.Movement.IsMoving)
+        {
+            if (p.Movement.MoveInputting)
+                sr.sprite = moveSprite;
+
+            else
+                sr.sprite = decelSprite;
+        }
+        else
+        {
+            sr.sprite = idleSprite;
         }
     }
 
@@ -69,7 +106,7 @@ public class PlayerAnimator : MonoBehaviour
     {
         sr.sprite = dashSprite;
 
-        while(movement.IsDashing)
+        while(p.Movement.IsDashing)
             yield return null;
 
         sr.sprite = baseSprite;
@@ -83,6 +120,23 @@ public class PlayerAnimator : MonoBehaviour
     private void HandleParryEnd()
     {
         sr.sprite = baseSprite;
+    }
+
+    private void HandleHit(HitData hit)
+    {
+        if(hitRoutine != null)
+            StopCoroutine(hitRoutine);
+
+        hitRoutine = StartCoroutine(HitFeedbackRoutine(hit.hitstunTime));
+    }
+
+    private IEnumerator HitFeedbackRoutine(float duration)
+    {
+        sr.material = hitMaterial;
+
+        yield return new WaitForSeconds(duration);
+
+        sr.material = baseMaterial;
     }
 
     public void PlayAttackAnimation(AttackType attackType, Vector2 direction)

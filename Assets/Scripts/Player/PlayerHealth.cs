@@ -1,28 +1,19 @@
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
+
+    [SerializeField] private HealthData data;
+
+    private Player p;
+
     public List<HealthSegment> healthSegments;
     private int activeHealthIndex;
 
     public HealthSegment activeSegment => healthSegments[activeHealthIndex];
-
-    [SerializeField] private HealthData data;
-
-    [SerializeField] private PlayerCombat combat;
-    [SerializeField] private PlayerTools tools;
-    [SerializeField] private PlayerMovement movement;
-    [SerializeField] private PlayerMomentum momentum;
-    [SerializeField] private PlayerAnimator animator;
-
-    private Material baseMaterial;
-    [SerializeField] private Material damageMaterial;
-
-    [SerializeField] private SpriteRenderer sr;
 
     public bool IsAlive { get; set; }
     public bool IsIframe => isIframe;
@@ -40,16 +31,14 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void Awake()
     {
+        p = GetComponent<Player>();
+
         IsAlive = true;
-
-        baseMaterial = sr.material;
-
-        InitializeSegments();
     }
 
     private void Start()
     {
-        //currentHealth = data.maxHealth;
+        InitializeSegments();
     }
 
     private void OnEnable()
@@ -81,7 +70,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         if (!IsAlive) return;
         if (IsIframe) return;
-        if (tools.TryInterruptWithTool(hit)) return;
+        if (p.Tools.TryInterceptWithTool(hit)) return;
 
         ApplyKnockback(hit);
         ApplyHitStun(hit);
@@ -101,7 +90,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             activeHealthIndex--;
             segment.IsActive = false;
             
-            if (activeHealthIndex >= healthSegments.Count - 1 || activeHealthIndex == -1)
+            if (activeHealthIndex < 0)
             {
                 PlayerDeath();
                 return;
@@ -110,33 +99,21 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             {
                 healthSegments[activeHealthIndex].IsActive = true;
             }
-
         }
 
         GameEvents.PlayerHealthChanged(healthSegments);
-
-
-        //currentHealth = Mathf.Max(0, currentHealth - hit.damage);
-
-        //GameEvents.PlayerHealthChanged(currentHealth, data.maxHealth);
-
-        //if (currentHealth <= 0)
-        //{
-        //    PlayerDeath();
-        //    return;
-        //}
 
         GrantIFrames(data.hitIFrameDuration);
     }
 
     private void ApplyKnockback(HitData hit)
     {
-        movement.PushPlayer(hit.knockbackDirection, hit.knockbackForce, hit.hitstunTime);
+        p.Movement.PushPlayer(hit.knockbackDirection, hit.knockbackForce, hit.hitstunTime);
     }
 
     private void ApplyHitStun(HitData hit)
     {
-        StartCoroutine(HitFXRoutine(hit.hitstunTime));
+        StartCoroutine(HitStunRoutine(hit.hitstunTime));
     }
 
     public void GrantIFrames(float duration)
@@ -158,26 +135,13 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         isIframe = false;
     }
 
-    private IEnumerator HitFXRoutine(float duration)
+    private IEnumerator HitStunRoutine(float duration)
     {
-        // flip sprite if needed
-
-        // change sprite to hit sprite (freeze animator??)
-
-        sr.material = damageMaterial;
         IsHitstunned = true;
 
         yield return new WaitForSeconds(duration);
 
-        sr.material = baseMaterial;
         IsHitstunned = false;
-    }
-
-    private IEnumerator HitstunRoutine()
-    {
-        float duration = 0.1f;
-
-        yield return new WaitForSeconds(duration);
     }
 
     private void PlayerDeath()
@@ -190,5 +154,15 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         gameObject.SetActive(false);
 
         GameEvents.PlayerDeath();
+    }
+
+    public void AddHealthSegment()
+    {
+
+    }
+
+    public void RemoveHealthSegment()
+    {
+
     }
 }

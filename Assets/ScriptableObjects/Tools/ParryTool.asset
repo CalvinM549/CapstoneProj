@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d1bbae74f31a994285758b5bc28ffac, type: 3}
   m_Name: ParryTool
   m_EditorClassIdentifier: Assembly-CSharp::ParryTool
-  IsAvaliable: 0
   ToolName: Parry Tool
   ToolDescription: parries things
+  Icon: {fileID: 0}
+  Cooldown: 5
   parryAngle: 180
   parryDuration: 1
-  cooldown: 5

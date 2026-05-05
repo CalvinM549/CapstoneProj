@@ -2,20 +2,61 @@ using UnityEngine;
 
 public abstract class PlayerTool : ScriptableObject
 {
-    public bool IsAvaliable;
-
     public string ToolName;
     public string ToolDescription;
+    public Sprite Icon;
 
-    protected Transform playerTransform;
+    public float Cooldown;
+    private float cooldownTimer;
 
-    public abstract bool UseTool(Vector2 direction);
+    protected Player player;
 
-    public abstract bool TryIntercept(HitData incoming);
+    public bool IsReady => cooldownTimer <= 0f;
+    public float CooldownPercent => Mathf.Clamp01(cooldownTimer / Cooldown);
 
-    public abstract void OnEquip(Transform currentTransform);
+    public bool UseTool(Vector2 direction)
+    {
+        if (!IsReady) return false;
 
-    public abstract void OnUnequip();
+        bool used = OnUse(direction);
 
-    public abstract void UpdateTool();
+        if (used)
+        {
+            OnUsed();
+            StartCooldown();
+        }
+
+        return used;
+    }
+
+    protected abstract bool OnUse(Vector2 direction);
+
+
+    public virtual bool TryIntercept(HitData incoming) => false;
+
+    public virtual void OnEquip(Player player)
+    {
+        this.player = player;
+    }
+
+    public virtual void OnUnequip()
+    {
+        cooldownTimer = 0f;
+        OnReset();
+    }
+
+    public virtual void UpdateTool()
+    {
+        if(cooldownTimer > 0f)
+            cooldownTimer -= Time.deltaTime;
+
+        OnUpdate();
+    }
+
+    protected virtual void OnUpdate() { }
+    protected virtual void OnReset() { }
+    protected virtual void OnUsed() { }
+
+    protected void StartCooldown() => cooldownTimer = Cooldown;
+    protected void ReduceCooldown(float amount) => cooldownTimer = Mathf.Max(0f, cooldownTimer - amount);
 }

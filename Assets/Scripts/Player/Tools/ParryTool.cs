@@ -1,24 +1,22 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ParryTool", menuName = "Player/Tools/NewParryTool")]
+[CreateAssetMenu(fileName = "ParryTool", menuName = "Player/Tools/ParryTool")]
 public class ParryTool : PlayerTool // Setup dash parry cancel
 {
-    [SerializeField] private float parryAngle; // width of the parry cone in degrees
-    [SerializeField] private float parryDuration; // how long the parry is active
-    [SerializeField] private float cooldown; // cooldown duration after parry ends
+    public float parryAngle; // width of the parry cone in degrees
+    public float parryDuration; // how long the parry is active
+
 
     private bool parryActive;
+    private float parryTimer = 0f;
     private Vector2 parryDirection;
 
-    private float parryTimer = 0f;
-    private float cooldownTimer = 0f;
-
-    public override bool UseTool(Vector2 direction)
+    protected override bool OnUse(Vector2 direction)
     {
-        if (cooldownTimer > 0f || parryActive) return false; // can't parry if on cooldown or already active
+        if (parryActive) return false;
 
         parryActive = true;
-        parryDirection = direction.normalized;
+        parryDirection = direction;
         parryTimer = parryDuration;
 
         GameEvents.PlayerParryStart();
@@ -27,41 +25,46 @@ public class ParryTool : PlayerTool // Setup dash parry cancel
 
     public override bool TryIntercept(HitData incoming)
     {
-        if (!parryActive) return false; // can't intercept if parry isn't active
-        Vector2 toIncoming = incoming.sourcePos - (Vector2)playerTransform.position; 
+        if(!parryActive) return false;
+
+        Vector2 toIncoming = incoming.sourcePos - (Vector2)player.transform.position;
         float angleToIncoming = Vector2.Angle(parryDirection, toIncoming);
-        if (angleToIncoming <= parryAngle / 2f)
-        {
-            return true;
-        }
-        return false; // incoming attack is outside of parry cone
+
+        if (angleToIncoming > parryAngle / 2) return false;
+
+        OnParrySuccess();
+        return true;
     }
 
-    public override void OnEquip(Transform currentTransform)
+    private void OnParrySuccess()
     {
-        playerTransform = currentTransform;
+        parryActive = false;
+        parryTimer = 0f;
+
+        //Do Feedback stuff
+
+        // Ping Event
+        GameEvents.PlayerParryEnd();
+        ReduceCooldown(Cooldown * 0.5f);
     }
 
-    public override void OnUnequip()
+    protected override void OnUpdate()
     {
-        
+        if (!parryActive) return;
+
+        parryTimer -= Time.deltaTime;
+
+        if (parryTimer <= 0f)
+        {
+
+            parryActive = false;
+            GameEvents.PlayerParryEnd();
+        }
     }
 
-    public override void UpdateTool()
+    protected override void OnReset()
     {
-        if (parryActive)
-        {
-            parryTimer -= Time.deltaTime;
-            if (parryTimer <= 0f)
-            {
-                GameEvents.PlayerParryEnd();
-                parryActive = false; // end parry when duration expires
-                cooldownTimer = cooldown; // start cooldown
-            }
-        }
-        else if (cooldownTimer > 0f)
-        {
-            cooldownTimer -= Time.deltaTime; // reduce cooldown timer
-        }
+        parryActive = false;
+        parryTimer = 0f;
     }
 }

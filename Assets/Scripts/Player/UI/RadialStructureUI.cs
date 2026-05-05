@@ -86,7 +86,7 @@ public class RadialStructureUI : MonoBehaviour
 
     private void HandleStructureChanged(IReadOnlyList<HealthSegment> segments)
     {
-        if(segments == null || segments.Count == 0) return;
+        if (segments == null || segments.Count == 0) return;
 
         if (segments.Count != uiSegments.Count)
         {

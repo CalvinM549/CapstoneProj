@@ -7,16 +7,11 @@ public class PlayerCombat : MonoBehaviour
 
     public WeaponData data;
 
-    [SerializeField] private PlayerMovement movement;
-    [SerializeField] private PlayerHealth health;
-    [SerializeField] private PlayerMomentum momentum;
-    [SerializeField] private PlayerTools tools; 
-    
+    private Player p;
+
     [SerializeField] private AttackHitboxes hitboxes;
 
     private InputSystem_Actions inputActions;
-
-    private IPlayerTool equippedTool;
 
     public CombatState CurrentState => currentState;
 
@@ -39,6 +34,8 @@ public class PlayerCombat : MonoBehaviour
 
     private void Awake()
     {
+        p = GetComponent<Player>();
+
         inputActions = InputManager.Instance.inputActions;
     }
 
@@ -76,19 +73,17 @@ public class PlayerCombat : MonoBehaviour
 
     private void OnLightAttackInput(InputAction.CallbackContext ctx)
     {
-        Debug.Log("Light Attack Pressed!");
         HandleAttackInput(true);
     }
 
     private void OnHeavyAttackInput(InputAction.CallbackContext ctx)
     {
-        Debug.Log("Heavy Attack Pressed!");
         HandleAttackInput(false);
     }
 
     private void HandleAttackInput(bool isLightInput)
     {
-        if (health.IsHitstunned) return;
+        if (p.Health.IsHitstunned) return;
         if (comboCooldownTimer > 0) return;
         if (currentState == CombatState.Active || currentState == CombatState.Startup) return;
 
@@ -118,7 +113,6 @@ public class PlayerCombat : MonoBehaviour
         if(currentAttackRoutine != null)
             StopCoroutine(currentAttackRoutine);
 
-        Debug.Log("Performing Light Attack!");
         currentAttackRoutine = StartCoroutine(AttackRoutine(data.lightAttacks[comboStep - 1]));
     }
 
@@ -130,7 +124,6 @@ public class PlayerCombat : MonoBehaviour
         if (currentAttackRoutine != null)
             StopCoroutine(currentAttackRoutine);
 
-        Debug.Log("Performing Heavy Attack!");
         currentAttackRoutine = StartCoroutine(AttackRoutine(data.heavyAttack));
 
     }
@@ -144,7 +137,6 @@ public class PlayerCombat : MonoBehaviour
         if (currentAttackRoutine != null)
             StopCoroutine(currentAttackRoutine);
 
-        Debug.Log("Performing Dash Attack!");
         currentAttackRoutine = StartCoroutine(AttackRoutine(data.dashAttack));
     }
 
@@ -167,7 +159,7 @@ public class PlayerCombat : MonoBehaviour
         // ACTIVE
         currentState = CombatState.Active;
         
-        movement.PushPlayer(GetAttackDirection(attack.type), attack.dashForce, attack.activeTime, false);
+        p.Movement.PushPlayer(GetAttackDirection(attack.type), attack.dashForce, attack.activeTime, false);
         hitboxes.EnableHitBox(attack, GetAttackDirection(attack.type), comboStep);
 
         yield return new WaitForSeconds(attack.activeTime);
@@ -195,7 +187,7 @@ public class PlayerCombat : MonoBehaviour
 
     private void HandleHitDetection(Collider2D hit, AttackInfo attack)
     {
-        print("Hit Detected");
+        print($"Player Hit {hit.gameObject.name} with {attack.type}");
 
         IDamageable target = hit.GetComponentInParent<IDamageable>();
         if (target == null || !target.IsAlive) return;
@@ -252,6 +244,16 @@ public class PlayerCombat : MonoBehaviour
         currentState = CombatState.Idle;
     }
 
+    public void InterruptActive()
+    {
+        if (CurrentState != CombatState.Active) return;
+
+        //Event?
+
+        StopAttackRoutine();
+        currentState = CombatState.Idle;
+    }
+
     private void StopAttackRoutine()
     {
         if (currentAttackRoutine != null)
@@ -265,17 +267,11 @@ public class PlayerCombat : MonoBehaviour
     private Vector2 GetAttackDirection(AttackType type)
     {
         if (type == AttackType.DashAttack)
-            return movement.LastMoveDirection;
+            return p.Movement.LastMoveDirection;
 
         else
         {
-            Vector3 mousePos = InputManager.Instance.inputActions.Player.PointerPosition.ReadValue<Vector2>();
-
-            Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane));
-            mousePosWorld.z = 0f;
-
-            Vector3 direction = mousePosWorld - transform.position;
-            return direction.normalized;
+            return p.GetMouseDirection();
         }
     }
 

@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: MovementData
   m_EditorClassIdentifier: Assembly-CSharp::PlayerData
   baseSpeed: 14
+  maxSpeed: 0
   acceleration: 80
-  deceleration: 45
+  deceleration: 35
   turnMultiplier: 4
   dashSpeed: 40
-  dashDuration: 0.12
+  dashDuration: 0.16
   dashExitMultiplier: 0.4
   maxDashCharges: 2
   dashRechargeTime: 1.5
