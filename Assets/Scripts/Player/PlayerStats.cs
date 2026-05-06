@@ -2,42 +2,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum StatType
-{
-    //Movement
-    MoveSpeed,
-    DashSpeed,
-    DashDuration,
-    DashCharges,
-
-    //Combat
-    HeavyDamage,
-    DsahDamage,
-    AttackKnockback,
-    
-    //Health
-    MaxHealthPerSegment,
-    HealthSegmentCount,
-
-    //Momentum
-    MomentumCapacity,
-    MomentumGainMult,
-    MomentumDecayMult
-
-}
-
 public class PlayerStats : MonoBehaviour
 {
+    private Player p;
+
     //[SerializeField] private PlayerStatsData data;
+    private readonly Dictionary<string, StatValue> stats = new();
 
-    private readonly Dictionary<StatType, StatValue> stats = new();
+    private StatValue Get(string statID)
+    {
+        stats.TryGetValue(statID, out StatValue value);
+        if(value == null)
+            return null;
 
-    public StatValue Get(StatType type) => stats[type];
-    public float Value(StatType type) => stats[type].Value;
+        return value;
+    }
+
+    public float Value(string statID)
+    {
+        return stats[statID].Value;
+    }
 
     private void Awake()
     {
+        p = GetComponent<Player>();
+
         InitializeStats();
+    }
+
+    private void Start()
+    {
+        InitStat(p.Movement.CurrentMoveDirection.x);
+    }
+
+    private void InitStat(float test)
+    {
+        print(nameof(test));
     }
 
     private void InitializeStats()
@@ -45,19 +45,35 @@ public class PlayerStats : MonoBehaviour
 
     }
 
-    public void ApplyTemporaryModifier(StatType stat, StatModifier modifier, float duration)
+    public void ApplyStatModifier(string statID, StatModifier modifier)
+    {
+        var stat = Get(statID);
+
+        stat.AddStatModifier(modifier);
+    }
+
+    public void RemoveStatModifier(string statID, StatModifier modifier)
+    {
+
+        var stat = Get(statID);
+
+        stat.RemoveStatModifier(modifier);
+    }
+
+    public void ApplyTemporaryModifier(string statID, StatModifier modifier, float duration)
     {
         // Maybe Buff/Debuff Tracking
+        var stat = Get(statID);
 
         StartCoroutine(HandleTemporaryModifier(stat, modifier, duration));
     }
     
-    private IEnumerator HandleTemporaryModifier(StatType stat, StatModifier modifier, float duration)
+    private IEnumerator HandleTemporaryModifier(StatValue stat, StatModifier modifier, float duration)
     {
         //
-        Get(stat).AddStatModifier(modifier);
+        stat.AddStatModifier(modifier);
         yield return new WaitForSeconds(duration);
-        Get(stat).RemoveStatModifier(modifier);
+        stat.RemoveStatModifier(modifier);
         //
     }
 

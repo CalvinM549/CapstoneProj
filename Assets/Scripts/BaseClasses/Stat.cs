@@ -15,7 +15,8 @@ public enum StatModType
 public class StatValue
 {
     // Initial Value and Modifiers list
-    public float baseValue;
+    public string id;
+    [SerializeField] private float baseValue;
     private readonly List<StatModifier> statModifiers;
 
     // Temp values used for Value
@@ -45,8 +46,9 @@ public class StatValue
         statModifiers = new List<StatModifier>();
     }
     // Constructor with preset base value
-    public StatValue(float baseValue) : this()
+    public StatValue(string id, float baseValue) : this()
     {
+        this.id = id;
         this.baseValue = baseValue;
     }
 

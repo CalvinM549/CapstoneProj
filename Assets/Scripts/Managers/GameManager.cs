@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -40,6 +41,13 @@ public class GameManager : MonoBehaviour
 
     private void HandlePlayerDeath()
     {
+        StartCoroutine(PlayerDeathRoutine());
+    }
+
+    private IEnumerator PlayerDeathRoutine()
+    {
+        yield return new WaitForSeconds(1f);
+
         player.SetActive(false);
         deathCanvas.gameObject.SetActive(true);
     }

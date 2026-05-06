@@ -38,26 +38,16 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void Start()
     {
-        InitializeSegments();
+        InitializeSegments(data.segmentBaseCount);
     }
 
-    private void OnEnable()
-    {
-        
-    }
-
-    private void OnDisable()
-    {
-        
-    }
-
-    private void InitializeSegments()
+    private void InitializeSegments(int segmentCount)
     {
         healthSegments.Clear();
 
-        for (int i = 0; i < data.segmentBaseCount; i++)
+        for (int i = 0; i < segmentCount; i++)
         {
-            bool isActive = i == data.segmentBaseCount - 1;
+            bool isActive = i == segmentCount - 1;
             healthSegments.Add(new HealthSegment(data.segmentMaxHealth, isActive));
         }
 

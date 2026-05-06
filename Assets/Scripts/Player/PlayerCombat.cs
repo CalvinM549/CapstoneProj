@@ -10,6 +10,7 @@ public class PlayerCombat : MonoBehaviour
     private Player p;
 
     [SerializeField] private AttackHitboxes hitboxes;
+    [SerializeField] private LayerMask wallLayer;
 
     private InputSystem_Actions inputActions;
 
@@ -191,6 +192,13 @@ public class PlayerCombat : MonoBehaviour
 
         IDamageable target = hit.GetComponentInParent<IDamageable>();
         if (target == null || !target.IsAlive) return;
+
+        //Raycast Check for walls
+        Vector2 direction = hit.transform.position - transform.position;
+        float distance = Vector2.Distance(transform.position, hit.transform.position);
+        if (Physics2D.Raycast(transform.position, direction, distance, wallLayer)) return;
+            // Wall stagger / particles
+
 
         Vector2 knockbackDir = (hit.transform.position - transform.position).normalized;
 

@@ -9,11 +9,6 @@ public class DashUI : MonoBehaviour
 
     [SerializeField] private List<Image> charges;
 
-    private void Awake()
-    {
-        
-    }
-
     private void OnEnable()
     {
         GameEvents.OnDashChargeChange += HandleChargeChanged;

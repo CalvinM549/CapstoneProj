@@ -16,6 +16,8 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 lastMoveDirection = Vector2.right;
 
     public Vector2 LastMoveDirection => lastMoveDirection;
+    public Vector2 CurrentMoveDirection => rb.linearVelocity;
+
 
     private int currentDashCharges;
     private float[] dashRechargeTimers;

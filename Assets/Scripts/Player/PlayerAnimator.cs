@@ -68,33 +68,71 @@ public class PlayerAnimator : MonoBehaviour
     {
         if (p.Health.IsHitstunned) return;
 
-        if (p.Movement.IsMoving)
+        //// MoveDir based Flip
+        //if (p.Movement.IsMoving)
+        //{
+        //    if (rb.linearVelocity.x > 0 && IsFacingRight)
+        //    {
+        //        FlipFacing();
+        //    }
+        //    else if(rb.linearVelocity.x < 0 && !IsFacingRight)
+        //    {
+        //        FlipFacing();
+        //    }
+        //}
+
+        // Mouse based flip
+        
+        if (p.Movement.IsDashing)
         {
-            if (rb.linearVelocity.x > 0 && IsFacingRight)
-            {
+            if (p.Movement.CurrentMoveDirection.x > 0 && IsFacingRight)
                 FlipFacing();
-            }
-            else if(rb.linearVelocity.x < 0 && !IsFacingRight)
-            {
+            else if(p.Movement.CurrentMoveDirection.x < 0 && !IsFacingRight)
                 FlipFacing();
-            }
+        }
+        else
+        {
+            Vector2 mouseDir = p.GetMouseDirection();
+
+            if (mouseDir.x > 0 && IsFacingRight)
+                FlipFacing();
+            else if (mouseDir.x < 0 && !IsFacingRight)
+                FlipFacing();
         }
     }
 
     private void HandleMovementSprite()
     {
+        if (p.Movement.IsDashing) return;
+        //if (p.Movement.IsMoving)
+        //{
+        //    if (p.Movement.MoveInputting)
+        //        sr.sprite = moveSprite;
+
+        //    else
+        //        sr.sprite = decelSprite;
+        //}
+        //else
+        //{
+        //    sr.sprite = idleSprite;
+        //}
+
         if (p.Movement.IsMoving)
         {
-            if (p.Movement.MoveInputting)
+            if ((!IsFacingRight && p.Movement.CurrentMoveDirection.x > 0) || (IsFacingRight && p.Movement.CurrentMoveDirection.x < 0))
+            {
                 sr.sprite = moveSprite;
-
+            }
             else
+            {
                 sr.sprite = decelSprite;
+            }
         }
         else
         {
             sr.sprite = idleSprite;
         }
+
     }
 
     private void HandleDashAnimation()

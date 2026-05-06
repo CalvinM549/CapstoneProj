@@ -43,6 +43,7 @@ public class RadialDashUI : MonoBehaviour
 
             if (newValue >= 0.99f && !charged)
             {
+                fillImage.DOKill();
                 fillImage.transform.DOPunchScale(Vector3.one * 0.2f, 0.35f, 6, 0.4f);
                 fillImage.color = Color.white;
                 fillImage.DOFade(0.15f, 0.35f);
@@ -50,6 +51,7 @@ public class RadialDashUI : MonoBehaviour
             }
             else if (consumed)
             {
+                fillImage.DOKill();
                 fillImage.transform.DOPunchScale(Vector3.one * 0.2f, 0.35f, 4, 0.3f);
                 charged = false;
             }

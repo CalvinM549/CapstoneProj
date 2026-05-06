@@ -28,6 +28,7 @@ public class RadialStructureUI : MonoBehaviour
         public Image fillImage;
         public float arcFillAmount;
 
+        private Color baseColour;
         private Tween activeTween;
 
         public UISegment(HealthSegment segment, RectTransform pivotRef, Image imageRef, float currentArc)
@@ -38,6 +39,8 @@ public class RadialStructureUI : MonoBehaviour
             pivot = pivotRef;
             fillImage = imageRef;
             arcFillAmount = currentArc;
+
+            baseColour = fillImage.color;
         }
 
         public void UpdateSegment(HealthSegment newValues, float tweenDuration)
@@ -58,7 +61,7 @@ public class RadialStructureUI : MonoBehaviour
             if (valueChanged)
             {
                 fillImage.color = Color.white;
-                fillImage.DOFade(0.15f, tweenDuration);
+                fillImage.DOFade(baseColour.a, tweenDuration);
             }
 
         }

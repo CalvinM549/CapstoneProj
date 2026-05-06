@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class StatModEffect : UpgradeEffect
 {
-    public StatType stat;
+    public string stat;
     public float value;
     public StatModType modType;
 
@@ -11,11 +11,11 @@ public class StatModEffect : UpgradeEffect
     public override void Apply(Player player)
     {
         modifier = new StatModifier(value, modType);
-        player.Stats.Get(stat).AddStatModifier(modifier);
+        player.Stats.ApplyStatModifier(stat, modifier);
     }
 
     public override void Remove(Player player)
     {
-        player.Stats.Get(stat).RemoveStatModifier(modifier);
+        player.Stats.RemoveStatModifier(stat, modifier);
     }
 }
