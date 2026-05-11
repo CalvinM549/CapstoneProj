@@ -13,6 +13,9 @@ public class PlayerAnimator : MonoBehaviour
     private Coroutine hitRoutine = null;
 
 
+    private bool heavySwingStarted = false;
+
+
     public Vector2 spritePos => sr.transform.position;
     public Sprite currentSprite => sr.sprite;
     public bool IsFacingRight { get; private set; }
@@ -33,6 +36,7 @@ public class PlayerAnimator : MonoBehaviour
 
     private void Awake()
     {
+        animator = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
         p = GetComponent<Player>();
 
@@ -42,18 +46,19 @@ public class PlayerAnimator : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEvents.OnPlayerDashStart += HandleDashAnimation;
-        GameEvents.OnPlayerParryStart += HandleParryAnimation;
-        GameEvents.OnPlayerParryEnd += HandleParryEnd;
+        GameEvents.OnPlayerDashStart += HandleDashStart;
+        GameEvents.OnPlayerDashEnd += HandleDashEnd;
+
+        GameEvents.OnAttackStarted += HandleAttackStart;
 
         GameEvents.OnPlayerHit += HandleHit;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnPlayerDashStart -= HandleDashAnimation;
-        GameEvents.OnPlayerParryStart -= HandleParryAnimation;
-        GameEvents.OnPlayerParryEnd -= HandleParryEnd;
+        GameEvents.OnPlayerDashStart -= HandleDashStart;
+
+        GameEvents.OnAttackStarted -= HandleAttackStart;
 
         GameEvents.OnPlayerHit -= HandleHit;
     }
@@ -61,7 +66,30 @@ public class PlayerAnimator : MonoBehaviour
     private void Update()
     {
         HandleAutoFlip();
-        HandleMovementSprite();
+        //HandleMovementSprite();
+        UpdateMovementAnimation();
+        UpdateAttackAnimation();
+    }
+
+    private void UpdateMovementAnimation()
+    {
+        if (p.Movement.IsDashing) return;
+
+        animator.SetBool("IsMoving", p.Movement.IsMoving);
+
+        // Facing dir
+        bool movingForwards = false;
+
+        Vector2 mouseDir = p.GetMouseDirection();
+
+        if (mouseDir.x > 0 && p.Movement.CurrentMoveDirection.x > 0)
+            movingForwards = true;
+        else if (mouseDir.x < 0 && p.Movement.CurrentMoveDirection.x < 0)
+            movingForwards = true;
+        else
+            movingForwards = false;
+
+        animator.SetBool("MovingForwards", movingForwards);
     }
 
     private void HandleAutoFlip()
@@ -101,63 +129,55 @@ public class PlayerAnimator : MonoBehaviour
         }
     }
 
-    private void HandleMovementSprite()
+    private void HandleAttackStart(AttackType type)
     {
-        if (p.Movement.IsDashing) return;
-        //if (p.Movement.IsMoving)
-        //{
-        //    if (p.Movement.MoveInputting)
-        //        sr.sprite = moveSprite;
+        if (type == AttackType.DashAttack) return;
 
-        //    else
-        //        sr.sprite = decelSprite;
-        //}
-        //else
-        //{
-        //    sr.sprite = idleSprite;
-        //}
+        int combo = p.Combat.ComboStep;
 
-        if (p.Movement.IsMoving)
+        if (type == AttackType.Light)
         {
-            if ((!IsFacingRight && p.Movement.CurrentMoveDirection.x > 0) || (IsFacingRight && p.Movement.CurrentMoveDirection.x < 0))
-            {
-                sr.sprite = moveSprite;
-            }
-            else
-            {
-                sr.sprite = decelSprite;
-            }
-        }
-        else
-        {
-            sr.sprite = idleSprite;
+            if (combo <= 1)
+                animator.Play("AttackSideLight1");
+            else if(combo == 2)
+                animator.Play("AttackSideLight2");
+            else if(combo == 3)
+                animator.Play("AttackSideLight3");
         }
 
+        if (type == AttackType.Heavy)
+        {
+            heavySwingStarted = false;
+            animator.ResetTrigger("DoHeavySwing");
+
+            animator.Play("AttackSideHeavyWindup");
+        }
     }
 
-    private void HandleDashAnimation()
+    private void UpdateAttackAnimation()
     {
-        StartCoroutine(DashAnimationRoutine());
+        if (p.Combat.CurrentAttackType == AttackType.Heavy)
+        {
+            if (p.Combat.CurrentState == CombatState.Active && !heavySwingStarted)
+            {
+                animator.SetTrigger("DoHeavySwing");
+                heavySwingStarted = true;
+                return;
+            }
+        }
     }
 
-    private IEnumerator DashAnimationRoutine()
+    private void HandleDashStart()
     {
-        sr.sprite = dashSprite;
+        //StartCoroutine(DashAnimationRoutine());
 
-        while(p.Movement.IsDashing)
-            yield return null;
-
-        sr.sprite = baseSprite;
+        animator.SetBool("IsDashing", true);
+        animator.Play("Dashing");
     }
-
-    private void HandleParryAnimation()
+    
+    private void HandleDashEnd()
     {
-        sr.sprite = parrySprite;
-    }
-
-    private void HandleParryEnd()
-    {
-        sr.sprite = baseSprite;
+        animator.SetBool("IsDashing", false);
     }
 
     private void HandleHit(HitData hit)
@@ -177,12 +197,6 @@ public class PlayerAnimator : MonoBehaviour
         sr.material = baseMaterial;
     }
 
-    public void PlayAttackAnimation(AttackType attackType, Vector2 direction)
-    {
-        // Convert direction to cardinals
-
-        // Play animation based on attack type
-    }
 
     protected void FlipFacing()
     {

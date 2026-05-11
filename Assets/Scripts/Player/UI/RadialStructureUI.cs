@@ -10,8 +10,6 @@ public class RadialStructureUI : MonoBehaviour
     [SerializeField] private GameObject segmentPrefab;
     [SerializeField] private RectTransform segmentContainer;
 
-    [SerializeField] private float ringRadius;
-
     [SerializeField] private float gapDegrees;
 
     [SerializeField] private float fillTweenDuration;

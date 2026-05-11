@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8436441433592370072}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FirePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 6976050224274095220}
   - component: {fileID: 4164596336617466435}
   - component: {fileID: 283695147377014958}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: SecondFill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -116,7 +116,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8673183561131605823}
   - component: {fileID: 6175210849205861076}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 1719022267803944504}
   - component: {fileID: 1493546158625251472}
   - component: {fileID: 4510813783698956753}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -283,7 +283,7 @@ GameObject:
   - component: {fileID: 2441533176310417569}
   - component: {fileID: 2041976472484267410}
   - component: {fileID: 6591528619567189717}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -399,7 +399,7 @@ GameObject:
   - component: {fileID: 5973253800907777256}
   - component: {fileID: 5830061054361423769}
   - component: {fileID: 3172116944278226305}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SentryEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -443,6 +443,7 @@ MonoBehaviour:
   damageMaterial: {fileID: 2100000, guid: 59148e3b6fbfc0d4abc10ce34622bba0, type: 2}
   damageSprite: {fileID: 21300000, guid: 94fffdd8e9eac0042b3a9c7df904667e, type: 3}
   damageParticles: {fileID: 5312974598286367443, guid: 5abe6e1fe1c8b6248941e8285faa0f75, type: 3}
+  IsIFrame: 0
   patrolPoints:
   - {fileID: 0}
   - {fileID: 0}
@@ -529,7 +530,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6956930538831400926}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: ChunkContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -566,7 +567,7 @@ GameObject:
   - component: {fileID: 57731532766458066}
   - component: {fileID: 7030645737966207027}
   - component: {fileID: 1253729845662049016}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Backround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -639,7 +640,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8257635068401206181}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: BarRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -679,7 +680,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5230564918070905677}
   - component: {fileID: 6568929510042102629}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -750,7 +751,7 @@ GameObject:
   - component: {fileID: 2184648981861742845}
   - component: {fileID: 659394545982468070}
   - component: {fileID: 408797632169052511}
-  m_Layer: 5
+  m_Layer: 8
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}

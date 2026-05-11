@@ -25,6 +25,7 @@ public class RadialDashUI : MonoBehaviour
         private bool charged;
 
         private Tween tween;
+        private Color baseColour;
 
         public ChargeIcon(RectTransform pivotRef, Image imageRef, float initialValue)
         {
@@ -32,27 +33,28 @@ public class RadialDashUI : MonoBehaviour
             fillImage = imageRef;
             lastValue = initialValue;
             fillImage.fillAmount = initialValue;
+            baseColour = fillImage.color;
         }
 
         public void UpdateCharge(float newValue)
         {
-            bool consumed = newValue < lastValue - 0.5f;
-
             tween?.Kill();
             tween = fillImage.DOFillAmount(newValue, 0.3f).SetEase(Ease.OutQuart);
 
             if (newValue >= 0.99f && !charged)
             {
+                Debug.Log("Charged");
+
                 fillImage.DOKill();
+                fillImage.transform.localScale = Vector3.one;
                 fillImage.transform.DOPunchScale(Vector3.one * 0.2f, 0.35f, 6, 0.4f);
                 fillImage.color = Color.white;
-                fillImage.DOFade(0.15f, 0.35f);
+                fillImage.DOFade(baseColour.a, 0.35f);
                 charged = true;
             }
-            else if (consumed)
+
+            if (newValue < lastValue && charged)
             {
-                fillImage.DOKill();
-                fillImage.transform.DOPunchScale(Vector3.one * 0.2f, 0.35f, 4, 0.3f);
                 charged = false;
             }
 

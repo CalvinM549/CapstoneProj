@@ -29,3 +29,15 @@ public class InputManager : MonoBehaviour
         inputActions = null;
     }
 }
+
+public class BufferedInput
+{
+    public float Timestamp;
+
+    public BufferedInput()
+    {
+        Timestamp = Time.time;
+    }
+
+    public bool isValid(float bufferWindow) => Time.time - Timestamp < bufferWindow;
+}

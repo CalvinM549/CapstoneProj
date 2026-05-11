@@ -3,6 +3,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "MovementData", menuName = "Player/NewMovementData", order = 1)]
 public class MovementData : ScriptableObject
 {
+    [Header("Inputs")]
+    public float inputBufferWindow;
+
     [Header("Base Movement")]
     public float baseSpeed;
     public float maxSpeed;

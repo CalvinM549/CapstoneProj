@@ -3,9 +3,27 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
+public enum MovementCondition
+{
+    Dashing,
+    ForcedPush,
+    SelfPush,
+    Stunned,
+    Interacting,
+    UI,
+
+
+    // Uniques
+    Cuscene,
+    Parrying
+}
+
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private MovementData data;
+
+    private int playerLayerIndex;
+    private int enemyLayerIndex;
 
     private Player p;
 
@@ -18,6 +36,7 @@ public class PlayerMovement : MonoBehaviour
     public Vector2 LastMoveDirection => lastMoveDirection;
     public Vector2 CurrentMoveDirection => rb.linearVelocity;
 
+    private BufferedInput bufferedDash;
 
     private int currentDashCharges;
     private float[] dashRechargeTimers;
@@ -43,15 +62,20 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         p = GetComponent<Player>();
+
+
+        playerLayerIndex = LayerMask.NameToLayer("Player");
+        enemyLayerIndex = LayerMask.NameToLayer("Enemy");
+        
     }
 
     private void OnEnable()
     {
         inputActions = InputManager.Instance.inputActions;
 
-        inputActions.Player.Move.performed += OnPlayerMove;
-        inputActions.Player.Move.canceled += OnPlayerStop;
-        inputActions.Player.Dash.performed += OnPlayerDash;
+        inputActions.Player.Move.performed += HandleMoveStart;
+        inputActions.Player.Move.canceled += HandleMoveStop;
+        inputActions.Player.Dash.performed += HandleDashInput;
 
         GameEvents.OnPlayerParryStart += HandleParryStart;
         GameEvents.OnPlayerParryEnd += HandleParryEnd;
@@ -59,9 +83,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDisable()
     {
-        inputActions.Player.Move.performed -= OnPlayerMove;
-        inputActions.Player.Move.canceled -= OnPlayerStop;
-        inputActions.Player.Dash.performed -= OnPlayerDash;
+        inputActions.Player.Move.performed -= HandleMoveStart;
+        inputActions.Player.Move.canceled -= HandleMoveStop;
+        inputActions.Player.Dash.performed -= HandleDashInput;
 
         GameEvents.OnPlayerParryStart -= HandleParryStart;
         GameEvents.OnPlayerParryEnd -= HandleParryEnd;
@@ -77,7 +101,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         HandleDashRecharge();
-        //TryBroadcastDashState();
+        FlushInputBuffer();
     }
 
     private void FixedUpdate()
@@ -86,37 +110,66 @@ public class PlayerMovement : MonoBehaviour
             ApplyMovement();
     }
 
-    #region Base Movement
+    #region InputHandling
 
-    private void OnPlayerMove(InputAction.CallbackContext ctx)
+    private void HandleMoveStart(InputAction.CallbackContext ctx)
     {
         moveDirection = ctx.ReadValue<Vector2>();
         MoveInputting = true;
     }
 
-    private void OnPlayerStop(InputAction.CallbackContext ctx)
+    private void HandleMoveStop(InputAction.CallbackContext ctx)
     {
         moveDirection = Vector2.zero;
         MoveInputting = true;
     }
 
-    private void OnPlayerDash(InputAction.CallbackContext ctx)
+    private void HandleDashInput(InputAction.CallbackContext ctx)
     {
-        if (isDashing) return;
-        if (isForcedPush) return;
-        if (currentDashCharges <= 0) return;
-        if (p.Combat.CurrentState == CombatState.Startup) return;
-
-        // Dash Confirmed
-
-        if(isSelfPush)
-            InterruptCurrentPush();
-
-        if (p.Combat.CurrentState == CombatState.Active)
-            p.Combat.InterruptActive();
+        if (CanDash())
+        {
+            StartDash();
+        }
+        else if (ShouldBufferDash())
+        {
+            bufferedDash = new();
+        }
 
         StartDash();
     }
+
+    #endregion
+
+    #region InputBuffering
+
+    private bool ShouldBufferDash()
+    {
+        if (currentDashCharges <= 0) return false;
+        if (IsDashing) return false;
+
+        return true;
+    }
+
+    private void FlushInputBuffer()
+    {
+        //Dash Buffer
+
+        if (bufferedDash == null) return;
+        if (!bufferedDash.isValid(data.inputBufferWindow))
+        {
+            bufferedDash = null;
+            return;
+        }
+
+        if (!CanDash()) return;
+
+        bufferedDash = null;
+        StartDash();
+    }
+
+    #endregion
+
+    #region BaseMovement
 
     private void ApplyMovement()
     {
@@ -162,8 +215,27 @@ public class PlayerMovement : MonoBehaviour
 
     #region Dash Functions
 
+    private bool CanDash()
+    {
+        if (isDashing) return false;
+        if (isForcedPush) return false;
+        if (currentDashCharges <= 0) return false;
+
+        if (p.Combat.CurrentState == CombatState.Startup) return false;
+
+        return true;
+    }
+
     private void StartDash()
     {
+        // Do Interrupts
+        if (isSelfPush)
+            InterruptCurrentPush();
+
+        if (p.Combat.CurrentState == CombatState.Active)
+            p.Combat.InterruptActive();
+
+
         Vector2 dashDir = moveDirection.magnitude > 0.1f ? moveDirection.normalized : lastMoveDirection;
 
         currentDashCharges--;
@@ -172,28 +244,41 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator DashRoutine(Vector2 direction)
     {
+
         isDashing = true;
 
         GameEvents.PlayerDashStart();
         p.Health.GrantIFrames(data.dashIFrameDuration);
         p.VFX.PlayDashTrail();
 
+
+        Physics2D.IgnoreLayerCollision(playerLayerIndex, enemyLayerIndex, true);
         rb.linearVelocity = direction * data.dashSpeed;
 
         yield return new WaitForSeconds(data.dashDuration);
 
-        isDashing = false;
 
-        Vector2 exitVelocity = moveDirection.magnitude > 0.1f
-            ? Vector2.Lerp(direction, moveDirection.normalized, 0.5f) * data.baseSpeed
-            : data.baseSpeed * data.dashExitMultiplier * direction;
+        EndDash();
+    }
 
-        rb.linearVelocity = exitVelocity;
-        //rb.linearVelocity *= data.dashExitMultiplier;
+    private void EndDash()
+    {
+
+        //Vector2 exitVelocity = moveDirection.magnitude > 0.1f
+        //    ? Vector2.Lerp(CurrentMoveDirection, moveDirection.normalized, 0.5f) * data.baseSpeed
+        //    : data.baseSpeed * data.dashExitMultiplier * CurrentMoveDirection;
+
+        //rb.linearVelocity = exitVelocity;
+        
+        rb.linearVelocity *= data.dashExitMultiplier;
+
+        Physics2D.IgnoreLayerCollision(playerLayerIndex, enemyLayerIndex, false);
 
         GameEvents.PlayerDashEnd();
 
         StartDashRecharge();
+
+        isDashing = false;
     }
 
     private void CancelDash()
@@ -202,9 +287,7 @@ public class PlayerMovement : MonoBehaviour
         if(currentDashRoutine != null)
             StopCoroutine(currentDashRoutine);
 
-        rb.linearVelocity *= data.dashExitMultiplier;
-        GameEvents.PlayerDashEnd();
-        isDashing = false;
+        EndDash();
     }
 
     private void StartDashRecharge()

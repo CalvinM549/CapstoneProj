@@ -19,7 +19,7 @@ MonoBehaviour:
     activeTime: 0.2
     recoveryTime: 0.1
     dashForce: 4
-    hitstopDuration: 0.05
+    hitstopDuration: 0.1
     knockback: 1
     hitstunTime: 0.15
   - type: 0
@@ -28,7 +28,7 @@ MonoBehaviour:
     activeTime: 0.2
     recoveryTime: 0.1
     dashForce: 4
-    hitstopDuration: 0.05
+    hitstopDuration: 0.1
     knockback: 1
     hitstunTime: 0.15
   - type: 0
@@ -37,7 +37,7 @@ MonoBehaviour:
     activeTime: 0.22
     recoveryTime: 0.3
     dashForce: 6
-    hitstopDuration: 0.05
+    hitstopDuration: 0.1
     knockback: 1
     hitstunTime: 0.2
   heavyAttack:
@@ -47,7 +47,7 @@ MonoBehaviour:
     activeTime: 0.15
     recoveryTime: 0.3
     dashForce: 9
-    hitstopDuration: 0.1
+    hitstopDuration: 0.3
     knockback: 3
     hitstunTime: 0.2
   dashAttack:

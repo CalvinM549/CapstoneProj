@@ -77,6 +77,10 @@ public class TimescaleManager : MonoBehaviour
 
     private IEnumerator HitstopRoutine(float duration)
     {
+        Debug.Log("Hitstop Started");
+
+        hitstopTimeElapsed = 0f;
+
         Time.timeScale = 0.05f;
 
         while (hitstopTimeElapsed < duration && !IsPaused)

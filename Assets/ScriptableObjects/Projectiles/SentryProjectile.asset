@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9256ec1605044c45a51505cfa510668, type: 3}
-  m_Name: EnemyProjectile
+  m_Name: SentryProjectile
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
   prefab: {fileID: 7729453556227253415, guid: 4a391f20a74486744878638e83022756, type: 3}
   poolSize: 0

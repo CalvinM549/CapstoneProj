@@ -27,6 +27,7 @@ public class PlayerCombat : MonoBehaviour
 
     // Light Combos
     public int ComboStep => comboStep;
+    public AttackType CurrentAttackType => currentAttackType;
     private int comboStep;
     private float comboWindowTimer = 0f;
     private float comboCooldownTimer = 0f;
@@ -190,17 +191,19 @@ public class PlayerCombat : MonoBehaviour
     {
         print($"Player Hit {hit.gameObject.name} with {attack.type}");
 
+        //Check if target is damageable
         IDamageable target = hit.GetComponentInParent<IDamageable>();
         if (target == null || !target.IsAlive) return;
 
-        //Raycast Check for walls
         Vector2 direction = hit.transform.position - transform.position;
         float distance = Vector2.Distance(transform.position, hit.transform.position);
+
+        //Raycast Check for walls
         if (Physics2D.Raycast(transform.position, direction, distance, wallLayer)) return;
             // Wall stagger / particles
 
 
-        Vector2 knockbackDir = (hit.transform.position - transform.position).normalized;
+        Vector2 knockbackDir = direction.normalized;
 
         HitData hitData = new HitData()
         {
