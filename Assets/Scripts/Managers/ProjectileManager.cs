@@ -59,14 +59,16 @@ public class ProjectileManager : MonoBehaviour
         }
     }
 
-    public void FireProjectile(ProjectileData projectile, Vector2 firePos, Vector2 direction, bool isPlayerProjectile = false)
+    public Projectile FireProjectile(ProjectileData projectile, Vector2 firePos, Vector2 direction, bool isPlayerProjectile = false)
     {
         if (!activePools.TryGetValue(projectile, out var poolEntry))
-            return;
+            return null;
 
         Projectile currentProjectile = poolEntry.pool.Get();
         currentProjectile.transform.position = firePos;
         currentProjectile.Initalize(projectile, direction, ReturnToPool, isPlayerProjectile);
+
+        return currentProjectile;
     }
 
     private void ReturnToPool(Projectile projectile)

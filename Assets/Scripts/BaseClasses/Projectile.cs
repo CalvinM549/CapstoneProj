@@ -44,10 +44,10 @@ public class Projectile : MonoBehaviour
     private IEnumerator LifetimeRoutine()
     {
         yield return new WaitForSeconds(data.lifetime);
-        DoImpact();
+        OnExpire();
     }
 
-    private void ReturnToPool()
+    protected void ReturnToPool()
     {
         if (lifetimeRoutine != null)
         {
@@ -60,12 +60,12 @@ public class Projectile : MonoBehaviour
         returnToPool?.Invoke(this);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected void OnTriggerEnter2D(Collider2D collision)
     {
         if (hitTarget) return;
 
         if (collision.CompareTag("Wall"))
-            DoImpact();
+            OnExpire();
 
         if (isPlayerProjectile && (collision.CompareTag("Player") || collision.CompareTag("PlayerHurtbox")))
             return;
@@ -81,7 +81,7 @@ public class Projectile : MonoBehaviour
         HandleHit(target);
     }
 
-    private void HandleHit(IDamageable target)
+    protected virtual void HandleHit(IDamageable target)
     {
         HitData hit = new HitData()
         {
@@ -101,10 +101,10 @@ public class Projectile : MonoBehaviour
         
         target.RecieveHit(hit);
 
-        DoImpact();
+        OnExpire();
     }
 
-    private void DoImpact()
+    protected virtual void OnExpire()
     {
         rb.linearVelocity = Vector2.zero;
 

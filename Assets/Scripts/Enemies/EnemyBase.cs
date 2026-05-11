@@ -12,8 +12,10 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
     public event Action<float, float, HitData> OnHit;
 
-    [SerializeField] protected SpriteRenderer sr;
-    [SerializeField] protected Animator animator;
+    protected SpriteRenderer sr;
+    protected Animator animator;
+    protected Rigidbody2D rb;
+
     protected bool isFacingRight = true;
 
     private Material baseMaterial;
@@ -28,10 +30,12 @@ public class EnemyBase : MonoBehaviour, IDamageable
     public bool IsAlive { get; set; }
     public bool IsIFrame = false;
 
-    private Rigidbody2D rb;
 
     protected virtual void Awake()
     {
+        animator = GetComponentInChildren<Animator>();
+        sr = animator.GetComponent<SpriteRenderer>();
+
         rb = GetComponent<Rigidbody2D>();
         currentHealth = data.maxHealth;
         IsAlive = true;

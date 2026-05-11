@@ -38,6 +38,8 @@ public class Player : MonoBehaviour
         return direction.normalized;
     }
 
+
+
     #endregion
 
 }
