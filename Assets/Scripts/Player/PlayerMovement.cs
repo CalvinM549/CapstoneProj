@@ -171,6 +171,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyMovement()
     {
+        if(!p.Health.IsAlive) moveDirection = Vector2.zero;
+
         switch (p.Combat.CurrentState)
         {
             case CombatState.Startup:
@@ -218,6 +220,7 @@ public class PlayerMovement : MonoBehaviour
         if (isDashing) return false;
         if (isForcedPush) return false;
         if (currentDashCharges <= 0) return false;
+        if (!p.Health.IsAlive) return false;
 
         if (p.Combat.CurrentState == CombatState.Startup) return false;
 

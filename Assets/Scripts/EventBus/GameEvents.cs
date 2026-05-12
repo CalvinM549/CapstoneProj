@@ -37,14 +37,14 @@ public static class GameEvents
     #endregion
 
     #region Combat
-    public static event Action<AttackType> OnAttackStarted; // Player attacks only
+    public static event Action<AttackType, Vector2> OnAttackStarted; // Player attacks only
     public static event Action<AttackType> OnAttackEnded; // Player Attacks only
     public static event Action<HitData> OnHitConfirmed;
 
     public static event Action<AttackType> OnRecoveryCancel;
     public static event Action<AttackType> OnAttackWhiff;
 
-    public static void AttackStarted(AttackType type) => OnAttackStarted?.Invoke(type);
+    public static void AttackStarted(AttackType type, Vector2 direction) => OnAttackStarted?.Invoke(type, direction);
     public static void AttackEnded(AttackType type) => OnAttackEnded?.Invoke(type);
     public static void HitConfirmed(HitData hit) => OnHitConfirmed?.Invoke(hit);
     public static void RecoveryCancel(AttackType type) => OnRecoveryCancel?.Invoke(type);

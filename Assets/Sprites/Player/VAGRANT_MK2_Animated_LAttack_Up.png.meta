@@ -1,0 +1,401 @@
+fileFormatVersion: 2
+guid: fc2ac46fcc2feb34cab9001e6932cb28
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -6502368584296347372
+    second: VAGRANT_MK2_Animated_LAttack_Up_0
+  - first:
+      213: 5097549262787482633
+    second: VAGRANT_MK2_Animated_LAttack_Up_1
+  - first:
+      213: -393441696724428535
+    second: VAGRANT_MK2_Animated_LAttack_Up_2
+  - first:
+      213: -5386036297178334577
+    second: VAGRANT_MK2_Animated_LAttack_Up_3
+  - first:
+      213: 435417368002856901
+    second: VAGRANT_MK2_Animated_LAttack_Up_4
+  - first:
+      213: 1752268543990753574
+    second: VAGRANT_MK2_Animated_LAttack_Up_5
+  - first:
+      213: 982369276245845372
+    second: VAGRANT_MK2_Animated_LAttack_Up_6
+  - first:
+      213: -5857598014295855041
+    second: VAGRANT_MK2_Animated_LAttack_Up_7
+  - first:
+      213: -4268675205803360020
+    second: VAGRANT_MK2_Animated_LAttack_Up_8
+  - first:
+      213: 831240389214449842
+    second: VAGRANT_MK2_Animated_LAttack_Up_9
+  - first:
+      213: 2550415947864161456
+    second: VAGRANT_MK2_Animated_LAttack_Up_10
+  - first:
+      213: 2513983012613594089
+    second: VAGRANT_MK2_Animated_LAttack_Up_11
+  - first:
+      213: -4123226196350080591
+    second: VAGRANT_MK2_Animated_LAttack_Up_12
+  - first:
+      213: 7673303539131600147
+    second: VAGRANT_MK2_Animated_LAttack_Up_13
+  - first:
+      213: 6467027698007544809
+    second: VAGRANT_MK2_Animated_LAttack_Up_14
+  - first:
+      213: 8510371942440569233
+    second: VAGRANT_MK2_Animated_LAttack_Up_15
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 16
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: VAGRANT_MK2_Animated_LAttack_Up_0
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 37
+        width: 76
+        height: 73
+      alignment: 9
+      pivot: {x: 0.5287883, y: 0.00941854}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4194b5e3932f2c5a0800000000000000
+      internalID: -6502368584296347372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VAGRANT_MK2_Animated_LAttack_Up_1
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 37
+        width: 74
+        height: 73
+      alignment: 9
+      pivot: {x: 0.54862976, y: 0.009438397}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9049089eb022eb640800000000000000
+      internalID: 5097549262787482633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VAGRANT_MK2_Animated_LAttack_Up_3
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 38
+        width: 78
+        height: 69
+      alignment: 9
+      pivot: {x: 0.4999996, y: 0.0028061245}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8a335f2684f045b0800000000000000
+      internalID: -5386036297178334577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VAGRANT_MK2_Animated_LAttack_Up_4
+      rect:
+        serializedVersion: 2
+        x: 606
+        y: 37
+        width: 49
+        height: 69
+      alignment: 9
+      pivot: {x: 0.19097652, y: 0.024985217}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c788dc0ac9ea0600800000000000000
+      internalID: 435417368002856901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VAGRANT_MK2_Animated_LAttack_Up_6
+      rect:
+        serializedVersion: 2
+        x: 812
+        y: 37
+        width: 65
+        height: 64
+      alignment: 9
+      pivot: {x: 0.46883357, y: 0.0010801554}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7524e4e6a312ad00800000000000000
+      internalID: 982369276245845372
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VAGRANT_MK2_Animated_LAttack_Up_7
+      rect:
+        serializedVersion: 2
+        x: 916
+        y: 37
+        width: 74
+        height: 64
+      alignment: 9
+      pivot: {x: 0.5035417, y: 0.0017681718}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f30bcd014a1a5bea0800000000000000
+      internalID: -5857598014295855041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VAGRANT_MK2_Animated_LAttack_Up_9
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 36
+        width: 23
+        height: 40
+      alignment: 9
+      pivot: {x: 0.504304, y: 0.012475491}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b0b51adab8298b00800000000000000
+      internalID: 831240389214449842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VAGRANT_MK2_Animated_LAttack_Up_10
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 37
+        width: 46
+        height: 39
+      alignment: 9
+      pivot: {x: 0.737718, y: 0.011186845}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bc3fe9bac5e46320800000000000000
+      internalID: 2550415947864161456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VAGRANT_MK2_Animated_LAttack_Up_14
+      rect:
+        serializedVersion: 2
+        x: 718
+        y: 38
+        width: 22
+        height: 37
+      alignment: 9
+      pivot: {x: 0.44995672, y: 0.009190533}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e31a547d6f7fb950800000000000000
+      internalID: 6467027698007544809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: VAGRANT_MK2_Animated_LAttack_Up_15
+      rect:
+        serializedVersion: 2
+        x: 1028
+        y: 37
+        width: 48
+        height: 47
+      alignment: 9
+      pivot: {x: 0.77611035, y: 0.0080230385}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1990f97113aea1670800000000000000
+      internalID: 8510371942440569233
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 4d38d45c406ea8c42bb71239302ec4fa
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      VAGRANT_MK2_Animated_LAttack_Up_0: -6502368584296347372
+      VAGRANT_MK2_Animated_LAttack_Up_1: 5097549262787482633
+      VAGRANT_MK2_Animated_LAttack_Up_10: 2550415947864161456
+      VAGRANT_MK2_Animated_LAttack_Up_11: 2513983012613594089
+      VAGRANT_MK2_Animated_LAttack_Up_12: -4123226196350080591
+      VAGRANT_MK2_Animated_LAttack_Up_13: 7673303539131600147
+      VAGRANT_MK2_Animated_LAttack_Up_14: 6467027698007544809
+      VAGRANT_MK2_Animated_LAttack_Up_15: 8510371942440569233
+      VAGRANT_MK2_Animated_LAttack_Up_2: -393441696724428535
+      VAGRANT_MK2_Animated_LAttack_Up_3: -5386036297178334577
+      VAGRANT_MK2_Animated_LAttack_Up_4: 435417368002856901
+      VAGRANT_MK2_Animated_LAttack_Up_5: 1752268543990753574
+      VAGRANT_MK2_Animated_LAttack_Up_6: 982369276245845372
+      VAGRANT_MK2_Animated_LAttack_Up_7: -5857598014295855041
+      VAGRANT_MK2_Animated_LAttack_Up_8: -4268675205803360020
+      VAGRANT_MK2_Animated_LAttack_Up_9: 831240389214449842
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

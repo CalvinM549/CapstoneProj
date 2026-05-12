@@ -141,7 +141,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         StopAllCoroutines();
 
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
 
         GameEvents.PlayerDeath();
     }

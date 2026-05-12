@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PlayerDeathRoutine()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
 
         player.gameObject.SetActive(false);
         deathCanvas.gameObject.SetActive(true);

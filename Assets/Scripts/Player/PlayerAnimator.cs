@@ -52,6 +52,8 @@ public class PlayerAnimator : MonoBehaviour
         GameEvents.OnAttackStarted += HandleAttackStart;
 
         GameEvents.OnPlayerHit += HandleHit;
+
+        GameEvents.OnPlayerDeath += HandleDeath;
     }
 
     private void OnDisable()
@@ -61,6 +63,8 @@ public class PlayerAnimator : MonoBehaviour
         GameEvents.OnAttackStarted -= HandleAttackStart;
 
         GameEvents.OnPlayerHit -= HandleHit;
+
+        GameEvents.OnPlayerDeath -= HandleDeath;
     }
 
     private void Update()
@@ -133,20 +137,44 @@ public class PlayerAnimator : MonoBehaviour
         }
     }
 
-    private void HandleAttackStart(AttackType type)
+    private void HandleAttackStart(AttackType type, Vector2 direction)
     {
         if (type == AttackType.DashAttack) return;
 
         int combo = p.Combat.ComboStep;
 
+        AttackDirection animationDir = AttackDirection.Side;
+        if (Mathf.Abs(direction.y) > Mathf.Abs(direction.x))
+        {
+            if (direction.y > 0)
+                animationDir = AttackDirection.Up;
+            else if(direction.y < 0)
+                animationDir = AttackDirection.Down;
+        }
+
         if (type == AttackType.Light)
         {
-            if (combo <= 1)
-                animator.Play("AttackSideLight1");
-            else if(combo == 2)
-                animator.Play("AttackSideLight2");
-            else if(combo == 3)
-                animator.Play("AttackSideLight3");
+            switch (animationDir)
+            {
+                case AttackDirection.Side:
+                case AttackDirection.Down:
+                    if (combo <= 1)
+                        animator.Play("AttackSideLight1");
+                    else if (combo == 2)
+                        animator.Play("AttackSideLight2");
+                    else if (combo == 3)
+                        animator.Play("AttackSideLight3");
+                    break;
+
+                case AttackDirection.Up:
+                    if (combo <= 1)
+                        animator.Play("AttackUpLight1");
+                    else if (combo == 2)
+                        animator.Play("AttackUpLight2");
+                    else if (combo == 3)
+                        animator.Play("AttackUpLight3");
+                    break;
+            }
         }
 
         if (type == AttackType.Heavy)
@@ -154,7 +182,19 @@ public class PlayerAnimator : MonoBehaviour
             heavySwingStarted = false;
             animator.ResetTrigger("DoHeavySwing");
 
-            animator.Play("AttackSideHeavyWindup");
+            switch (animationDir)
+            {
+                case AttackDirection.Side:
+                case AttackDirection.Down:
+                    animator.Play("AttackSideHeavyWindup");
+                    break;
+
+                case AttackDirection.Up:
+                    animator.Play("AttackUpHeavyWindup");
+                    break;
+            }
+
+
         }
     }
 
@@ -182,6 +222,12 @@ public class PlayerAnimator : MonoBehaviour
     private void HandleDashEnd()
     {
         animator.SetBool("IsDashing", false);
+    }
+
+    private void HandleDeath()
+    {
+        StartCoroutine(HitFeedbackRoutine(1f));
+        animator.Play("DeathIdle");
     }
 
     private void HandleHit(HitData hit)

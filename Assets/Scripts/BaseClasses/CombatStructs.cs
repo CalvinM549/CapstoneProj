@@ -1,6 +1,13 @@
 using System;
 using UnityEngine;
 
+public enum AttackDirection
+{
+    Side,
+    Up,
+    Down
+}
+
 public enum AttackType
 {
     Light,

@@ -121,6 +121,7 @@ public class PlayerCombat : MonoBehaviour
         // Light Buffer
         if (bufferedLight != null && bufferedLight.isValid(0.1f) && CanAttack())
         {
+            print("DoingBufferedLight");
             bufferedLight = null;
             HandleAttackInput(true);
         }
@@ -128,6 +129,7 @@ public class PlayerCombat : MonoBehaviour
         // Heavy Buffer
         if (bufferedHeavy != null && bufferedHeavy.isValid(0.1f) && CanAttack())
         {
+            print("DoingBufferedHeavy");
             bufferedHeavy = null;
             HandleAttackInput(false);
         }
@@ -210,7 +212,9 @@ public class PlayerCombat : MonoBehaviour
 
         // STARTUP
         currentState = CombatState.Startup;
-        GameEvents.AttackStarted(attack.type);
+        Vector2 direction = GetAttackDirection(attack.type);
+
+        GameEvents.AttackStarted(attack.type, direction);
 
         yield return new WaitForSeconds(attack.startupTime);
 
@@ -220,8 +224,8 @@ public class PlayerCombat : MonoBehaviour
         // ACTIVE
         currentState = CombatState.Active;
         
-        p.Movement.PushPlayer(GetAttackDirection(attack.type), attack.dashForce, attack.activeTime, false);
-        hitboxes.EnableHitBox(attack, GetAttackDirection(attack.type), comboStep);
+        p.Movement.PushPlayer(direction, attack.dashForce, attack.activeTime, false);
+        hitboxes.EnableHitBox(attack, direction, comboStep);
 
         yield return new WaitForSeconds(attack.activeTime);
         
