@@ -3,24 +3,23 @@ using UnityEngine;
 
 public class Walker : EnemyBase, IProjectileEmitter
 {
-    private Transform playerPosition;
+
+    [SerializeField] private LayerMask groundLayer;
 
     [SerializeField] private float attackCooldown;
 
     [Header("Missiles")]
     [SerializeField] private int missileCount;
     [SerializeField] private float missileInterval;
-    [SerializeField] private float explosionRadius;
+    [SerializeField] private float missileScatter;
 
     [SerializeField] private Transform[] firePoints;
     [SerializeField] private GameObject telegraphPrefab;
 
     private Vector2[] targetPositions;
-    private Vector2 currentPosition;
+    private Vector2 currentTarget;
 
     [Header("Slam")]
-
-
 
     private bool isAttacking;
     private float attackCooldownTimer;
@@ -33,9 +32,12 @@ public class Walker : EnemyBase, IProjectileEmitter
     public bool IsPlayerProjectile => false;
     public bool PoolRequested { get; set; }
 
-    private void Awake()
+    protected override void Awake()
     {
         base.Awake();
+        playerTransform = GameObject.FindWithTag("Player").transform;
+
+        attackCooldownTimer = Random.Range(0, attackCooldown);
     }
 
     protected override void OnEnable()
@@ -50,6 +52,7 @@ public class Walker : EnemyBase, IProjectileEmitter
 
     protected override void Update()
     {
+
         UpdateCooldown();
         UpdateMovement();
         
@@ -84,19 +87,30 @@ public class Walker : EnemyBase, IProjectileEmitter
 
     private IEnumerator MissileBarrageRoutine()
     {
-        isAttacking = true;
+        SetFiring(true);
 
         animator.Play("MissileFire");
 
         yield return new WaitForSeconds(0.5f); // wait for animation to finish
 
 
-        Vector2[] targetPositions = new Vector2[missileCount];
+        targetPositions = new Vector2[missileCount];
 
         for (int i = 0; i < missileCount; i++)
         {
-            Vector2 scatter = Random.insideUnitCircle * 2f; // 2f is the scatter distance
-            targetPositions[i] = (Vector2)playerPosition.position + scatter;
+            bool validTarget = false;
+            while (!validTarget)
+            {
+                print("generating point");
+                Vector2 targetPoint = Random.insideUnitCircle * missileScatter; // 15f is the scatter distance
+
+                validTarget = Physics2D.OverlapPoint(targetPoint, groundLayer) != null;
+
+                if(validTarget)
+                    targetPositions[i] = (Vector2)playerTransform.position + targetPoint;
+            }
+
+            print($"Point founnd : {targetPositions[i]}");
         }
 
 
@@ -108,10 +122,9 @@ public class Walker : EnemyBase, IProjectileEmitter
                 yield return new WaitForSeconds(missileInterval);
         }
 
-        isAttacking = false;
-
         yield return new WaitForSeconds(0.4f);
 
+        SetFiring(false);
         attackCooldownTimer = attackCooldown;
     }
 
@@ -121,11 +134,19 @@ public class Walker : EnemyBase, IProjectileEmitter
         // Do damage and stun all around when hitting ground
     }
 
+    private void SetFiring(bool firing)
+    {
+        animator.SetBool("IsFiring", firing);
+        isAttacking = firing;
+    }
+
     private void FireMissile(int count)
     {
+        print($"Missile {count} fired");
+
         if (count > missileCount) return;
 
-        currentPosition = targetPositions[count];
+        currentTarget = targetPositions[count];
 
         FireProjectile(projectiles[0], firePoints[count].position, Vector2.up, false);
     }
@@ -136,7 +157,7 @@ public class Walker : EnemyBase, IProjectileEmitter
         
         if (missile is MissileProjectile mp)
         {
-            mp.InitializeAsMissile(currentPosition, telegraphPrefab);
+            mp.InitializeAsMissile(currentTarget, telegraphPrefab);
         }
         
         // Missile smoke puff?

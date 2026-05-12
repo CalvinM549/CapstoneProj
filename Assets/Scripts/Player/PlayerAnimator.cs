@@ -65,10 +65,14 @@ public class PlayerAnimator : MonoBehaviour
 
     private void Update()
     {
-        HandleAutoFlip();
         //HandleMovementSprite();
         UpdateMovementAnimation();
         UpdateAttackAnimation();
+    }
+
+    private void FixedUpdate()
+    {
+        HandleAutoFlip();
     }
 
     private void UpdateMovementAnimation()

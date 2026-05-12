@@ -6,13 +6,14 @@ public class PlayerCombat : MonoBehaviour
 {
 
     public WeaponData data;
-
     private Player p;
 
     [SerializeField] private AttackHitboxes hitboxes;
     [SerializeField] private LayerMask wallLayer;
 
     private InputSystem_Actions inputActions;
+    private BufferedInput bufferedHeavy;
+    private BufferedInput bufferedLight;
 
     public CombatState CurrentState => currentState;
 
@@ -71,24 +72,82 @@ public class PlayerCombat : MonoBehaviour
     {
         UpdateComboWindow();
         UpdateComboCooldown();
+
+        FlushInputBuffer();
     }
+
+    #region Input Setup
 
     private void OnLightAttackInput(InputAction.CallbackContext ctx)
     {
-        HandleAttackInput(true);
+        if (TimescaleManager.IsPaused) return;
+
+        if (CanAttack())
+        {
+            HandleAttackInput(true);
+        }
+        else if(ShouldBufferLight())
+        {
+            bufferedLight = new();
+        }
     }
 
     private void OnHeavyAttackInput(InputAction.CallbackContext ctx)
     {
-        HandleAttackInput(false);
+        if (TimescaleManager.IsPaused) return;
+
+        if (CanAttack())
+        {
+            HandleAttackInput(false);
+        }
+        else if(ShouldBufferHeavy())
+        {
+            bufferedHeavy = new();
+        }
+    }
+    
+    private bool ShouldBufferLight()
+    {
+        return true;
+    }
+
+    private bool ShouldBufferHeavy()
+    {
+        return true;
+    }
+
+    private void FlushInputBuffer()
+    {
+        // Light Buffer
+        if (bufferedLight != null && bufferedLight.isValid(0.1f) && CanAttack())
+        {
+            bufferedLight = null;
+            HandleAttackInput(true);
+        }
+
+        // Heavy Buffer
+        if (bufferedHeavy != null && bufferedHeavy.isValid(0.1f) && CanAttack())
+        {
+            bufferedHeavy = null;
+            HandleAttackInput(false);
+        }
+        
+    }
+
+    #endregion
+
+    private bool CanAttack()
+    {
+        if (p.Health.IsHitstunned) return false;
+        if (comboCooldownTimer > 0) return false;
+        if (currentState == CombatState.Active || 
+            currentState == CombatState.Startup) return false;
+
+        return true;
     }
 
     private void HandleAttackInput(bool isLightInput)
     {
-        if (p.Health.IsHitstunned) return;
-        if (comboCooldownTimer > 0) return;
-        if (currentState == CombatState.Active || currentState == CombatState.Startup) return;
-
         if (currentState == CombatState.Recovery)
             InterruptRecovery();
 

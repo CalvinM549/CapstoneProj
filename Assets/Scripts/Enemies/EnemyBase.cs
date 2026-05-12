@@ -7,6 +7,8 @@ public class EnemyBase : MonoBehaviour, IDamageable
     [Header("Stats")]
     [SerializeField] protected EnemyData data;
 
+    protected Transform playerTransform;
+
     protected float currentHealth;
     public float PercentHealth => currentHealth / data.maxHealth;
 
@@ -22,7 +24,6 @@ public class EnemyBase : MonoBehaviour, IDamageable
     protected Sprite baseSprite;
 
     [SerializeField] private Material damageMaterial;
-    [SerializeField] private Sprite damageSprite;
     [SerializeField] private GameObject damageParticles;
 
     private Coroutine hitFXRoutine;

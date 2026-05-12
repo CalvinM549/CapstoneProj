@@ -7,8 +7,6 @@ public class Sentry : EnemyBase, IProjectileEmitter
     [SerializeField] private Transform[] patrolPoints;
     private int currentPoint = 0;
 
-    private Transform playerTransform;
-
     [SerializeField] private int burstCount = 3;
     [SerializeField] private float burstInterval = 0.15f;
 

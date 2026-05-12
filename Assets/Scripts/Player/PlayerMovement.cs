@@ -100,7 +100,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        HandleDashRecharge();
+        UpdateDashRecharge();
         FlushInputBuffer();
     }
 
@@ -134,8 +134,6 @@ public class PlayerMovement : MonoBehaviour
         {
             bufferedDash = new();
         }
-
-        StartDash();
     }
 
     #endregion
@@ -302,7 +300,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void HandleDashRecharge()
+    private void UpdateDashRecharge()
     {
         float rechargeRate = 1.0f; // alter based on things ig
 

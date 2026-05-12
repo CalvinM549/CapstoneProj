@@ -46,6 +46,7 @@ public class TimescaleManager : MonoBehaviour
         {
             lastTimeScale = Time.timeScale;
             Time.timeScale = 0f;
+            IsPaused = true;
         }
     }
 
@@ -53,7 +54,7 @@ public class TimescaleManager : MonoBehaviour
     {
         pauseSources--;
 
-        if (pauseSources == 0 && IsPaused)
+        if (pauseSources <= 0 && IsPaused)
         {
             Time.timeScale = lastTimeScale;
             IsPaused = false;

@@ -16,8 +16,7 @@ public class MissileProjectile : Projectile
         if (telegraphPrefab != null)
         {
             var telegraph = Instantiate(telegraphPrefab, rainTargetPosition, Quaternion.identity);
-
-            telegraph.GetComponent<MissileRainTelegraph>()?.Initialize(rainTargetPosition);
+            telegraph.GetComponent<MissileRainTelegraph>()?.Initialize(rainTargetPosition, data);
         }
 
         ReturnToPool();

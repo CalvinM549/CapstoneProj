@@ -1,12 +1,19 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [SerializeField] private GameObject player;
+    private InputSystem_Actions inputActions;
+
+    [SerializeField] private Player player;
     [SerializeField] private Canvas deathCanvas;
+    [SerializeField] private Canvas tutorialCanvas;
+
+    private bool tutorialActive;
 
     public GameState CurrentState => currentState;
     private GameState currentState;
@@ -22,21 +29,49 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        inputActions = InputManager.Instance.inputActions;
+
+    }
+
+    private void Start()
+    {
+        player = GameObject.FindWithTag("Player").GetComponent<Player>();
+
+        if (!tutorialActive)
+        {
+            tutorialActive = true;
+            tutorialCanvas.gameObject.SetActive(true);
+            TimescaleManager.Instance.PauseGame();
+        }
     }
 
     private void OnEnable()
     {
         GameEvents.OnPlayerDeath += HandlePlayerDeath;
+        inputActions.UI.Exit.performed += HandleEscPressed;
     }
 
     private void OnDisable()
     {
         GameEvents.OnPlayerDeath -= HandlePlayerDeath;
+        inputActions.UI.Exit.performed -= HandleEscPressed;
     }
 
-    private void HandleEscPressed()
+    private void HandleEscPressed(InputAction.CallbackContext ctx)
     {
+        if (tutorialActive)
+        {
+            tutorialCanvas.gameObject.SetActive(false);
+            tutorialActive = false;
+            TimescaleManager.Instance.UnpauseGame();
+            return;
+        }
 
+        if (!player.Health.IsAlive)
+        {
+            ResetGame();
+        }
     }
 
     private void HandlePlayerDeath()
@@ -48,7 +83,7 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
 
-        player.SetActive(false);
+        player.gameObject.SetActive(false);
         deathCanvas.gameObject.SetActive(true);
     }
 
@@ -58,10 +93,18 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public Vector2 GetCardinal(Vector2 input)
+    private void ResetGame()
     {
-        // Convert given vector to 8 point cardinal direction (N, NE, E, SE, S, SW, W, NW) and return it as a normalized vector
-        return Vector2.zero;
+        SceneManager.LoadScene("TestingScene");
+
+        deathCanvas.gameObject.SetActive(false);
+
+        if (!tutorialActive && !TimescaleManager.IsPaused)
+        {
+            tutorialActive = true;
+            tutorialCanvas.gameObject.SetActive(true);
+            TimescaleManager.Instance.PauseGame();
+        }
     }
 
 }
