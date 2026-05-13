@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Sentry : EnemyBase, IProjectileEmitter
 {
-
+    [SerializeField] bool isElite;
     [SerializeField] private Transform[] patrolPoints;
     private int currentPoint = 0;
 
@@ -127,10 +127,11 @@ public class Sentry : EnemyBase, IProjectileEmitter
         yield return new WaitForSeconds(1.5f);
 
         // Firing
-
+        var direction = playerTransform.position - transform.position;
         for (int i = 0; i < burstCount; i++)
         {
-            var direction = playerTransform.position - transform.position;
+            if(isElite)
+                direction = playerTransform.position - transform.position;
 
             float spread = Random.Range(-spreadAngle * 0.5f, spreadAngle * 0.5f);
             Vector2 fireDir = Quaternion.Euler(0f, 0f, spread) * direction;

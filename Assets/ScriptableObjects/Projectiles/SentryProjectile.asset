@@ -15,7 +15,7 @@ MonoBehaviour:
   prefab: {fileID: 7729453556227253415, guid: 4a391f20a74486744878638e83022756, type: 3}
   poolSize: 0
   lifetime: 0.5
-  speed: 50
+  speed: 30
   damage: 4
   damageType: 0
   knockback: 2

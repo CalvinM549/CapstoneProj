@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 
     private InputSystem_Actions inputActions;
 
+    [SerializeField] private LayerMask groundLayer;
+
     [SerializeField] private Player player;
     [SerializeField] private Canvas deathCanvas;
     [SerializeField] private Canvas tutorialCanvas;
