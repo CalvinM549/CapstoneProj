@@ -10,10 +10,15 @@ public class GameManager : MonoBehaviour
     private InputSystem_Actions inputActions;
 
     [SerializeField] private LayerMask groundLayer;
+    public LayerMask GroundLayer => groundLayer;
+    [SerializeField] private LayerMask wallLayer;
+    public LayerMask WallLayer => wallLayer;
 
     [SerializeField] private Player player;
     [SerializeField] private Canvas deathCanvas;
     [SerializeField] private Canvas tutorialCanvas;
+
+    [SerializeField] private Texture2D combatCursor;
 
     private bool tutorialActive;
 
@@ -39,6 +44,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         player = GameObject.FindWithTag("Player").GetComponent<Player>();
+        SetCursor();
 
         if (!tutorialActive)
         {
@@ -109,6 +115,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+    private void SetCursor()
+    {
+        Cursor.SetCursor(combatCursor, Vector2.zero, CursorMode.Auto);
+    }
 }
 
 

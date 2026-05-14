@@ -128,26 +128,43 @@ public class Sentry : EnemyBase, IProjectileEmitter
 
         // Firing
         var direction = playerTransform.position - transform.position;
-        for (int i = 0; i < burstCount; i++)
+        var distance = Vector2.Distance(transform.position, playerTransform.position);
+
+        // LOS Check
+        if (!Physics2D.Raycast(transform.position, direction, distance, GameManager.Instance.WallLayer))
         {
-            if(isElite)
-                direction = playerTransform.position - transform.position;
+            // IF LOS is clear
 
-            float spread = Random.Range(-spreadAngle * 0.5f, spreadAngle * 0.5f);
-            Vector2 fireDir = Quaternion.Euler(0f, 0f, spread) * direction;
+            for (int i = 0; i < burstCount; i++)
+            {
 
-            if (fireDir.x > 0 && !isFacingRight)
-                FlipFacing();
-            else if (fireDir.x < 0 && isFacingRight) 
-                FlipFacing();
+                // Do tracking for each bullet
+                if (isElite)
+                    direction = playerTransform.position - transform.position;
 
-            FireProjectile(Projectiles[0], firePoint.position, direction, false);
+                float spread = Random.Range(-spreadAngle * 0.5f, spreadAngle * 0.5f);
+                Vector2 fireDir = Quaternion.Euler(0f, 0f, spread) * direction;
 
-            if (i < burstCount - 1)
-                yield return new WaitForSeconds(burstInterval);
+                if (fireDir.x > 0 && !isFacingRight)
+                    FlipFacing();
+                else if (fireDir.x < 0 && isFacingRight)
+                    FlipFacing();
+
+                FireProjectile(Projectiles[0], firePoint.position, direction, false);
+
+                if (i < burstCount - 1)
+                    yield return new WaitForSeconds(burstInterval);
+            }
+
+            attackCooldownTimer = attackCooldown;
+
         }
-
-        attackCooldownTimer = attackCooldown;
+        else
+        {
+            yield return new WaitForSeconds(0.3f);
+            //if LOS is not clear
+            attackCooldownTimer = attackCooldown / 2; // put on reduced CD
+        }
 
         yield return new WaitForSeconds(0.2f);
 
