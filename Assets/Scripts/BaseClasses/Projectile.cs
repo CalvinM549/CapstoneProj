@@ -5,6 +5,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     public ProjectileData data;
+    private Vector2 sourcePosition;
 
     private Vector2 direction;
     private bool isPlayerProjectile;
@@ -21,9 +22,10 @@ public class Projectile : MonoBehaviour
         rb.gravityScale = 0f;
     }
 
-    public void Initalize(ProjectileData data, Vector2 direction, Action<Projectile> returnToPool, bool playerProjectile)
+    public void Initalize(ProjectileData data, Vector2 direction, Vector2 sourcePos, Action<Projectile> returnToPool, bool playerProjectile)
     {
         this.data = data;
+        this.sourcePosition = sourcePos;
         this.direction = direction;
         this.returnToPool = returnToPool;
         isPlayerProjectile = playerProjectile;
@@ -87,7 +89,7 @@ public class Projectile : MonoBehaviour
         {
             damage = data.damage,
             attackType = AttackType.Secondary,
-            sourcePos = transform.position,
+            sourcePos = sourcePosition,
             knockbackDirection = direction,
             knockbackForce = data.knockback,
             hitstopTime = data.hitstopDuration,

@@ -101,7 +101,7 @@ public class Walker : EnemyBase, IProjectileEmitter
             bool validTarget = false;
             while (!validTarget)
             {
-                print("generating point");
+                //print("generating point");
                 Vector2 targetPoint = Random.insideUnitCircle * missileScatter; // 15f is the scatter distance
 
                 validTarget = Physics2D.OverlapPoint(targetPoint, groundLayer) != null;
@@ -110,7 +110,7 @@ public class Walker : EnemyBase, IProjectileEmitter
                     targetPositions[i] = (Vector2)playerTransform.position + targetPoint;
             }
 
-            print($"Point founnd : {targetPositions[i]}");
+            //print($"Point founnd : {targetPositions[i]}");
         }
 
 

@@ -1,11 +1,20 @@
+using DG.Tweening;
 using System;
 using System.Collections;
+using System.Security.Authentication.ExtendedProtection;
 using Unity.Cinemachine;
 using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    // Make Instance?
+    public enum CameraEffect
+    {
+        PositionalShake,
+        ImpulseShake,
+        DirectionalShake,
+        ZoomPunch,
+        VCamSwitch
+    }
 
     [SerializeField] private CinemachineCamera defaultCamera;
 
@@ -13,12 +22,15 @@ public class CameraManager : MonoBehaviour
     private Transform player;
 
     [SerializeField] private BoxCollider2D roomBounds;
-    
+    [SerializeField] private int maxCameraShakes;
+
     private CinemachineImpulseSource impulseSource;
 
     public bool IsBlending => brain.IsBlending;
 
     private CinemachineCamera currentCamera;
+    private int currentShakeCount;
+
 
     [Space]
     [SerializeField] private float lightHitShakeMag = 0.05f;
@@ -33,14 +45,21 @@ public class CameraManager : MonoBehaviour
         player = GameObject.FindWithTag("Player").transform;
     }
 
+    private void OnDestroy()
+    {
+        
+    }
+
     private void OnEnable()
     {
         GameEvents.OnHitConfirmed += HandleHitShake;
+        GameEvents.OnPlayerHit += HandlePlayerHit;
     }
 
     private void OnDisable()
     {
         GameEvents.OnHitConfirmed -= HandleHitShake;
+        GameEvents.OnPlayerHit -= HandlePlayerHit;
     }
 
     #region Event Handlers
@@ -60,6 +79,11 @@ public class CameraManager : MonoBehaviour
                 CameraShake(dashHitShakeMag);
                 break;
         }
+    }
+
+    private void HandlePlayerHit(HitData hit)
+    {
+        CameraShake(hit.hitstunTime);
     }
 
     #endregion
@@ -111,5 +135,18 @@ public class CameraManager : MonoBehaviour
     }
 
     #endregion
+    //private void DoPositionalShake()
+    //{
+    //    if (brain == null) return;
+    //    if (currentShakeCount >= maxCameraShakes) return;
+
+    //    float strength = b.baseStrength * p.intensity;
+    //    float dur = p.duration > 0f ? p.duration : b.duration;
+
+    //    currentShakeCount++;
+    //    brain.transform
+    //        .DOShakePosition(dur, strength, b.vibrato, b.randomness, snapping: false, fadeOut: true)
+    //        .OnComplete(() => currentShakeCount--);
+    //}
 
 }

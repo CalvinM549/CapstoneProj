@@ -66,7 +66,7 @@ public class ProjectileManager : MonoBehaviour
 
         Projectile currentProjectile = poolEntry.pool.Get();
         currentProjectile.transform.position = firePos;
-        currentProjectile.Initalize(projectile, direction, ReturnToPool, isPlayerProjectile);
+        currentProjectile.Initalize(projectile, direction, firePos, ReturnToPool, isPlayerProjectile);
 
         return currentProjectile;
     }

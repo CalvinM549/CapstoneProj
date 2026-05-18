@@ -52,8 +52,6 @@ public class MissileRainTelegraph : MonoBehaviour
 
         foreach (Collider2D hit in hits)
         {
-            print(hit.gameObject.name);
-
             if (!hit.CompareTag("PlayerHurtbox") && !hit.CompareTag("Player")) continue;
 
             IDamageable target = hit.GetComponentInParent<IDamageable>();

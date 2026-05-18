@@ -58,8 +58,9 @@ public class RadialStructureUI : MonoBehaviour
 
             if (valueChanged)
             {
-                fillImage.color = Color.white;
-                fillImage.DOFade(baseColour.a, tweenDuration);
+                fillImage.color = Color.red;
+                fillImage.DOColor(baseColour, tweenDuration);
+                //fillImage.DOFade(baseColour.a, tweenDuration);
             }
 
         }

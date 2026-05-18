@@ -250,6 +250,8 @@ public class PlayerAnimator : MonoBehaviour
 
     protected void FlipFacing()
     {
+        if (p.Combat.CurrentState == CombatState.Startup || p.Combat.CurrentState == CombatState.Active) return;
+
         IsFacingRight = !IsFacingRight;
 
         Vector3 scaler = sr.transform.localScale;
