@@ -25,6 +25,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
     [SerializeField] private Material damageMaterial;
     [SerializeField] private GameObject damageParticles;
+    [SerializeField] private GameObject damageSparkParticles;
 
     private Coroutine hitFXRoutine;
 
@@ -106,6 +107,9 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
         if(damageParticles != null)
             Instantiate(damageParticles, transform.position, Quaternion.identity);
+
+        if (damageSparkParticles != null)
+            Instantiate(damageSparkParticles, transform.position, Quaternion.identity);
 
         animator.Play("Hit");
 

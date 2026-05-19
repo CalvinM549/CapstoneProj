@@ -204,6 +204,30 @@ public class PlayerMomentum : MonoBehaviour
         GameEvents.MomentumZoneChange(oldZone, currentZone);
     }
 
+    public float GetMomentumSpeedMultiplier()
+    {
+        float mult = 1f;
+            
+        switch (currentZone)
+        {
+            case MomentumZone.Empty:
+            case MomentumZone.Low:
+                mult = data.lowSpeedMult;
+                break;
+
+            case MomentumZone.Mid:
+                mult = data.midSpeedMult;
+                break;
+
+            case MomentumZone.High:
+            case MomentumZone.Full:
+                mult = data.highSpeedMult;
+                break;
+        }
+
+        return mult;
+    }
+
     #endregion
 
 }

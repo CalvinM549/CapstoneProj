@@ -4,27 +4,45 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+public enum RunState
+{
+    Idle,
+    Drafting,
+    InRun,
+    RunWin,
+    RunLoss
+}
+
 public class RunManager : MonoBehaviour
 {
+
     public static RunManager Instance { get; private set; }
 
-    public GameObject currentPlayer;
+    //public event Action<DraftedRoute> OnDraftReady;       // Draft generated, show UI
+    //public event Action<RunState> OnRunStateChanged;  // Any state transition
+    //public event Action<RoomManager> OnRoomStarted;      // New room is active
+    //public event Action<RoomManager> OnRoomCleared;      // Room completed, doors open
+    //public event Action<int, int> OnRoomProgressChanged; // (currentIndex, total)
 
-    public RunData currentRun;
+    [SerializeField] private Transform roomSpawnPoint;
 
-    public bool PlayerExists => currentPlayer != null;
+    public RunState State { get; private set; } = RunState.Idle;
+    //Route
+    
+    private List<RoomConfig> orderedRooms;
+    private int currentRoomIndex;
+    private RoomManager activeRoomManager;
+    private GameObject activeRoomGO;
 
-    public bool RunActive;
-
-
-
-    private void Start()
+    private void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
     }
+
+
 
     private void OnEnable()
     {
@@ -51,7 +69,15 @@ public class RunManager : MonoBehaviour
 
     public void EndRun(bool won)
     {
-        // Display 
+        SetState(won ? RunState.RunWin : RunState.RunLoss);
+
+        //Hook to things with event
+    }
+
+    private void SetState(RunState newState)
+    {
+        State = newState;
+        //Fire Event
     }
 
     #endregion
@@ -69,10 +95,6 @@ public class RunManager : MonoBehaviour
 
     public void UpdateTimer()
     {
-        if (RunActive)
-        {
-            currentRun.RunDuration += Time.deltaTime;
-        }
     }
 
     #endregion

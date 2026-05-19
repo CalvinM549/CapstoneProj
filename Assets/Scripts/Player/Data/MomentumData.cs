@@ -24,4 +24,10 @@ public class MomentumData : ScriptableObject
     public float lightWhiffDrain;
     public float dashWhiffDrain;
     public float heavyWhiffDrain;
+
+    [Header("Speed Multipliers")]
+    public float lowSpeedMult;
+    public float midSpeedMult;
+    public float highSpeedMult;
+
 }

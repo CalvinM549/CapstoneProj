@@ -27,3 +27,6 @@ MonoBehaviour:
   lightWhiffDrain: 3
   dashWhiffDrain: 5
   heavyWhiffDrain: 12
+  lowSpeedMult: 0.9
+  midSpeedMult: 1
+  highSpeedMult: 1.2

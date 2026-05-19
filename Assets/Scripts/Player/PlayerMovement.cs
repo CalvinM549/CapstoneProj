@@ -177,7 +177,9 @@ public class PlayerMovement : MonoBehaviour
         {
             case CombatState.Startup:
             case CombatState.Active:
-                rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, Vector2.zero, data.deceleration * 2.0f * Time.fixedDeltaTime);
+                rb.linearVelocity = Vector2.MoveTowards(
+                    rb.linearVelocity, Vector2.zero, 
+                    data.deceleration * 2.0f * Time.fixedDeltaTime);
                 break;
 
             case CombatState.Recovery:
@@ -196,7 +198,7 @@ public class PlayerMovement : MonoBehaviour
         {
             lastMoveDirection = moveDirection.normalized;
             float accel = GetAcceleration() * multiplier;
-            Vector2 targetVelocity = moveDirection.normalized * data.baseSpeed * multiplier;
+            Vector2 targetVelocity = moveDirection.normalized * data.baseSpeed * multiplier * p.Momentum.GetMomentumSpeedMultiplier();
             rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, accel * Time.fixedDeltaTime);
         }
         else
