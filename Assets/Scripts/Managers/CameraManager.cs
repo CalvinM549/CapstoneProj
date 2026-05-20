@@ -100,9 +100,8 @@ public class CameraManager : MonoBehaviour
     }
 
     #endregion
+
     #region Camera View Changing
-
-
 
     private void SetCamera(CinemachineCamera camera)
     {
@@ -135,6 +134,7 @@ public class CameraManager : MonoBehaviour
     }
 
     #endregion
+
     //private void DoPositionalShake()
     //{
     //    if (brain == null) return;

@@ -73,6 +73,15 @@ public class Walker : EnemyBase, IProjectileEmitter
         //?? idk how it should move
     }
 
+    protected override void ApplyDamage(HitData hit)
+    {
+        float damage = hit.damage;
+        if (!isAttacking)
+            damage *= 0.5f;
+
+        currentHealth = Mathf.Max(0, currentHealth - damage);
+    }
+
     private void MissileBarrage()
     {
         if (isAttacking) return;

@@ -103,6 +103,8 @@ public class PlayerAnimator : MonoBehaviour
     private void HandleAutoFlip()
     {
         if (p.Health.IsHitstunned) return;
+        if (p.Combat.CurrentState == CombatState.Startup
+            || p.Combat.CurrentState == CombatState.Active) return;
 
         //// MoveDir based Flip
         //if (p.Movement.IsMoving)
@@ -118,7 +120,7 @@ public class PlayerAnimator : MonoBehaviour
         //}
 
         // Mouse based flip
-        
+
         if (p.Movement.IsDashing)
         {
             if (p.Movement.CurrentMoveDirection.x > 0 && IsFacingRight)
@@ -140,6 +142,14 @@ public class PlayerAnimator : MonoBehaviour
     private void HandleAttackStart(AttackType type, Vector2 direction)
     {
         if (type == AttackType.DashAttack) return;
+
+        // Set Facing
+        Vector2 mouseDir = p.GetMouseDirection();
+
+        if (mouseDir.x > 0 && IsFacingRight)
+            FlipFacing();
+        else if (mouseDir.x < 0 && !IsFacingRight)
+            FlipFacing();
 
         int combo = p.Combat.ComboStep;
 
@@ -247,11 +257,8 @@ public class PlayerAnimator : MonoBehaviour
         sr.material = baseMaterial;
     }
 
-
-    protected void FlipFacing()
+    private void FlipFacing()
     {
-        if (p.Combat.CurrentState == CombatState.Startup || p.Combat.CurrentState == CombatState.Active) return;
-
         IsFacingRight = !IsFacingRight;
 
         Vector3 scaler = sr.transform.localScale;

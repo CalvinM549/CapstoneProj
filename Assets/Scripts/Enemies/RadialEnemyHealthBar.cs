@@ -136,6 +136,15 @@ public class RadialEnemyHealthBar : MonoBehaviour
             .SetEase(Ease.OutCubic);
     }
 
+    private void DoDamageChunk(float damageFill)
+    {
+        float filledAngle = targetFill * 360f;
+        
+        // Instantiate a new object
+        //newArc.localRotation = Quaternion.Euler(0f, 0f, -filledAngle);
+        //newArcImage.fillAmount = 1f - targetFill + damageFill
+    }
+
     private void ShowBar()
     {
         isVisible = true;

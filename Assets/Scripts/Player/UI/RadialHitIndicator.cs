@@ -51,9 +51,7 @@ public class RadialHitIndicator : MonoBehaviour
     private void HandlePlayerHit(HitData hit)
     {
         if (playerTransform == null) return;
-
-        print(hit.sourcePos);
-        
+                
         Vector2 direction = ((Vector2)playerTransform.position - hit.sourcePos).normalized;
         if (direction == Vector2.zero) return;
 

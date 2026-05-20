@@ -27,6 +27,8 @@ public class EnemyBase : MonoBehaviour, IDamageable
     [SerializeField] private GameObject damageParticles;
     [SerializeField] private GameObject damageSparkParticles;
 
+    [SerializeField] private GameObject deathParticles;
+
     private Coroutine hitFXRoutine;
 
     public bool IsAlive { get; set; }
@@ -72,12 +74,12 @@ public class EnemyBase : MonoBehaviour, IDamageable
             Die();
     }
 
-    protected void ApplyDamage(HitData hit)
+    protected virtual void ApplyDamage(HitData hit)
     {
         currentHealth = Mathf.Max(0, currentHealth - hit.damage);
     }
 
-    private void ApplyKnockback(Vector2 direction, float force)
+    protected virtual void ApplyKnockback(Vector2 direction, float force)
     {
         if (direction.magnitude < 0.1f) return;
 
@@ -88,7 +90,11 @@ public class EnemyBase : MonoBehaviour, IDamageable
     {
         Debug.Log("Enemy Killed");
         IsAlive = false;
-        StopAllCoroutines();
+
+        if (deathParticles != null)
+            Instantiate(deathParticles, transform.position, Quaternion.identity);
+
+            StopAllCoroutines();
         gameObject.SetActive(false);
     }
 

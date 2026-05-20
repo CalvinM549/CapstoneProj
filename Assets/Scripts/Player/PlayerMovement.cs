@@ -58,6 +58,8 @@ public class PlayerMovement : MonoBehaviour
     private Coroutine currentDashRoutine;
     private Coroutine currentPushRoutine;
 
+    #region MonobehaviourThings
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -109,6 +111,8 @@ public class PlayerMovement : MonoBehaviour
         if(!IsDashing && !isForcedPush && !isSelfPush && !isParrying)  
             ApplyMovement();
     }
+
+    #endregion
 
     #region InputHandling
 
@@ -250,16 +254,16 @@ public class PlayerMovement : MonoBehaviour
 
         isDashing = true;
 
+        // Start Events
         GameEvents.PlayerDashStart();
         p.Health.GrantIFrames(data.dashIFrameDuration);
         p.VFX.PlayDashTrail();
-
-
         Physics2D.IgnoreLayerCollision(playerLayerIndex, enemyLayerIndex, true);
+        //
+
         rb.linearVelocity = direction * data.dashSpeed;
 
         yield return new WaitForSeconds(data.dashDuration);
-
 
         EndDash();
     }
