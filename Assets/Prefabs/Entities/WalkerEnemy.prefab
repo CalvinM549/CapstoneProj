@@ -565,7 +565,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  attackCooldown: 5
+  attackCooldown: 3
   missileCount: 4
   missileInterval: 0.15
   missileScatter: 10

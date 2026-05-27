@@ -12,10 +12,8 @@ public class RadialMomentumUI : MonoBehaviour
 
     [SerializeField] private float colourLerpSpeed;
 
-    [SerializeField] private Color emptyColour;
-    [SerializeField] private Color lowColour;
-    [SerializeField] private Color midColour;
-    [SerializeField] private Color highColour;
+    [SerializeField] private Color minColour;
+    [SerializeField] private Color maxColour;
 
     private float currentFill;
     private float targetFill;
@@ -24,7 +22,7 @@ public class RadialMomentumUI : MonoBehaviour
     private void Awake()
     {
         currentFill = 0f;
-        targetColour = emptyColour;
+        targetColour = minColour;
         if (fillBar != null) fillBar.color = targetColour;
         BuildUI();
     }
@@ -59,22 +57,11 @@ public class RadialMomentumUI : MonoBehaviour
 
     private void HandleMomentumChanged(float normalized)
     {
-        fillBar.fillAmount = GetAdjustedFill(currentFill); // Replace with Tweeners
+        currentFill = GetAdjustedFill(normalized);
+
+        fillBar.fillAmount = currentFill; // Replace with Tweeners
+        fillBar.color = Color.Lerp(minColour, maxColour, normalized);
     }
 
-    private void HandleMomentumZoneChange(MomentumZone old, MomentumZone current)
-    {
-        targetColour = current switch
-        {
-            MomentumZone.Full => highColour,
-            MomentumZone.High => highColour,
-            MomentumZone.Mid => midColour,
-            MomentumZone.Low => lowColour,
-            MomentumZone.Empty => emptyColour,
-            _ => emptyColour
-        };
-
-        // Use tweener
-    }
 
 }
