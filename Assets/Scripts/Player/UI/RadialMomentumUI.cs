@@ -37,11 +37,6 @@ public class RadialMomentumUI : MonoBehaviour
         GameEvents.OnMomentumChange -= HandleMomentumChanged;
     }
 
-    private void Update()
-    {
-        
-    }
-
     private void BuildUI()
     {
         fillBar.rectTransform.localRotation = Quaternion.Euler(0f, 0f, arcOffset);

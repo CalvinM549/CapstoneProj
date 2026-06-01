@@ -22,56 +22,46 @@ public class RadialStructureUI : MonoBehaviour
 
         public float PercentHealth => currentHealth / maxHealth;
 
-        public RectTransform pivot;
-        public Image fillImage;
-        public float arcFillAmount;
+        private readonly RingController controller;
 
-        private Color baseColour;
-        private Tween activeTween;
-
-        public UISegment(HealthSegment segment, RectTransform pivotRef, Image imageRef, float currentArc)
+        public UISegment(HealthSegment segment, RingController controller)
         {
             currentHealth = segment.currentHealth;
             maxHealth = segment.maxHealth;
 
-            pivot = pivotRef;
-            fillImage = imageRef;
-            arcFillAmount = currentArc;
+            this.controller = controller;
 
-            baseColour = fillImage.color;
         }
 
         public void UpdateSegment(HealthSegment newValues, float tweenDuration)
         {
-            bool wasAlive = currentHealth > 0f;
             bool valueChanged = newValues.currentHealth != currentHealth;
 
-            currentHealth = newValues.currentHealth;
-            maxHealth = newValues.maxHealth;
+            currentHealth   = newValues.currentHealth;
+            maxHealth       = newValues.maxHealth;
 
-            float targetFill = PercentHealth * arcFillAmount;
-
-            activeTween.Kill();
-            fillImage?.DOKill();
-            activeTween = fillImage.DOFillAmount(targetFill, tweenDuration).SetEase(Ease.OutCubic);
-
+            controller.SetFill(PercentHealth, tweenDuration);
 
             if (valueChanged)
             {
-                fillImage.color = Color.red;
-                fillImage.DOColor(baseColour, tweenDuration);
-                //fillImage.DOFade(baseColour.a, tweenDuration);
+                controller.FlashColour(Color.red, tweenDuration);
             }
 
         }
 
         public void SetFillImmediate()
         {
-            fillImage.fillAmount = PercentHealth * arcFillAmount;
+            controller.SetFillImmediate(PercentHealth);
+        }
+
+        public void Kill()
+        {
+            if (controller != null)
+                Destroy(controller.gameObject);
         }
     }
 
-    [SerializeField] private readonly List<UISegment> uiSegments = new();
+    private readonly List<UISegment> uiSegments = new();
 
     private void OnEnable()
     {
@@ -81,9 +71,6 @@ public class RadialStructureUI : MonoBehaviour
     private void OnDisable()
     {
         GameEvents.OnPlayerHealthChanged -= HandleStructureChanged;
-
-        foreach (var segment in uiSegments)
-            segment.pivot?.DOKill();
     }
 
     private void HandleStructureChanged(IReadOnlyList<HealthSegment> segments)
@@ -104,62 +91,69 @@ public class RadialStructureUI : MonoBehaviour
 
     private void BuildSegments(IReadOnlyList<HealthSegment> segments)
     {
-        foreach (var oldSegment in uiSegments)
-        {
-            oldSegment.pivot?.DOKill();
-            if (oldSegment.pivot != null)
-                Destroy(oldSegment.pivot.gameObject);
-        }
-
+        foreach (var old in uiSegments)
+            old.Kill();
         uiSegments.Clear();
 
         int count = segments.Count;
         if (count <= 0) return;
 
-        float totalGap = gapDegrees * count;
-        float halfGap = gapDegrees * 0.5f;
-        float totalArcDegrees = 360f - totalGap;
-        float arcPerSegment = totalArcDegrees / count;
-        float arcFillAmount = arcPerSegment / 360;
+        float totalArcDeg = 360f - (gapDegrees * count);
+        float arcPerSegment = totalArcDeg / count;
+
+        float startOffset = 45f + gapDegrees * 0.5f;
 
         for (int i = 0; i < count; i++)
         {
-            float startAngle = 45 - (i * (arcPerSegment + gapDegrees)) - halfGap;
+            float arcOffset = startOffset + i * (arcPerSegment + gapDegrees);
 
-            var pivot = CreateSegmentPivot(startAngle);
-            var fillImage = ConfigureFillImage(pivot, arcFillAmount);
+            var controller = CreateRing(arcOffset, arcPerSegment, segments[i]);
+            var uiSegment = new UISegment(segments[i], controller);
 
-            var uiSegment = new UISegment(segments[i], pivot, fillImage, arcFillAmount);
             uiSegments.Add(uiSegment);
             uiSegment.SetFillImmediate();
         }
     }
 
-    private RectTransform CreateSegmentPivot(float startAngleDegrees)
+    private RingController CreateRing(float arcOffset, float arcSpan, HealthSegment segment)
     {
         var segmentGO = Instantiate(segmentPrefab, segmentContainer);
-        var segmentRect = segmentGO.GetComponent<RectTransform>();
+        segmentGO.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
 
-        segmentRect.anchoredPosition = Vector2.zero;
-        segmentRect.localRotation = Quaternion.Euler(0f, 0f, startAngleDegrees);
+        var controller = segmentGO.GetComponent<RingController>();
+        if (controller == null) return null;
 
-        return segmentRect;
+        controller.Initialize(arcOffset,
+            arcSpan, 
+            controller.Ring != null ? controller.Ring.color : Color.pink);
+        return controller;
     }
 
-    private Image ConfigureFillImage(RectTransform pivot, float arcFillAmount)
-    {
-        //var segmentTransform = pivot.GetChild(0);
-        var images = pivot.GetComponentsInChildren<Image>();
+    //private RectTransform CreateSegmentPivot(float startAngleDegrees)
+    //{
+    //    var segmentGO = Instantiate(segmentPrefab, segmentContainer);
+    //    var segmentRect = segmentGO.GetComponent<RectTransform>();
 
-        Image fillImage = images.Length > 1 ? images[1] : images[0];
+    //    segmentRect.anchoredPosition = Vector2.zero;
+    //    segmentRect.localRotation = Quaternion.Euler(0f, 0f, startAngleDegrees);
 
-        fillImage.type = Image.Type.Filled;
-        fillImage.fillMethod = Image.FillMethod.Radial360;
-        fillImage.fillOrigin = (int)Image.Origin360.Top;
-        fillImage.fillClockwise = true;
+    //    return segmentRect;
+    //}
 
-        fillImage.fillAmount = arcFillAmount;
+    //private Image ConfigureFillImage(RectTransform pivot, float arcFillAmount)
+    //{
+    //    //var segmentTransform = pivot.GetChild(0);
+    //    var images = pivot.GetComponentsInChildren<Image>();
 
-        return fillImage;
-    }
+    //    Image fillImage = images.Length > 1 ? images[1] : images[0];
+
+    //    fillImage.type = Image.Type.Filled;
+    //    fillImage.fillMethod = Image.FillMethod.Radial360;
+    //    fillImage.fillOrigin = (int)Image.Origin360.Top;
+    //    fillImage.fillClockwise = true;
+
+    //    fillImage.fillAmount = arcFillAmount;
+
+    //    return fillImage;
+    //}
 }

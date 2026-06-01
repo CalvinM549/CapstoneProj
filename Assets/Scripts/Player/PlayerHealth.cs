@@ -136,6 +136,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void PlayerDeath()
     {
+        GameEvents.PlayerHealthChanged(healthSegments);
         IsAlive = false;
         isIframe = true;
 
