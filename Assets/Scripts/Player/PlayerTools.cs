@@ -38,7 +38,8 @@ public class PlayerTools : MonoBehaviour
 
     private void OnUseToolInput(InputAction.CallbackContext context)
     {
-        UseEquippedTool();
+        // Re-impliment when tools are more setup
+        //UseEquippedTool();
     }
 
 
