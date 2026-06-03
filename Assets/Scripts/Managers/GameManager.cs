@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -5,7 +6,22 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    public enum GameState
+    {
+        MainMenu,
+        Hub,
+        Draft,
+        InRun,
+        Paused,
+        GameOver,
+        Win
+    }
+
     public static GameManager Instance;
+
+
+    public GameState CurrentState => currentState;
+    private GameState currentState;
 
     private InputSystem_Actions inputActions;
 
@@ -14,16 +30,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private LayerMask wallLayer;
     public LayerMask WallLayer => wallLayer;
 
-    [SerializeField] private Player player;
-    [SerializeField] private Canvas deathCanvas;
-    [SerializeField] private Canvas tutorialCanvas;
 
     [SerializeField] private Texture2D combatCursor;
 
     private bool tutorialActive;
 
-    public GameState CurrentState => currentState;
-    private GameState currentState;
 
     private void Awake()
     {
@@ -43,76 +54,27 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        player = GameObject.FindWithTag("Player").GetComponent<Player>();
-        SetCursor();
 
-        if (!tutorialActive)
-        {
-            tutorialActive = true;
-            tutorialCanvas.gameObject.SetActive(true);
-            TimescaleManager.Instance.PauseGame();
-        }
     }
 
     private void OnEnable()
     {
-        GameEvents.OnPlayerDeath += HandlePlayerDeath;
-        inputActions.UI.Exit.performed += HandleEscPressed;
+
     }
 
     private void OnDisable()
     {
-        GameEvents.OnPlayerDeath -= HandlePlayerDeath;
-        inputActions.UI.Exit.performed -= HandleEscPressed;
-    }
-
-    private void HandleEscPressed(InputAction.CallbackContext ctx)
-    {
-        if (tutorialActive)
-        {
-            tutorialCanvas.gameObject.SetActive(false);
-            tutorialActive = false;
-            TimescaleManager.Instance.UnpauseGame();
-            return;
-        }
-
-        if (!player.Health.IsAlive)
-        {
-            ResetGame();
-        }
-    }
-
-    private void HandlePlayerDeath()
-    {
-        StartCoroutine(PlayerDeathRoutine());
-    }
-
-    private IEnumerator PlayerDeathRoutine()
-    {
-        yield return new WaitForSeconds(2f);
-
-        player.gameObject.SetActive(false);
-        deathCanvas.gameObject.SetActive(true);
-    }
-
-
-    public void PauseGame()
-    {
 
     }
 
-    private void ResetGame()
+    public void SetState(GameState newState)
     {
-        SceneManager.LoadScene("TestingScene");
+        currentState = newState;
+    }
 
-        deathCanvas.gameObject.SetActive(false);
+    public void ReturnToMenu()
+    {
 
-        if (!tutorialActive && !TimescaleManager.IsPaused)
-        {
-            tutorialActive = true;
-            tutorialCanvas.gameObject.SetActive(true);
-            TimescaleManager.Instance.PauseGame();
-        }
     }
 
 
@@ -125,12 +87,4 @@ public class GameManager : MonoBehaviour
 
 
 
-public enum GameState
-{
-    MainMenu,
-    Hub,
-    Draft,
-    InRun,
-    Paused,
-    GameOver
-}
+

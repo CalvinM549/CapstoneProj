@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class RadialMomentumUI : MonoBehaviour
 {
-    [SerializeField] private Image fillBar;
+    [SerializeField] private RingController controller;
     [SerializeField] private float arcOffset;
     [SerializeField] private float arcDegrees;
 
@@ -15,15 +15,10 @@ public class RadialMomentumUI : MonoBehaviour
     [SerializeField] private Color minColour;
     [SerializeField] private Color maxColour;
 
-    private float currentFill;
-    private float targetFill;
-    private Color targetColour;
+    private float lastValue;
 
     private void Awake()
     {
-        currentFill = 0f;
-        targetColour = minColour;
-        if (fillBar != null) fillBar.color = targetColour;
         BuildUI();
     }
 
@@ -39,23 +34,25 @@ public class RadialMomentumUI : MonoBehaviour
 
     private void BuildUI()
     {
-        fillBar.rectTransform.localRotation = Quaternion.Euler(0f, 0f, arcOffset);
-        fillBar.fillAmount = GetAdjustedFill(currentFill);
-    }
-
-    private float GetAdjustedFill(float fillAmount)
-    {
-        fillAmount = Mathf.Clamp01(fillAmount);
-        float arcRatio = arcDegrees / 360f;
-        return fillAmount * arcRatio;
+        controller.Initialize(arcOffset, arcDegrees, minColour, maxColour);
+        controller.SetFillImmediate(0f);
+        lastValue = 0f;
     }
 
     private void HandleMomentumChanged(float normalized)
     {
-        currentFill = GetAdjustedFill(normalized);
+        controller.SetFill(normalized, gainLerpSpeed);
 
-        fillBar.fillAmount = currentFill; // Replace with Tweeners
-        fillBar.color = Color.Lerp(minColour, maxColour, normalized);
+        if (Mathf.Abs(normalized - lastValue) >= 0.1f)
+        {
+            controller.FlashColour(Color.Lerp(Color.red, Color.green, normalized), 0.2f);
+        }
+        else
+        {
+            controller.SetColourFromNormal(normalized);
+        }
+
+        lastValue = normalized;
     }
 
 

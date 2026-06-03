@@ -59,6 +59,7 @@ public class PlayerAnimator : MonoBehaviour
     private void OnDisable()
     {
         GameEvents.OnPlayerDashStart -= HandleDashStart;
+        GameEvents.OnPlayerDashEnd -= HandleDashEnd;
 
         GameEvents.OnAttackStarted -= HandleAttackStart;
 
@@ -72,10 +73,6 @@ public class PlayerAnimator : MonoBehaviour
         //HandleMovementSprite();
         UpdateMovementAnimation();
         UpdateAttackAnimation();
-    }
-
-    private void FixedUpdate()
-    {
         HandleAutoFlip();
     }
 

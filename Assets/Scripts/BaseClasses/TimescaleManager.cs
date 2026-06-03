@@ -61,6 +61,11 @@ public class TimescaleManager : MonoBehaviour
         }
     }
 
+    private void HandleHitstop(HitData hit)
+    {
+        DoHitstop(hit.hitstopTime);
+    }
+
     public void DoHitstop(float duration)
     {
         if (currentHitstopRoutine != null)
@@ -69,11 +74,6 @@ public class TimescaleManager : MonoBehaviour
         }
 
         currentHitstopRoutine = StartCoroutine(HitstopRoutine(duration));
-    }
-
-    private void HandleHitstop(HitData hit)
-    {
-        DoHitstop(hit.hitstopTime);
     }
 
     private IEnumerator HitstopRoutine(float duration)
@@ -90,7 +90,8 @@ public class TimescaleManager : MonoBehaviour
             yield return null;
         }
 
-        Time.timeScale = 1.0f;
+        if(!IsPaused)
+            Time.timeScale = 1.0f;
     }
 
 }

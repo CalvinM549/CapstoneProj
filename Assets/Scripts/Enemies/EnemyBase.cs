@@ -95,6 +95,8 @@ public class EnemyBase : MonoBehaviour, IDamageable
             Instantiate(deathParticles, transform.position, Quaternion.identity);
 
             StopAllCoroutines();
+
+        GameEvents.EnemyKilled(this);
         gameObject.SetActive(false);
     }
 

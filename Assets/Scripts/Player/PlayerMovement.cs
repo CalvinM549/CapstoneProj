@@ -108,7 +108,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!IsDashing && !isForcedPush && !isSelfPush && !isParrying)  
+        if(CanMove())  
             ApplyMovement();
     }
 
@@ -172,6 +172,16 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region BaseMovement
+
+    private bool CanMove()
+    {
+        if (IsDashing) return false;
+        if(isForcedPush) return false;
+        if (isSelfPush) return false;
+        if (isParrying) return false;
+
+        return true;
+    }
 
     private void ApplyMovement()
     {

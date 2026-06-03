@@ -39,6 +39,17 @@ public class RingController : MonoBehaviour
         ApplyConfig(arcOffset, arcSpan, baseColour);
         initialized = true;
     }
+    public void Initialize(float arcOffset, float arcSpan, Color minColour, Color maxColour)
+    {
+        this.arcOffset = arcOffset;
+        this.arcDegrees = arcSpan;
+
+        this.minColour = minColour;
+        this.maxColour = maxColour;
+
+        ApplyConfig(arcOffset, arcSpan, minColour);
+        initialized = true;
+    }
 
     private void ApplyConfig(float offset, float span, Color colour)
     {

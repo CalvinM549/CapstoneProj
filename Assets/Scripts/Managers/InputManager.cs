@@ -16,6 +16,7 @@ public class InputManager : MonoBehaviour
         }
 
         Instance = this;
+        DontDestroyOnLoad(gameObject);
 
         inputActions = new InputSystem_Actions();
         inputActions.Enable();
