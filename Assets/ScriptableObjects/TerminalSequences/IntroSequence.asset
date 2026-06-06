@@ -1,0 +1,101 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79cc4064bf7acfe4d978cef7e119bd39, type: 3}
+  m_Name: IntroSequence
+  m_EditorClassIdentifier: Assembly-CSharp::TerminalSequenceData
+  startDelay: 0.5
+  defaultLineDelay: 0.4
+  lines:
+  - text: ///
+    lineType: 0
+    delayOverride: -1
+    loadingDuration: 0
+    dotCycleSpeed: 0
+    loadingResultSuffix: 
+  - text: <ACTIVATION CODE [ERROR]>
+    lineType: 1
+    delayOverride: -1
+    loadingDuration: 0
+    dotCycleSpeed: 0
+    loadingResultSuffix: 
+  - text: <COMBAT INTELLIGENCE [CORRUPTED] activation sequence>
+    lineType: 1
+    delayOverride: -1
+    loadingDuration: 0
+    dotCycleSpeed: 0
+    loadingResultSuffix: 
+  - text: '<DESIGNATION NOT FOUND, applying VAGRANT classification> '
+    lineType: 1
+    delayOverride: -1
+    loadingDuration: 0
+    dotCycleSpeed: 0
+    loadingResultSuffix: 
+  - text: <attempting contact with OVERSEER NETWORK
+    lineType: 2
+    delayOverride: -1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: ' FAILURE, data lockdown active>'
+  - text: <SEARCHING FOR ACTIVE UNITS
+    lineType: 2
+    delayOverride: -1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: '>'
+  - text: <FAILURE>
+    lineType: 0
+    delayOverride: 0.1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: 
+  - text: <FAILURE>
+    lineType: 0
+    delayOverride: 0.1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: 
+  - text: <FAILURE>
+    lineType: 0
+    delayOverride: 0.1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: 
+  - text: <LOCATING INACTIVE UNIT STORES
+    lineType: 2
+    delayOverride: -1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: ' SUCCESS>'
+  - text: <MAU unit storage INTACT, accessing
+    lineType: 2
+    delayOverride: -1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: '>'
+  - text: <ACCESSING FACILITY SCHEMATICS
+    lineType: 2
+    delayOverride: -1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: ' SUCCESS, partial corruption>'
+  - text: <STARTUP SEQUENCE COMPLETE>
+    lineType: 1
+    delayOverride: -1
+    loadingDuration: 0
+    dotCycleSpeed: 0
+    loadingResultSuffix: 
+  - text: ///
+    lineType: 0
+    delayOverride: -1
+    loadingDuration: 0
+    dotCycleSpeed: 0
+    loadingResultSuffix: 
