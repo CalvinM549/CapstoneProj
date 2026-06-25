@@ -6,6 +6,16 @@ public class PlayerStats : MonoBehaviour
 {
     private Player p;
 
+    // Stat List, contains muteable stats affected by the game in the form of upgrades etc
+
+    //Movement
+
+    //Combat
+
+    //Momentum
+
+    //Lockons
+
     //[SerializeField] private PlayerStatsData data;
     private readonly Dictionary<string, StatValue> stats = new();
 

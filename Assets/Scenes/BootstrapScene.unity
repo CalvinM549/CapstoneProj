@@ -267,7 +267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07df05fc7d3b68948a54c3616c6dfbd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
-  AutoLoadMenu: 1
+  AutoLoadMenu: 0
   fadeTime: 0.6
   fadeOverlay: {fileID: 976834527}
 --- !u!4 &616966052

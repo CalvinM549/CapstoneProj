@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WalkerData
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   enemyName: Walker
-  maxHealth: 14
+  maxHealth: 9
   staggerThreshold: 0
   knockbackMultiplier: 0.5
   moveSpeed: 1

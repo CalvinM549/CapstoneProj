@@ -30,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
     private InputSystem_Actions inputActions;
     private Rigidbody2D rb;
 
-    private Vector2 moveDirection;
+    private Vector2 inputDirection;
     private Vector2 lastMoveDirection = Vector2.right;
 
     public Vector2 LastMoveDirection => lastMoveDirection;
@@ -118,13 +118,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleMoveStart(InputAction.CallbackContext ctx)
     {
-        moveDirection = ctx.ReadValue<Vector2>();
+        inputDirection = ctx.ReadValue<Vector2>();
         MoveInputting = true;
     }
 
     private void HandleMoveStop(InputAction.CallbackContext ctx)
     {
-        moveDirection = Vector2.zero;
+        inputDirection = Vector2.zero;
         MoveInputting = true;
     }
 
@@ -185,15 +185,13 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyMovement()
     {
-        if(!p.Health.IsAlive) moveDirection = Vector2.zero;
+        if(!p.Health.IsAlive) inputDirection = Vector2.zero;
 
         switch (p.Combat.CurrentState)
         {
             case CombatState.Startup:
             case CombatState.Active:
-                rb.linearVelocity = Vector2.MoveTowards(
-                    rb.linearVelocity, Vector2.zero, 
-                    data.deceleration * 2.0f * Time.fixedDeltaTime);
+                DecelerateToZero(2f);
                 break;
 
             case CombatState.Recovery:
@@ -208,11 +206,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyModifiedMovement(float multiplier = 1.0f)
     {
-        if (moveDirection.magnitude > 0.1f)
+        if (inputDirection.magnitude > 0.1f)
         {
-            lastMoveDirection = moveDirection.normalized;
+            lastMoveDirection = inputDirection.normalized;
             float accel = GetAcceleration() * multiplier;
-            Vector2 targetVelocity = moveDirection.normalized * data.baseSpeed * multiplier * p.Momentum.GetMomentumSpeedMultiplier();
+            Vector2 targetVelocity = inputDirection.normalized * data.baseSpeed * multiplier * p.Momentum.GetMomentumSpeedMultiplier();
+
             rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, accel * Time.fixedDeltaTime);
         }
         else
@@ -221,9 +220,14 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void DecelerateToZero(float multiplier = 1.0f)
+    {
+        rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, Vector2.zero, data.deceleration * multiplier * Time.fixedDeltaTime);
+    }
+
     private float GetAcceleration()
     {
-        bool isTurning = Vector2.Dot(rb.linearVelocity.normalized, moveDirection.normalized) < -0.3f;
+        bool isTurning = Vector2.Dot(rb.linearVelocity.normalized, inputDirection.normalized) < -0.3f;
         return data.acceleration * (isTurning ? data.turnMultiplier : 1.0f);
     }
 
@@ -253,7 +257,7 @@ public class PlayerMovement : MonoBehaviour
             p.Combat.InterruptActive();
 
 
-        Vector2 dashDir = moveDirection.magnitude > 0.1f ? moveDirection.normalized : lastMoveDirection;
+        Vector2 dashDir = inputDirection.magnitude > 0.1f ? inputDirection.normalized : lastMoveDirection;
 
         currentDashCharges--;
         currentDashRoutine = StartCoroutine(DashRoutine(dashDir));
@@ -287,7 +291,13 @@ public class PlayerMovement : MonoBehaviour
 
         //rb.linearVelocity = exitVelocity;
         
-        rb.linearVelocity *= data.dashExitMultiplier;
+        //rb.linearVelocity *= data.dashExitMultiplier;
+
+        Vector2 exitDir = inputDirection.magnitude > 0.1f 
+            ? Vector2.Lerp(CurrentMoveDirection.normalized, inputDirection.normalized, 0.6f) 
+            : CurrentMoveDirection.normalized;
+        float exitSpeed = rb.linearVelocity.magnitude * data.dashExitMultiplier;
+        rb.linearVelocity = exitDir * exitSpeed;
 
         Physics2D.IgnoreLayerCollision(playerLayerIndex, enemyLayerIndex, false);
 

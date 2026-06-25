@@ -30,14 +30,18 @@ public class Player : MonoBehaviour
 
     public Vector2 GetMouseDirection()
     {
+        Vector3 direction = (GetMouseWorldPos() - transform.position).normalized;
+        return direction;
+    }
+
+    public Vector3 GetMouseWorldPos()
+    {
         Vector3 mousePos = InputManager.Instance.inputActions.Player.PointerPosition.ReadValue<Vector2>();
         Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane));
         mousePosWorld.z = 0f;
-        Vector3 direction = mousePosWorld - transform.position;
 
-        return direction.normalized;
+        return mousePosWorld;
     }
-
     #endregion
 
 }
