@@ -66,7 +66,7 @@ public class PlayerTools : MonoBehaviour
         if (!ToolEquipped) return;
 
         if (equippedTool.UseTool(p.GetMouseDirection()))
-            Debug.Log($"{equippedTool.ToolName} used!");
+            Debug.Log($"[PlayerTools] {equippedTool.ToolName} used!");
     }
 
     public bool TryInterceptWithTool(HitData hit)

@@ -90,7 +90,11 @@ public static class GameEvents
     #endregion
 
 
-    //public static event Action<EnemyBase>
+    public static event Action<EnemyBase> OnLockAcquired;
+    public static event Action OnLockDropped;
+
+    public static void LockAcquired(EnemyBase enemy) => OnLockAcquired?.Invoke(enemy);
+    public static void LockDropped() => OnLockDropped?.Invoke();
 
     // Heat
 

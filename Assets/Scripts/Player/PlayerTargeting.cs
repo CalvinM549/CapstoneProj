@@ -49,7 +49,7 @@ public class PlayerTargeting : MonoBehaviour
         if (nearest == null) return;
 
         lockedTarget = nearest;
-        // Fire Event;
+        GameEvents.LockAcquired(lockedTarget);
     }
 
     private void CycleLock()
@@ -62,13 +62,13 @@ public class PlayerTargeting : MonoBehaviour
         }
 
         lockedTarget = next;
-        //Fire event
+        GameEvents.LockAcquired(lockedTarget);
     }
 
     public void DropLock()
     {
         lockedTarget = null;
-        //Fire event
+        GameEvents.LockDropped();
     }
 
     private void ValidateLock()

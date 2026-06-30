@@ -8,7 +8,6 @@ public class MissileRainTelegraph : MonoBehaviour
     [SerializeField] private SpriteRenderer indicatorSprite;
 
     [SerializeField] private Transform missileVisual;
-    [SerializeField] private GameObject explosionVFXPrefab;
 
     private Vector2 targetPosition;
     [SerializeField] private float radius;
@@ -45,8 +44,7 @@ public class MissileRainTelegraph : MonoBehaviour
 
     private void Detonate()
     {
-        if (explosionVFXPrefab != null)
-            Instantiate(explosionVFXPrefab, transform.position, Quaternion.identity);
+        VFXManager.Instance.PlayVFX(VFXType.ExplosionComplex, transform.position);
 
         Collider2D[] hits = Physics2D.OverlapCircleAll(targetPosition, radius);
 

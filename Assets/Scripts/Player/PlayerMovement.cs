@@ -54,8 +54,6 @@ public class PlayerMovement : MonoBehaviour
     public bool IsDashing => isDashing;
     private bool moveInputting;
 
-    public float TimeStopped;
-
     private Coroutine currentDashRoutine;
     private Coroutine currentPushRoutine;
 
@@ -310,7 +308,7 @@ public class PlayerMovement : MonoBehaviour
         isDashing = false;
     }
 
-    private void CancelDash()
+    public void InterruptDash()
     {
         if (!isDashing) return;
         if(currentDashRoutine != null)
@@ -367,7 +365,7 @@ public class PlayerMovement : MonoBehaviour
         if (force <= 0) return;
         if (direction.normalized.magnitude < 0.01f) return;
 
-        CancelDash();
+        InterruptDash();
 
         InterruptCurrentPush();
 

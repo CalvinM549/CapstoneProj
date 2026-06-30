@@ -3,6 +3,7 @@ using UnityEngine;
 public enum FireType
 {
     Linked,
+    Blocked,
     Independent
 }
 
@@ -14,14 +15,18 @@ public abstract class PlayerWeapon : ScriptableObject, IProjectileEmitter
     public FireType fireType;
     public bool automatic;
 
-    public ProjectileData[] Projectiles { get; }
+    [SerializeField] private ProjectileData[] projectiles;
+
+    public ProjectileData[] Projectiles => projectiles;
     public bool IsPlayerProjectile => true;
     public bool PoolRequested { get; set; }
 
-    public virtual void OnEquip(Player p) { }
-    public virtual void OnUnequip() { }
+    protected Player p;
+
+    public virtual void OnEquip(Player p) { this.p = p; }
+    public virtual void OnUnequip() { p = null; }
     public virtual void UpdateWeapon() { }
 
     public abstract bool CanFire();
-    public abstract void Fire();
+    public abstract void Fire(Vector2 direction);
 }

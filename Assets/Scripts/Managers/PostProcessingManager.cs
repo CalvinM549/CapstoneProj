@@ -5,6 +5,13 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
+public enum PPVolume
+{
+    Global,
+    Hit,
+    Death
+}
+
 public class PostProcessingManager : MonoBehaviour
 {
     [Serializable]
@@ -20,8 +27,6 @@ public class PostProcessingManager : MonoBehaviour
         [NonSerialized]
         public Tween activeTween;
     }
-
-    public string targetVolumeId;
 
     [Header("Config")]
     public float entryDuration;
@@ -48,6 +53,7 @@ public class PostProcessingManager : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.OnPlayerHit += HandlePlayerHit;
+        GameEvents.OnPlayerDeath += HandlePlayerDeath;
 
     }
 
@@ -64,6 +70,11 @@ public class PostProcessingManager : MonoBehaviour
         DoPulse("hitVolume", hit.hitstunTime * 3f, 1f);
     }
 
+    private void HandlePlayerDeath()
+    {
+        DoHold("deathVolume", 1.0f, 5f);
+    }
+
     private void DoPulse(string volume, float duration, float maxWeight)
     {
         var volumeRef = volumeLookup[volume];
@@ -75,12 +86,12 @@ public class PostProcessingManager : MonoBehaviour
 
     }
 
-    private void DoHold(string volume, float targetWeight)
+    private void DoHold(string volume, float targetWeight, float fadeDuration)
     {
         var volumeRef = volumeLookup[volume];
         volumeRef.activeTween?.Kill();
 
-        volumeRef.activeTween = TweenWeight(volumeRef, targetWeight, entryDuration, entryEase);
+        volumeRef.activeTween = TweenWeight(volumeRef, targetWeight, fadeDuration, entryEase);
     }
 
     private void DoRelease(string volume)

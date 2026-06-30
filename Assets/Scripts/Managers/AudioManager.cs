@@ -9,26 +9,32 @@ public enum SoundType
     Music
 }
 
-public class Sound
-{
-    public string soundName;
-    public AudioClip clip;
 
-    [Range(0f, 1f)]
-    public float volume;
-    public bool loop;
-    public bool doPitchVariation;
-    public float pitchVariationAmount;
-
-    [HideInInspector] public AudioSource source;
-}
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager instance;
 
-    private AudioSource sourcePrefab;
-    private ObjectPool<AudioSource> sourcePool;
+    [Serializable]
+    private class AudioEntry
+    {
+        public string soundName;
+        public AudioClip clip;
+
+        [Range(0f, 1f)]
+        public float volume;
+        public bool loop;
+        public bool doPitchVariation;
+        public float pitchVariationAmount;
+
+        [HideInInspector] public AudioSource source;
+    }
+
+    //private AudioSource sourcePrefab;
+    //private ObjectPool<AudioSource> sourcePool;
+
+    [SerializeField] private AudioEntry[] sfxLibrary;
+    [SerializeField] private AudioEntry[] musicLibrary;
 
     public AudioMixerGroup sfxMixer;
     public AudioMixerGroup musicMixer;
@@ -39,10 +45,7 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)]
     public float musicVolume;
 
-    public Sound[] sfxLibrary;
     public AudioSource sfxSource;
-
-    public Sound[] musicLibrary;
     public AudioSource musicSource;
 
     private void Awake()
@@ -54,7 +57,7 @@ public class AudioManager : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
 
-        foreach (Sound sound in sfxLibrary)
+        foreach (AudioEntry sound in sfxLibrary)
         {
             sound.source = gameObject.AddComponent<AudioSource>();
             sound.source.clip = sound.clip;
@@ -71,7 +74,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySFX(string name)
     {
-        Sound sound = Array.Find(sfxLibrary, sound => sound.soundName == name);
+        AudioEntry sound = Array.Find(sfxLibrary, sound => sound.soundName == name);
         if (sound == null)
             Debug.LogError("No sound with that name");
 

@@ -8,6 +8,15 @@ public class ProjectileManager : MonoBehaviour
 {
     public static ProjectileManager Instance;
 
+
+    private class PoolEntry
+    {
+        public ObjectPool<Projectile> pool;
+        public int userCount;
+    }
+
+    private Dictionary<ProjectileData, PoolEntry> activePools = new();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -18,15 +27,6 @@ public class ProjectileManager : MonoBehaviour
 
         Instance = this;
     }
-
-    private class PoolEntry
-    {
-        public ObjectPool<Projectile> pool;
-        public int userCount;
-    }
-
-    private Dictionary<ProjectileData, PoolEntry> activePools = new();
-
 
     public void RequestPool(ProjectileData projectile)
     {
@@ -59,7 +59,11 @@ public class ProjectileManager : MonoBehaviour
         }
     }
 
-    public Projectile FireProjectile(ProjectileData projectile, Vector2 firePos, Vector2 direction, bool isPlayerProjectile = false)
+    public Projectile FireProjectile(
+        ProjectileData projectile,
+        Vector2 firePos, 
+        Vector2 direction, 
+        bool isPlayerProjectile = false)
     {
         if (!activePools.TryGetValue(projectile, out var poolEntry))
             return null;

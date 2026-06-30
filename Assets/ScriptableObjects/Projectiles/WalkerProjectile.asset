@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9256ec1605044c45a51505cfa510668, type: 3}
-  m_Name: MissileProjectile
+  m_Name: WalkerProjectile
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
   prefab: {fileID: 1321395741110767241, guid: ffd99c1e3f0b6964aad8fc6e563da292, type: 3}
-  poolSize: 0
+  poolSize: 8
   lifetime: 1
   speed: 30
   damage: 6

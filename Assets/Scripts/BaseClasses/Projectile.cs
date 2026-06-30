@@ -9,7 +9,7 @@ public class Projectile : MonoBehaviour
 
     private Vector2 direction;
     private bool isPlayerProjectile;
-    private Rigidbody2D rb;
+    protected Rigidbody2D rb;
 
     private bool hitTarget;
 
@@ -22,7 +22,7 @@ public class Projectile : MonoBehaviour
         rb.gravityScale = 0f;
     }
 
-    public void Initalize(ProjectileData data, Vector2 direction, Vector2 sourcePos, Action<Projectile> returnToPool, bool playerProjectile)
+    public virtual void Initalize(ProjectileData data, Vector2 direction, Vector2 sourcePos, Action<Projectile> returnToPool, bool playerProjectile)
     {
         this.data = data;
         this.sourcePosition = sourcePos;

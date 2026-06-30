@@ -8,6 +8,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
     [SerializeField] protected EnemyData data;
 
     protected Transform playerTransform;
+    public bool hasPlayerLock;
 
     protected float currentHealth;
     public float PercentHealth => currentHealth / data.maxHealth;
@@ -24,11 +25,6 @@ public class EnemyBase : MonoBehaviour, IDamageable
     protected Sprite baseSprite;
 
     [SerializeField] private Material damageMaterial;
-    //[SerializeField] private ParticleSystem[] damageParticles;
-    [SerializeField] private GameObject damageParticles;
-    [SerializeField] private GameObject damageSparkParticles;
-
-    [SerializeField] private GameObject deathParticles;
 
     private Coroutine hitFXRoutine;
 
@@ -97,10 +93,9 @@ public class EnemyBase : MonoBehaviour, IDamageable
         Debug.Log("Enemy Killed");
         IsAlive = false;
 
-        if (deathParticles != null)
-            Instantiate(deathParticles, transform.position, Quaternion.identity);
+        VFXManager.Instance.PlayVFX(VFXType.ExplosionComplex, transform.position);
 
-            StopAllCoroutines();
+        StopAllCoroutines();
 
         GameEvents.EnemyKilled(this);
         gameObject.SetActive(false);
@@ -119,11 +114,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
             FlipFacing();
         }
 
-        if(damageParticles != null)
-            Instantiate(damageParticles, transform.position, Quaternion.identity);
-
-        if (damageSparkParticles != null)
-            Instantiate(damageSparkParticles, transform.position, Quaternion.identity);
+        VFXManager.Instance.PlayVFX(VFXType.HitSpark, transform.position);
 
         animator.Play("Hit");
 

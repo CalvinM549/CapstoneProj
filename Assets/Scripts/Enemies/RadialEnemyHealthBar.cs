@@ -64,11 +64,13 @@ public class RadialEnemyHealthBar : MonoBehaviour
     private void OnEnable()
     {
         owner.OnHit += HandleHit;
+        GameEvents.OnLockAcquired += HandleLock;
     }
 
     private void OnDisable()
     {
         owner.OnHit -= HandleHit;
+        GameEvents.OnLockAcquired -= HandleLock;
 
         fillTween?.Kill();
         delayFillTween?.Kill();
@@ -102,9 +104,20 @@ public class RadialEnemyHealthBar : MonoBehaviour
         punchTween = barRoot.DOPunchScale(Vector3.one * hitPunchScale, hitPunchDuration, 5, 0.5f);
     }
 
+    private void HandleLock(EnemyBase enemy)
+    {
+        if (enemy != owner) return;
+
+        if (!isVisible)
+            ShowBar();
+
+        hideTimer = hideDelay;
+    }
+
     private void UpdateHideTimer()
     {
         if (alwaysVisible || !isVisible) return;
+        if (owner.hasPlayerLock) return;
 
         if (hideTimer > 0f)
         {

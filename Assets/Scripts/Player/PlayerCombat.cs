@@ -4,6 +4,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerCombat : MonoBehaviour
 {
+    public bool useDashCancel;
+    [Space]
 
     public WeaponData data;
     private Player p;
@@ -23,7 +25,6 @@ public class PlayerCombat : MonoBehaviour
     private AttackType currentAttackType;
     private bool currentAttackConnected = false;
 
-    
     public bool IsAttacking { get; private set; }
 
     // Light Combos
@@ -35,6 +36,19 @@ public class PlayerCombat : MonoBehaviour
         
     private bool dashAttackWindow;
 
+    // Ranged
+
+    [SerializeField] private PlayerWeapon tempWeapon;
+    public PlayerWeapon EquippedWeapon { get; private set; }
+    public bool RangedWeaponEquipped => EquippedWeapon != null;
+
+    private float rangedCooldownTimer;
+    public float rangedCooldownPercent => RangedWeaponEquipped && EquippedWeapon.cooldown > 0f
+        ? Mathf.Clamp01(rangedCooldownTimer / EquippedWeapon.cooldown) : 0f;
+
+    private bool dashCancelWindow;
+    private Coroutine dashCancelRoutine;
+
     private void Awake()
     {
         p = GetComponent<Player>();
@@ -42,17 +56,24 @@ public class PlayerCombat : MonoBehaviour
         inputActions = InputManager.Instance.inputActions;
     }
 
+    private void Start()
+    {
+        EquipRangedWeapon(tempWeapon);
+    }
+
     private void OnEnable()
     {
         // Inputs
         inputActions.Player.LightAttack.performed += OnLightAttackInput;
         inputActions.Player.HeavyAttack.performed += OnHeavyAttackInput;
+        inputActions.Player.RangedAttack.performed += OnRangedAttackInput;
+        inputActions.Player.RangedAttack.canceled += OnRangedAttackCancel;
 
         // Events
         hitboxes.OnPlayerHitboxContact += HandleHitDetection;
 
         GameEvents.OnPlayerDashStart += HandleDashStart;
-        GameEvents.OnPlayerDashEnd += HandleDashEnd;
+        //GameEvents.OnPlayerDashEnd += HandleDashEnd;
     }
 
     private void OnDisable()
@@ -60,18 +81,23 @@ public class PlayerCombat : MonoBehaviour
         // Inputs
         inputActions.Player.LightAttack.performed -= OnLightAttackInput;
         inputActions.Player.HeavyAttack.performed -= OnHeavyAttackInput;
+        inputActions.Player.RangedAttack.performed -= OnRangedAttackInput;
+        inputActions.Player.RangedAttack.canceled -= OnRangedAttackCancel;
 
         // Events
         hitboxes.OnPlayerHitboxContact -= HandleHitDetection;
 
         GameEvents.OnPlayerDashStart -= HandleDashStart;
-        GameEvents.OnPlayerDashEnd -= HandleDashEnd;
+        //GameEvents.OnPlayerDashEnd -= HandleDashEnd;
+
+        if (RangedWeaponEquipped) ProjectilePools.ReleasePool(EquippedWeapon);
     }
 
     private void Update()
     {
         UpdateComboWindow();
         UpdateComboCooldown();
+        UpdateRangedCooldown();
 
         FlushInputBuffer();
     }
@@ -80,11 +106,11 @@ public class PlayerCombat : MonoBehaviour
 
     private void OnLightAttackInput(InputAction.CallbackContext ctx)
     {
-        if (TimescaleManager.IsPaused) return;
+        if (!CanAttack()) return;
 
-        if (CanAttack())
+        if (CanMeleeAttack())
         {
-            HandleAttackInput(true);
+            HandleMeleeInput(true);
         }
         else if(ShouldBufferLight())
         {
@@ -94,16 +120,35 @@ public class PlayerCombat : MonoBehaviour
 
     private void OnHeavyAttackInput(InputAction.CallbackContext ctx)
     {
-        if (TimescaleManager.IsPaused) return;
+        if (!CanAttack()) return;
 
-        if (CanAttack())
+        if (CanMeleeAttack())
         {
-            HandleAttackInput(false);
+            HandleMeleeInput(false);
         }
         else if(ShouldBufferHeavy())
         {
             bufferedHeavy = new();
         }
+    }
+
+    private void OnRangedAttackInput(InputAction.CallbackContext ctx)
+    {
+        if (!CanAttack()) return;
+
+        if (CanRangedAttack())
+        {
+            FireRangedWeapon();
+        }
+        else if (ShouldBufferRanged())
+        {
+            //
+        }
+    }
+
+    private void OnRangedAttackCancel(InputAction.CallbackContext ctx)
+    {
+
     }
 
     private bool ShouldBufferLight()
@@ -116,44 +161,90 @@ public class PlayerCombat : MonoBehaviour
         return true;
     }
 
+    private bool ShouldBufferRanged()
+    {
+        return false;
+    }
+
     private void FlushInputBuffer()
     {
         // Light Buffer
-        if (bufferedLight != null && bufferedLight.isValid(0.1f) && CanAttack())
+        if (bufferedLight != null && bufferedLight.isValid(0.1f) && CanMeleeAttack())
         {
             print("DoingBufferedLight");
             bufferedLight = null;
-            HandleAttackInput(true);
+            HandleMeleeInput(true);
         }
 
         // Heavy Buffer
-        if (bufferedHeavy != null && bufferedHeavy.isValid(0.1f) && CanAttack())
+        if (bufferedHeavy != null && bufferedHeavy.isValid(0.1f) && CanMeleeAttack())
         {
             print("DoingBufferedHeavy");
             bufferedHeavy = null;
-            HandleAttackInput(false);
+            HandleMeleeInput(false);
         }
         
     }
 
     #endregion
 
+    #region Attack Input Gates
+
     private bool CanAttack()
     {
+        if (TimescaleManager.IsPaused) return false;
         if (p.Health.IsHitstunned) return false;
+        if (!p.Health.IsAlive) return false;
+
+        if (!useDashCancel && p.Movement.IsDashing) return false;
+
+        return true;
+    }
+
+    private bool CanMeleeAttack()
+    {
         if (comboCooldownTimer > 0) return false;
         if (currentState is CombatState.Active or CombatState.Startup) return false;
 
         return true;
     }
 
-    private void HandleAttackInput(bool isLightInput)
+    private bool CanRangedAttack()
+    {
+        if (!RangedWeaponEquipped) return false;
+        if (rangedCooldownTimer > 0f) return false;
+        if (!RangedAttackCheck()) return false;
+        if (!EquippedWeapon.CanFire()) return false;
+
+        return true;
+    }
+
+    private bool RangedAttackCheck()
+    {
+        return EquippedWeapon.fireType switch
+        {
+            FireType.Linked => currentState is not (CombatState.Startup or CombatState.Active),
+            FireType.Blocked => currentState is CombatState.Idle,
+            FireType.Independent => true,
+            _ => true
+        };
+    }
+
+    #endregion
+
+    #region Melee Attacks
+
+    private void HandleMeleeInput(bool isLightInput)
     {
         if (currentState == CombatState.Recovery)
             InterruptRecovery();
 
-        if (dashAttackWindow)
-            PerformDashAttack();
+        //if (dashAttackWindow)
+        //    PerformDashAttack();
+
+        if (dashCancelWindow)
+            p.Movement.InterruptDash();
+
         else
         {
             if (isLightInput)
@@ -290,6 +381,50 @@ public class PlayerCombat : MonoBehaviour
         target.RecieveHit(hitData);
     }
 
+    #endregion
+
+    #region Ranged Attacks
+
+    private void FireRangedWeapon()
+    {
+        if (dashCancelWindow)
+            p.Movement.InterruptDash();
+
+        if (currentState == CombatState.Recovery && EquippedWeapon.fireType == FireType.Linked)
+            InterruptRecovery();
+
+        rangedCooldownTimer = EquippedWeapon.cooldown;
+
+        EquippedWeapon.Fire(GetAttackDirection(AttackType.Secondary));
+    }
+
+    public void EquipRangedWeapon(PlayerWeapon weapon)
+    {
+        if (RangedWeaponEquipped)
+        {
+            EquippedWeapon.OnUnequip();
+            ProjectilePools.ReleasePool(weapon);
+        }
+
+        EquippedWeapon = weapon;
+        rangedCooldownTimer = 0f;
+
+        if (weapon != null)
+        {
+
+            Debug.Log($"[PlayerCombat] new weapon {weapon.name} equipped");
+            ProjectilePools.RequestPool(weapon);
+            weapon.OnEquip(p);
+        }
+
+        // Fire Event
+    }
+
+    public void UnequipRangedWeapon() => EquipRangedWeapon(null);
+
+    #endregion
+
+
     #region Utility
 
     private void UpdateComboWindow()
@@ -308,6 +443,12 @@ public class PlayerCombat : MonoBehaviour
     {
         if(comboCooldownTimer > 0f)
             comboCooldownTimer -= Time.deltaTime;
+    }
+
+    private void UpdateRangedCooldown()
+    {
+        if(rangedCooldownTimer > 0f)
+            rangedCooldownTimer -= Time.deltaTime;
     }
 
     private void InterruptRecovery()
@@ -342,6 +483,18 @@ public class PlayerCombat : MonoBehaviour
 
     private Vector2 GetAttackDirection(AttackType type)
     {
+        switch (type)
+        {
+            case AttackType.Light:
+            case AttackType.Heavy:
+                return p.GetMouseDirection();
+
+            case AttackType.Secondary:
+                if (p.Targeting.HasTarget)
+                    return p.GetTargetDirection();
+                else
+                    return p.GetMouseDirection();
+        }
         if (type == AttackType.DashAttack)
             return p.Movement.LastMoveDirection;
 
@@ -351,19 +504,36 @@ public class PlayerCombat : MonoBehaviour
 
     private void HandleDashStart()
     {
-        dashAttackWindow = true;
+        //dashAttackWindow = true;
+
+        StartDashCancelWindow();
         InterruptRecovery();
     }
 
-    private void HandleDashEnd()
+    //private void HandleDashEnd()
+    //{
+    //    StartCoroutine(DashWindowRoutine());
+    //}
+
+    //private IEnumerator DashWindowRoutine()
+    //{
+    //    yield return new WaitForSeconds(data.dashExtraWindow);
+    //    dashAttackWindow = false;
+    //}
+
+    private void StartDashCancelWindow()
     {
-        StartCoroutine(DashWindowRoutine());
+        if(dashCancelRoutine != null)
+            StopCoroutine(dashCancelRoutine);
+
+        dashCancelRoutine = StartCoroutine(DashCancelRoutine());
     }
 
-    private IEnumerator DashWindowRoutine()
+    private IEnumerator DashCancelRoutine()
     {
+        dashCancelWindow = true;
         yield return new WaitForSeconds(data.dashExtraWindow);
-        dashAttackWindow = false;
+        dashCancelWindow = false;
     }
 
     #endregion

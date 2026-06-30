@@ -43,7 +43,7 @@ public static class ProjectilePools
 
     public static Projectile FireProjectile(IProjectileEmitter emitter, ProjectileData data, Vector2 firePos, Vector2 direction)
     {
-        if (emitter.PoolRequested)
+        if (!emitter.PoolRequested)
         {
             Debug.LogWarning($"[ProjectilePools] Fire called before pool requested on {data.name}");
             return null;

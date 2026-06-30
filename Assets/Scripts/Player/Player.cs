@@ -30,6 +30,17 @@ public class Player : MonoBehaviour
 
     #region Utilities
 
+    public Vector2 GetTargetDirection()
+    {
+        if (Targeting.HasTarget)
+        {
+            Vector3 direction = (Targeting.LockedTarget.position - transform.position).normalized;
+            return direction;
+        }
+
+        return GetMouseDirection();
+    }
+
     public Vector2 GetMouseDirection()
     {
         Vector3 direction = (GetMouseWorldPos() - transform.position).normalized;

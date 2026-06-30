@@ -6,6 +6,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 {
 
     [SerializeField] private HealthData data;
+    [SerializeField] private bool UseIFrames;
 
     private Player p;
 
@@ -103,7 +104,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         GameEvents.PlayerHealthChanged(healthSegments);
 
-        GrantIFrames(data.hitIFrameDuration);
+        if(UseIFrames)
+            GrantIFrames(data.hitIFrameDuration);
     }
 
     private void ApplyKnockback(HitData hit)
