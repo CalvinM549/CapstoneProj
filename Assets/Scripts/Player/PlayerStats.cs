@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,86 +7,107 @@ public class PlayerStats : MonoBehaviour
 {
     private Player p;
 
-    // Stat List, contains muteable stats affected by the game in the form of upgrades etc
+    [SerializeField] private MovementData movementData;
+    [SerializeField] private HealthData healthData;
+    [SerializeField] private WeaponData weaponData;
+    [SerializeField] private MomentumData momentumData;
 
-    //Movement
-
-    //Combat
-
-    //Momentum
-
-    //Lockons
-
-    //[SerializeField] private PlayerStatsData data;
     private readonly Dictionary<string, StatValue> stats = new();
 
-    private StatValue Get(string statID)
-    {
-        stats.TryGetValue(statID, out StatValue value);
-        if(value == null)
-            return null;
-
-        return value;
-    }
-
-    public float Value(string statID)
-    {
-        return stats[statID].Value;
-    }
 
     private void Awake()
     {
         p = GetComponent<Player>();
 
-        InitializeStats();
-    }
-
-    private void Start()
-    {
-        InitStat(p.Movement.CurrentMoveDirection.x);
-    }
-
-    private void InitStat(float test)
-    {
-        print(nameof(test));
+        //InitializeStats();
     }
 
     private void InitializeStats()
     {
+        // Movement
+        Register("MoveSpeed", movementData.baseSpeed);
+        Register("Acceleration", movementData.acceleration);
 
+        // Health
+
+        // Combat
+
+        // Momentum
     }
+
+    #region Helpers
+
+    public float Get(string statID)
+    {
+        return stats.TryGetValue(statID, out StatValue sv) ? sv.Value : 0;
+    }
+
+    public void Subscribe(string statID, Action callback)
+    {
+        if(stats.TryGetValue(statID, out StatValue sv))
+            sv.OnChanged += callback;
+    }
+
+    public void Unsubscribe(string statID, Action callback)
+    {
+        if (stats.TryGetValue(statID, out StatValue sv))
+            sv.OnChanged -= callback;
+    }
+
 
     public void ApplyStatModifier(string statID, StatModifier modifier)
     {
-        var stat = Get(statID);
+        if (!stats.TryGetValue(statID, out StatValue sv))
+        {
+            Debug.LogWarning($"[PlayerStats] stat '{statID}' not found, cannot add modifier");
+            return;
+        }
 
-        stat.AddStatModifier(modifier);
+        sv.AddStatModifier(modifier);
     }
 
     public void RemoveStatModifier(string statID, StatModifier modifier)
     {
 
-        var stat = Get(statID);
+        if(stats.TryGetValue(statID, out StatValue sv))
+            sv.RemoveStatModifier(modifier);
+    }
 
-        stat.RemoveStatModifier(modifier);
+    public void RemoveModifiersFromSource(object source)
+    {
+        foreach (StatValue sv in stats.Values)
+            sv.RemoveAllFromSource(source);
     }
 
     public void ApplyTemporaryModifier(string statID, StatModifier modifier, float duration)
     {
-        // Maybe Buff/Debuff Tracking
-        var stat = Get(statID);
+        StartCoroutine(TemporaryModifierRoutine(statID, modifier, duration));
+    }
 
-        StartCoroutine(HandleTemporaryModifier(stat, modifier, duration));
-    }
-    
-    private IEnumerator HandleTemporaryModifier(StatValue stat, StatModifier modifier, float duration)
+
+    #endregion
+
+
+    #region Utility
+
+    private void Register(string id, float baseValue)
     {
-        //
-        stat.AddStatModifier(modifier);
-        yield return new WaitForSeconds(duration);
-        stat.RemoveStatModifier(modifier);
-        //
+        if (stats.ContainsKey(id))
+        {
+            Debug.LogWarning($"[PlayerStats] stat with id '{id}' already exists");
+            return;
+        }
+        stats[id] = new StatValue(baseValue);
     }
+
+    private IEnumerator TemporaryModifierRoutine(string statID, StatModifier modifier, float duration)
+    {
+        ApplyStatModifier(statID, modifier);
+        yield return new WaitForSeconds(duration);
+        RemoveStatModifier(statID, modifier);
+    }
+
+    #endregion
 
 }
 

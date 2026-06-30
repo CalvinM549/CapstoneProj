@@ -13,8 +13,6 @@ public class RingController : MonoBehaviour
     private Tween fillTween;
     private Tween colourTween;
 
-    private bool initialized;
-
     private void Awake()
     {
         ring = GetComponent<ProceduralRing>();
@@ -37,7 +35,6 @@ public class RingController : MonoBehaviour
         maxColour = baseColour;
 
         ApplyConfig(arcOffset, arcSpan, baseColour);
-        initialized = true;
     }
     public void Initialize(float arcOffset, float arcSpan, Color minColour, Color maxColour)
     {
@@ -48,7 +45,6 @@ public class RingController : MonoBehaviour
         this.maxColour = maxColour;
 
         ApplyConfig(arcOffset, arcSpan, minColour);
-        initialized = true;
     }
 
     private void ApplyConfig(float offset, float span, Color colour)

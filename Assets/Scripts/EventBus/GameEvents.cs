@@ -90,6 +90,8 @@ public static class GameEvents
     #endregion
 
 
+    //public static event Action<EnemyBase>
+
     // Heat
 
     // Draft

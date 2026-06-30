@@ -105,7 +105,7 @@ public class PlayerCombat : MonoBehaviour
             bufferedHeavy = new();
         }
     }
-    
+
     private bool ShouldBufferLight()
     {
         return true;
@@ -142,8 +142,7 @@ public class PlayerCombat : MonoBehaviour
     {
         if (p.Health.IsHitstunned) return false;
         if (comboCooldownTimer > 0) return false;
-        if (currentState == CombatState.Active || 
-            currentState == CombatState.Startup) return false;
+        if (currentState is CombatState.Active or CombatState.Startup) return false;
 
         return true;
     }
@@ -252,18 +251,21 @@ public class PlayerCombat : MonoBehaviour
 
     private void HandleHitDetection(Collider2D hit, AttackInfo attack)
     {
-        print($"Player Hit {hit.gameObject.name} with {attack.type}");
+        //print($"[PlayerCombat] Player Hit {hit.gameObject.name} with {attack.type}");
 
         //Check if target is damageable
         IDamageable target = hit.GetComponentInParent<IDamageable>();
         if (target == null || !target.IsAlive) return;
 
+        //Raycast Check for walls
         Vector2 direction = hit.transform.position - transform.position;
         float distance = Vector2.Distance(transform.position, hit.transform.position);
 
-        //Raycast Check for walls
-        if (Physics2D.Raycast(transform.position, direction, distance, wallLayer)) return;
-            // Wall stagger / particles
+        if (Physics2D.Raycast(transform.position, direction, distance, wallLayer))
+        {
+            // Wall stagger / particles?
+            return;
+        }
 
 
         Vector2 knockbackDir = direction.normalized;
@@ -344,9 +346,7 @@ public class PlayerCombat : MonoBehaviour
             return p.Movement.LastMoveDirection;
 
         else
-        {
             return p.GetMouseDirection();
-        }
     }
 
     private void HandleDashStart()

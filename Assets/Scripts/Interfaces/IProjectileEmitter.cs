@@ -6,11 +6,12 @@ public interface IProjectileEmitter
     bool IsPlayerProjectile { get; }
     bool PoolRequested { get; set; }
 
-    void FireProjectile(ProjectileData projectile, Vector2 firePos, Vector2 direction, bool isPlayer);
 }
 
 public static class ProjectilePools
 {
+    // Poolers
+
     public static void RequestPool(IProjectileEmitter emitter)
     {
         if (emitter.PoolRequested) return;
@@ -37,4 +38,19 @@ public static class ProjectilePools
 
         emitter.PoolRequested = false;
     }
+
+    // Firing
+
+    public static Projectile FireProjectile(IProjectileEmitter emitter, ProjectileData data, Vector2 firePos, Vector2 direction)
+    {
+        if (emitter.PoolRequested)
+        {
+            Debug.LogWarning($"[ProjectilePools] Fire called before pool requested on {data.name}");
+            return null;
+        }
+
+        return ProjectileManager.Instance.FireProjectile(data, firePos, direction, emitter.IsPlayerProjectile);
+    }
+
+    //public static HomingProjectile FireHomingProjectile() 
 }

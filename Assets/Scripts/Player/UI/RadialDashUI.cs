@@ -43,8 +43,6 @@ public class RadialDashUI : MonoBehaviour
 
             if (newValue >= 0.99f && !charged)
             {
-                Debug.Log("Charged");
-
                 fillImage.DOKill();
                 fillImage.transform.localScale = Vector3.one;
                 fillImage.transform.DOPunchScale(Vector3.one * 0.2f, 0.35f, 6, 0.4f);

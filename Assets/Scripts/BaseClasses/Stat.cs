@@ -15,108 +15,98 @@ public enum StatModType
 public class StatValue
 {
     // Initial Value and Modifiers list
-    public string id;
-    [SerializeField] private float baseValue;
-    private readonly List<StatModifier> statModifiers;
+    private readonly float baseValue;
+    private readonly List<StatModifier> statModifiers = new();
 
     // Temp values used for Value
-    private bool dirtyValue = true;
-    private float _value;
-    private float lastBaseValue = float.MinValue;
+    private bool isDirty = true;
+    private float cachedValue;
+
+    public event Action OnChanged;
+
+    public StatValue(float baseValue)
+    {
+        this.baseValue = baseValue;
+        cachedValue = baseValue;
+    }
 
     // Value that is called by other scripts
     public float Value
     {
         get
         {
-            if (dirtyValue || lastBaseValue != baseValue)
-            {
-                lastBaseValue = baseValue;
-                _value = CalculateValue();
-                dirtyValue = false;
-            }
-            return _value;
+            if (isDirty) CalculateValue();
+            return cachedValue;
         }
     }
 
-    // Constructors to create new Stat Types
-    // Valueless Constructor
-    public StatValue()
-    {
-        statModifiers = new List<StatModifier>();
-    }
-    // Constructor with preset base value
-    public StatValue(string id, float baseValue) : this()
-    {
-        this.id = id;
-        this.baseValue = baseValue;
-    }
+    public float BaseValue => baseValue;
 
     // Adds or Removes new modifiers to the stat
     public void AddStatModifier(StatModifier modifier)
     {
-        dirtyValue = true;
         statModifiers.Add(modifier);
-
-        Debug.Log($"Added {modifier.value} as {modifier.type}");
-        // Resorts the list based on the correct order of modifiers
-        statModifiers.Sort(CompareModifierOrder);
+        SetDirty();
+        //Debug.Log($"Added {modifier.value} as {modifier.type}");
     }
 
     public bool RemoveStatModifier(StatModifier modifier)
     {
-        dirtyValue = true;
+        bool removed = statModifiers.Remove(modifier);
+        if (removed)
+        {
+            SetDirty();
+            //Debug.Log($"Removed {modifier}");
+        }
 
-        Debug.Log($"Removed {modifier}");
-        return statModifiers.Remove(modifier);
+        return removed;
     }
 
-    private int CompareModifierOrder(StatModifier a, StatModifier b)
+    public void RemoveAllFromSource(object source)
     {
-        // If the first modifier comes before the second
-        if (a.order < b.order)
-            return -1;
-        // if the second modifier comes first
-        else if (a.order > b.order)
-            return 1;
-        // if both modifiers are at the same point in the order
-        return 0;
+        int removed = statModifiers.RemoveAll(m => m.source == source);
+        if (removed > 0) SetDirty();
+    }
+
+    public void ClearAllModifiers()
+    {
+        if (statModifiers.Count == 0) return;
+        statModifiers.Clear();
+        SetDirty();
+    }
+
+    private void SetDirty()
+    {
+        isDirty = true;
+        OnChanged?.Invoke();
     }
 
     // Calculates the final value of the stat, incl. modifiers
-    private float CalculateValue()
+    private void CalculateValue()
     {
-        float finalValue = baseValue;
-        float totalPercentAdd = 0;
 
-        for (int i = 0; i < statModifiers.Count; i++)
+        float flat = BaseValue;
+        float percentAdd = 0f;
+        float percentMult = 1f;
+
+        foreach (StatModifier mod in statModifiers)
         {
-            StatModifier currentMod = statModifiers[i];
-
-            // if a simple flat value is added
-            if (currentMod.type == StatModType.Flat)
-                finalValue += currentMod.value;
-
-            // if an additive multiplier is added
-            else if (currentMod.type == StatModType.PercentAdd)
+            switch (mod.type)
             {
-                // Adds the percent value to add to a single value
-                totalPercentAdd += currentMod.value;
-
-                // When it reaches the final percent add modifier, multiplies the final value and resets the counter
-                if (i + 1 >= statModifiers.Count || statModifiers[i + 1].type != StatModType.PercentAdd)
-                {
-                    finalValue *= 1 + totalPercentAdd;
-                    totalPercentAdd = 0;
-                }
+                case StatModType.Flat: 
+                    flat += mod.value; 
+                    break;
+                case StatModType.PercentAdd:
+                    percentAdd += mod.value;
+                    break;
+                case StatModType.PercentMult:
+                    percentMult *= mod.value;
+                    break;
             }
-
-            // if a multiplicative multiplier is added.
-            else if (currentMod.type == StatModType.PercentMult)
-                finalValue *= 1 + currentMod.value;
         }
 
-        return Mathf.Round(finalValue);
+        cachedValue = flat * (1f + percentAdd) * percentMult;
+        isDirty = false;
     }
 
 }
@@ -126,19 +116,16 @@ public class StatModifier
 {
     public readonly float value;
     public readonly StatModType type;
-    public readonly int order;
+    public readonly object source;
 
-    public StatModifier(float value, StatModType type, int order)
+    public StatModifier(float value, StatModType type, object source = null)
     {
         this.value = value;
         this.type = type;
-        this.order = order;
+        this.source = source;
     }
 
     // Sets standard order, if it is not set
-    public StatModifier(float value, StatModType type) : this(value, type, (int)type)
-    {
-
-    }
+    public StatModifier(float value, StatModType type) : this(value, type, (int)type) { }
 
 }

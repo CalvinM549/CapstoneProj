@@ -20,6 +20,8 @@ public class InputManager : MonoBehaviour
 
         inputActions = new InputSystem_Actions();
         inputActions.Enable();
+
+        print("InputActive");
     }
 
     private void OnDisable()

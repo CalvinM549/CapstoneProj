@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +13,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private int activeHealthIndex;
 
     public HealthSegment activeSegment => healthSegments[activeHealthIndex];
+    public int ActiveHealthIndex => activeHealthIndex;
 
     public bool IsAlive { get; set; }
     public bool IsIframe => isIframe;
@@ -22,12 +22,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private bool isIframe = false;
 
 
-    private int currentHealth;
-
     private Coroutine hitStunRoutine;
     private Coroutine iFrameRoutine;
 
-    public float PercentHealth => currentHealth / data.maxHealth;
 
     private void Awake()
     {
@@ -52,6 +49,19 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         }
 
         activeHealthIndex = healthSegments.Count - 1;
+
+        GameEvents.PlayerHealthChanged(healthSegments);
+    }
+
+    private void RestoreFromSave(int activeIndex, List<SegmentSave> savedSegments)
+    {
+        InitializeSegments(savedSegments.Count);
+        activeHealthIndex = Mathf.Clamp(activeIndex, 0, healthSegments.Count - 1);
+
+        for (int i = 0; i < healthSegments.Count && i < savedSegments.Count; i++)
+        {
+            healthSegments[i].RestoreFromSave(savedSegments[i]);
+        }
 
         GameEvents.PlayerHealthChanged(healthSegments);
     }

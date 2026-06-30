@@ -24,6 +24,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
     protected Sprite baseSprite;
 
     [SerializeField] private Material damageMaterial;
+    //[SerializeField] private ParticleSystem[] damageParticles;
     [SerializeField] private GameObject damageParticles;
     [SerializeField] private GameObject damageSparkParticles;
 
@@ -46,6 +47,11 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
         baseSprite = sr.sprite;
         baseMaterial = sr.material;
+    }
+
+    protected virtual void Start()
+    {
+        playerTransform = GameObject.FindWithTag("Player").transform;
     }
 
     protected virtual void OnEnable() { }

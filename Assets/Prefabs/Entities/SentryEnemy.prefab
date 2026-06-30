@@ -438,12 +438,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Sentry
   data: {fileID: 11400000, guid: 7d3de8bc9675fbd4c99dbe75663d82dd, type: 2}
-  sr: {fileID: 2041976472484267410}
-  animator: {fileID: 6591528619567189717}
   damageMaterial: {fileID: 2100000, guid: 59148e3b6fbfc0d4abc10ce34622bba0, type: 2}
-  damageSprite: {fileID: 21300000, guid: 94fffdd8e9eac0042b3a9c7df904667e, type: 3}
-  damageParticles: {fileID: 5312974598286367443, guid: 5abe6e1fe1c8b6248941e8285faa0f75, type: 3}
+  damageParticles: {fileID: 533581620762249183, guid: 45dbaa8fa637e39498312b384884d02a, type: 3}
+  damageSparkParticles: {fileID: 0}
+  deathParticles: {fileID: 0}
   IsIFrame: 0
+  isElite: 0
   patrolPoints:
   - {fileID: 0}
   - {fileID: 0}
@@ -776,7 +776,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1920, y: 1080}
+  m_SizeDelta: {x: 15, y: 15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &6221921385575208933
 Canvas:

@@ -40,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
 
     private int currentDashCharges;
     private float[] dashRechargeTimers;
+    private float[] dashRechargePercentages;
 
     private bool isDashing;
     private bool isForcedPush;
@@ -51,7 +52,7 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsMoving => rb.linearVelocity.magnitude > 0.01;
     public bool IsDashing => isDashing;
-    public bool MoveInputting;
+    private bool moveInputting;
 
     public float TimeStopped;
 
@@ -97,7 +98,7 @@ public class PlayerMovement : MonoBehaviour
     {
         currentDashCharges = data.maxDashCharges;
         dashRechargeTimers = new float[data.maxDashCharges];
-        
+        dashRechargePercentages = new float[data.maxDashCharges];
     }
 
     private void Update()
@@ -119,13 +120,13 @@ public class PlayerMovement : MonoBehaviour
     private void HandleMoveStart(InputAction.CallbackContext ctx)
     {
         inputDirection = ctx.ReadValue<Vector2>();
-        MoveInputting = true;
+        moveInputting = true;
     }
 
     private void HandleMoveStop(InputAction.CallbackContext ctx)
     {
         inputDirection = Vector2.zero;
-        MoveInputting = true;
+        moveInputting = false;
     }
 
     private void HandleDashInput(InputAction.CallbackContext ctx)
@@ -176,7 +177,7 @@ public class PlayerMovement : MonoBehaviour
     private bool CanMove()
     {
         if (IsDashing) return false;
-        if(isForcedPush) return false;
+        if (isForcedPush) return false;
         if (isSelfPush) return false;
         if (isParrying) return false;
 
@@ -208,9 +209,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if (inputDirection.magnitude > 0.1f)
         {
+
             lastMoveDirection = inputDirection.normalized;
+            
             float accel = GetAcceleration() * multiplier;
-            Vector2 targetVelocity = inputDirection.normalized * data.baseSpeed * multiplier * p.Momentum.GetMomentumSpeedMultiplier();
+            Vector2 targetVelocity = data.baseSpeed * multiplier * p.Momentum.GetMomentumSpeedMultiplier() * inputDirection.normalized;
 
             rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, accel * Time.fixedDeltaTime);
         }
@@ -241,7 +244,6 @@ public class PlayerMovement : MonoBehaviour
         if (isForcedPush) return false;
         if (currentDashCharges <= 0) return false;
         if (!p.Health.IsAlive) return false;
-
         if (p.Combat.CurrentState == CombatState.Startup) return false;
 
         return true;
@@ -333,13 +335,11 @@ public class PlayerMovement : MonoBehaviour
     {
         float rechargeRate = 1.0f; // alter based on things ig
 
-        float[] dashPercentages = new float[dashRechargeTimers.Length];
-
         for (int i = 0; i < dashRechargeTimers.Length; i++)
         {
             if (dashRechargeTimers[i] <= 0)
             {
-                dashPercentages[i] = 1f;
+                dashRechargePercentages[i] = 1f;
                 
                 continue;
             }
@@ -352,10 +352,10 @@ public class PlayerMovement : MonoBehaviour
                 currentDashCharges = Mathf.Min(currentDashCharges + 1, data.maxDashCharges);
             }
 
-            dashPercentages[i] = Mathf.Abs((dashRechargeTimers[i] / data.dashRechargeTime) - 1);
+            dashRechargePercentages[i] = Mathf.Abs((dashRechargeTimers[i] / data.dashRechargeTime) - 1);
         }
 
-        GameEvents.DashChargeChange(dashPercentages);
+        GameEvents.DashChargeChange(dashRechargePercentages);
     }
 
     #endregion

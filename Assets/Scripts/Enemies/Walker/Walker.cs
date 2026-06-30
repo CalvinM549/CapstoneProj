@@ -35,7 +35,6 @@ public class Walker : EnemyBase, IProjectileEmitter
     protected override void Awake()
     {
         base.Awake();
-        playerTransform = GameObject.FindWithTag("Player").transform;
 
         attackCooldownTimer = Random.Range(0, attackCooldown);
     }
@@ -108,17 +107,16 @@ public class Walker : EnemyBase, IProjectileEmitter
         for (int i = 0; i < missileCount; i++)
         {
             bool validTarget = false;
-            while (!validTarget)
+            while (!validTarget) // Loop can crash game if no ground tiles exist in the area
             {
                 //print("generating point");
-                Vector2 targetPoint = Random.insideUnitCircle * missileScatter; // 15f is the scatter distance
+                Vector2 targetPoint = Random.insideUnitCircle * missileScatter;
 
                 validTarget = Physics2D.OverlapPoint(targetPoint, groundLayer) != null;
 
                 if(validTarget)
                     targetPositions[i] = (Vector2)playerTransform.position + targetPoint;
             }
-
             //print($"Point founnd : {targetPositions[i]}");
         }
 
@@ -151,8 +149,6 @@ public class Walker : EnemyBase, IProjectileEmitter
 
     private void FireMissile(int count)
     {
-        print($"Missile {count} fired");
-
         if (count > missileCount) return;
 
         currentTarget = targetPositions[count];

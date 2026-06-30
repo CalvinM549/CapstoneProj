@@ -20,6 +20,14 @@ public class HealthSegment
         IsActive = isActive;
     }
 
+    public void RestoreFromSave(SegmentSave save)
+    {
+        currentHealth = save.currentHealth;
+        maxHealth = save.maxHealth;
+        IsActive = save.isActive;
+        IsDestroyed = save.isActive;
+    }
+
     public float ReduceHealth(float amount)
     {
         float overflow = 0f;

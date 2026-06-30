@@ -36,8 +36,6 @@ public class Sentry : EnemyBase, IProjectileEmitter
     {
         base.Awake();
 
-        playerTransform = GameObject.FindWithTag("Player").transform;
-
         attackCooldownTimer = Random.Range(0, attackCooldown);
     }
 
@@ -80,6 +78,8 @@ public class Sentry : EnemyBase, IProjectileEmitter
 
     private void UpdateMovement()
     {
+        if (patrolPoints.Length <= 0 || patrolPoints[0] == null) return;
+
         if (isFiring)
         {
             animator.SetBool("IsWalking", false);
@@ -150,7 +150,7 @@ public class Sentry : EnemyBase, IProjectileEmitter
                 else if (fireDir.x < 0 && isFacingRight)
                     FlipFacing();
 
-                FireProjectile(Projectiles[0], firePoint.position, direction, false);
+                FireProjectile(Projectiles[0], firePoint.position, direction);
 
                 if (i < burstCount - 1)
                     yield return new WaitForSeconds(burstInterval);
@@ -178,9 +178,9 @@ public class Sentry : EnemyBase, IProjectileEmitter
         sr.sprite = baseSprite;
     }
 
-    public void FireProjectile(ProjectileData projectile, Vector2 firePos, Vector2 direction, bool isPlayer)
+    public void FireProjectile(ProjectileData projectile, Vector2 firePos, Vector2 direction)
     {
-        ProjectileManager.Instance.FireProjectile(projectile, firePos, direction, isPlayer);
+        ProjectilePools.FireProjectile(this, projectile, firePos, direction);
         Instantiate(bulletFlashEffect, firePoint);
     }
 }

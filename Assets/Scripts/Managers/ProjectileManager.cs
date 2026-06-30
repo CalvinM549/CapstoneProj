@@ -33,7 +33,7 @@ public class ProjectileManager : MonoBehaviour
         if (activePools.TryGetValue(projectile, out var poolEntry))
         {
             poolEntry.userCount++;
-            Debug.Log("New Pool user");
+            Debug.Log($"[ProjectileManager] {projectile.name} user added");
             return;
         }
 
@@ -43,7 +43,7 @@ public class ProjectileManager : MonoBehaviour
             userCount = 1
         };
 
-        Debug.Log("New Pool Created");
+        Debug.Log($"[ProjectileManager] {projectile.name} pool created");
     }
 
     public void ReleasePool(ProjectileData projectile)
@@ -55,7 +55,7 @@ public class ProjectileManager : MonoBehaviour
         if (poolEntry.userCount <= 0)
         {
             activePools.Remove(projectile);
-            Debug.Log("Pool removed");
+            Debug.Log($"[ProjectileManager] {projectile.name} pool removed");
         }
     }
 
