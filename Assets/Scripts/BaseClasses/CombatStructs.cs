@@ -31,6 +31,13 @@ public enum CombatState
     Recovery
 }
 
+public enum PushDirections
+{
+    InputDir,
+    AimDir,
+    AimInvert
+}
+
 public class HitData
 {
     public int damage;

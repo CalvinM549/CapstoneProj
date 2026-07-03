@@ -395,6 +395,7 @@ public class PlayerCombat : MonoBehaviour
 
         rangedCooldownTimer = EquippedWeapon.cooldown;
 
+
         EquippedWeapon.Fire(GetAttackDirection(AttackType.Secondary));
     }
 
