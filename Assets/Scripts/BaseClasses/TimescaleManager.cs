@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class TimescaleManager : MonoBehaviour
 {
-    public static TimescaleManager Instance;
+    public static TimescaleManager Instance { get; private set; }
 
     public static bool IsPaused {  get; private set; }
 
@@ -13,6 +13,8 @@ public class TimescaleManager : MonoBehaviour
     private float lastTimeScale;
 
     private float hitstopTimeElapsed;
+
+    [SerializeField] private float hitstopTimeScale = 0.05f;
 
     private void Awake()
     {
@@ -30,12 +32,14 @@ public class TimescaleManager : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.OnHitConfirmed += HandleHitstop;
+        GameEvents.OnPlayerDeath += DeathStop;
         //Pause game event?
     }
 
     private void OnDisable()
     {
         GameEvents.OnHitConfirmed -= HandleHitstop;
+        GameEvents.OnPlayerDeath -= DeathStop;
     }
 
     public void PauseGame()
@@ -66,6 +70,11 @@ public class TimescaleManager : MonoBehaviour
         DoHitstop(hit.hitstopTime);
     }
 
+    private void DeathStop()
+    {
+        DoHitstop(2.5f);
+    }
+
     public void DoHitstop(float duration)
     {
         if (currentHitstopRoutine != null)
@@ -82,7 +91,7 @@ public class TimescaleManager : MonoBehaviour
 
         hitstopTimeElapsed = 0f;
 
-        Time.timeScale = 0.05f;
+        Time.timeScale = hitstopTimeScale;
 
         while (hitstopTimeElapsed < duration && !IsPaused)
         {

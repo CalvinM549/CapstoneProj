@@ -14,6 +14,8 @@ public enum PPVolume
 
 public class PostProcessingManager : MonoBehaviour
 {
+    public static PostProcessingManager Instance;
+
     [Serializable]
     public class EffectVolume
     {

@@ -9,7 +9,10 @@ public class PixelCable : MonoBehaviour
     [Header("Cable Settings")]
     public int segments = 15;
     public float cableLength = 5f;
-    public float gravity = -9.81f;
+    public float gravityMult = 1;
+
+    public const float GRAVITY = -9.81f;
+
     public int constraintIterations = 5;
 
     [Header("Reaction Settings")]
@@ -45,7 +48,7 @@ public class PixelCable : MonoBehaviour
 
     void Simulate()
     {
-        Vector2 force = new Vector2(0, gravity) + windForce;
+        Vector2 force = new Vector2(0, (gravityMult * GRAVITY)) + windForce;
         for (int i = 0; i < segments; i++)
         {
             // Keep start and end fixed to anchors

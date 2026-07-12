@@ -28,6 +28,23 @@ public class Player : MonoBehaviour
         Stats       = GetComponent<PlayerStats>();
     }
 
+    public void SetupNew(RunLoadout loadout)
+    {
+        if (loadout == null) return;
+        ResetPlayerState();
+
+    }
+
+    public void ResetPlayerState()
+    {
+
+    }
+
+    public void PrepareForRoomChange()
+    {
+        Targeting.DropLock();
+    }
+
     #region Utilities
 
     public Vector2 GetTargetDirection()
@@ -49,7 +66,7 @@ public class Player : MonoBehaviour
 
     public Vector3 GetMouseWorldPos()
     {
-        Vector3 mousePos = InputManager.Instance.inputActions.Player.PointerPosition.ReadValue<Vector2>();
+        Vector3 mousePos = InputManager.Instance.GetMousePosition();
         Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane));
         mousePosWorld.z = 0f;
 

@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
+    public static CameraManager Instance { get; private set; }
+
     public enum CameraEffect
     {
         PositionalShake,
@@ -20,16 +22,15 @@ public class CameraManager : MonoBehaviour
 
     private CinemachineBrain brain;
     private Transform player;
+    private CinemachineImpulseSource impulseSource;
+    private CinemachineCamera currentCamera;
 
     [SerializeField] private BoxCollider2D roomBounds;
     [SerializeField] private int maxCameraShakes;
 
-    private CinemachineImpulseSource impulseSource;
+    private Tween zoomTween;
 
     public bool IsBlending => brain.IsBlending;
-
-    private CinemachineCamera currentCamera;
-    private int currentShakeCount;
 
 
     [Space]
@@ -39,15 +40,21 @@ public class CameraManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         brain = GetComponent<CinemachineBrain>();
         impulseSource = GetComponent<CinemachineImpulseSource>();
 
         player = GameObject.FindWithTag("Player").transform;
-    }
-
-    private void OnDestroy()
-    {
-        
+        currentCamera = defaultCamera;
     }
 
     private void OnEnable()
@@ -90,11 +97,9 @@ public class CameraManager : MonoBehaviour
 
     #region CameraShake
 
-    private void CameraShake(float magnitude, float duration = 0.2f)
+    public void CameraShake(float magnitude)
     {
         if (impulseSource == null) return;
-
-        //impulseSource.ImpulseDefinition.ImpulseDuration = duration;
 
         impulseSource.GenerateImpulse(magnitude);
     }
@@ -103,34 +108,31 @@ public class CameraManager : MonoBehaviour
 
     #region Camera View Changing
 
-    private void SetCamera(CinemachineCamera camera)
+    private void SetCamera(CinemachineCamera camera, Transform target = null, Action onBlendComplete = null)
     {
-        if (currentCamera != null)
-            currentCamera.Priority = 0;
+        if (currentCamera == null) return;
+
+        currentCamera.Priority = 0;
 
         currentCamera = camera;
         currentCamera.Priority = 10;
+
+        if (target != null)
+            currentCamera.Follow = target;
+
+        if (onBlendComplete != null)
+            StartCoroutine(CameraMoveEnd(onBlendComplete));
     }
 
-    private void ReturnToDefault()
+    private void ReturnToDefault(Action onBlendComplete = null)
     {
-        SetCamera(defaultCamera);
-        SetTarget(player);
+        SetCamera(defaultCamera, player, onBlendComplete);
     }
 
-    private void SetTarget(Transform target, Action triggeredEvent = null)
-    {
-        currentCamera.Follow = target;
-
-        if (triggeredEvent != null)
-            CameraMoveEnd(triggeredEvent);
-    }
-
-
-    private IEnumerator CameraMoveEnd(Action triggeredEvent)
+    private IEnumerator CameraMoveEnd(Action onComplete)
     {
         yield return new WaitUntil(() => !brain.IsBlending);
-        triggeredEvent?.Invoke();
+        onComplete?.Invoke();
     }
 
     #endregion

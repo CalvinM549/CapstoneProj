@@ -9,7 +9,10 @@ public class PlayerTargeting : MonoBehaviour
 
     private Player p;
     private EnemyBase lockedTarget;
-    private InputSystem_Actions inputActions;
+    private int lockStacks;
+
+
+    private InputReader inputs;
 
     public bool HasTarget => lockedTarget != null && lockedTarget.IsAlive;
     public Transform LockedTarget => lockedTarget?.transform;
@@ -21,13 +24,14 @@ public class PlayerTargeting : MonoBehaviour
 
     private void OnEnable()
     {
-        inputActions = InputManager.Instance.inputActions;
-        inputActions.Player.LockOn.performed += HandleLockInput;
+        inputs = InputManager.Instance.PlayerInputs;
+
+        inputs.TargetPressed += HandleLockInput;
     }
 
     private void OnDisable()
     {
-        inputActions.Player.LockOn.performed -= HandleLockInput;
+        inputs.TargetPressed -= HandleLockInput;
     }
 
     private void Update()
@@ -35,7 +39,7 @@ public class PlayerTargeting : MonoBehaviour
         ValidateLock();
     }
 
-    private void HandleLockInput(InputAction.CallbackContext ctx)
+    private void HandleLockInput()
     {
         if (HasTarget)
             CycleLock();

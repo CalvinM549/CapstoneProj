@@ -42,6 +42,16 @@ public class PlayerStats : MonoBehaviour
         return stats.TryGetValue(statID, out StatValue sv) ? sv.Value : 0;
     }
 
+    public int GetInt(string statID)
+    {
+        return stats.TryGetValue(statID, out StatValue sv) ? sv.ValueInt : 0;
+    }
+
+    public StatValue GetStatValue(string statID)
+    {
+        return stats.TryGetValue(statID, out StatValue sv) ? sv : null;
+    }
+
     public void Subscribe(string statID, Action callback)
     {
         if(stats.TryGetValue(statID, out StatValue sv))
@@ -103,6 +113,8 @@ public class PlayerStats : MonoBehaviour
     private IEnumerator TemporaryModifierRoutine(string statID, StatModifier modifier, float duration)
     {
         ApplyStatModifier(statID, modifier);
+        // Ping event for UI
+
         yield return new WaitForSeconds(duration);
         RemoveStatModifier(statID, modifier);
     }

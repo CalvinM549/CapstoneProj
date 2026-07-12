@@ -1,79 +1,80 @@
-using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum RoomState
 {
-    Idle,
+    Spawning,
     Active,
-    Completed,
+    Cleared,
     Failed
 }
 
-public class RoomManager : MonoBehaviour // Attach to each level alongside projectile manager?
+public class RoomManager : MonoBehaviour
 {
-    public event Action<RoomManager> OnLevelCompleted;
-    public event Action<RoomManager> OnLevelFailed;
+    public event Action<RoomManager> OnCleared;
+    public event Action<RoomManager> OnFailure;
 
-    [SerializeField] private List<GameObject> doors = new();
+    public RoomData Data {  get; private set; }
+    public RoomState State { get; private set; }
 
-    public RoomState State { get; private set; } = RoomState.Idle;
-    public RoomConfig Config { get; private set; }
+    private IObjectiveTracker objectiveTracker;
+    
+    [SerializeField] private Doorway[] doorways;
+    public Vector2 defaultEntryPoint;
 
-    private IRoomObjectiveHandler handler;
+    private CurrentRun runData;
 
-    public void Initialize(RoomConfig config)
+    private void Awake()
     {
-        Config = config;
-
-        handler = ResolveHandler(config.objective.objectiveType);
+        objectiveTracker = GetComponent<IObjectiveTracker>();
     }
 
-    public void ActivateLevel()
+    public void Initialize(RoomData room, CurrentRun run)
     {
-        if (State != RoomState.Idle) return;
+        runData = run;
+        Data = room;
 
+        State = RoomState.Spawning;
+
+        // Enemy Spawns
+
+        foreach (var door in doorways)
+            door.Lock();
+    }
+
+    public void Activate()
+    {
         State = RoomState.Active;
-
+        objectiveTracker.OnEncounterCleared += HandleEncounterCleared;
     }
 
-    private void HandleObjectiveCompleted()
+    public Vector2 GetEntryPointFor(Doorway door)
     {
-
+        return Vector2.zero;
     }
 
-    private void HandleObjectiveFailed()
+    private void HandleEncounterCleared()
     {
+        if (State != RoomState.Active) return;
 
+        State = RoomState.Cleared;
+        objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
+
+        foreach (var door in doorways)
+            door.Unlock();
+
+        OnCleared?.Invoke(this);
     }
 
-    private void LockDoors()
+    public void HandleEncounterFailure()
     {
-
+        if (State == RoomState.Cleared) return;
+        State = RoomState.Failed;
+        OnFailure?.Invoke(this);
     }
 
-    private void UnlockDoors()
+    public void ResetForPool()
     {
-
+        // Room Pooler reset
     }
-
-    private IRoomObjectiveHandler ResolveHandler(RoomObjectiveType type)
-    {
-        return type switch
-        {
-            RoomObjectiveType.Clear => GetOrAdd<ClearHandler>(),
-            RoomObjectiveType.Gauntlet => GetOrAdd<GauntletHandler>(),
-            RoomObjectiveType.Assassinate => GetOrAdd<AssassinateHandler>(),
-            RoomObjectiveType.Infiltrate => GetOrAdd<InfiltrateHandler>()
-        };
-    }
-
-    private T GetOrAdd<T>() where T : MonoBehaviour, IRoomObjectiveHandler
-    {
-        return TryGetComponent<T>(out var existing) ? existing : gameObject.AddComponent<T>();
-    }
-
-
-
 }

@@ -13,7 +13,6 @@ public class PlayerTools : MonoBehaviour
     private void Awake()
     {
         p = GetComponent<Player>();
-        inputActions = InputManager.Instance.inputActions;
 
         if (equippedTool != null)
             equippedTool.OnEquip(p);
@@ -21,12 +20,14 @@ public class PlayerTools : MonoBehaviour
 
     private void OnEnable()
     {
-        inputActions.Player.UseTool.performed += OnUseToolInput;
+        // SETUP NEW INPUTS
+
+        //inputActions.Player.UseTool.performed += OnUseToolInput;
     }
 
     private void OnDisable()
     {
-        inputActions.Player.UseTool.performed -= OnUseToolInput;
+        //inputActions.Player.UseTool.performed -= OnUseToolInput;
     }
 
     private void Update()

@@ -8,20 +8,27 @@ public class PlayerCombat : MonoBehaviour
     [Space]
 
     public WeaponData data;
+
     private Player p;
 
     [SerializeField] private AttackHitboxes hitboxes;
     [SerializeField] private LayerMask wallLayer;
 
-    private InputSystem_Actions inputActions;
-    private BufferedInput bufferedHeavy;
-    private BufferedInput bufferedLight;
+    private InputReader input;
+
+    private InputBuffer meleeBuffer;
+    private InputBuffer rangedBuffer;
+
+    [SerializeField] private float heavyHoldThreshold;
+    private Coroutine holdDetectRoutine;
 
     public CombatState CurrentState => currentState;
 
     private CombatState currentState = CombatState.Idle;
     
-    private Coroutine currentAttackRoutine;
+    private Coroutine currentMeleeRoutine;
+    private Coroutine currentRangedRoutine;
+    
     private AttackType currentAttackType;
     private bool currentAttackConnected = false;
 
@@ -46,6 +53,9 @@ public class PlayerCombat : MonoBehaviour
     public float rangedCooldownPercent => RangedWeaponEquipped && EquippedWeapon.cooldown > 0f
         ? Mathf.Clamp01(rangedCooldownTimer / EquippedWeapon.cooldown) : 0f;
 
+    private bool rangedInputHeld;
+    private Coroutine autoFireRoutine;
+
     private bool dashCancelWindow;
     private Coroutine dashCancelRoutine;
 
@@ -53,7 +63,8 @@ public class PlayerCombat : MonoBehaviour
     {
         p = GetComponent<Player>();
 
-        inputActions = InputManager.Instance.inputActions;
+        meleeBuffer = new InputBuffer(0.1f);
+        rangedBuffer = new InputBuffer(0.1f);
     }
 
     private void Start()
@@ -63,11 +74,13 @@ public class PlayerCombat : MonoBehaviour
 
     private void OnEnable()
     {
-        // Inputs
-        inputActions.Player.LightAttack.performed += OnLightAttackInput;
-        inputActions.Player.HeavyAttack.performed += OnHeavyAttackInput;
-        inputActions.Player.RangedAttack.performed += OnRangedAttackInput;
-        inputActions.Player.RangedAttack.canceled += OnRangedAttackCancel;
+        input = InputManager.Instance.PlayerInputs;
+
+        input.MeleePressed += OnLightAttackInput;
+        input.MeleeCanceled += OnMeleeInputCancelled;
+
+        input.RangedPressed += OnRangedInputStarted;
+        input.RangedCanceled += OnRangedAttackCancel;
 
         // Events
         hitboxes.OnPlayerHitboxContact += HandleHitDetection;
@@ -79,10 +92,11 @@ public class PlayerCombat : MonoBehaviour
     private void OnDisable()
     {
         // Inputs
-        inputActions.Player.LightAttack.performed -= OnLightAttackInput;
-        inputActions.Player.HeavyAttack.performed -= OnHeavyAttackInput;
-        inputActions.Player.RangedAttack.performed -= OnRangedAttackInput;
-        inputActions.Player.RangedAttack.canceled -= OnRangedAttackCancel;
+        input.MeleePressed -= OnLightAttackInput;
+        input.MeleeCanceled -= OnMeleeInputCancelled;
+
+        input.RangedPressed -= OnRangedInputStarted;
+        input.RangedCanceled -= OnRangedAttackCancel;
 
         // Events
         hitboxes.OnPlayerHitboxContact -= HandleHitDetection;
@@ -99,41 +113,72 @@ public class PlayerCombat : MonoBehaviour
         UpdateComboCooldown();
         UpdateRangedCooldown();
 
-        FlushInputBuffer();
+        meleeBuffer.TryConsume(CanMeleeAttack, () => HandleMeleeInput(true));
     }
 
     #region Input Setup
 
-    private void OnLightAttackInput(InputAction.CallbackContext ctx)
+    private void OnLightAttackInput()
+    {
+        if (holdDetectRoutine != null)
+            StopCoroutine(holdDetectRoutine);
+
+        holdDetectRoutine = StartCoroutine(HeavyHoldRoutine());
+    }
+
+    private void OnMeleeInputCancelled()
+    {
+        if (holdDetectRoutine == null) return;
+
+        StopCoroutine(holdDetectRoutine);
+        holdDetectRoutine = null;
+
+        ProcessMeleeInput(true);
+    }
+
+    private IEnumerator HeavyHoldRoutine()
+    {
+        yield return new WaitForSeconds(heavyHoldThreshold);
+        holdDetectRoutine = null;
+        ProcessMeleeInput(false);
+    }
+
+    private void ProcessMeleeInput(bool isLightInput)
     {
         if (!CanAttack()) return;
 
         if (CanMeleeAttack())
         {
-            HandleMeleeInput(true);
+            HandleMeleeInput(isLightInput);
         }
-        else if(ShouldBufferLight())
+
+        else if (isLightInput ? ShouldBufferLight() : ShouldBufferHeavy())
         {
-            bufferedLight = new();
+            if (isLightInput)
+                meleeBuffer.Buffer();
+            else
+                meleeBuffer.Buffer();
         }
     }
 
-    private void OnHeavyAttackInput(InputAction.CallbackContext ctx)
-    {
-        if (!CanAttack()) return;
+    //private void OnHeavyAttackInput(InputAction.CallbackContext ctx)
+    //{
+    //    if (!CanAttack()) return;
 
-        if (CanMeleeAttack())
-        {
-            HandleMeleeInput(false);
-        }
-        else if(ShouldBufferHeavy())
-        {
-            bufferedHeavy = new();
-        }
-    }
+    //    if (CanMeleeAttack())
+    //    {
+    //        HandleMeleeInput(false);
+    //    }
+    //    else if(ShouldBufferHeavy())
+    //    {
+    //        bufferedHeavy = new();
+    //    }
+    //}
 
-    private void OnRangedAttackInput(InputAction.CallbackContext ctx)
+    private void OnRangedInputStarted()
     {
+        rangedInputHeld = true;
+
         if (!CanAttack()) return;
 
         if (CanRangedAttack())
@@ -146,9 +191,9 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    private void OnRangedAttackCancel(InputAction.CallbackContext ctx)
+    private void OnRangedAttackCancel()
     {
-
+        rangedInputHeld = false;
     }
 
     private bool ShouldBufferLight()
@@ -164,26 +209,6 @@ public class PlayerCombat : MonoBehaviour
     private bool ShouldBufferRanged()
     {
         return false;
-    }
-
-    private void FlushInputBuffer()
-    {
-        // Light Buffer
-        if (bufferedLight != null && bufferedLight.isValid(0.1f) && CanMeleeAttack())
-        {
-            print("DoingBufferedLight");
-            bufferedLight = null;
-            HandleMeleeInput(true);
-        }
-
-        // Heavy Buffer
-        if (bufferedHeavy != null && bufferedHeavy.isValid(0.1f) && CanMeleeAttack())
-        {
-            print("DoingBufferedHeavy");
-            bufferedHeavy = null;
-            HandleMeleeInput(false);
-        }
-        
     }
 
     #endregion
@@ -263,10 +288,10 @@ public class PlayerCombat : MonoBehaviour
 
         comboWindowTimer = data.comboWindow;
 
-        if(currentAttackRoutine != null)
-            StopCoroutine(currentAttackRoutine);
+        if(currentMeleeRoutine != null)
+            StopCoroutine(currentMeleeRoutine);
 
-        currentAttackRoutine = StartCoroutine(AttackRoutine(data.lightAttacks[comboStep - 1]));
+        currentMeleeRoutine = StartCoroutine(MeleeAttackRoutine(data.lightAttacks[comboStep - 1]));
     }
 
     private void PerformHeavyAttack()
@@ -274,10 +299,10 @@ public class PlayerCombat : MonoBehaviour
         comboStep = 0;
         comboWindowTimer = 0;
 
-        if (currentAttackRoutine != null)
-            StopCoroutine(currentAttackRoutine);
+        if (currentMeleeRoutine != null)
+            StopCoroutine(currentMeleeRoutine);
 
-        currentAttackRoutine = StartCoroutine(AttackRoutine(data.heavyAttack));
+        currentMeleeRoutine = StartCoroutine(MeleeAttackRoutine(data.heavyAttack));
 
     }
 
@@ -287,15 +312,15 @@ public class PlayerCombat : MonoBehaviour
         comboStep = 0;
         comboWindowTimer = 0;
 
-        if (currentAttackRoutine != null)
-            StopCoroutine(currentAttackRoutine);
+        if (currentMeleeRoutine != null)
+            StopCoroutine(currentMeleeRoutine);
 
-        currentAttackRoutine = StartCoroutine(AttackRoutine(data.dashAttack));
+        currentMeleeRoutine = StartCoroutine(MeleeAttackRoutine(data.dashAttack));
     }
 
     // Attack Routine
 
-    private IEnumerator AttackRoutine(AttackInfo attack)
+    private IEnumerator MeleeAttackRoutine(AttackInfo attack)
     {
         currentAttackType = attack.type;
         currentAttackConnected = false;
@@ -395,8 +420,50 @@ public class PlayerCombat : MonoBehaviour
 
         rangedCooldownTimer = EquippedWeapon.cooldown;
 
+        if (EquippedWeapon.fireType == FireType.Independent)
+        {
+            EquippedWeapon.Fire(GetAttackDirection(AttackType.Secondary));
+            return;
+        }
 
-        EquippedWeapon.Fire(GetAttackDirection(AttackType.Secondary));
+        if (currentRangedRoutine != null)
+            StopCoroutine(currentRangedRoutine);
+
+        currentRangedRoutine = StartCoroutine(RangedAttackRoutine(EquippedWeapon));
+    }
+
+    private IEnumerator RangedAttackRoutine(PlayerWeapon weapon)
+    {
+        Vector2 direction = GetAttackDirection(AttackType.Secondary);
+
+        // STARTUP
+        currentState = CombatState.Startup;
+
+        yield return new WaitForSeconds(weapon.windupTime);
+
+        if (EquippedWeapon != weapon)
+        {
+            currentState = CombatState.Idle;
+            currentRangedRoutine = null;
+            yield break;
+        }
+
+        // ACTIVE
+        currentState = CombatState.Active;
+        weapon.Fire(direction);
+
+        yield return new WaitForSeconds(weapon.activeTime);
+
+        // RECOVERY
+        currentState = CombatState.Recovery;
+
+        yield return new WaitForSeconds(weapon.recoveryTime);
+
+        if(currentState == CombatState.Recovery)
+            currentState = CombatState.Idle;
+
+        currentRangedRoutine = null;
+
     }
 
     public void EquipRangedWeapon(PlayerWeapon weapon)
@@ -458,7 +525,7 @@ public class PlayerCombat : MonoBehaviour
 
         GameEvents.RecoveryCancel(currentAttackType);
 
-        StopAttackRoutine();
+        StopAllAttackRoutines();
         currentState = CombatState.Idle;
     }
 
@@ -468,17 +535,23 @@ public class PlayerCombat : MonoBehaviour
 
         //Event?
 
-        StopAttackRoutine();
+        StopAllAttackRoutines();
         currentState = CombatState.Idle;
     }
 
-    private void StopAttackRoutine()
+    private void StopAllAttackRoutines()
     {
-        if (currentAttackRoutine != null)
+        if (currentMeleeRoutine != null)
         {
-            StopCoroutine(currentAttackRoutine);
-            currentAttackRoutine = null;
+            StopCoroutine(currentMeleeRoutine);
+            currentMeleeRoutine = null;
             hitboxes.ResetHitboxes();
+        }
+
+        if (currentRangedRoutine != null)
+        {
+            StopCoroutine(currentRangedRoutine);
+            currentRangedRoutine = null;
         }
     }
 

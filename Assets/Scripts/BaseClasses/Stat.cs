@@ -40,6 +40,8 @@ public class StatValue
         }
     }
 
+    public int ValueInt => Mathf.RoundToInt(Value);
+
     public float BaseValue => baseValue;
 
     // Adds or Removes new modifiers to the stat

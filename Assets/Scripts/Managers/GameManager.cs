@@ -48,8 +48,6 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-        inputActions = InputManager.Instance.inputActions;
-
     }
 
     private void Start()

@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Player p;
 
-    private InputSystem_Actions inputActions;
+    private InputReader input;
     private Rigidbody2D rb;
 
     private Vector2 inputDirection;
@@ -36,7 +36,7 @@ public class PlayerMovement : MonoBehaviour
     public Vector2 LastMoveDirection => lastMoveDirection;
     public Vector2 CurrentMoveDirection => rb.linearVelocity;
 
-    private BufferedInput bufferedDash;
+    private InputBuffer dashBuffer;
 
     private int currentDashCharges;
     private float[] dashRechargeTimers;
@@ -64,32 +64,24 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         p = GetComponent<Player>();
 
-
         playerLayerIndex = LayerMask.NameToLayer("Player");
         enemyLayerIndex = LayerMask.NameToLayer("Enemy");
-        
+
+        dashBuffer = new InputBuffer(data.inputBufferWindow);
     }
 
     private void OnEnable()
     {
-        inputActions = InputManager.Instance.inputActions;
+        input = InputManager.Instance.PlayerInputs;
 
-        inputActions.Player.Move.performed += HandleMoveStart;
-        inputActions.Player.Move.canceled += HandleMoveStop;
-        inputActions.Player.Dash.performed += HandleDashInput;
-
-        GameEvents.OnPlayerParryStart += HandleParryStart;
-        GameEvents.OnPlayerParryEnd += HandleParryEnd;
+        input.MoveChanged += HandleMoveChanged;
+        input.DashPressed += HandleDashInput;
     }
 
     private void OnDisable()
     {
-        inputActions.Player.Move.performed -= HandleMoveStart;
-        inputActions.Player.Move.canceled -= HandleMoveStop;
-        inputActions.Player.Dash.performed -= HandleDashInput;
-
-        GameEvents.OnPlayerParryStart -= HandleParryStart;
-        GameEvents.OnPlayerParryEnd -= HandleParryEnd;
+        input.MoveChanged -= HandleMoveChanged;
+        input.DashPressed -= HandleDashInput;
     }
 
     private void Start()
@@ -102,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         UpdateDashRecharge();
-        FlushInputBuffer();
+        dashBuffer.TryConsume(CanDash, StartDash);
     }
 
     private void FixedUpdate()
@@ -115,19 +107,13 @@ public class PlayerMovement : MonoBehaviour
 
     #region InputHandling
 
-    private void HandleMoveStart(InputAction.CallbackContext ctx)
+    private void HandleMoveChanged(Vector2 direction)
     {
-        inputDirection = ctx.ReadValue<Vector2>();
-        moveInputting = true;
+        inputDirection = direction;
+        moveInputting = direction.sqrMagnitude > 0.001f;
     }
 
-    private void HandleMoveStop(InputAction.CallbackContext ctx)
-    {
-        inputDirection = Vector2.zero;
-        moveInputting = false;
-    }
-
-    private void HandleDashInput(InputAction.CallbackContext ctx)
+    private void HandleDashInput()
     {
         if (CanDash())
         {
@@ -135,7 +121,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (ShouldBufferDash())
         {
-            bufferedDash = new();
+            dashBuffer.Buffer();
         }
     }
 
@@ -149,23 +135,6 @@ public class PlayerMovement : MonoBehaviour
         if (IsDashing) return false;
 
         return true;
-    }
-
-    private void FlushInputBuffer()
-    {
-        //Dash Buffer
-
-        if (bufferedDash == null) return;
-        if (!bufferedDash.isValid(data.inputBufferWindow))
-        {
-            bufferedDash = null;
-            return;
-        }
-
-        if (!CanDash()) return;
-
-        bufferedDash = null;
-        StartDash();
     }
 
     #endregion
@@ -405,18 +374,19 @@ public class PlayerMovement : MonoBehaviour
 
     #endregion
 
-    #region Utilities
+    #region Meta Utility
 
-    private void HandleParryStart()
+    public void MoveToPosition(Vector2 targetPos)
     {
-        isParrying = true;
-        rb.linearVelocity = Vector2.zero;
+        // Lock Inputs
     }
 
-    private void HandleParryEnd()
+    private IEnumerator AutoMoveRoutine(Vector3 targetPos)
     {
-        isParrying = false;
+        yield return new WaitUntil(() => transform.position == targetPos);
     }
+
+
 
     #endregion
 }

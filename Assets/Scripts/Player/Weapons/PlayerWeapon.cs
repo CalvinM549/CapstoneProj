@@ -15,6 +15,10 @@ public abstract class PlayerWeapon : ScriptableObject, IProjectileEmitter
     public FireType fireType;
     public bool automatic;
 
+    public float windupTime;
+    public float activeTime;
+    public float recoveryTime;
+
     [SerializeField] private ProjectileData[] projectiles;
 
     public ProjectileData[] Projectiles => projectiles;

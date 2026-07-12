@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 
 public class LevelManager : MonoBehaviour
 {
-    private InputSystem_Actions inputActions;
+    private MenuInputReader inputs;
 
     [SerializeField] private CanvasGroup pauseMenuUI;
     [SerializeField] private CanvasGroup deathUI;
@@ -21,12 +21,6 @@ public class LevelManager : MonoBehaviour
     private int currentEnemyCount;
     private int maxEnemyCount;
         
-
-    private void Awake()
-    {
-        inputActions = InputManager.Instance.inputActions;
-    }
-
     private void Start()
     {
         timerActive = true;
@@ -47,7 +41,9 @@ public class LevelManager : MonoBehaviour
 
     private void OnEnable()
     {
-        inputActions.UI.Exit.performed += HandleExitPressed;
+        inputs = InputManager.Instance.MenuInputs;
+
+        inputs.ExitPressed += HandleExitPressed;
 
         GameEvents.OnPlayerDeath += HandlePlayerDeath;
         GameEvents.OnEnemyKilled += HandleEnemyDeath;
@@ -55,7 +51,7 @@ public class LevelManager : MonoBehaviour
 
     private void OnDisable()
     {
-        inputActions.UI.Exit.performed -= HandleExitPressed;
+        inputs.ExitPressed -= HandleExitPressed;
 
         GameEvents.OnPlayerDeath -= HandlePlayerDeath;
         GameEvents.OnEnemyKilled -= HandleEnemyDeath;
@@ -70,7 +66,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    private void HandleExitPressed(InputAction.CallbackContext ctx)
+    private void HandleExitPressed()
     {
         if (winUI.gameObject.activeInHierarchy || deathUI.gameObject.activeInHierarchy)
             return;

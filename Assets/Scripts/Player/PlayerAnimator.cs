@@ -235,6 +235,7 @@ public class PlayerAnimator : MonoBehaviour
 
     private void HandleDeath()
     {
+        VFXManager.Instance.PlayVFX(VFXType.ExplosionComplex, transform.position);
         StartCoroutine(HitFeedbackRoutine(1f));
         animator.Play("DeathIdle");
     }
