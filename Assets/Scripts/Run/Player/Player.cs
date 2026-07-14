@@ -30,14 +30,22 @@ public class Player : MonoBehaviour
 
     public void SetupNew(RunLoadout loadout)
     {
-        if (loadout == null) return;
+        if (loadout == null)
+        {
+            Debug.LogWarning("[Player] No loadout provided for setup");
+            return;
+        }
+
         ResetPlayerState();
 
+        Tools.EquipTool(loadout.tool);
+        Combat.EquipRangedWeapon(loadout.weapon);
     }
 
     public void ResetPlayerState()
     {
-
+        // Kill coroutines
+        Targeting.DropLock();
     }
 
     public void PrepareForRoomChange()
@@ -45,6 +53,11 @@ public class Player : MonoBehaviour
         Targeting.DropLock();
     }
 
+    public PlayerStateSave PackPlayerState()
+    {
+        return null;
+    }
+    
     #region Utilities
 
     public Vector2 GetTargetDirection()

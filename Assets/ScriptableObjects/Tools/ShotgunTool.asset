@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45caee2a08bdc534392375c40d97f3f0, type: 3}
   m_Name: ShotgunTool
   m_EditorClassIdentifier: Assembly-CSharp::ShotgunTool
+  id: 894e4771-087d-4e0c-af71-6526eefd2aaf
   ToolName: Shotgun Tool
   ToolDescription: shotguns things
   Icon: {fileID: 0}

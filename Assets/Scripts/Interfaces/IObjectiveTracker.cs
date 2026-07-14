@@ -4,6 +4,9 @@ using UnityEngine;
 public interface IObjectiveTracker
 {
     event Action OnEncounterCleared;
-    //void Setup(SpawnTable table);
+    event Action<float> OnProgressChanged;
+
+    void Setup(RoomData room, CurrentRun run);
+    void Tick(float dt);
     void Reset();
 }

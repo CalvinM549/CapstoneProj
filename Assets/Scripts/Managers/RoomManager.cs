@@ -18,7 +18,8 @@ public class RoomManager : MonoBehaviour
     public RoomState State { get; private set; }
 
     private IObjectiveTracker objectiveTracker;
-    
+
+    [SerializeField] private UpgradeStation upgradeStation;
     [SerializeField] private Doorway[] doorways;
     public Vector2 defaultEntryPoint;
 
@@ -29,17 +30,30 @@ public class RoomManager : MonoBehaviour
         objectiveTracker = GetComponent<IObjectiveTracker>();
     }
 
-    public void Initialize(RoomData room, CurrentRun run)
+    private void Update()
+    {
+        if (State == RoomState.Active)
+            objectiveTracker.Tick(Time.deltaTime);
+    }
+
+    public void Initialize(RoomData room, CurrentRun run, bool completed = false)
     {
         runData = run;
         Data = room;
 
-        State = RoomState.Spawning;
+        if (completed)
+        {
 
-        // Enemy Spawns
+        }
+        else
+        {
+            State = RoomState.Spawning;
 
-        foreach (var door in doorways)
-            door.Lock();
+            // Enemy Spawns
+
+            foreach (var door in doorways)
+                door.Lock();
+        }
     }
 
     public void Activate()
@@ -59,6 +73,8 @@ public class RoomManager : MonoBehaviour
 
         State = RoomState.Cleared;
         objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
+
+        upgradeStation.Enable();
 
         foreach (var door in doorways)
             door.Unlock();

@@ -8,13 +8,9 @@ public class GameManager : MonoBehaviour
 {
     public enum GameState
     {
-        MainMenu,
+        Menu,
         Hub,
-        Draft,
-        InRun,
-        Paused,
-        GameOver,
-        Win
+        Run
     }
 
     public static GameManager Instance;
@@ -50,31 +46,10 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private void Start()
-    {
-
-    }
-
-    private void OnEnable()
-    {
-
-    }
-
-    private void OnDisable()
-    {
-
-    }
-
     public void SetState(GameState newState)
     {
         currentState = newState;
     }
-
-    public void ReturnToMenu()
-    {
-
-    }
-
 
     private void SetCursor()
     {

@@ -14,7 +14,11 @@ public class SceneLoader : MonoBehaviour
     [SerializeField] private CanvasGroup fadeOverlay;
 
     public const string BOOTSTRAP = "Bootstrap";
-    public const string MAINMENU = "MainMenu";
+    public const string MAINMENU = "MenuScene";
+
+    public const string HUB = "HubScene";
+    public const string RUN = "RunScene";
+
     public const string LEVEL = "TestingScene";
 
     private void Awake()
@@ -38,6 +42,9 @@ public class SceneLoader : MonoBehaviour
     }
 
     public void LoadMainMenu() => LoadScene(MAINMENU);
+    public void LoadHub() => LoadScene(HUB);
+    public void LoadRun() => LoadScene(RUN);
+
     public void LoadLevel() => LoadScene(LEVEL);
     public void ReloadLevel() => LoadScene(LEVEL);
     public void QuitGame()

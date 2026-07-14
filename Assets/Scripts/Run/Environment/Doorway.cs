@@ -5,6 +5,8 @@ public class Doorway : MonoBehaviour
     [SerializeField] private Collider2D triggerVolume;
     [SerializeField] private SpriteRenderer doorVisual;
 
+    public CardinalDirection entryDirection;
+
     public MapNode Destination {  get; private set; }
     public bool IsLocked { get; private set; } = true;
 
@@ -14,6 +16,8 @@ public class Doorway : MonoBehaviour
     {
         IsLocked = true;
         triggerVolume.enabled = false;
+
+        doorVisual.color = Color.red;
         // Trigger door animation
     }
 
@@ -21,6 +25,8 @@ public class Doorway : MonoBehaviour
     {
         IsLocked = false;
         triggerVolume.enabled = true;
+
+        doorVisual.color = Color.white;
         // Trigger animation
     }
 

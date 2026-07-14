@@ -15,4 +15,5 @@ public class RunMap
 {
     public List<List<MapNode>> rows = new();
     public MapNode currentNode;
+    public MapNode startNode;
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class PlayerTool : ScriptableObject
+public abstract class PlayerTool : DatabaseEntry
 {
     public string ToolName;
     public string ToolDescription;

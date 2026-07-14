@@ -6,6 +6,15 @@ using UnityEngine;
 [Serializable]
 public class PlayerProfile
 {
+    public string profileName;
+    public int profileSlot;
+
+    public int metaCurrency;
+
+    // Meta buffs??
+    public int BaseSegments;
+    public float BaseTimer;
+    
     public List<string> unlockedArchives;
 
     public List<string> unlockedTools;

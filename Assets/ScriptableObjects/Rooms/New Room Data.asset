@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 950ba027e6d6ada4a9c44e2a52e76001, type: 3}
   m_Name: New Room Data
   m_EditorClassIdentifier: Assembly-CSharp::RoomData
-  roomId: 
+  id: start_01
   type: 0
   tag: 0
   difficultyCost: 0

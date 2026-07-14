@@ -17,6 +17,8 @@ public enum RunPhase
 public class RunManager : MonoBehaviour
 {
     public static RunManager Instance { get; private set; }
+
+    public GameDatabase db;
     // Room Pool
 
     private CurrentRun currentRun;
@@ -41,8 +43,11 @@ public class RunManager : MonoBehaviour
     {
         currentRun = runState;
         
-        // Initialize Player
+        activePlayer = Instantiate(playerPrefab, Vector2.zero, Quaternion.identity);
+        activePlayer.SetupNew(loadout);
 
+        // Initialize Player
+        EnterNode(map.startNode, entryPoint: null);
     }
 
     private void EnterNode(MapNode node, Doorway entryPoint)
@@ -59,6 +64,8 @@ public class RunManager : MonoBehaviour
         Vector2 spawnPos = entryPoint != null 
             ? activeRoom.GetEntryPointFor(entryPoint) 
             : activeRoom.defaultEntryPoint;
+
+        activePlayer.transform.position = spawnPos;
 
         //
 
@@ -84,6 +91,7 @@ public class RunManager : MonoBehaviour
     public void TransitionTo(MapNode nextNode)
     {
         // Disable current room
+        // Do Visual hiding
         activeRoom = null;
         EnterNode(nextNode, null);
     }
@@ -96,11 +104,13 @@ public class CurrentRun
     // Run
     public int RunSeed;
 
+    // Map
     public int chapterIndex;
     public RunMap currentMap;
     // Draft things
 
-    public float runTimer;
+    public float runDurationTimer;
+    public float playerHeatTimer;
 
     // Player    
     public PlayerData player;
@@ -112,6 +122,21 @@ public class CurrentRun
     public int EnemiesKilled;
     public float RunDuration;
     public int DamageTaken;
+
+    public void Tick(float dt)
+    {
+        runDurationTimer += dt;
+        playerHeatTimer -= dt;
+        if (playerHeatTimer <= 0)
+        {
+            // Fire Event   
+        }
+    }
+
+    public void HeatReset()
+    {
+
+    }
 
 }
 
@@ -126,7 +151,4 @@ public class PlayerData
 
     // Momentum info
     public float CurrentMomentum;
-
-    // Upgrade info
-    public List<string> UpgradesGained = new();
 }

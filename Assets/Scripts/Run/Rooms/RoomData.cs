@@ -3,6 +3,7 @@ using UnityEngine;
 
 public enum RoomType
 {
+    Start,
     Combat,
     Elite,
     Hazard,
@@ -26,11 +27,11 @@ public enum RoomTag
 }
 
 [CreateAssetMenu(menuName = "Run/Room Def")]
-public class RoomData : ScriptableObject
+public class RoomData : DatabaseEntry, ICategorizedEntry<RoomType>
 {
-    public string roomId;
-
     public RoomType type;
+    public RoomType Category => type;
+
     public RoomTag tag;
 
     public int difficultyCost;
@@ -42,4 +43,5 @@ public class RoomData : ScriptableObject
     // Used for restricting rooms per chapter
     public int minChapter = 0;
     public int maxChapter = 99;
+
 }

@@ -468,6 +468,8 @@ public class PlayerCombat : MonoBehaviour
 
     public void EquipRangedWeapon(PlayerWeapon weapon)
     {
+        if (weapon == EquippedWeapon) return;
+
         if (RangedWeaponEquipped)
         {
             EquippedWeapon.OnUnequip();

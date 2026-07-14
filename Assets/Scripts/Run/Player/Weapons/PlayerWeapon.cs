@@ -7,7 +7,7 @@ public enum FireType
     Independent
 }
 
-public abstract class PlayerWeapon : ScriptableObject, IProjectileEmitter
+public abstract class PlayerWeapon : DatabaseEntry, IProjectileEmitter
 {
     public string weaponName;
     public float cooldown = 1f;

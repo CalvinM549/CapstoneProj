@@ -315,6 +315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d318d47a38611254a9c76372cbba7b2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimescaleManager
+  hitstopTimeScale: 0.05
 --- !u!4 &748869616
 Transform:
   m_ObjectHideFlags: 0
