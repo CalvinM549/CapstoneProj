@@ -148,7 +148,7 @@ public class PlayerMomentum : MonoBehaviour
         AddMomentum(gain);
     }
 
-    private void HandleEnemyKilled(EnemyBase enemy)
+    private void HandleEnemyKilled(EnemyController enemy)
     {
         AddMomentum(data.killGain);
     }

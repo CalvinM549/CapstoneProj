@@ -26,6 +26,12 @@ public class Player : MonoBehaviour
         Animator    = GetComponent<PlayerAnimator>();
         VFX         = GetComponent<PlayerVFX>();
         Stats       = GetComponent<PlayerStats>();
+
+    }
+
+    private void Start()
+    {
+        CameraManager.Instance.SetPlayer(transform);
     }
 
     public void SetupNew(RunLoadout loadout)
@@ -40,6 +46,21 @@ public class Player : MonoBehaviour
 
         Tools.EquipTool(loadout.tool);
         Combat.EquipRangedWeapon(loadout.weapon);
+    }
+
+    public void SetupFromSave(PlayerStateSave save)
+    {
+        // Init with values
+
+        if (save == null)
+        {
+            Debug.LogError("[Player] No save data provided");
+            return;
+        }
+
+        ResetPlayerState();
+
+
     }
 
     public void ResetPlayerState()

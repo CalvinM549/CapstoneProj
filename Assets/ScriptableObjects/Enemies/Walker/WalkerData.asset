@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dae9cbbaadc1ca4182d6312aebded5a, type: 3}
   m_Name: WalkerData
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  id: 198b9a91-b22e-4af9-952b-3bccd1dc7fa4
   enemyName: Walker
   maxHealth: 9
   staggerThreshold: 0

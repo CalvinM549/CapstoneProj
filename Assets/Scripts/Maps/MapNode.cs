@@ -5,6 +5,7 @@ using UnityEngine;
 public class MapNode
 {
     public RoomData room;
+    public int nodeIndex;
     public int row;
     public int col;
     public List<MapNode> connections = new();

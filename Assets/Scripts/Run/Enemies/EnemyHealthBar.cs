@@ -15,7 +15,7 @@ public class EnemyHealthBar : MonoBehaviour
     [SerializeField] private float delayFillDuration;
     [SerializeField] private float timeUntilDrain;
 
-    private EnemyBase owner;
+    private EnemyController owner;
     private float barWidth;
 
     private float targetFill = 1f;
@@ -26,7 +26,7 @@ public class EnemyHealthBar : MonoBehaviour
 
     private void Awake()
     {
-        owner = GetComponentInParent<EnemyBase>();
+        owner = GetComponentInParent<EnemyController>();
 
         barWidth = barRoot.rect.width;
     }

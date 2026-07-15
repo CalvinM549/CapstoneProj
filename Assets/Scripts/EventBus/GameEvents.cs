@@ -81,19 +81,19 @@ public static class GameEvents
 
     #region Enemy
 
-    public static event Action<EnemyBase, HitData> OnEnemyHit;
-    public static event Action<EnemyBase> OnEnemyKilled;
+    public static event Action<EnemyController, HitData> OnEnemyHit;
+    public static event Action<EnemyController> OnEnemyKilled;
 
-    public static void EnemyHit(EnemyBase enemy, HitData hit) => OnEnemyHit?.Invoke(enemy, hit);
-    public static void EnemyKilled(EnemyBase enemy) => OnEnemyKilled?.Invoke(enemy);
+    public static void EnemyHit(EnemyController enemy, HitData hit) => OnEnemyHit?.Invoke(enemy, hit);
+    public static void EnemyKilled(EnemyController enemy) => OnEnemyKilled?.Invoke(enemy);
 
     #endregion
 
 
-    public static event Action<EnemyBase> OnLockAcquired;
+    public static event Action<EnemyController> OnLockAcquired;
     public static event Action OnLockDropped;
 
-    public static void LockAcquired(EnemyBase enemy) => OnLockAcquired?.Invoke(enemy);
+    public static void LockAcquired(EnemyController enemy) => OnLockAcquired?.Invoke(enemy);
     public static void LockDropped() => OnLockDropped?.Invoke();
 
     // Heat

@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 950ba027e6d6ada4a9c44e2a52e76001, type: 3}
-  m_Name: New Room Data
+  m_Name: Room1
   m_EditorClassIdentifier: Assembly-CSharp::RoomData
   id: start_01
   type: 0
   tag: 0
   difficultyCost: 0
   timerCost: 0
-  roomPrefab: {fileID: 0}
+  roomPrefab: {fileID: 3310053853735739365, guid: e5e43bedbb4aaf349bef7767ea93aeac, type: 3}
   minChapter: 0
   maxChapter: 99

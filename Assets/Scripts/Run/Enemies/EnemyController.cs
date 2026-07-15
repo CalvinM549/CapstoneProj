@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class EnemyBase : MonoBehaviour, IDamageable
+public class EnemyController : MonoBehaviour, IDamageable
 {
     [Header("Stats")]
     [SerializeField] protected EnemyData data;

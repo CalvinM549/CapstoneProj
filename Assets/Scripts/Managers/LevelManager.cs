@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class LevelManager : MonoBehaviour
+public class LevelManager : MonoBehaviour // Depreciated
 {
     private MenuInputReader inputs;
 
@@ -25,7 +25,7 @@ public class LevelManager : MonoBehaviour
     {
         timerActive = true;
 
-        var enemies = FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
+        var enemies = FindObjectsByType<EnemyController>(FindObjectsSortMode.None);
         maxEnemyCount = enemies.Length;
         currentEnemyCount = maxEnemyCount;
         enemyCounter.SetText($"{currentEnemyCount}/{maxEnemyCount} Enemies");
@@ -86,7 +86,7 @@ public class LevelManager : MonoBehaviour
 
     }
 
-    private void HandleEnemyDeath(EnemyBase enemy)
+    private void HandleEnemyDeath(EnemyController enemy)
     {
         currentEnemyCount--;
         enemyCounter.SetText($"{currentEnemyCount}/{maxEnemyCount} Enemies");

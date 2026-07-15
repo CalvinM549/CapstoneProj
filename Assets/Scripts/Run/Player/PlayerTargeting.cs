@@ -8,7 +8,7 @@ public class PlayerTargeting : MonoBehaviour
     [SerializeField] private LayerMask enemyLayer;
 
     private Player p;
-    private EnemyBase lockedTarget;
+    private EnemyController lockedTarget;
     private int lockStacks;
 
 
@@ -49,7 +49,7 @@ public class PlayerTargeting : MonoBehaviour
 
     private void AcquireLock()
     {
-        EnemyBase nearest = FindNearestEnemy();
+        EnemyController nearest = FindNearestEnemy();
         if (nearest == null) return;
 
         lockedTarget = nearest;
@@ -58,7 +58,7 @@ public class PlayerTargeting : MonoBehaviour
 
     private void CycleLock()
     {
-        EnemyBase next = FindNearestEnemyExcluding(lockedTarget);
+        EnemyController next = FindNearestEnemyExcluding(lockedTarget);
         if (next == null)
         {
             DropLock();
@@ -84,19 +84,19 @@ public class PlayerTargeting : MonoBehaviour
             DropLock();
     }
 
-    private EnemyBase FindNearestEnemy() => FindNearestEnemyExcluding(null);
+    private EnemyController FindNearestEnemy() => FindNearestEnemyExcluding(null);
 
-    private EnemyBase FindNearestEnemyExcluding(EnemyBase exclude)
+    private EnemyController FindNearestEnemyExcluding(EnemyController exclude)
     {
         Vector2 lockPos = p.GetMouseWorldPos();
         Collider2D[] hits = Physics2D.OverlapCircleAll(lockPos, lockAcquireArea, enemyLayer);
 
-        EnemyBase best = null;
+        EnemyController best = null;
         float bestDist = float.MaxValue;
 
         foreach (var hit in hits)
         {
-            EnemyBase e = hit.GetComponentInParent<EnemyBase>();
+            EnemyController e = hit.GetComponentInParent<EnemyController>();
             if (e == null || !e.IsAlive || e == exclude) continue;
 
             float d = Vector2.Distance(lockPos, e.transform.position);

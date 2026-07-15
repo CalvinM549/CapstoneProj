@@ -1,0 +1,64 @@
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using UnityEngine;
+
+public class RoomPoolService
+{
+    private RoomDatabase roomDatabase;
+    private Transform roomContainer;
+
+    private Dictionary<int, RoomManager> pooledRooms;
+    //private List<RoomManager> pooledRooms;
+    private RoomManager activeRoom;
+
+    public RoomPoolService(RoomDatabase data, Transform container)
+    {
+        roomDatabase = data;
+        roomContainer = container;
+    }
+
+    public void BuildPool(RunMap map)
+    {
+        pooledRooms = new Dictionary<int, RoomManager>();
+
+        foreach (var layer in map.rows)
+        {
+            foreach (var node in layer)
+            {
+                if (pooledRooms.ContainsKey(node.nodeIndex))  // Room already pooled
+                {
+                    Debug.LogError($"[RoomPoolService] Duplicate node index found at {node.nodeIndex}");
+                    return;
+                }
+
+                var obj = GameObject.Instantiate(node.room.roomPrefab, roomContainer);
+                // Determine save state? i.e. apply completion status
+                obj.gameObject.SetActive(false);
+                Debug.Log($"[RoomPoolService] Added room to pool at index {node.nodeIndex}");
+                pooledRooms[node.nodeIndex] = obj;
+            }
+        }
+    }
+
+    public RoomManager GetRoom(MapNode node)
+    {
+        if (activeRoom != null) Debug.LogError("[RoomPoolService] existing room active, return old to pool first");
+
+        if (!pooledRooms.TryGetValue(node.nodeIndex, out RoomManager entry))
+        {
+            Debug.LogWarning($"[RoomPoolService] failed to find room with id {node.nodeIndex} in pool");
+            return null;
+        }
+
+        entry.gameObject.SetActive(true);
+        activeRoom = entry;
+        return entry;
+    }
+
+    public void ReturnToPool(RoomManager room)
+    {
+        room.gameObject.SetActive(false);
+        activeRoom = null;
+        return;
+    }
+}

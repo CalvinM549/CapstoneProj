@@ -2,7 +2,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "EnemyData", menuName = "Enemies/NewEnemyData", order = 1)]
-public class EnemyData : ScriptableObject
+public class EnemyData : DatabaseEntry
 {
     [Header("Name")]
     public string enemyName;

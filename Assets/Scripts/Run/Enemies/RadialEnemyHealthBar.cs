@@ -28,7 +28,7 @@ public class RadialEnemyHealthBar : MonoBehaviour
     [SerializeField] private float hitPunchScale;
     [SerializeField] private float hitPunchDuration;
 
-    private EnemyBase owner;
+    private EnemyController owner;
     private CanvasGroup canvasGroup;
 
     private float targetFill = 1f;
@@ -45,7 +45,7 @@ public class RadialEnemyHealthBar : MonoBehaviour
 
     private void Awake()
     {
-        owner = GetComponentInParent<EnemyBase>();
+        owner = GetComponentInParent<EnemyController>();
 
         canvasGroup = barRoot.GetComponent<CanvasGroup>();
 
@@ -104,7 +104,7 @@ public class RadialEnemyHealthBar : MonoBehaviour
         punchTween = barRoot.DOPunchScale(Vector3.one * hitPunchScale, hitPunchDuration, 5, 0.5f);
     }
 
-    private void HandleLock(EnemyBase enemy)
+    private void HandleLock(EnemyController enemy)
     {
         if (enemy != owner) return;
 

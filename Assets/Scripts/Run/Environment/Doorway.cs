@@ -5,6 +5,7 @@ public class Doorway : MonoBehaviour
     [SerializeField] private Collider2D triggerVolume;
     [SerializeField] private SpriteRenderer doorVisual;
 
+    public Transform entryPoint;
     public CardinalDirection entryDirection;
 
     public MapNode Destination {  get; private set; }

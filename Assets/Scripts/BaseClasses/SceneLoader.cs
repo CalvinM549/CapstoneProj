@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using Unity.VectorGraphics;
 using UnityEngine;
@@ -12,6 +13,8 @@ public class SceneLoader : MonoBehaviour
 
     [SerializeField] private float fadeTime;
     [SerializeField] private CanvasGroup fadeOverlay;
+
+    public event Action<string> onSceneLoaded;
 
     public const string BOOTSTRAP = "Bootstrap";
     public const string MAINMENU = "MenuScene";
@@ -63,7 +66,7 @@ public class SceneLoader : MonoBehaviour
         var async = SceneManager.LoadSceneAsync(sceneName);
     }
 
-    private void LoadScene(string sceneName)
+    private void LoadScene(string sceneName, Action onLoad = null)
     {
         if (fadeOverlay != null)
         {
@@ -71,10 +74,10 @@ public class SceneLoader : MonoBehaviour
             fadeOverlay.DOFade(1f, fadeTime).SetUpdate(true);
         }
 
-        StartCoroutine(LoadSceneRoutine(sceneName));
+        StartCoroutine(LoadSceneRoutine(sceneName, onLoad));
     }
 
-    private IEnumerator LoadSceneRoutine(string sceneName)
+    private IEnumerator LoadSceneRoutine(string sceneName, Action onLoad)
     {
         yield return new WaitForSecondsRealtime(fadeTime);
 
@@ -82,6 +85,9 @@ public class SceneLoader : MonoBehaviour
 
         while(!async.isDone)
             yield return null;
+
+        onSceneLoaded?.Invoke(sceneName);
+        onLoad?.Invoke();
 
         if(TimescaleManager.IsPaused)
             TimescaleManager.Instance.UnpauseGame();

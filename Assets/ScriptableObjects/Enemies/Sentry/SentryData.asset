@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dae9cbbaadc1ca4182d6312aebded5a, type: 3}
   m_Name: SentryData
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  id: 883322da-d3cd-40c2-b0d2-4fd1686db834
   enemyName: Sentry
   maxHealth: 8
   staggerThreshold: 100

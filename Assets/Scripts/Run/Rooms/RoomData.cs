@@ -37,7 +37,7 @@ public class RoomData : DatabaseEntry, ICategorizedEntry<RoomType>
     public int difficultyCost;
     public float timerCost; // Expected time taken
 
-    public GameObject roomPrefab;
+    public RoomManager roomPrefab;
     // Rewards
 
     // Used for restricting rooms per chapter

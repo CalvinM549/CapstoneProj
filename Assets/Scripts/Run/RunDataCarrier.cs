@@ -2,13 +2,23 @@ using UnityEngine;
 
 public static class RunDataCarrier
 {
-    public static RunLoadout loadout;
-    public static RunMap map;
-    public static CurrentRun run;
-
-    public static void ConsumeData()
+    private static RunConfig preparedConfig;
+    public static RunConfig ConsumeData()
     {
+        RunConfig temp = preparedConfig;
+        preparedConfig = null;
 
+        return temp;
+    }
+
+    public static void BuildData(int seed, RunLoadout loadout, RunMap map)
+    {
+        preparedConfig = new RunConfig()
+        {
+            seed = seed,
+            loadout = loadout,
+            map = map
+        };
     }
 
 

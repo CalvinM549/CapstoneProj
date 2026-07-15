@@ -23,7 +23,7 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private Doorway[] doorways;
     public Vector2 defaultEntryPoint;
 
-    private CurrentRun runData;
+    private CurrentRun run;
 
     private void Awake()
     {
@@ -32,14 +32,20 @@ public class RoomManager : MonoBehaviour
 
     private void Update()
     {
-        if (State == RoomState.Active)
+        if (State == RoomState.Active && objectiveTracker != null)
             objectiveTracker.Tick(Time.deltaTime);
+
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            HandleEncounterCleared();
+        }
     }
 
     public void Initialize(RoomData room, CurrentRun run, bool completed = false)
     {
-        runData = run;
         Data = room;
+        this.run = run;
 
         if (completed)
         {
@@ -59,12 +65,12 @@ public class RoomManager : MonoBehaviour
     public void Activate()
     {
         State = RoomState.Active;
-        objectiveTracker.OnEncounterCleared += HandleEncounterCleared;
+        //objectiveTracker.OnEncounterCleared += HandleEncounterCleared;
     }
 
     public Vector2 GetEntryPointFor(Doorway door)
     {
-        return Vector2.zero;
+        return door.entryPoint.position;
     }
 
     private void HandleEncounterCleared()
@@ -72,9 +78,10 @@ public class RoomManager : MonoBehaviour
         if (State != RoomState.Active) return;
 
         State = RoomState.Cleared;
-        objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
+        //objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
 
-        upgradeStation.Enable();
+        if(upgradeStation != null) // The case in rest / shop rooms?
+            upgradeStation.Enable();
 
         foreach (var door in doorways)
             door.Unlock();

@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Walker : EnemyBase, IProjectileEmitter
+public class Walker : EnemyController, IProjectileEmitter
 {
 
     [SerializeField] private LayerMask groundLayer;

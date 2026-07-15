@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class HubScreen : MonoBehaviour
 {
-    public abstract HubScreenType ScreenType { get; }
+    public abstract HubState ScreenType { get; }
 
     public virtual void Open(HubManager hub)
     {

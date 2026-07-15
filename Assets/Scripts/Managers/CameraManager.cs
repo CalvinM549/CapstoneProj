@@ -53,8 +53,18 @@ public class CameraManager : MonoBehaviour
         brain = GetComponent<CinemachineBrain>();
         impulseSource = GetComponent<CinemachineImpulseSource>();
 
-        player = GameObject.FindWithTag("Player").transform;
         currentCamera = defaultCamera;
+    }
+
+    private void Start()
+    {
+        //player = GameObject.FindWithTag("Player").transform;
+    }
+
+    public void SetPlayer(Transform player)
+    {
+        this.player = player;
+        currentCamera.Follow = player;
     }
 
     private void OnEnable()

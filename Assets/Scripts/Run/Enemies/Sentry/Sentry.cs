@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class Sentry : EnemyBase, IProjectileEmitter
+public class Sentry : EnemyController, IProjectileEmitter
 {
     [SerializeField] bool isElite;
     [SerializeField] private Transform[] patrolPoints;

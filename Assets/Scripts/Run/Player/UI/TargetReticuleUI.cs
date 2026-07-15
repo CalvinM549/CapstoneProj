@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TargetReticleUI : MonoBehaviour
 {
-    private EnemyBase owner;
+    private EnemyController owner;
 
     [SerializeField] private CanvasGroup cg;
     [SerializeField] private float rotationSpeed;
@@ -16,7 +16,7 @@ public class TargetReticleUI : MonoBehaviour
 
     private void Awake()
     {
-        owner = GetComponentInParent<EnemyBase>();
+        owner = GetComponentInParent<EnemyController>();
 
         cg.alpha = 0f;
     }
@@ -44,7 +44,7 @@ public class TargetReticleUI : MonoBehaviour
 
     // ── Public API ────────────────────────────────────────────────────────────
 
-    private void HandleLockAcquired(EnemyBase enemy)
+    private void HandleLockAcquired(EnemyController enemy)
     {
         if (enemy != owner) return;
 
