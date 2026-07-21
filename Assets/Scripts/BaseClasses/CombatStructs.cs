@@ -38,7 +38,7 @@ public enum PushDirections
     AimInvert
 }
 
-public class HitData
+public struct HitData
 {
     public int damage;
     public int momentumCost;

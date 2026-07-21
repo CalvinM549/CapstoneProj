@@ -1,32 +1,66 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyService
 {
     public EnemyDatabase enemyDatabase;
 
-    public EnemyService(EnemyDatabase data)
+    private Dictionary<string, Stack<EnemyController>> pooledEnemies = new();
+    private Transform container;
+
+    public EnemyService(EnemyDatabase data, Transform container)
     {
         enemyDatabase = data;
+        this.container = container;
     }
 
-    public void BuildPool()
+    public void BuildPool(EnemyData data, int count)
     {
-        // Either X enemies in each of Y pools for each type
-        // Or All enemies in 1 dict with key
+        var stack = GetOrCreateStack(data.Id);
+        for (int i = 0; i < count; i++)
+        {
+            var obj = CreateToPool(data);
+            obj.gameObject.SetActive(false);
+            stack.Push(obj);
+        }
     }
 
     // Wave Spawner
     // Enemy Spawner / Resetter
 
-    public EnemyController GetEnemy() // Add type selector
+    public EnemyController GetEnemy(EnemyData data, Vector2 position) // Add type selector
     {
-        return null;
+        var stack = GetOrCreateStack(data.Id);
+        EnemyController enemy = stack.Count > 0 ? stack.Pop() : CreateToPool(data);
+
+        enemy.transform.position = position;
+        enemy.gameObject.SetActive(true);
+        enemy.OnSpawn();
+        return enemy;
     }
 
     public void ReturnToPool(EnemyController enemy)
     {
+        enemy.ResetForPool();
         enemy.gameObject.SetActive(false);
         // Return to pool
+    }
+
+    private EnemyController CreateToPool(EnemyData data)
+    {
+        var obj = GameObject.Instantiate(data.prefab);
+        return obj.GetComponent<EnemyController>();
+    }
+
+    private Stack<EnemyController> GetOrCreateStack(string id)
+    {
+        if(!pooledEnemies.TryGetValue(id, out var stack))
+        {
+            stack = new Stack<EnemyController>();
+            pooledEnemies[id] = stack;
+        }
+
+        return stack;
     }
 }
 

@@ -42,14 +42,25 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    public void Initialize(RoomData room, CurrentRun run, bool completed = false)
+    public void Initialize(MapNode node, CurrentRun run, bool completed = false)
     {
-        Data = room;
+        Data = node.room;
         this.run = run;
+
+        foreach (var door in doorways)
+        {
+            if (node.connections.TryGetValue(door.direction, out var neighbor))
+            {
+                door.gameObject.SetActive(true);
+                door.SetDestination(neighbor);
+            }
+            else
+                door.gameObject.SetActive(false);
+        }
 
         if (completed)
         {
-
+            // TODO
         }
         else
         {
@@ -58,7 +69,7 @@ public class RoomManager : MonoBehaviour
             // Enemy Spawns
 
             foreach (var door in doorways)
-                door.Lock();
+                if(door.gameObject.activeSelf) door.Lock();
         }
     }
 
@@ -68,9 +79,14 @@ public class RoomManager : MonoBehaviour
         //objectiveTracker.OnEncounterCleared += HandleEncounterCleared;
     }
 
-    public Vector2 GetEntryPointFor(Doorway door)
+    public Vector2 GetEntryPointFor(Direction fromDirection)
     {
-        return door.entryPoint.position;
+        foreach (var door in doorways)
+        {
+            if (door.direction == fromDirection && door.gameObject.activeSelf)
+                return door.entryPoint.position;
+        }
+        return defaultEntryPoint;
     }
 
     private void HandleEncounterCleared()

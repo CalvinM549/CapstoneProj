@@ -8,7 +8,7 @@ public class MapNode
     public int nodeIndex;
     public int row;
     public int col;
-    public List<MapNode> connections = new();
+    public Dictionary<Direction, MapNode> connections = new();
     public bool cleared;
 }
 

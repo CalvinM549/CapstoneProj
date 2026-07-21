@@ -11,7 +11,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     public bool hasPlayerLock;
 
     protected float currentHealth;
-    public float PercentHealth => currentHealth / data.maxHealth;
+    public float PercentHealth => currentHealth / data.baseHealth;
 
     public event Action<float, float, HitData> OnHit;
 
@@ -31,6 +31,16 @@ public class EnemyController : MonoBehaviour, IDamageable
     public bool IsAlive { get; set; }
     public bool IsIFrame = false;
 
+    public void OnSpawn()
+    {
+
+    }
+
+    public void OnDespawn()
+    {
+
+        StopAllCoroutines();
+    }
 
     protected virtual void Awake()
     {
@@ -38,7 +48,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         sr = animator.GetComponent<SpriteRenderer>();
 
         rb = GetComponent<Rigidbody2D>();
-        currentHealth = data.maxHealth;
+        currentHealth = data.baseHealth;
         IsAlive = true;
 
         baseSprite = sr.sprite;
@@ -54,6 +64,18 @@ public class EnemyController : MonoBehaviour, IDamageable
     protected virtual void OnDisable() { }
     protected virtual void Update() { }
 
+    public virtual void Initialize(Transform player) // Occurs when spawned??
+    {
+        playerTransform = player;
+    }
+
+    public virtual void ResetForPool()
+    {
+        // reset health
+    }
+
+    #region Taking Damage
+
     public void RecieveHit(HitData hit)
     {
         if (!IsAlive) return;
@@ -63,7 +85,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         ApplyDamage(hit);
         ApplyKnockback(hit.knockbackDirection, hit.knockbackForce);
 
-        OnHit?.Invoke(currentHealth, data.maxHealth, hit);
+        OnHit?.Invoke(currentHealth, data.baseHealth, hit);
         GameEvents.EnemyHit(this, hit);
 
         if (IsAlive)
@@ -85,7 +107,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         if (direction.magnitude < 0.1f) return;
 
-        rb.linearVelocity = (direction * force * data.knockbackMultiplier);
+        rb.linearVelocity = (direction * force);
     }
 
     protected virtual void Die()
@@ -127,6 +149,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         IsIFrame = false;
     }
 
+    #endregion
 
     protected void FlipFacing()
     {

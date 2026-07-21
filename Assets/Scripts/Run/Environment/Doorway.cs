@@ -6,7 +6,7 @@ public class Doorway : MonoBehaviour
     [SerializeField] private SpriteRenderer doorVisual;
 
     public Transform entryPoint;
-    public CardinalDirection entryDirection;
+    public Direction direction; // Direction the player must enter from
 
     public MapNode Destination {  get; private set; }
     public bool IsLocked { get; private set; } = true;
@@ -35,6 +35,6 @@ public class Doorway : MonoBehaviour
     {
         if (IsLocked || !collision.CompareTag("Player")) return;
 
-        RunManager.Instance.TransitionTo(Destination);
+        RunManager.Instance.TransitionTo(Destination, direction);
     }
 }

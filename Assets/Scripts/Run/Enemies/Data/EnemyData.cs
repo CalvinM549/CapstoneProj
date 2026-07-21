@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 
@@ -7,16 +8,37 @@ public class EnemyData : DatabaseEntry
     [Header("Name")]
     public string enemyName;
 
-    [Space]
-    public float maxHealth;
-    public float staggerThreshold;
-    public float knockbackMultiplier;
-
+    public EnemyController prefab;
 
     [Space]
-    public float moveSpeed;
-    public float acceleration;
+    public float baseHealth;
+    public float baseDamage;
+    public float baseSpeed;
 
     [Header("AI")]
     public float detectionRadius;
+}
+
+[Serializable]
+public class SpawnEntry
+{
+    public EnemyData enemyType;
+    public int count;
+
+    public string spawnGroupTag;
+}
+
+public class SpawnWave
+{
+    public SpawnEntry[] entries;
+
+    public float startDelay;
+
+    public int TotalCount()
+    {
+        int total = 0;
+        foreach(var e in entries) 
+            total += e.count;
+        return total;
+    }
 }

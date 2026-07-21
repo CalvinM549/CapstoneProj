@@ -50,8 +50,6 @@ public class Player : MonoBehaviour
 
     public void SetupFromSave(PlayerStateSave save)
     {
-        // Init with values
-
         if (save == null)
         {
             Debug.LogError("[Player] No save data provided");
@@ -60,7 +58,7 @@ public class Player : MonoBehaviour
 
         ResetPlayerState();
 
-
+        // Init with values
     }
 
     public void ResetPlayerState()

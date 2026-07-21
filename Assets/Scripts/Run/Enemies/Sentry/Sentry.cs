@@ -96,7 +96,7 @@ public class Sentry : EnemyController, IProjectileEmitter
         else if(direction.x < 0 && !isFacingRight)
             FlipFacing();
 
-            transform.position = Vector2.MoveTowards(transform.position, targetPoint, (data.moveSpeed * Time.deltaTime));
+            transform.position = Vector2.MoveTowards(transform.position, targetPoint, (data.baseSpeed * Time.deltaTime));
         if (transform.position == targetPoint)
         {
             if (currentPoint >= patrolPoints.Length - 1)

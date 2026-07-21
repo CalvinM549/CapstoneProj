@@ -43,5 +43,4 @@ public class RoomData : DatabaseEntry, ICategorizedEntry<RoomType>
     // Used for restricting rooms per chapter
     public int minChapter = 0;
     public int maxChapter = 99;
-
 }

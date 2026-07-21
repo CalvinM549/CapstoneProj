@@ -5,7 +5,7 @@ public class ObjectPool<T> where T : Component
 {
     private T prefab;
     private Transform parent;
-    private Queue<T> pool = new();
+    private Stack<T> pool = new();
     private int liveCount;
     private readonly int maxSize;
 
@@ -25,7 +25,7 @@ public class ObjectPool<T> where T : Component
     {
         var obj = GameObject.Instantiate(prefab, parent);
         obj.gameObject.SetActive(false);
-        pool.Enqueue(obj);
+        pool.Push(obj);
         liveCount++;
     }
 
@@ -39,7 +39,7 @@ public class ObjectPool<T> where T : Component
             CreateToPool();
         }
 
-        var obj = pool.Dequeue();
+        var obj = pool.Pop();
         obj.gameObject.SetActive(true);
         return obj;
     }
@@ -47,6 +47,6 @@ public class ObjectPool<T> where T : Component
     public void ReturnToPool(T obj)
     {
         obj.gameObject.SetActive(false);
-        pool.Enqueue(obj);
+        pool.Push(obj);
     }
 }
