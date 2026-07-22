@@ -83,7 +83,6 @@ public class LevelManager : MonoBehaviour // Depreciated
             pauseMenuUI.alpha = 0f;
             TimescaleManager.Instance.UnpauseGame();
         }
-
     }
 
     private void HandleEnemyDeath(EnemyController enemy)

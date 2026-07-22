@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   id: 883322da-d3cd-40c2-b0d2-4fd1686db834
   enemyName: Sentry
-  maxHealth: 8
-  staggerThreshold: 100
-  knockbackMultiplier: 2
-  moveSpeed: 2
-  acceleration: 0
+  prefab: {fileID: 0}
+  baseHealth: 6
+  baseDamage: 0
+  baseSpeed: 0
   detectionRadius: 0

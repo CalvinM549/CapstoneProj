@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public enum RoomState
@@ -42,7 +43,7 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    public void Initialize(MapNode node, CurrentRun run, bool completed = false)
+    public void Initialize(MapNode node, CurrentRun run)
     {
         Data = node.room;
         this.run = run;
@@ -58,14 +59,14 @@ public class RoomManager : MonoBehaviour
                 door.gameObject.SetActive(false);
         }
 
-        if (completed)
+        State = RoomState.Spawning;
+
+        if (node.cleared)
         {
-            // TODO
+            // Keep door in open state
         }
         else
         {
-            State = RoomState.Spawning;
-
             // Enemy Spawns
 
             foreach (var door in doorways)
@@ -86,6 +87,8 @@ public class RoomManager : MonoBehaviour
             if (door.direction == fromDirection && door.gameObject.activeSelf)
                 return door.entryPoint.position;
         }
+
+        print($"[RoomManager] No doorway matching direction {fromDirection}, using default instead");
         return defaultEntryPoint;
     }
 

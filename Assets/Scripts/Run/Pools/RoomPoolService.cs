@@ -7,7 +7,7 @@ public class RoomPoolService
     private RoomDatabase roomDatabase;
     private Transform roomContainer;
 
-    private Dictionary<int, RoomManager> pooledRooms;
+    private Dictionary<Vector2Int, RoomManager> pooledRooms;
     //private List<RoomManager> pooledRooms;
     private RoomManager activeRoom;
 
@@ -19,24 +19,40 @@ public class RoomPoolService
 
     public void BuildPool(RunMap map)
     {
-        pooledRooms = new Dictionary<int, RoomManager>();
+        pooledRooms = new Dictionary<Vector2Int, RoomManager>();
 
-        foreach (var layer in map.rows)
+        //foreach (var layer in map.rows)
+        //{
+        //    foreach (var node in layer)
+        //    {
+        //        if (pooledRooms.ContainsKey(node.nodeIndex))  // Room already pooled
+        //        {
+        //            Debug.LogError($"[RoomPoolService] Duplicate node index found at {node.nodeIndex}");
+        //            return;
+        //        }
+
+        //        var obj = GameObject.Instantiate(node.room.roomPrefab, roomContainer);
+        //        // Determine save state? i.e. apply completion status
+        //        obj.gameObject.SetActive(false);
+        //        Debug.Log($"[RoomPoolService] Added room to pool at index {node.nodeIndex}");
+        //        pooledRooms[node.nodeIndex] = obj;
+        //    }
+        //}
+
+
+        foreach (var node in map.tiles.Values)
         {
-            foreach (var node in layer)
+            if (pooledRooms.ContainsKey(node.coordinates))
             {
-                if (pooledRooms.ContainsKey(node.nodeIndex))  // Room already pooled
-                {
-                    Debug.LogError($"[RoomPoolService] Duplicate node index found at {node.nodeIndex}");
-                    return;
-                }
-
-                var obj = GameObject.Instantiate(node.room.roomPrefab, roomContainer);
-                // Determine save state? i.e. apply completion status
-                obj.gameObject.SetActive(false);
-                Debug.Log($"[RoomPoolService] Added room to pool at index {node.nodeIndex}");
-                pooledRooms[node.nodeIndex] = obj;
+                Debug.LogError($"[RoomPoolService] Duplicate node index found at {node.coordinates}");
+                return;
             }
+
+            var obj = GameObject.Instantiate(node.room.roomPrefab, roomContainer);
+            // Determine save state? i.e. apply completion status
+            obj.gameObject.SetActive(false);
+            Debug.Log($"[RoomPoolService] Added room to pool at index {node.coordinates}");
+            pooledRooms[node.coordinates] = obj;
         }
     }
 
@@ -44,9 +60,9 @@ public class RoomPoolService
     {
         if (activeRoom != null) Debug.LogError("[RoomPoolService] existing room active, return old to pool first");
 
-        if (!pooledRooms.TryGetValue(node.nodeIndex, out RoomManager entry))
+        if (!pooledRooms.TryGetValue(node.coordinates, out RoomManager entry))
         {
-            Debug.LogWarning($"[RoomPoolService] failed to find room with id {node.nodeIndex} in pool");
+            Debug.LogWarning($"[RoomPoolService] failed to find room with id {node.coordinates} in pool");
             return null;
         }
 

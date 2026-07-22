@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   id: 198b9a91-b22e-4af9-952b-3bccd1dc7fa4
   enemyName: Walker
-  maxHealth: 9
-  staggerThreshold: 0
-  knockbackMultiplier: 0.5
-  moveSpeed: 1
-  acceleration: 2
+  prefab: {fileID: 0}
+  baseHealth: 8
+  baseDamage: 0
+  baseSpeed: 0
   detectionRadius: 0

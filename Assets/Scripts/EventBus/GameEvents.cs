@@ -75,6 +75,9 @@ public static class GameEvents
     public static void PlayerParryStart() => OnPlayerParryStart?.Invoke();
     public static void PlayerParryEnd() => OnPlayerParryEnd?.Invoke();
 
+    public static event Action<Vector3> OnPlayerTransitionTeleport;
+    public static void PlayerTransitionTeleport(Vector3 newPos) => OnPlayerTransitionTeleport?.Invoke(newPos);
+
     #endregion
 
 

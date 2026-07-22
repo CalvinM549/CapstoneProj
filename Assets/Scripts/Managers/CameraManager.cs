@@ -71,12 +71,16 @@ public class CameraManager : MonoBehaviour
     {
         GameEvents.OnHitConfirmed += HandleHitShake;
         GameEvents.OnPlayerHit += HandlePlayerHit;
+
+        GameEvents.OnPlayerTransitionTeleport += HandlePlayerTransition;
     }
 
     private void OnDisable()
     {
         GameEvents.OnHitConfirmed -= HandleHitShake;
         GameEvents.OnPlayerHit -= HandlePlayerHit;
+
+        GameEvents.OnPlayerTransitionTeleport -= HandlePlayerTransition;
     }
 
     #region Event Handlers
@@ -103,6 +107,11 @@ public class CameraManager : MonoBehaviour
         CameraShake(hit.hitstunTime);
     }
 
+    private void HandlePlayerTransition(Vector3 newPos)
+    {
+        PlayerWarp(newPos);
+    }
+
     #endregion
 
     #region CameraShake
@@ -118,7 +127,7 @@ public class CameraManager : MonoBehaviour
 
     #region Camera View Changing
 
-    private void SetCamera(CinemachineCamera camera, Transform target = null, Action onBlendComplete = null)
+    public void SetCamera(CinemachineCamera camera, Transform target = null, Action onBlendComplete = null)
     {
         if (currentCamera == null) return;
 
@@ -134,7 +143,14 @@ public class CameraManager : MonoBehaviour
             StartCoroutine(CameraMoveEnd(onBlendComplete));
     }
 
-    private void ReturnToDefault(Action onBlendComplete = null)
+    private void PlayerWarp(Vector3 newPos)
+    {
+        Vector3 deltaPos = newPos - transform.position;
+
+        currentCamera.OnTargetObjectWarped(currentCamera.Follow, deltaPos);
+    }
+
+    public void ReturnToDefault(Action onBlendComplete = null)
     {
         SetCamera(defaultCamera, player, onBlendComplete);
     }

@@ -28,6 +28,7 @@ public class HubManager : MonoBehaviour
 
     // Services
     private MetaProgressionService metaProgression;
+    private MapGenerationService mapGeneration;
 
     [Header("Testing Values")]
 
@@ -48,19 +49,22 @@ public class HubManager : MonoBehaviour
             screens[screen.ScreenType] = screen;
 
         // Setup any instances
+        // Load Profile from save system?
     }
 
     private void Start()
     {
-        // Load Profile from save system?
+        metaProgression = new(activeProfile);
+        mapGeneration = new(db.rooms, 1002, new Vector2Int(5, 2)); // Replace bounds
+
         pendingLoadout = BuildDefaultLoadout();
-        
-        pendingMap = BuildTestingMap(); // TEMP FUNCTION
+
+        pendingMap = mapGeneration.GenerateMapWithSeed(1002); // TEMP FUNCTION
+        //pendingMap = BuildTestingMap(); // TEMP FUNCTION
         currentSeed = 1002; // TEMP FUNCTION
 
         //ShowScreen(HubState.Main);
 
-        metaProgression = new(activeProfile);
 
         seedText.text = currentSeed.ToString();
         seedText.color = CanBeginRun ? Color.green : Color.red;
@@ -90,31 +94,28 @@ public class HubManager : MonoBehaviour
 
     public RunMap BuildTestingMap()
     {
-        List<List<MapNode>> temp = new List<List<MapNode>>();
-        int currentNodeIndex = 0;
-
+        RunMap map = new();
+        
         if (defaultRooms.Length <= 0) print("[HubManager] no rooms lol");
 
-        for (int layerIndex = 0; layerIndex < defaultRooms.Length; layerIndex++)
+        for (int i = 0; i < defaultRooms.Length; i++)
         {
-            List<MapNode> layer = new();
-
-            // Loop through nodes in layer usually
             MapNode newNode = new MapNode()
             {
-                room = defaultRooms[layerIndex],
-                nodeIndex = currentNodeIndex,
-                row = 0,
-                col = layerIndex,
+                room = defaultRooms[i],
+                coordinates = new Vector2Int(0, i),
                 // Setup Connections - refer to Aesthosis??
                 cleared = false
             };
-            layer.Add(newNode);
-            currentNodeIndex++;
 
-            temp.Add(layer);
-
+            map.tiles[newNode.coordinates] = newNode;
         }
+
+        map.startNode = map.tiles[Vector2Int.zero];
+        map.startNode.ConnectTo(map.tiles[new Vector2Int(0, 1)], Direction.East);
+
+
+        return map;
 
         //for (int i = 0; i < defaultRooms.Length; i++)
         //{
@@ -132,13 +133,12 @@ public class HubManager : MonoBehaviour
         //    temp[i][0] = node;
         //}
 
-        RunMap map = new RunMap()
-        {
-            rows = temp,
-            startNode = temp[0][0]
-        };
+        //RunMap map = new RunMap()
+        //{
 
-        return map;
+        //};
+
+        //return map;
     }
 
     public void BeginNewRunFromHub()

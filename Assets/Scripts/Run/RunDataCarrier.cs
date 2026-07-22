@@ -3,6 +3,7 @@ using UnityEngine;
 public static class RunDataCarrier
 {
     private static RunConfig preparedConfig;
+    
     public static RunConfig ConsumeData()
     {
         RunConfig temp = preparedConfig;

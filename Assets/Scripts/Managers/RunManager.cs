@@ -1,6 +1,8 @@
+using DG.Tweening;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -25,17 +27,18 @@ public class RunManager : MonoBehaviour
     [SerializeField] private Transform enemyContainer;
     [SerializeField] private Transform playerContainer;
 
+    [SerializeField] private float fadeTime;
+    [SerializeField] private CanvasGroup fadeOverlay;
+
     public RoomPoolService roomService; // Pools rooms, holds useful values etc
     public EnemyService enemyService; // Pools enemies, allows for spawning and handling etc
     public RunState state { get; private set; }
-
 
     private CurrentRun currentRun;
 
     private Player activePlayer;
     private RoomManager activeRoom;
 
-    
     [SerializeField] private Player playerPrefab;
 
     private void Awake()
@@ -94,10 +97,12 @@ public class RunManager : MonoBehaviour
         //EnterNode()
     }
 
+    #region Room Transitions
+
     private void EnterNode(MapNode node, Direction? arrivingFrom)
     {
         state = RunState.RoomActive;
-        currentRun.currentMap.currentNode = node;
+        currentRun.map.currentNode = node;
 
         // Get active room from pool
         if (roomService == null)
@@ -116,9 +121,10 @@ public class RunManager : MonoBehaviour
             ? activeRoom.GetEntryPointFor(arrivingFrom.Value.Opposite())
             : activeRoom.defaultEntryPoint;
 
+        GameEvents.PlayerTransitionTeleport(spawnPos);
         activePlayer.transform.position = spawnPos;
 
-        //
+        //DoTransitionFade(false); // Unhide Screen
 
         activeRoom.Activate();
     }
@@ -127,6 +133,8 @@ public class RunManager : MonoBehaviour
     {
         room.OnCleared -= HandleRoomCleared;
         room.OnFailure -= HandleRoomFailed;
+
+        currentRun.map.currentNode.cleared = true;
 
         state = RunState.RoomTransition;
     }
@@ -141,11 +149,36 @@ public class RunManager : MonoBehaviour
     public void TransitionTo(MapNode nextNode, Direction exitDirection)
     {
         // Disable current room
-        // Do Visual hiding
+        //DoTransitionFade(true); // Do Visual hiding
+
+        //StartCoroutine(TransitionRoutine(nextNode, exitDirection));
+
         roomService.ReturnToPool(activeRoom);
         activeRoom = null;
-        EnterNode(nextNode, null); // Change null to correct door
+        EnterNode(nextNode, null); // Change null to exit direction
     }
+
+    public IEnumerator TransitionRoutine(MapNode nextNode, Direction dir)
+    {
+        DoTransitionFade(true);
+
+        yield return new WaitForSeconds(fadeTime);
+        EnterNode(nextNode, null); // Change null to exit direction
+
+        DoTransitionFade(false);
+    }
+
+    private void DoTransitionFade(bool enable)
+    {
+        if (fadeOverlay == null) return;
+
+        float fadeValue = enable ? 1f : 0f;
+
+        fadeOverlay?.DOKill();
+        fadeOverlay.DOFade(fadeValue, fadeTime).SetUpdate(true);
+    }
+
+    #endregion
 
     private void UpdateRunTick()
     {
@@ -183,7 +216,7 @@ public class CurrentRun
 
     // Map
     public int chapterIndex;
-    public RunMap currentMap;
+    public RunMap map;
     public Doorway lastDoorway; // used to re-load spawn pos
     // Draft things
 
@@ -200,7 +233,7 @@ public class CurrentRun
     public CurrentRun(int seed, RunMap map)
     {
         RunSeed = seed;
-        currentMap = map;
+        this.map = map;
 
         runDurationTimer = 0f;
         playerHeatTimer = 120f; // Change to variable start time??
