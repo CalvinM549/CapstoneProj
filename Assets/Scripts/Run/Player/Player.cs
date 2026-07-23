@@ -31,7 +31,8 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        CameraManager.Instance.SetPlayer(transform);
+        if (CameraManager.Instance != null)
+            CameraManager.Instance.SetPlayer(transform);
     }
 
     public void SetupNew(RunLoadout loadout)
