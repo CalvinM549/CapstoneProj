@@ -11,6 +11,8 @@ public abstract class PlayerWeapon : DatabaseEntry, IProjectileEmitter
 {
     public string weaponName;
     public float cooldown = 1f;
+    public int baseAmmo;
+    public int ammoUsed;
 
     public FireType fireType;
     public bool automatic;

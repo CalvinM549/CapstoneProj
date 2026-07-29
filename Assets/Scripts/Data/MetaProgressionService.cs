@@ -9,6 +9,21 @@ public class MetaProgressionService
         this.profile = profile;
     }
 
+    public void GrantArchiveUnlock(string id)
+    {
+
+    }
+
+    public void GrantToolUnlock(string id)
+    {
+
+    }
+
+    public void GrantWeaponUnlock(string id)
+    {
+
+    }
+
     public void GrantCurrency(int amount)
     {
         profile.metaCurrency += amount;

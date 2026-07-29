@@ -46,7 +46,7 @@ MonoBehaviour:
     startupTime: 0.35
     activeTime: 0.25
     recoveryTime: 0.3
-    dashForce: 9
+    dashForce: 15
     hitstopDuration: 0.3
     knockback: 3
     hitstunTime: 0.2
@@ -63,4 +63,5 @@ MonoBehaviour:
   comboWindow: 1
   comboCooldown: 0.2
   maxComboSteps: 3
+  heavyHoldThreshold: 0.25
   dashExtraWindow: 0.1

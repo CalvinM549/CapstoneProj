@@ -720,7 +720,7 @@ GameObject:
   - component: {fileID: 982274027}
   - component: {fileID: 982274026}
   m_Layer: 0
-  m_Name: Hub
+  m_Name: HubManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -743,12 +743,16 @@ MonoBehaviour:
     profileName: 
     profileSlot: 0
     metaCurrency: 0
+    bestRunTime: 0
+    runsAttempted: 0
+    runVictoryCount: 0
+    runFailureCount: 0
     BaseSegments: 0
     BaseTimer: 0
     unlockedArchives: []
     unlockedTools: []
     unlockedWeapons: []
-  defaultWeapon: {fileID: 11400000, guid: 44d8718efb40bf1438cd3e61ccceefd7, type: 2}
+  defaultWeapon: {fileID: 11400000, guid: c4986f5c1d5dddb4fb844e5fe6a1591e, type: 2}
   defaultRooms:
   - {fileID: 11400000, guid: 61b90bca84cd7a941870de9c451536ae, type: 2}
   - {fileID: 11400000, guid: f42d973c574c6514888fe6d295865f7e, type: 2}

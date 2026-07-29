@@ -11,10 +11,17 @@ public class PlayerProfile
 
     public int metaCurrency;
 
+    // Run History
+    public float bestRunTime;
+    public int runsAttempted;
+    public int runVictoryCount;
+    public int runFailureCount;
+
     // Meta buffs??
     public int BaseSegments;
     public float BaseTimer;
     
+    // Unlocks
     public List<string> unlockedArchives;
 
     public List<string> unlockedTools;

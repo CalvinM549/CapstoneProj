@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -19,11 +20,9 @@ public class PlayerCombat : MonoBehaviour
     private InputBuffer meleeBuffer;
     private InputBuffer rangedBuffer;
 
-    [SerializeField] private float heavyHoldThreshold;
     private Coroutine holdDetectRoutine;
 
     public CombatState CurrentState => currentState;
-
     private CombatState currentState = CombatState.Idle;
     
     private Coroutine currentMeleeRoutine;
@@ -59,6 +58,9 @@ public class PlayerCombat : MonoBehaviour
     private bool dashCancelWindow;
     private Coroutine dashCancelRoutine;
 
+    public int currentAmmo;
+    public event Action<int> onAmmoChanged;
+
     private void Awake()
     {
         p = GetComponent<Player>();
@@ -69,7 +71,8 @@ public class PlayerCombat : MonoBehaviour
 
     private void Start()
     {
-        EquipRangedWeapon(tempWeapon);
+        if(EquippedWeapon == null)
+            EquipRangedWeapon(tempWeapon);
     }
 
     private void OnEnable()
@@ -138,7 +141,7 @@ public class PlayerCombat : MonoBehaviour
 
     private IEnumerator HeavyHoldRoutine()
     {
-        yield return new WaitForSeconds(heavyHoldThreshold);
+        yield return new WaitForSeconds(data.heavyHoldThreshold);
         holdDetectRoutine = null;
         ProcessMeleeInput(false);
     }
@@ -434,7 +437,7 @@ public class PlayerCombat : MonoBehaviour
 
     private IEnumerator RangedAttackRoutine(PlayerWeapon weapon)
     {
-        Vector2 direction = GetAttackDirection(AttackType.Secondary);
+        //Vector2 direction = GetAttackDirection(AttackType.Secondary);
 
         // STARTUP
         currentState = CombatState.Startup;
@@ -450,7 +453,11 @@ public class PlayerCombat : MonoBehaviour
 
         // ACTIVE
         currentState = CombatState.Active;
+        Vector2 direction = GetAttackDirection(AttackType.Secondary);
         weapon.Fire(direction);
+
+        currentAmmo -= weapon.ammoUsed;
+        onAmmoChanged?.Invoke(currentAmmo);
 
         yield return new WaitForSeconds(weapon.activeTime);
 
@@ -477,7 +484,10 @@ public class PlayerCombat : MonoBehaviour
         }
 
         EquippedWeapon = weapon;
+        currentAmmo = weapon.baseAmmo;
         rangedCooldownTimer = 0f;
+
+        onAmmoChanged?.Invoke(currentAmmo);
 
         if (weapon != null)
         {

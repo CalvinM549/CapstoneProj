@@ -43,9 +43,13 @@ public class PlayerMovement : MonoBehaviour
     private float[] dashRechargePercentages;
 
     private bool isDashing;
+    // Sliding?
     private bool isForcedPush;
     private bool isSelfPush;
-    private bool isParrying = false;
+
+    private bool isOverrideMovement;
+    private bool isUsingTool;
+
 
     private int inputLockSources;
     public bool InputLocked => inputLockSources > 0;
@@ -146,7 +150,8 @@ public class PlayerMovement : MonoBehaviour
         if (IsDashing) return false;
         if (isForcedPush) return false;
         if (isSelfPush) return false;
-        if (isParrying) return false;
+        if (isOverrideMovement) return false;
+        if (isUsingTool) return false;
 
         return true;
     }
@@ -159,7 +164,7 @@ public class PlayerMovement : MonoBehaviour
         {
             case CombatState.Startup:
             case CombatState.Active:
-                DecelerateToZero(2f);
+                DecelerateToZero(1f);
                 break;
 
             case CombatState.Recovery:
@@ -378,15 +383,25 @@ public class PlayerMovement : MonoBehaviour
 
     public void MoveToPosition(Vector2 targetPos)
     {
-        // Lock Inputs
+        isOverrideMovement = true;
+    }
+
+    public void MoveInDirection(Direction direction, float duration)
+    {
+        isOverrideMovement = true;
+    }
+
+    public void StopMoveOverride()
+    {
+        // Stop Coroutine
+
+        isOverrideMovement = false;
     }
 
     private IEnumerator AutoMoveRoutine(Vector3 targetPos)
     {
         yield return new WaitUntil(() => transform.position == targetPos);
     }
-
-
 
     #endregion
 }

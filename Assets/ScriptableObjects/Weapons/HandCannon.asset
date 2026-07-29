@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c4fdf117cbd5294cb3d1f6b0c3c57ce, type: 3}
   m_Name: HandCannon
   m_EditorClassIdentifier: Assembly-CSharp::HandcannonWeapon
+  id: 80c2c507-f746-4a5b-8075-695769b46f2f
   weaponName: HandCannon
   cooldown: 3
+  baseAmmo: 10
+  ammoUsed: 1
   fireType: 0
   automatic: 0
   windupTime: 0.3

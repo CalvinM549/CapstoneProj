@@ -576,6 +576,17 @@
                 },
                 {
                     "name": "",
+                    "id": "53e67cc2-2e18-41a9-aafd-1b60d7727dcc",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "LockOn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "f17aadd7-ecaf-4e5f-aa16-9753f80963f1",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",

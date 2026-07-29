@@ -19,7 +19,7 @@ public class EnemyService
         var stack = GetOrCreateStack(data.Id);
         for (int i = 0; i < count; i++)
         {
-            var obj = CreateToPool(data);
+            var obj = CreateForPool(data);
             obj.gameObject.SetActive(false);
             stack.Push(obj);
         }
@@ -31,7 +31,7 @@ public class EnemyService
     public EnemyController GetEnemy(EnemyData data, Vector2 position) // Add type selector
     {
         var stack = GetOrCreateStack(data.Id);
-        EnemyController enemy = stack.Count > 0 ? stack.Pop() : CreateToPool(data);
+        EnemyController enemy = stack.Count > 0 ? stack.Pop() : CreateForPool(data);
 
         enemy.transform.position = position;
         enemy.gameObject.SetActive(true);
@@ -43,10 +43,12 @@ public class EnemyService
     {
         enemy.ResetForPool();
         enemy.gameObject.SetActive(false);
-        // Return to pool
+
+        var stack = pooledEnemies[enemy.Data.Id];
+        stack.Push(enemy);
     }
 
-    private EnemyController CreateToPool(EnemyData data)
+    private EnemyController CreateForPool(EnemyData data)
     {
         var obj = GameObject.Instantiate(data.prefab);
         return obj.GetComponent<EnemyController>();
@@ -62,6 +64,19 @@ public class EnemyService
 
         return stack;
     }
+    
+    // Enemy Wave data object
+    public void SpawnWave(SpawnWave wave)
+    {
+        foreach (WaveEntry entry in wave.entries)
+        {
+            // Get spawn point
+            for (int i = 0; i < entry.count; i++)
+            {
+                GetEnemy(entry.enemyType, Vector2.zero); // Replace with proper spawn pos
+            }
+        }
+    }
+
 }
 
-// Enemy Wave data object

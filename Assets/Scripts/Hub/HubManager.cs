@@ -22,6 +22,7 @@ public class HubManager : MonoBehaviour
     public int currentSeed {  get; private set; }
 
     public bool CanBeginRun => pendingMap != null && pendingLoadout != null && currentSeed != 0;
+    private bool loadingToRun = false;
 
     private readonly Dictionary<HubState, HubScreen> screens;
     private HubScreen activeScreen;
@@ -143,10 +144,12 @@ public class HubManager : MonoBehaviour
 
     public void BeginNewRunFromHub()
     {
+        if (loadingToRun) return;
+
         SaveProfile();
 
+        loadingToRun = true;
         RunDataCarrier.BuildData(currentSeed, pendingLoadout, pendingMap);
-
         SceneLoader.Instance.LoadRun();
     }
 

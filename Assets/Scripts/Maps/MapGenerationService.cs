@@ -144,15 +144,16 @@ public class MapGenerationService
         // Random generation for nodes atm, no weight
 
         Dictionary<Vector2Int, MapNode> map = new();
+        int nodeIndex = 0;
 
         foreach (var square in grid)
         {
             //if (square == Vector2Int.zero)
             // Get specific node
-
+            nodeIndex++;
             MapNode node = new()
             {
-                room = roomDatabase.GetRandom(rngSeed), // Replace with weighted function?
+                room = roomDatabase.GetRandom(rngSeed + nodeIndex), // Replace with weighted function?
                 coordinates = square,
                 cleared = false
             };

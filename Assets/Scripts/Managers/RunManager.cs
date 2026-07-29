@@ -97,6 +97,15 @@ public class RunManager : MonoBehaviour
         //EnterNode()
     }
 
+    private void ReturnToHub(bool victory)
+    {
+        // Update player profile based on run results
+        // Save profile changes
+
+        SceneLoader.Instance.LoadHub();
+        // Transition back to hub
+    }
+
     #region Room Transitions
 
     private void EnterNode(MapNode node, Direction? arrivingFrom)
@@ -134,6 +143,7 @@ public class RunManager : MonoBehaviour
         room.OnCleared -= HandleRoomCleared;
         room.OnFailure -= HandleRoomFailed;
 
+        currentRun.roomsCleared++;
         currentRun.map.currentNode.cleared = true;
 
         state = RunState.RoomTransition;
@@ -151,20 +161,24 @@ public class RunManager : MonoBehaviour
         // Disable current room
         //DoTransitionFade(true); // Do Visual hiding
 
-        //StartCoroutine(TransitionRoutine(nextNode, exitDirection));
+        StartCoroutine(TransitionRoutine(nextNode, exitDirection));
 
-        roomService.ReturnToPool(activeRoom);
-        activeRoom = null;
-        EnterNode(nextNode, null); // Change null to exit direction
+        //roomService.ReturnToPool(activeRoom);
+        //activeRoom = null;
+        //EnterNode(nextNode, null); // Change null to exit direction
     }
 
     public IEnumerator TransitionRoutine(MapNode nextNode, Direction dir)
     {
         DoTransitionFade(true);
+        TimescaleManager.Instance.PauseGame();
+        yield return new WaitForSecondsRealtime(fadeTime);
 
-        yield return new WaitForSeconds(fadeTime);
+        roomService.ReturnToPool(activeRoom);
+        activeRoom = null;
         EnterNode(nextNode, null); // Change null to exit direction
 
+        TimescaleManager.Instance.UnpauseGame();
         DoTransitionFade(false);
     }
 
@@ -217,6 +231,7 @@ public class CurrentRun
     // Map
     public int chapterIndex;
     public RunMap map;
+    public int roomsCleared;
     public Doorway lastDoorway; // used to re-load spawn pos
     // Draft things
 
@@ -237,6 +252,8 @@ public class CurrentRun
 
         runDurationTimer = 0f;
         playerHeatTimer = 120f; // Change to variable start time??
+
+        roomsCleared = 0;
 
         EnemiesKilled = 0;
         DamageTaken = 0;

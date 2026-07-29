@@ -67,25 +67,25 @@ public class TimescaleManager : MonoBehaviour
 
     private void HandleHitstop(HitData hit)
     {
-        DoHitstop(hit.hitstopTime);
+        RequestTimeSlow(hit.hitstopTime);
     }
 
     private void DeathStop()
     {
-        DoHitstop(2.5f);
+        RequestTimeSlow(2.5f);
     }
 
-    public void DoHitstop(float duration)
+    public void RequestTimeSlow(float duration)
     {
         if (currentHitstopRoutine != null)
         {
             StopCoroutine(currentHitstopRoutine);
         }
 
-        currentHitstopRoutine = StartCoroutine(HitstopRoutine(duration));
+        currentHitstopRoutine = StartCoroutine(TimeSlowRoutine(duration));
     }
 
-    private IEnumerator HitstopRoutine(float duration)
+    private IEnumerator TimeSlowRoutine(float duration)
     {
         Debug.Log("Hitstop Started");
 

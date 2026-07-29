@@ -482,7 +482,8 @@ MonoBehaviour:
   sfxVolume: 0
   musicVolume: 0
   sfxSource: {fileID: 0}
-  musicSource: {fileID: 0}
+  musicSourceA: {fileID: 0}
+  musicSourceB: {fileID: 0}
 --- !u!4 &1012444242
 Transform:
   m_ObjectHideFlags: 0
@@ -544,6 +545,10 @@ MonoBehaviour:
     prefab: {fileID: 7456246955456325049, guid: 84bb48ee150b3c74493dc2632e310e78, type: 3}
     initialPoolSize: 4
     maxPoolSize: 10
+  - type: 5
+    prefab: {fileID: 2525816426480259238, guid: 2fa7df641f7774247abd70c5068abdfb, type: 3}
+    initialPoolSize: 4
+    maxPoolSize: 4
   vfxContainer: {fileID: 0}
 --- !u!4 &1067201986
 Transform:

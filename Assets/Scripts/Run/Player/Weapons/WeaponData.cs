@@ -19,6 +19,8 @@ public class WeaponData : ScriptableObject
     public float comboCooldown;
     public int maxComboSteps;
 
+    public float heavyHoldThreshold;
+
     public float dashExtraWindow;
 }
 

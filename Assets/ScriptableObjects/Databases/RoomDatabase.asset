@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomDatabase
   entries:
   - {fileID: 11400000, guid: 61b90bca84cd7a941870de9c451536ae, type: 2}
+  - {fileID: 11400000, guid: f42d973c574c6514888fe6d295865f7e, type: 2}

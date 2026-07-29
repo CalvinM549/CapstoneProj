@@ -6,6 +6,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 {
     [Header("Stats")]
     [SerializeField] protected EnemyData data;
+    public EnemyData Data => data;
 
     protected Transform playerTransform;
     public bool hasPlayerLock;

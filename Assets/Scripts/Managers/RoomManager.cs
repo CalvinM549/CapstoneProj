@@ -68,6 +68,7 @@ public class RoomManager : MonoBehaviour
         else
         {
             // Enemy Spawns
+            objectiveTracker.Setup(node.room, run);
 
             foreach (var door in doorways)
                 if(door.gameObject.activeSelf) door.Lock();
@@ -77,7 +78,7 @@ public class RoomManager : MonoBehaviour
     public void Activate()
     {
         State = RoomState.Active;
-        //objectiveTracker.OnEncounterCleared += HandleEncounterCleared;
+        objectiveTracker.OnEncounterCleared += HandleEncounterCleared;
     }
 
     public Vector2 GetEntryPointFor(Direction fromDirection)
@@ -97,7 +98,7 @@ public class RoomManager : MonoBehaviour
         if (State != RoomState.Active) return;
 
         State = RoomState.Cleared;
-        //objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
+        objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
 
         if(upgradeStation != null) // The case in rest / shop rooms?
             upgradeStation.Enable();

@@ -9,15 +9,6 @@ public class CameraManager : MonoBehaviour
 {
     public static CameraManager Instance { get; private set; }
 
-    public enum CameraEffect
-    {
-        PositionalShake,
-        ImpulseShake,
-        DirectionalShake,
-        ZoomPunch,
-        VCamSwitch
-    }
-
     [SerializeField] private CinemachineCamera defaultCamera;
 
     private CinemachineBrain brain;

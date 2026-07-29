@@ -16,25 +16,26 @@ public class EnemyData : DatabaseEntry
     public float baseSpeed;
 
     [Header("AI")]
+    // AI Controller
     public float detectionRadius;
 }
 
 [Serializable]
-public class SpawnEntry
+public class WaveEntry
 {
     public EnemyData enemyType;
     public int count;
 
-    public string spawnGroupTag;
+    public string spawnGroupTag; // name of object that unit spawns at
 }
 
 public class SpawnWave
 {
-    public SpawnEntry[] entries;
+    public WaveEntry[] entries;
 
     public float startDelay;
 
-    public int TotalCount()
+    public int TotalEnemiesInWave()
     {
         int total = 0;
         foreach(var e in entries) 

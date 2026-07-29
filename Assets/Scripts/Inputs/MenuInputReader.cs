@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class MenuInputReader : MonoBehaviour
+public class MenuInputReader
 {
     private readonly InputSystem_Actions actions;
 

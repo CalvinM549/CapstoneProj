@@ -46,7 +46,11 @@ public class AudioManager : MonoBehaviour
     public float musicVolume;
 
     public AudioSource sfxSource;
-    public AudioSource musicSource;
+    public AudioSource musicSourceA;
+    public AudioSource musicSourceB;
+
+    private AudioSource activeMusicSource;
+    private AudioSource inactiveMusicSource;
 
     private void Awake()
     {
@@ -68,8 +72,20 @@ public class AudioManager : MonoBehaviour
             sound.source.outputAudioMixerGroup = sfxMixer;
         }
 
-        musicSource = gameObject.AddComponent<AudioSource>();
-        musicSource.outputAudioMixerGroup = musicMixer;
+        musicSourceA = gameObject.AddComponent<AudioSource>();
+        musicSourceA.outputAudioMixerGroup = musicMixer;
+        musicSourceB = gameObject.AddComponent<AudioSource>();
+        musicSourceB.outputAudioMixerGroup = musicMixer;
+    }
+
+    public void PlayMusicTrack(string name, bool doFade)
+    {
+        // find music entry
+
+        if (doFade)
+        {
+            // Do stuff
+        }
     }
 
     public void PlaySFX(string name)

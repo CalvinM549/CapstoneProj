@@ -20,7 +20,12 @@ public class LevelManager : MonoBehaviour // Depreciated
     [SerializeField] private TextMeshProUGUI enemyCounter;
     private int currentEnemyCount;
     private int maxEnemyCount;
-        
+
+    [SerializeField] private CanvasGroup WeaponSelectUI;
+    [SerializeField] private PlayerWeapon missile;
+    [SerializeField] private PlayerWeapon cannon;
+
+
     private void Start()
     {
         timerActive = true;
@@ -146,5 +151,18 @@ public class LevelManager : MonoBehaviour // Depreciated
     public void LoadToMenu()
     {
         SceneLoader.Instance.LoadMainMenu();
+    }
+
+    public void SelectWeapon(int weapon)
+    {
+        PlayerWeapon selectedWeapon = null;
+
+        if (weapon == 0)
+            selectedWeapon = missile;
+        else
+            selectedWeapon = cannon;
+
+        var obj = GameObject.FindAnyObjectByType<Player>().GetComponent<Player>();
+        obj.Combat.EquipRangedWeapon(selectedWeapon);
     }
 }

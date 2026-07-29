@@ -25,14 +25,18 @@ public class PlayerStats : MonoBehaviour
     private void InitializeStats()
     {
         // Movement
-        Register("MoveSpeed", movementData.baseSpeed);
-        Register("Acceleration", movementData.acceleration);
+        Register(StatRef.PlayerBaseSpeed, 1f);
+        Register(StatRef.PlayerDashCharges, 2f);
+        Register(StatRef.PlayerDashRecharge, 1f);
+
 
         // Health
 
         // Combat
 
         // Momentum
+
+        // Head
     }
 
     #region Helpers
