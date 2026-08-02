@@ -13,7 +13,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public List<HealthSegment> healthSegments;
     private int activeHealthIndex;
 
-    public HealthSegment activeSegment => healthSegments[activeHealthIndex];
+    public HealthSegment ActiveSegment => healthSegments[activeHealthIndex];
     public int ActiveHealthIndex => activeHealthIndex;
 
     public bool IsAlive { get; set; }
@@ -22,6 +22,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private bool isIframe = false;
 
+    private bool isInitialized = false;
 
     private Coroutine hitStunRoutine;
     private Coroutine iFrameRoutine;
@@ -36,11 +37,20 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void Start()
     {
-        InitializeSegments(data.segmentBaseCount);
+        InitializeHealth(data.segmentBaseCount);
     }
 
-    private void InitializeSegments(int segmentCount)
+    public void Initialize()
     {
+        InitializeHealth(data.segmentBaseCount);
+
+    }
+
+    private void InitializeHealth(int segmentCount)
+    {
+
+        if (isInitialized) return;
+
         healthSegments.Clear();
 
         for (int i = 0; i < segmentCount; i++)
@@ -52,11 +62,13 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         activeHealthIndex = healthSegments.Count - 1;
 
         GameEvents.PlayerHealthChanged(healthSegments);
+
+        isInitialized = true;
     }
 
-    private void RestoreFromSave(int activeIndex, List<SegmentSave> savedSegments)
+    public void Restore(int activeIndex, List<SegmentSave> savedSegments)
     {
-        InitializeSegments(savedSegments.Count);
+        InitializeHealth(savedSegments.Count);
         activeHealthIndex = Mathf.Clamp(activeIndex, 0, healthSegments.Count - 1);
 
         for (int i = 0; i < healthSegments.Count && i < savedSegments.Count; i++)
@@ -67,11 +79,25 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         GameEvents.PlayerHealthChanged(healthSegments);
     }
 
+    public void RestoreCurrentSegment()
+    {
+        if (ActiveSegment == null)
+        {
+            Debug.LogWarning("[PlayerHealth] No active health segment found");
+            return;
+        }
+        ActiveSegment.RestoreSegment();
+        GameEvents.PlayerHealthChanged(healthSegments);
+    }
+
+    #region Recieving Damage
+
     public void RecieveHit(HitData hit)
     {
         if (!IsAlive) return;
         if (IsIframe) return;
-        if (p.Tools.TryInterceptWithTool(hit)) return;
+        if (p.Tools.TryInterceptWithTool(hit)) return; // For parry tools etc
+        // Do event trigger for upgrades? make event return true maybe
 
         ApplyKnockback(hit);
         ApplyHitStun(hit);
@@ -82,7 +108,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     {
         GameEvents.PlayerHit(hit);
 
-        HealthSegment segment = activeSegment;
+        HealthSegment segment = ActiveSegment;
 
         float overflow = segment.ReduceHealth(hit.damage);
 
@@ -146,6 +172,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         IsHitstunned = false;
     }
 
+    #endregion
+
     private void PlayerDeath()
     {
         GameEvents.PlayerHealthChanged(healthSegments);
@@ -154,18 +182,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         StopAllCoroutines();
 
-        //gameObject.SetActive(false);
-
         GameEvents.PlayerDeath();
-    }
-
-    public void AddHealthSegment()
-    {
-
-    }
-
-    public void RemoveHealthSegment()
-    {
-
     }
 }

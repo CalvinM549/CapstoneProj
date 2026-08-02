@@ -24,7 +24,7 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private Doorway[] doorways;
     public Vector2 defaultEntryPoint;
 
-    private CurrentRun run;
+    private RunState run;
 
     private void Awake()
     {
@@ -36,14 +36,15 @@ public class RoomManager : MonoBehaviour
         if (State == RoomState.Active && objectiveTracker != null)
             objectiveTracker.Tick(Time.deltaTime);
 
-
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.L))
         {
             HandleEncounterCleared();
         }
+#endif
     }
 
-    public void Initialize(MapNode node, CurrentRun run)
+    public void Initialize(MapNode node, RunState run)
     {
         Data = node.room;
         this.run = run;
@@ -78,7 +79,8 @@ public class RoomManager : MonoBehaviour
     public void Activate()
     {
         State = RoomState.Active;
-        objectiveTracker.OnEncounterCleared += HandleEncounterCleared;
+        if(objectiveTracker != null)
+            objectiveTracker.OnEncounterCleared += HandleEncounterCleared;
     }
 
     public Vector2 GetEntryPointFor(Direction fromDirection)
@@ -98,7 +100,8 @@ public class RoomManager : MonoBehaviour
         if (State != RoomState.Active) return;
 
         State = RoomState.Cleared;
-        objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
+        if(objectiveTracker != null)
+            objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
 
         if(upgradeStation != null) // The case in rest / shop rooms?
             upgradeStation.Enable();
@@ -118,6 +121,12 @@ public class RoomManager : MonoBehaviour
 
     public void ResetForPool()
     {
-        // Room Pooler reset
+        OnCleared = null;
+        OnFailure = null;
+
+        if (objectiveTracker != null)
+            objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
+
+        State = RoomState.Spawning;
     }
 }

@@ -1,14 +1,12 @@
 using System;
 using UnityEngine;
 
-public class AttackHitboxes : MonoBehaviour
+public class PlayerHitboxController : MonoBehaviour
 {
     [Header("Light Attacks")]
-    [SerializeField] private Hitbox[] lightHitboxes;
+    [SerializeField] private PlayerMeleeHitbox[] lightHitboxes;
 
-    [SerializeField] private Hitbox heavyHitbox;
-
-    [SerializeField] private Hitbox dashHitbox;
+    [SerializeField] private PlayerMeleeHitbox heavyHitbox;
 
     [SerializeField] private Transform facingPivot;
 
@@ -22,7 +20,6 @@ public class AttackHitboxes : MonoBehaviour
             SubscribeHitbox(hitbox);
 
         SubscribeHitbox(heavyHitbox);
-        SubscribeHitbox(dashHitbox);    
     }
 
     private void RotateToDir(Vector3 direction)
@@ -31,7 +28,7 @@ public class AttackHitboxes : MonoBehaviour
         facingPivot.rotation = Quaternion.Euler(new Vector3(0,0, angle));
     }
 
-    private void SubscribeHitbox(Hitbox hitbox)
+    private void SubscribeHitbox(PlayerMeleeHitbox hitbox)
     {
         if (hitbox == null) return;
 
@@ -55,10 +52,6 @@ public class AttackHitboxes : MonoBehaviour
             case AttackType.Heavy:
                 heavyHitbox?.Activate();
                 break;
-
-            case AttackType.DashAttack:
-                dashHitbox?.Activate();
-                break;
         }
     }
 
@@ -68,7 +61,6 @@ public class AttackHitboxes : MonoBehaviour
             hitbox?.Deactivate();
 
         heavyHitbox?.Deactivate();
-        dashHitbox?.Deactivate();
 
         currentAttack = null;
     }

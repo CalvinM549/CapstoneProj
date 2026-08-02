@@ -4,7 +4,6 @@ public class RunSaveManager : MonoBehaviour
 {
     private Player player;
 
-
     #region Public Functions
 
     public void SaveRun()

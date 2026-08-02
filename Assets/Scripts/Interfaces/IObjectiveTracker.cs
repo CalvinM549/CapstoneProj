@@ -6,7 +6,7 @@ public interface IObjectiveTracker
     event Action OnEncounterCleared;
     event Action<float> OnProgressChanged;
 
-    void Setup(RoomData room, CurrentRun run);
+    void Setup(RoomData room, RunState run);
     void Tick(float dt);
     void Reset();
 }

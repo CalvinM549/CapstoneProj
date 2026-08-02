@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileData
   prefab: {fileID: 7729453556227253415, guid: 4a391f20a74486744878638e83022756, type: 3}
   poolSize: 3
-  lifetime: 0.4
+  lifetime: 0.7
   speed: 30
   damage: 5
   damageType: 0
@@ -22,5 +22,5 @@ MonoBehaviour:
   hitstunTime: 0.1
   hitstopDuration: 1
   isParryable: 1
-  impactVFXPrefab: {fileID: 0}
-  expireVFXPrefab: {fileID: 0}
+  impactVFXPrefab: {fileID: 322882815777838680, guid: 55e175f5de6bcec488c252716af9914e, type: 3}
+  expireVFXPrefab: {fileID: 322882815777838680, guid: 55e175f5de6bcec488c252716af9914e, type: 3}

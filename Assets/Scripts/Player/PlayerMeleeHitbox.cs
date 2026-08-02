@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-public class Hitbox : MonoBehaviour
+public class PlayerMeleeHitbox : MonoBehaviour
 {
 
     private bool active;

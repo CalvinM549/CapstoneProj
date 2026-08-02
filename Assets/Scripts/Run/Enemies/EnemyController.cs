@@ -113,7 +113,6 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     protected virtual void Die()
     {
-        Debug.Log("Enemy Killed");
         IsAlive = false;
 
         VFXManager.Instance.PlayVFX(VFXType.ExplosionComplex, transform.position);

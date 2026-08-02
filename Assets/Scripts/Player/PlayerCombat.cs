@@ -12,7 +12,7 @@ public class PlayerCombat : MonoBehaviour
 
     private Player p;
 
-    [SerializeField] private AttackHitboxes hitboxes;
+    [SerializeField] private PlayerHitboxController hitboxes;
     [SerializeField] private LayerMask wallLayer;
 
     private InputReader input;

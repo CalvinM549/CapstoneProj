@@ -6,6 +6,13 @@ using UnityEngine;
 public static class GameEvents
 {
 
+    #region Run
+
+    public static event Action<bool> OnRunEnded;
+    public static void RunEnded(bool victory) => OnRunEnded?.Invoke(victory);
+
+    #endregion
+
     #region Inputs
 
 

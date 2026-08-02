@@ -16,7 +16,7 @@ public class SceneLoader : MonoBehaviour
 
     public event Action<string> onSceneLoaded;
 
-    public const string BOOTSTRAP = "Bootstrap";
+    public const string BOOTSTRAP = "BootstrapScene";
     public const string MAINMENU = "MenuScene";
 
     public const string HUB = "HubScene";
@@ -39,6 +39,17 @@ public class SceneLoader : MonoBehaviour
     private void Start()
     {
         fadeOverlay.alpha = 0f;
+
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            UnityEngine.SceneManagement.Scene scene = SceneManager.GetSceneAt(i);
+            if (scene.name != BOOTSTRAP && scene.isLoaded)
+            {
+                SceneManager.SetActiveScene(scene);
+                onSceneLoaded?.Invoke(scene.name);
+                return;
+            }
+        }
 
         if(AutoLoadMenu)    
             LoadSceneImmediate(MAINMENU);

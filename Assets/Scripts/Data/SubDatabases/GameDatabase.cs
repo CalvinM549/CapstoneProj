@@ -8,4 +8,5 @@ public class GameDatabase : ScriptableObject
 
     public RoomDatabase rooms;
     public EnemyDatabase enemies;
+    public ArchiveDatabase archives;
 }

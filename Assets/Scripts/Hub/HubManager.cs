@@ -24,7 +24,7 @@ public class HubManager : MonoBehaviour
     public bool CanBeginRun => pendingMap != null && pendingLoadout != null && currentSeed != 0;
     private bool loadingToRun = false;
 
-    private readonly Dictionary<HubState, HubScreen> screens;
+    private readonly Dictionary<HubState, HubScreen> screens = new();
     private HubScreen activeScreen;
 
     // Services
@@ -53,7 +53,7 @@ public class HubManager : MonoBehaviour
         // Load Profile from save system?
     }
 
-    private void Start()
+    public void InitializeHub()
     {
         metaProgression = new(activeProfile);
         mapGeneration = new(db.rooms, 1002, new Vector2Int(5, 2)); // Replace bounds
@@ -155,8 +155,11 @@ public class HubManager : MonoBehaviour
 
     public void BeginSavedRunFromHub()
     {
+        if (loadingToRun) return;
+
         SaveProfile();
 
+        loadingToRun = true;
         SceneLoader.Instance.LoadRun();
     }
 
@@ -169,7 +172,7 @@ public class HubManager : MonoBehaviour
         activeScreen = screens[type];
         activeScreen.Open(this);
 
-        // Run Event
+        // Run Event?
     }
 
     #region Profile Helpers

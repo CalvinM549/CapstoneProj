@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance;
 
-
     public GameState CurrentState => currentState;
     private GameState currentState;
 
@@ -41,22 +40,46 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
     }
 
     private void OnEnable()
     {
-        
+        SceneLoader.Instance.onSceneLoaded += HandleSceneLoaded;
+        GameEvents.OnRunEnded += HandleRunEnded;
     }
 
     private void OnDisable()
     {
-        
+        if (SceneLoader.Instance != null)
+            SceneLoader.Instance.onSceneLoaded -= HandleSceneLoaded;
+        GameEvents.OnRunEnded -= HandleRunEnded;
     }
 
-    public void SetState(GameState newState)
+    private void HandleSceneLoaded(string sceneName)
     {
-        currentState = newState;
+        switch (sceneName)
+        {
+            case SceneLoader.MAINMENU:
+                currentState = GameState.Run;
+                break;
+
+            case SceneLoader.HUB:
+                currentState = GameState.Hub;
+                HubManager.Instance.InitializeHub();
+                break;
+
+            case SceneLoader.RUN:
+                currentState = GameState.Run;
+                RunManager.Instance.BeginRun();
+                break;
+        }
+    }
+
+    private void HandleRunEnded(bool victory)
+    {
+        SceneLoader.Instance.LoadHub();
     }
 
     private void SetCursor()

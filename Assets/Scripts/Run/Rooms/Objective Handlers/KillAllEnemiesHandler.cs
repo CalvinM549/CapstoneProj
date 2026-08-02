@@ -20,7 +20,7 @@ public class KillAllEnemiesHandler : MonoBehaviour, IObjectiveTracker
         GameEvents.OnEnemyKilled -= HandleEnemyDeath;
     }
 
-    public void Setup(RoomData room, CurrentRun run)
+    public void Setup(RoomData room, RunState run)
     {
         var enemies = FindObjectsByType<EnemyController>(FindObjectsSortMode.None);
         startEnemies = enemies.Length;

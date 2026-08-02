@@ -128,32 +128,4 @@ public class RadialStructureUI : MonoBehaviour
             controller.Ring != null ? controller.Ring.color : Color.pink);
         return controller;
     }
-
-    //private RectTransform CreateSegmentPivot(float startAngleDegrees)
-    //{
-    //    var segmentGO = Instantiate(segmentPrefab, segmentContainer);
-    //    var segmentRect = segmentGO.GetComponent<RectTransform>();
-
-    //    segmentRect.anchoredPosition = Vector2.zero;
-    //    segmentRect.localRotation = Quaternion.Euler(0f, 0f, startAngleDegrees);
-
-    //    return segmentRect;
-    //}
-
-    //private Image ConfigureFillImage(RectTransform pivot, float arcFillAmount)
-    //{
-    //    //var segmentTransform = pivot.GetChild(0);
-    //    var images = pivot.GetComponentsInChildren<Image>();
-
-    //    Image fillImage = images.Length > 1 ? images[1] : images[0];
-
-    //    fillImage.type = Image.Type.Filled;
-    //    fillImage.fillMethod = Image.FillMethod.Radial360;
-    //    fillImage.fillOrigin = (int)Image.Origin360.Top;
-    //    fillImage.fillClockwise = true;
-
-    //    fillImage.fillAmount = arcFillAmount;
-
-    //    return fillImage;
-    //}
 }

@@ -47,6 +47,7 @@ public class Player : MonoBehaviour
 
         Tools.EquipTool(loadout.tool);
         Combat.EquipRangedWeapon(loadout.weapon);
+        Health.Initialize();
     }
 
     public void SetupFromSave(PlayerStateSave save)
@@ -59,7 +60,12 @@ public class Player : MonoBehaviour
 
         ResetPlayerState();
 
-        // Init with values
+        //Health.Restore();
+    }
+
+    public PlayerStateSave PackPlayerState()
+    {
+        return null;
     }
 
     public void ResetPlayerState()
@@ -71,13 +77,9 @@ public class Player : MonoBehaviour
     public void PrepareForRoomChange()
     {
         Targeting.DropLock();
+        Health.RestoreCurrentSegment();
     }
 
-    public PlayerStateSave PackPlayerState()
-    {
-        return null;
-    }
-    
     #region Utilities
 
     public Vector2 GetTargetDirection()
