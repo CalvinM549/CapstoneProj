@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,10 +5,11 @@ using UnityEngine;
 [Serializable]
 public class PlayerProfile
 {
+    public int slotIndex;
+    public string profileID;
     public string profileName;
-    public int profileSlot;
 
-    public int metaCurrency;
+    public int metaCurrency = 0;
 
     // Run History
     public float bestRunTime;
@@ -28,8 +28,30 @@ public class PlayerProfile
     public List<string> unlockedWeapons;
 
     public List<SavedLoadoutPreset> savedPresets;
+
+    // Story Flags
+    public bool tutorialSeen;
+    public bool skipCutscene;
+
+    // New profile Builder
+    public PlayerProfile(int slot, string name)
+    {
+        slotIndex = slot;
+        profileID = Guid.NewGuid().ToString();
+        profileName = name;
+
+        runsAttempted = 0;
+
+        unlockedArchives = new();
+        unlockedTools = new();
+        unlockedWeapons = new();
+
+        tutorialSeen = false;
+        skipCutscene = false;
+    }
 }
 
+[Serializable]
 public class SavedLoadoutPreset
 {
 

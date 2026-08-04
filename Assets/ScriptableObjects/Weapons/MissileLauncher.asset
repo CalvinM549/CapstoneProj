@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MissileWeapon
   id: 312c186d-9bd2-47fd-848a-722458ad93ec
   weaponName: Missiles
-  cooldown: 3
+  cooldown: 5
   baseAmmo: 16
   ammoUsed: 4
   fireType: 2

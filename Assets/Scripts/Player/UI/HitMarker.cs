@@ -28,6 +28,11 @@ public class HitMarker : MonoBehaviour
             Age += Time.deltaTime;
     }
 
+    private void OnDestroy()
+    {
+        sequence?.Kill();
+    }
+
     public void Activate(Vector2 direction, float markerRadius, float peakPunchScale, 
         float holdDuration, float fadeDuration, Color colour, Action<HitMarker> returnToPoolCallback)
     {

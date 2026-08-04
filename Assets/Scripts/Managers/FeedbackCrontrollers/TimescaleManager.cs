@@ -73,6 +73,7 @@ public class TimescaleManager : MonoBehaviour
     private void DeathStop()
     {
         RequestTimeSlow(2.5f);
+        Invoke(nameof(PauseGame), 2.5f);
     }
 
     public void RequestTimeSlow(float duration)
@@ -85,10 +86,24 @@ public class TimescaleManager : MonoBehaviour
         currentHitstopRoutine = StartCoroutine(TimeSlowRoutine(duration));
     }
 
+    public void KillAllTimeSlows()
+    {
+        if (currentHitstopRoutine != null)
+        {
+            StopCoroutine(currentHitstopRoutine);
+            currentHitstopRoutine = null;
+
+            if (!IsPaused)
+            {
+                Time.timeScale = 1.0f;
+            }
+
+            lastTimeScale = 1.0f;
+        }
+    }
+
     private IEnumerator TimeSlowRoutine(float duration)
     {
-        Debug.Log("Hitstop Started");
-
         hitstopTimeElapsed = 0f;
 
         Time.timeScale = hitstopTimeScale;

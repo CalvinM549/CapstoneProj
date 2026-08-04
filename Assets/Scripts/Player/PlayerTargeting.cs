@@ -12,7 +12,7 @@ public class PlayerTargeting : MonoBehaviour
     private int lockStacks;
 
 
-    private InputReader inputs;
+    private GameplayInputReader inputs;
 
     public bool HasTarget => lockedTarget != null && lockedTarget.IsAlive;
     public Transform LockedTarget => lockedTarget?.transform;
@@ -59,14 +59,12 @@ public class PlayerTargeting : MonoBehaviour
     private void CycleLock()
     {
         EnemyController next = FindNearestEnemyExcluding(lockedTarget);
-        if (next == null)
-        {
-            DropLock();
-            return;
-        }
+        DropLock();
 
         lockedTarget = next;
-        GameEvents.LockAcquired(lockedTarget);
+
+        if(next != null)
+            GameEvents.LockAcquired(lockedTarget);
     }
 
     public void DropLock()

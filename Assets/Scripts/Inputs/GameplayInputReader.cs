@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputReader
+public class GameplayInputReader
 {
     private readonly InputSystem_Actions actions;
 
@@ -27,7 +27,7 @@ public class InputReader
     public Vector2 MoveInput {  get; private set; }
 
 
-    public InputReader(InputSystem_Actions actions)
+    public GameplayInputReader(InputSystem_Actions actions)
     {
         this.actions = actions;
         Subscribe();
@@ -35,31 +35,31 @@ public class InputReader
 
     private void Subscribe()
     {
-        actions.Player.Move.performed += OnMovePerformed;
-        actions.Player.Move.canceled += OnMoveCanceled;
-        actions.Player.Dash.performed += OnDashPerformed;
+        actions.Gameplay.Move.performed += OnMovePerformed;
+        actions.Gameplay.Move.canceled += OnMoveCanceled;
+        actions.Gameplay.Dash.performed += OnDashPerformed;
 
-        actions.Player.LightAttack.performed += OnMeleePerformed;
-        actions.Player.LightAttack.canceled += OnMeleeCanceled;
-        actions.Player.RangedAttack.performed += OnRangedPerformed;
-        actions.Player.RangedAttack.canceled += OnRangedCanceled;
+        actions.Gameplay.LightAttack.performed += OnMeleePerformed;
+        actions.Gameplay.LightAttack.canceled += OnMeleeCanceled;
+        actions.Gameplay.RangedAttack.performed += OnRangedPerformed;
+        actions.Gameplay.RangedAttack.canceled += OnRangedCanceled;
 
-        actions.Player.LockOn.performed += OnTargetPerformed;
+        actions.Gameplay.LockOn.performed += OnTargetPerformed;
 
     }
 
     public void Unsubscribe()
     {
-        actions.Player.Move.performed -= OnMovePerformed;
-        actions.Player.Move.canceled -= OnMoveCanceled;
-        actions.Player.Dash.performed -= OnDashPerformed;
+        actions.Gameplay.Move.performed -= OnMovePerformed;
+        actions.Gameplay.Move.canceled -= OnMoveCanceled;
+        actions.Gameplay.Dash.performed -= OnDashPerformed;
 
-        actions.Player.LightAttack.performed -= OnMeleePerformed;
-        actions.Player.LightAttack.canceled -= OnMeleeCanceled;
-        actions.Player.RangedAttack.performed -= OnRangedPerformed;
-        actions.Player.RangedAttack.canceled -= OnRangedCanceled;
+        actions.Gameplay.LightAttack.performed -= OnMeleePerformed;
+        actions.Gameplay.LightAttack.canceled -= OnMeleeCanceled;
+        actions.Gameplay.RangedAttack.performed -= OnRangedPerformed;
+        actions.Gameplay.RangedAttack.canceled -= OnRangedCanceled;
 
-        actions.Player.LockOn.performed -= OnTargetPerformed;
+        actions.Gameplay.LockOn.performed -= OnTargetPerformed;
     }
 
     #region Movement

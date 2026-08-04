@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 public enum InputContext
@@ -16,7 +17,7 @@ public class InputManager : MonoBehaviour
 
     private InputSystem_Actions inputActions;
 
-    public InputReader PlayerInputs {  get; private set; }
+    public GameplayInputReader PlayerInputs {  get; private set; }
     public MenuInputReader MenuInputs { get; private set; }
 
     public InputContext CurrentContext { get; private set; } = InputContext.Uninitialized;
@@ -36,58 +37,66 @@ public class InputManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         inputActions = new InputSystem_Actions();
-        PlayerInputs = new InputReader(inputActions);
+        PlayerInputs = new GameplayInputReader(inputActions);
         MenuInputs = new MenuInputReader(inputActions);
 
         inputActions.Global.Enable();
+
+        inputActions.Global.Exit.performed += HandleExitPressed;
+        
         SetContext(InputContext.Gameplay);
 
-        print("[InputManager] Inputs Enabled");
+        Debug.Log("[InputManager] Inputs Enabled");
     }
 
     private void OnDisable()
     {
         if (inputActions == null) return;
 
-        this.PlayerInputs?.Unsubscribe();
-        this.MenuInputs?.Unsubscribe();
+        PlayerInputs?.Unsubscribe();
+        MenuInputs?.Unsubscribe();
+        inputActions.Global.Exit.performed -= HandleExitPressed;
 
         inputActions.Disable();
         inputActions.Dispose();
         inputActions = null;
     }
 
-    public void SetContext(InputContext context)
+    public void SetContext(InputContext newContext)
     {
-        if(CurrentContext == context) return;
+        if(CurrentContext == newContext) return;
 
-        CurrentContext = context;
+        Debug.Log($"[InputManager] Inputs switching from {CurrentContext} to {newContext}");
+        CurrentContext = newContext;
 
-        switch (context)
+        switch (newContext)
         {
             case InputContext.Gameplay:
-                inputActions.Player.Enable();
+                inputActions.Gameplay.Enable();
                 inputActions.UI.Disable();
-                Debug.Log("[InputManager] Gameplay inputs enabled");
                 break;
 
             case InputContext.UI:
                 inputActions.UI.Enable();
-                inputActions.Player.Disable();
+                inputActions.Gameplay.Disable();
                 break;
 
             case InputContext.Cutscene:
-                inputActions.Player.Disable();
+                inputActions.Gameplay.Disable();
                 inputActions.UI.Disable();
                 break;
         }
 
-        ContextChanged?.Invoke(context);
+        ContextChanged?.Invoke(newContext);
     }
 
+    private void HandleExitPressed(InputAction.CallbackContext ctx)
+    {
+        // Depending on game context, display settings vs exit menus etc
+    }
 
     public Vector2 GetMousePosition()
     {
-        return inputActions.Player.PointerPosition.ReadValue<Vector2>();
+        return inputActions.Global.PointerPosition.ReadValue<Vector2>();
     }
 }

@@ -2,6 +2,7 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using UnityEngine;
+using static UnityEngine.Rendering.STP;
 
 
 
@@ -27,6 +28,8 @@ public class RunManager : MonoBehaviour
     [SerializeField] private float fadeTime;
     [SerializeField] private CanvasGroup fadeOverlay;
 
+    [SerializeField] private RunEndOverlay endOverlay;
+
     public RoomPoolService roomService; // Pools rooms, holds useful values etc
     public EnemyService enemyService; // Pools enemies, allows for spawning and handling etc
     private RoomState state;
@@ -47,6 +50,13 @@ public class RunManager : MonoBehaviour
 
         roomService = new RoomPoolService(db.rooms, roomContainer);
         enemyService = new EnemyService(db.enemies, enemyContainer);
+
+        GameEvents.OnRunEnded += HandleRunEnd;
+    }
+
+    private void OnDestroy()
+    {
+        GameEvents.OnRunEnded -= HandleRunEnd;
     }
 
     private void Update()
@@ -54,9 +64,23 @@ public class RunManager : MonoBehaviour
         UpdateRunTick();
     }
 
-    public void BeginRun()
+    public void InitializeRun()
     {
-        RunConfig config = RunDataCarrier.ConsumeData();
+        if (RunDataCarrier.IsNewRun)
+        {
+            BeginNewRun();
+            return;
+        }
+        else
+        {
+            ResumeSavedRun();
+            return;
+        }
+    }
+
+    public void BeginNewRun()
+    {
+        RunConfig config = RunDataCarrier.ConsumeNewRunData();
         if (config == null)
         {
             Debug.LogError("[RunManager] No RunConfig exists");
@@ -72,23 +96,33 @@ public class RunManager : MonoBehaviour
         EnterNode(config.map.startNode, null);
     }
 
-    public void LoadToRun(RunState run)
+    public void ResumeSavedRun()
     {
-        currentRun = run;
+        //RunSaveData save = RunDataCarrier.ConsumeSavedRunData();
+        //if (save == null)
+        //{
+        //    Debug.LogError("[RunManager] No RunSaveData exists");
+        //    return;
+        //}
 
-        activePlayer = Instantiate(playerPrefab, Vector2.zero, Quaternion.identity);
-        activePlayer.SetupFromSave(null); // REMOVE NULL
+        //currentRun = RunState.BuildFromSave(save);
+        //roomService.BuildPool(currentRun.map);
 
-        //EnterNode()
+        //activePlayer = Instantiate(playerPrefab, playerContainer);
+        //activePlayer.SetupFromSave();
+
+        //EnterNode(config.map.startNode, null);
     }
 
-    private void ReturnToHub(bool victory)
+    private void HandleRunEnd(bool victory)
     {
-        // Update player profile based on run results
-        // Save profile changes
+        // Update profile based on run results
 
-        SceneLoader.Instance.LoadHub();
-        // Transition back to hub
+        var profile = GameManager.Instance.ActiveProfile;
+        if (profile != null)
+            RunSaveSystem.DeleteForSlot(profile.slotIndex);
+
+        endOverlay.Display(victory, currentRun);
     }
 
     #region Room Transitions
@@ -141,6 +175,8 @@ public class RunManager : MonoBehaviour
         currentRun.map.currentNode.cleared = true;
 
         state = RoomState.RoomTransition;
+
+        // Save game?
     }
 
     private void HandleRoomFailed(RoomManager room)
@@ -211,6 +247,20 @@ public class RunManager : MonoBehaviour
     }
 
     #region Save System
+
+    private void SaveCurrentRun()
+    {
+        var profile = GameManager.Instance.ActiveProfile;
+        if(profile == null) return;
+
+        var save = new RunSaveData()
+        {
+            seed = currentRun.RunSeed,
+            player = activePlayer.PackPlayerState()
+        };
+
+        RunSaveSystem.Save(save, profile);
+    }
 
     #endregion
 }

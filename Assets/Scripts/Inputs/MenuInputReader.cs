@@ -18,13 +18,11 @@ public class MenuInputReader
     private void Subscribe()
     {
         actions.Global.Exit.performed += OnExitPerformed;
-        actions.Global.Inventory.performed += OnInventoryPerformed;
     }
 
     public void Unsubscribe()
     {
         actions.Global.Exit.performed -= OnExitPerformed;
-        actions.Global.Inventory.performed -= OnInventoryPerformed;
     }
 
     private void OnExitPerformed(InputAction.CallbackContext ctx)

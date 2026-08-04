@@ -166,7 +166,7 @@ MonoBehaviour:
   db: {fileID: 11400000, guid: 2e6ffc4f57ba51f428c00a9eb207ee3f, type: 2}
   startPosition: {x: 0, y: 0}
   walkLength: 12
-  mapBounds: {x: 5, y: 1}
+  mapBounds: {x: 2, y: 2}
   allowOverlap: 0
   delay: 0.05
   displayNode: {fileID: 4839949032228345143, guid: 03f0d82f061ac3c46aae952e2b282303, type: 3}

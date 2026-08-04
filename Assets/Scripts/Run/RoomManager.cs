@@ -12,9 +12,6 @@ public enum RoomState
 
 public class RoomManager : MonoBehaviour
 {
-    public event Action<RoomManager> OnCleared;
-    public event Action<RoomManager> OnFailure;
-
     public RoomData Data {  get; private set; }
     public RoomState State { get; private set; }
 
@@ -25,6 +22,9 @@ public class RoomManager : MonoBehaviour
     public Vector2 defaultEntryPoint;
 
     private RunState run;
+
+    public event Action<RoomManager> OnCleared;
+    public event Action<RoomManager> OnFailure;
 
     private void Awake()
     {

@@ -4,25 +4,23 @@ using System.Collections.Generic;
 [Serializable]
 public class RunSaveData
 {
-    public string saveVersion = "1";
+    public string ownerProfileId;
     public string saveTimestamp = "";
 
-    public UpgradeSaveData upgrades = new();
+    public int seed;
+    public RunLoadout loadout;
+    
+    // Map
+    public int currentNodeId;
+    public int roomsCleared;
+
+    // Player
+    public float heatValue;
+
+    // Stats
+    public float runDuration;
+
     public PlayerStateSave player = new();
-    public RunProgressSave run = new();
-}
-
-[Serializable]
-public class UpgradeSaveData
-{
-    // Each slot stores the ID of the equipped Perk
-    public string majorFrame = "";
-    public string majorWeapons = "";
-    public string majorPropulsion = "";
-
-    public List<string> subUpgradeIDs;
-
-    public List<string> auxUpgradeIDs;
 }
 
 [Serializable]
@@ -32,6 +30,11 @@ public class PlayerStateSave
     public List<SegmentSave> segments = new();
 
     public float currentMomentum = 0f;
+
+    public string equippedTool = "";
+    public string equippedWeapon = "";
+
+    public PlayerUpgradeSave upgradeSave;
 }
 
 [Serializable]
@@ -44,11 +47,14 @@ public class SegmentSave
 }
 
 [Serializable]
-public class RunProgressSave
+public class PlayerUpgradeSave
 {
-    public int currentRoom;
-    public int currentFloor;
-    public int seed;
-    public float runTimeSeconds;
+    // Each slot stores the ID of the equipped Perk
+    public string majorFrame = "";
+    public string majorWeapons = "";
+    public string majorPropulsion = "";
 
+    public List<string> subUpgradeIDs;
+
+    public List<string> auxUpgradeIDs;
 }

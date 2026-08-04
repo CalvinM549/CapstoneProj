@@ -4,6 +4,7 @@ public class RunState
 {
     // Run
     public int RunSeed;
+    public float difficultyScore;
 
     // Map
     public int chapterIndex;
@@ -22,6 +23,8 @@ public class RunState
     public int EnemiesKilled;
     public int DamageTaken;
 
+    #region Creation / Loading
+
     public RunState(int seed, RunMap map)
     {
         RunSeed = seed;
@@ -36,6 +39,21 @@ public class RunState
         DamageTaken = 0;
     }
 
+    public static RunState BuildFromSave(RunSaveData save)
+    {
+        // Rebuild map using seed
+        // clear already cleared rooms
+
+        //var run = new RunState(save.seed, map);
+
+        //return run;
+
+        return null; // TEMP
+
+    }
+
+    #endregion
+
     public void Tick(float dt)
     {
         runDurationTimer += dt;
@@ -46,9 +64,7 @@ public class RunState
         }
     }
 
-    public void HeatReset()
-    {
+    // Calculate Rating for run
 
-    }
 
 }

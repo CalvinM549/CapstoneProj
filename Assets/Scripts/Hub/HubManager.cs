@@ -28,7 +28,6 @@ public class HubManager : MonoBehaviour
     private HubScreen activeScreen;
 
     // Services
-    private MetaProgressionService metaProgression;
     private MapGenerationService mapGeneration;
 
     [Header("Testing Values")]
@@ -49,13 +48,10 @@ public class HubManager : MonoBehaviour
         foreach (var screen in GetComponentsInChildren<HubScreen>(includeInactive: true))
             screens[screen.ScreenType] = screen;
 
-        // Setup any instances
-        // Load Profile from save system?
     }
 
     public void InitializeHub()
     {
-        metaProgression = new(activeProfile);
         mapGeneration = new(db.rooms, 1002, new Vector2Int(5, 2)); // Replace bounds
 
         pendingLoadout = BuildDefaultLoadout();
@@ -117,29 +113,6 @@ public class HubManager : MonoBehaviour
 
 
         return map;
-
-        //for (int i = 0; i < defaultRooms.Length; i++)
-        //{
-        //    print(i);
-        //    var node = new MapNode()
-        //    {
-        //        room = defaultRooms[i],
-        //        nodeIndex = i,
-        //        row = 0,
-        //        col = i,
-        //        // Setup Connections - refer to Aesthosis??
-        //        cleared = false
-        //    };
-
-        //    temp[i][0] = node;
-        //}
-
-        //RunMap map = new RunMap()
-        //{
-
-        //};
-
-        //return map;
     }
 
     public void BeginNewRunFromHub()

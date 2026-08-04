@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] private GameDatabase db;
+
     public PlayerMovement Movement { get; private set; }
     public PlayerHealth Health { get; private set; }
     public PlayerCombat Combat { get; private set; }
@@ -60,6 +62,12 @@ public class Player : MonoBehaviour
 
         ResetPlayerState();
 
+        var equippedTool = db.tools.Get(save.equippedTool);
+        var equippedWeapon = db.weapons.Get(save.equippedWeapon);
+
+        Tools.EquipTool(equippedTool);
+        Combat.EquipRangedWeapon(equippedWeapon);
+        Upgrades.RestoreFromSave(save.upgradeSave);
         //Health.Restore();
     }
 
@@ -77,7 +85,6 @@ public class Player : MonoBehaviour
     public void PrepareForRoomChange()
     {
         Targeting.DropLock();
-        Health.RestoreCurrentSegment();
     }
 
     #region Utilities

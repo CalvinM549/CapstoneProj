@@ -1,87 +1,116 @@
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class TitleManager : MonoBehaviour
 {
-    private InputSystem_Actions inputActions;
+    public static TitleManager Instance { get; private set; }
 
-    [SerializeField] private CanvasGroup overlayBackground;
-    [SerializeField] private GameObject controlsOverlay;
-    [SerializeField] private GameObject exitOverlay;
+    // Default UI
+    [SerializeField] private CanvasGroup baseGroup;
+    [SerializeField] private Button continueButton;
 
-    private bool controlsActive;
-    private bool confirmExitActive;
+    // Profiles SubUI
+    [SerializeField] private CanvasGroup profilesGroup;
+    [SerializeField] private Button[] profileSlots;
 
-    private void Start()
+    // Settings SubUI
+    [SerializeField] private CanvasGroup settingsGroup;
+
+    // Exit Confirmation? not sure if needed
+    [SerializeField] private CanvasGroup exitGroup;
+
+    private void Awake()
     {
-        exitOverlay.SetActive(false);
-        controlsOverlay.SetActive(false);
-
-        confirmExitActive = false;
-        controlsActive = false;
-
-        overlayBackground.alpha = 0f;
-        overlayBackground.blocksRaycasts = false;
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
     }
 
-    //private void OnEnable()
-    //{
-    //    inputActions = InputManager.Instance.inputActions;
-
-    //    inputActions.UI.Exit.performed += HandleExitInput;
-    //}
-
-    //private void OnDisable()
-    //{
-    //    inputActions.UI.Exit.performed -= HandleExitInput;
-    //}
-
-    private void HandleExitInput(InputAction.CallbackContext ctx)
+    public void InitializeMenu()
     {
-        if (controlsActive)
+        baseGroup.alpha = 1f;
+
+        profilesGroup.gameObject.SetActive(false);
+        settingsGroup.gameObject.SetActive(false);
+        exitGroup.gameObject.SetActive(false);
+
+        // ContinueButton
+        if (!MetaStateSaveSystem.TryLoad(out var meta) 
+            || meta.lastActiveSlot < 0 
+            || !ProfileSaveSystem.TryLoad(meta.lastActiveSlot, out var profile))
         {
-            ToggleControlsOverlay(false); 
+            continueButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            continueButton.gameObject.SetActive(true);
+            continueButton.onClick.RemoveAllListeners();
+            continueButton.onClick.AddListener(() => ContinueGame(profile));
+        }
+    }
+
+
+
+    private void ContinueGame(PlayerProfile profile)
+    {
+        GameManager.Instance.SetActiveProfile(profile);
+
+        if (RunSaveSystem.TryLoad(profile, out var run))
+            SceneLoader.Instance.LoadRun();
+        else
+            SceneLoader.Instance.LoadHub();
+    }
+
+    public void ViewProfiles()
+    {
+        baseGroup.gameObject.SetActive(false);
+        profilesGroup.gameObject.SetActive(true);
+
+        var slots = ProfileSaveSystem.GetAllSlots();
+        for (int i = 0; i < profileSlots.Length; i++)
+        {
+            int slot = i;
+            var existing = slots[i];
+
+            // Set button visuals
+            profileSlots[i].onClick.RemoveAllListeners();
+            profileSlots[i].onClick.AddListener(() => LoadProfile(slot, existing));
+        }
+    }
+
+    private void LoadProfile(int slot, PlayerProfile existing)
+    {
+        // load into hub with correect profile slot
+        if (existing == null)
+        {
+            // Show UI for setting profile's name
+            string enteredName = "";
+            var profile = new PlayerProfile(slot, enteredName);
+            ProfileSaveSystem.Save(profile);
+            EnterHubWithProfile(profile);
             return;
         }
 
-        if (confirmExitActive)
-        {
-            ToggleExitOverlay(false);
-            return;
-        }
-
-        // If nothing is active
-        ToggleExitOverlay(true);
+        EnterHubWithProfile(existing);
     }
 
-    public void OnStartPress()
+    private void EnterHubWithProfile(PlayerProfile profile)
     {
-        SceneLoader.Instance.LoadLevel();
+        GameManager.Instance.SetActiveProfile(profile);
+        SceneLoader.Instance.LoadHub();
     }
 
-    public void OnQuitPress()
+    public void ViewSettings()
     {
-        Application.Quit();
+
     }
 
-    public void ToggleControlsOverlay(bool enable)
+    public void QuitGame()
     {
-        controlsActive = enable;
-        controlsOverlay.SetActive(enable);
-        ToggleOverlayBackground(enable);
+        SceneLoader.Instance.QuitGame();
     }
 
-    public void ToggleExitOverlay(bool enable)
-    {
-        confirmExitActive = enable;
-        exitOverlay.SetActive(enable);
-        ToggleOverlayBackground(enable);
-    }
-    
-    private void ToggleOverlayBackground(bool enable)
-    {
-        overlayBackground.DOFade(enable ? 0.95f : 0f, 0.5f);
-        overlayBackground.blocksRaycasts = enable;
-    }
 }

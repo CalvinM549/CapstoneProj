@@ -69,7 +69,6 @@ public class SceneLoader : MonoBehaviour
 #endif
     }
 
-
     #region Utilities
 
     private void LoadSceneImmediate(string sceneName)
@@ -100,6 +99,8 @@ public class SceneLoader : MonoBehaviour
         onSceneLoaded?.Invoke(sceneName);
         onLoad?.Invoke();
 
+        TimescaleManager.Instance.KillAllTimeSlows();
+
         if(TimescaleManager.IsPaused)
             TimescaleManager.Instance.UnpauseGame();
 
@@ -109,8 +110,6 @@ public class SceneLoader : MonoBehaviour
             fadeOverlay.DOFade(0f, fadeTime).SetUpdate(true); ;
         }
     }
-
-
 
     #endregion
 }

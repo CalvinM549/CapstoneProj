@@ -27,7 +27,6 @@ public class VFXManager : MonoBehaviour
         else
             Destroy(gameObject);
 
-        DontDestroyOnLoad(gameObject);
         BuildPools();
     }
 

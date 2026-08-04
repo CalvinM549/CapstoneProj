@@ -19,6 +19,9 @@ public class GameManager : MonoBehaviour
     public GameState CurrentState => currentState;
     private GameState currentState;
 
+    public PlayerProfile ActiveProfile { get; private set; }
+    private MetaProgressionService metaProgression;
+
     [SerializeField] private LayerMask groundLayer;
     public LayerMask GroundLayer => groundLayer;
     [SerializeField] private LayerMask wallLayer;
@@ -47,14 +50,12 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         SceneLoader.Instance.onSceneLoaded += HandleSceneLoaded;
-        GameEvents.OnRunEnded += HandleRunEnded;
     }
 
     private void OnDisable()
     {
         if (SceneLoader.Instance != null)
             SceneLoader.Instance.onSceneLoaded -= HandleSceneLoaded;
-        GameEvents.OnRunEnded -= HandleRunEnded;
     }
 
     private void HandleSceneLoaded(string sceneName)
@@ -62,7 +63,9 @@ public class GameManager : MonoBehaviour
         switch (sceneName)
         {
             case SceneLoader.MAINMENU:
-                currentState = GameState.Run;
+                currentState = GameState.Menu;
+                TitleManager.Instance.InitializeMenu();
+                // Set cursor?
                 break;
 
             case SceneLoader.HUB:
@@ -72,14 +75,9 @@ public class GameManager : MonoBehaviour
 
             case SceneLoader.RUN:
                 currentState = GameState.Run;
-                RunManager.Instance.BeginRun();
+                RunManager.Instance.InitializeRun();
                 break;
         }
-    }
-
-    private void HandleRunEnded(bool victory)
-    {
-        SceneLoader.Instance.LoadHub();
     }
 
     private void SetCursor()
@@ -89,7 +87,11 @@ public class GameManager : MonoBehaviour
 
     #region Profile Utilities
 
-
+    public void SetActiveProfile(PlayerProfile profile)
+    {
+        ActiveProfile = profile;
+        metaProgression = new(profile);
+    }
 
     #endregion
 
@@ -105,7 +107,7 @@ public class GameManager : MonoBehaviour
     {
         // Begins a run with the correct information, i.e. saved run info vs built info
 
-        RunManager.Instance.BeginRun();
+        RunManager.Instance.BeginNewRun();
     }
 
     #endregion

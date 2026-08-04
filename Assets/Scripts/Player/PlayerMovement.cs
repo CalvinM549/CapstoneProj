@@ -27,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Player p;
 
-    private InputReader input;
+    private GameplayInputReader input;
     private Rigidbody2D rb;
 
     private Vector2 inputDirection;

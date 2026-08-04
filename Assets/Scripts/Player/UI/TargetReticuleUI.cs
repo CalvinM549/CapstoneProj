@@ -12,8 +12,6 @@ public class TargetReticleUI : MonoBehaviour
 
     [SerializeField] private RectTransform rotationAnchor;
 
-    // ── Unity lifecycle ───────────────────────────────────────────────────────
-
     private void Awake()
     {
         owner = GetComponentInParent<EnemyController>();
@@ -42,8 +40,6 @@ public class TargetReticleUI : MonoBehaviour
         rotationAnchor.Rotate(0f, 0f, rotationSpeed * Time.deltaTime);
     }
 
-    // ── Public API ────────────────────────────────────────────────────────────
-
     private void HandleLockAcquired(EnemyController enemy)
     {
         if (enemy != owner) return;
@@ -52,7 +48,6 @@ public class TargetReticleUI : MonoBehaviour
 
         cg.DOKill();
         cg.DOFade(0.6f, 0.3f).SetEase(Ease.OutBack);
-
     }
 
     private void HandleLockDropped()

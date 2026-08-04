@@ -43,12 +43,10 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     public void Initialize()
     {
         InitializeHealth(data.segmentBaseCount);
-
     }
 
     private void InitializeHealth(int segmentCount)
     {
-
         if (isInitialized) return;
 
         healthSegments.Clear();
@@ -68,6 +66,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     public void Restore(int activeIndex, List<SegmentSave> savedSegments)
     {
+        isInitialized = false;
         InitializeHealth(savedSegments.Count);
         activeHealthIndex = Mathf.Clamp(activeIndex, 0, healthSegments.Count - 1);
 
@@ -183,5 +182,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         StopAllCoroutines();
 
         GameEvents.PlayerDeath();
+        GameEvents.RunEnded(false);
     }
 }

@@ -15,7 +15,7 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private PlayerHitboxController hitboxes;
     [SerializeField] private LayerMask wallLayer;
 
-    private InputReader input;
+    private GameplayInputReader input;
 
     private InputBuffer meleeBuffer;
     private InputBuffer rangedBuffer;
@@ -39,8 +39,6 @@ public class PlayerCombat : MonoBehaviour
     private int comboStep;
     private float comboWindowTimer = 0f;
     private float comboCooldownTimer = 0f;
-        
-    private bool dashAttackWindow;
 
     // Ranged
 
@@ -60,6 +58,7 @@ public class PlayerCombat : MonoBehaviour
 
     public int currentAmmo;
     public event Action<int> onAmmoChanged;
+    public event Action<float> onReloadChanged;
 
     private void Awake()
     {
@@ -309,18 +308,6 @@ public class PlayerCombat : MonoBehaviour
 
     }
 
-    private void PerformDashAttack()
-    {
-        dashAttackWindow = false; // set to false to prevent multiple attacks in same dash
-        comboStep = 0;
-        comboWindowTimer = 0;
-
-        if (currentMeleeRoutine != null)
-            StopCoroutine(currentMeleeRoutine);
-
-        currentMeleeRoutine = StartCoroutine(MeleeAttackRoutine(data.dashAttack));
-    }
-
     // Attack Routine
 
     private IEnumerator MeleeAttackRoutine(AttackInfo attack)
@@ -527,8 +514,12 @@ public class PlayerCombat : MonoBehaviour
 
     private void UpdateRangedCooldown()
     {
-        if(rangedCooldownTimer > 0f)
+        if (rangedCooldownTimer > 0f)
+        {
             rangedCooldownTimer -= Time.deltaTime;
+            if(RangedWeaponEquipped)
+                onReloadChanged?.Invoke(rangedCooldownTimer / EquippedWeapon.cooldown);
+        }
     }
 
     private void InterruptRecovery()

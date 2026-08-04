@@ -34,6 +34,11 @@ public class PlayerUpgrades : MonoBehaviour
 
     #region Utilities
 
+    public void RestoreFromSave(PlayerUpgradeSave save)
+    {
+
+    }
+
     public MajorUpgrade GetMajor(UpgradeSlot slot) => 
         majorSlots.TryGetValue(slot, out var upgrade) ? upgrade : null;
 
