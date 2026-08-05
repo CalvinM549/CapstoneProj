@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerHealth : MonoBehaviour, IDamageable
+public class  PlayerHealth : MonoBehaviour, IDamageable
 {
 
     [SerializeField] private HealthData data;
@@ -109,7 +109,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         HealthSegment segment = ActiveSegment;
 
-        float overflow = segment.ReduceHealth(hit.damage);
+        float overflow = segment.ReduceHealth(hit.damage); // overflow value unused atm
 
         if (segment.IsDestroyed)
         {

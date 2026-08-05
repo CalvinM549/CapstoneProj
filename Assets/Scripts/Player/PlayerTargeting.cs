@@ -11,7 +11,6 @@ public class PlayerTargeting : MonoBehaviour
     private EnemyController lockedTarget;
     private int lockStacks;
 
-
     private GameplayInputReader inputs;
 
     public bool HasTarget => lockedTarget != null && lockedTarget.IsAlive;
@@ -45,6 +44,17 @@ public class PlayerTargeting : MonoBehaviour
             CycleLock();
         else
             AcquireLock();
+    }
+
+    public void SetLock(EnemyController enemy)
+    {
+        if (lockedTarget == enemy) return;
+
+        if(lockedTarget != null)
+            DropLock();
+        
+        lockedTarget = enemy;
+        GameEvents.LockAcquired(enemy);
     }
 
     private void AcquireLock()

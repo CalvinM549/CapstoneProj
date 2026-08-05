@@ -19,6 +19,7 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private BoxCollider2D roomBounds;
     [SerializeField] private int maxCameraShakes;
 
+
     private Tween zoomTween;
 
     public bool IsBlending => brain.IsBlending;
@@ -73,6 +74,7 @@ public class CameraManager : MonoBehaviour
 
         GameEvents.OnPlayerTransitionTeleport -= HandlePlayerTransition;
     }
+
 
     #region Event Handlers
 
@@ -153,6 +155,7 @@ public class CameraManager : MonoBehaviour
     }
 
     #endregion
+
 
     //private void DoPositionalShake()
     //{

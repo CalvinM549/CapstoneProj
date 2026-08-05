@@ -23,14 +23,14 @@ public static class DirectionExtensions
         };
     }
 
+    //public static Direction Random()
+    //{
+    //    return (Direction)UnityEngine.Random.Range(0, 4);
+    //}
+
     public static Direction Random()
     {
-        return (Direction)UnityEngine.Random.Range(0, 4);
-    }
-    public static Direction Random(int seed)
-    {
-        UnityEngine.Random.InitState(seed);
-        return (Direction)UnityEngine.Random.Range(0, 4);
+        return (Direction)RNGManager.Instance.rng.Next(0, 5);
     }
 
     public static Vector2Int ToGridOffset(this Direction dir)

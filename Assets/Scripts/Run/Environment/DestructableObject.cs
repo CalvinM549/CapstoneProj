@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class DestructableDecoration : MonoBehaviour, IDamageable
+public class DestructableObject : MonoBehaviour, IDamageable
 {
     private SpriteRenderer sr;
     private Animator animator;

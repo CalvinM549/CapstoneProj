@@ -15,19 +15,11 @@ public class PlayerAnimator : MonoBehaviour
 
     private bool heavySwingStarted = false;
 
-
     public Vector2 spritePos => sr.transform.position;
     public Sprite currentSprite => sr.sprite;
     public bool IsFacingRight { get; private set; }
 
     [Header("Config")]
-    private Sprite baseSprite;
-
-    [SerializeField] private Sprite idleSprite;
-    [SerializeField] private Sprite moveSprite;
-    [SerializeField] private Sprite decelSprite;
-    [SerializeField] private Sprite dashSprite;
-    [SerializeField] private Sprite parrySprite;
 
     private Material baseMaterial;
     [SerializeField] private Material hitMaterial;
@@ -40,7 +32,6 @@ public class PlayerAnimator : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         p = GetComponent<Player>();
 
-        baseSprite = sr.sprite;
         baseMaterial = sr.material;
     }
 
@@ -73,7 +64,7 @@ public class PlayerAnimator : MonoBehaviour
         //HandleMovementSprite();
         UpdateMovementAnimation();
         UpdateAttackAnimation();
-        HandleAutoFlip();
+        UpdateAutoFlip();
     }
 
     private void UpdateMovementAnimation()
@@ -98,27 +89,12 @@ public class PlayerAnimator : MonoBehaviour
         animator.SetBool("MovingForwards", movingForwards);
     }
 
-    private void HandleAutoFlip()
+    private void UpdateAutoFlip()
     {
         if (TimescaleManager.IsPaused) return;
         if (p.Health.IsHitstunned) return;
         if (p.Combat.CurrentState == CombatState.Startup
             || p.Combat.CurrentState == CombatState.Active) return;
-
-        //// MoveDir based Flip
-        //if (p.Movement.IsMoving)
-        //{
-        //    if (rb.linearVelocity.x > 0 && IsFacingRight)
-        //    {
-        //        FlipFacing();
-        //    }
-        //    else if(rb.linearVelocity.x < 0 && !IsFacingRight)
-        //    {
-        //        FlipFacing();
-        //    }
-        //}
-
-        // Mouse based flip
 
         if (p.Movement.IsDashing)
         {
@@ -142,12 +118,9 @@ public class PlayerAnimator : MonoBehaviour
     {
         if (type == AttackType.DashAttack) return;
 
-        // Set Facing
-        Vector2 mouseDir = p.GetMouseDirection();
-
-        if (mouseDir.x > 0 && IsFacingRight)
+        if (direction.x > 0 && IsFacingRight)
             FlipFacing();
-        else if (mouseDir.x < 0 && !IsFacingRight)
+        else if (direction.x < 0 && !IsFacingRight)
             FlipFacing();
 
         int combo = p.Combat.ComboStep;
@@ -161,49 +134,50 @@ public class PlayerAnimator : MonoBehaviour
                 animationDir = AttackDirection.Down;
         }
 
-        if (type == AttackType.Light)
+        switch (type)
         {
-            switch (animationDir)
-            {
-                case AttackDirection.Side:
-                case AttackDirection.Down:
-                    if (combo <= 1)
-                        animator.Play("AttackSideLight1");
-                    else if (combo == 2)
-                        animator.Play("AttackSideLight2");
-                    else if (combo == 3)
-                        animator.Play("AttackSideLight3");
-                    break;
+            case AttackType.Light:
+                switch (animationDir)
+                {
+                    case AttackDirection.Side:
+                    case AttackDirection.Down:
+                        if (combo <= 1)
+                            animator.Play("AttackSideLight1");
+                        else if (combo == 2)
+                            animator.Play("AttackSideLight2");
+                        else if (combo == 3)
+                            animator.Play("AttackSideLight3");
+                        break;
 
-                case AttackDirection.Up:
-                    if (combo <= 1)
-                        animator.Play("AttackUpLight1");
-                    else if (combo == 2)
-                        animator.Play("AttackUpLight2");
-                    else if (combo == 3)
-                        animator.Play("AttackUpLight3");
-                    break;
-            }
-        }
+                    case AttackDirection.Up:
+                        if (combo <= 1)
+                            animator.Play("AttackUpLight1");
+                        else if (combo == 2)
+                            animator.Play("AttackUpLight2");
+                        else if (combo == 3)
+                            animator.Play("AttackUpLight3");
+                        break;
+                }
+                break;
 
-        if (type == AttackType.Heavy)
-        {
-            heavySwingStarted = false;
-            animator.ResetTrigger("DoHeavySwing");
+            case AttackType.Heavy:
 
-            switch (animationDir)
-            {
-                case AttackDirection.Side:
-                case AttackDirection.Down:
-                    animator.Play("AttackSideHeavyWindup");
-                    break;
+                heavySwingStarted = false;
+                animator.ResetTrigger("DoHeavySwing");
 
-                case AttackDirection.Up:
-                    animator.Play("AttackUpHeavyWindup");
-                    break;
-            }
+                switch (animationDir)
+                {
+                    case AttackDirection.Side:
+                    case AttackDirection.Down:
+                        animator.Play("AttackSideHeavyWindup");
+                        break;
 
+                    case AttackDirection.Up:
+                        animator.Play("AttackUpHeavyWindup");
+                        break;
+                }
 
+                break;
         }
     }
 

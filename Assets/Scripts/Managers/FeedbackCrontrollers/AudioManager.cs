@@ -9,11 +9,9 @@ public enum SoundType
     Music
 }
 
-
-
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager instance;
+    public static AudioManager Instance;
 
     [Serializable]
     private class AudioEntry
@@ -26,8 +24,6 @@ public class AudioManager : MonoBehaviour
         public bool loop;
         public bool doPitchVariation;
         public float pitchVariationAmount;
-
-        [HideInInspector] public AudioSource source;
     }
 
     //private AudioSource sourcePrefab;
@@ -39,13 +35,17 @@ public class AudioManager : MonoBehaviour
     public AudioMixerGroup sfxMixer;
     public AudioMixerGroup musicMixer;
 
+    private float globalVolume = 1;
+
     [Range(0f, 1f)]
     public float sfxVolume;
 
     [Range(0f, 1f)]
     public float musicVolume;
 
-    public AudioSource sfxSource;
+    [SerializeField] private PooledSFX sfxSourcePrefab;
+    private ObjectPool<PooledSFX> sfxSourcePool;
+
     public AudioSource musicSourceA;
     public AudioSource musicSourceB;
 
@@ -54,33 +54,33 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null)
-            instance = this;
+        if (Instance == null)
+            Instance = this;
         else
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
 
-        foreach (AudioEntry sound in sfxLibrary)
-        {
-            sound.source = gameObject.AddComponent<AudioSource>();
-            sound.source.clip = sound.clip;
-            sound.source.loop = sound.loop;
-            sound.source.volume = sound.volume * sfxVolume;
-
-            sound.source.playOnAwake = false;
-            sound.source.outputAudioMixerGroup = sfxMixer;
-        }
-
-        musicSourceA = gameObject.AddComponent<AudioSource>();
         musicSourceA.outputAudioMixerGroup = musicMixer;
-        musicSourceB = gameObject.AddComponent<AudioSource>();
         musicSourceB.outputAudioMixerGroup = musicMixer;
+
+        BuildPools();
+    }
+
+    private void BuildPools()
+    {
+        sfxSourcePool = new ObjectPool<PooledSFX>(
+            sfxSourcePrefab, 
+            10, 
+            transform
+            );
     }
 
     public void PlayMusicTrack(string name, bool doFade)
     {
-        // find music entry
+        AudioEntry track = Array.Find(musicLibrary, sound => sound.soundName == name);
+        if (track == null)
+            Debug.LogError($"[AudioManager] No track with name: {name}");
 
         if (doFade)
         {
@@ -88,24 +88,15 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void PlaySFX(string name)
+    public void PlaySFX(string name, Vector3 position)
     {
         AudioEntry sound = Array.Find(sfxLibrary, sound => sound.soundName == name);
         if (sound == null)
-            Debug.LogError("No sound with that name");
+            Debug.LogError($"[AudioManager] No SFX with name: {name}");
 
-        if(sound.source.isPlaying)
-            return; // already playing
+        float adjustedVolume = globalVolume * sfxVolume * sound.volume;
 
-        if (sound.doPitchVariation)
-        {
-            // setup pitch shift
-        }
-
-        sound.source.volume = sound.volume * sfxVolume;
-        sound.source.Play();
+        var avaliableSource = sfxSourcePool.Get();
+        avaliableSource.Play(sound.clip, sfxSourcePool.ReturnToPool, position, adjustedVolume, 1f);
     }
-
-
-
 }

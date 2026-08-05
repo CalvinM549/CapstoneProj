@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8532893561139689670
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3446942819352491730}
+  - component: {fileID: 7293212571765854873}
+  m_Layer: 0
+  m_Name: VFXManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3446942819352491730
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8532893561139689670}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.46932, y: -1.6668, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7293212571765854873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8532893561139689670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b02bc7edd73a5a4d9202dcb7a45de54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VFXManager
+  vfxEntries:
+  - type: 0
+    prefab: {fileID: 6602517693866406410, guid: 45dbaa8fa637e39498312b384884d02a, type: 3}
+    initialPoolSize: 4
+    maxPoolSize: 10
+  - type: 1
+    prefab: {fileID: 1994441833758684031, guid: 36528c7ab0e669c4b998815da77898f0, type: 3}
+    initialPoolSize: 4
+    maxPoolSize: 10
+  - type: 2
+    prefab: {fileID: 3038929342739417312, guid: 0e6512685a4c1ec4494d9de4be3ea57a, type: 3}
+    initialPoolSize: 8
+    maxPoolSize: 10
+  - type: 3
+    prefab: {fileID: 7456246955456325049, guid: 84bb48ee150b3c74493dc2632e310e78, type: 3}
+    initialPoolSize: 4
+    maxPoolSize: 10
+  - type: 5
+    prefab: {fileID: 2525816426480259238, guid: 2fa7df641f7774247abd70c5068abdfb, type: 3}
+    initialPoolSize: 4
+    maxPoolSize: 4
+  vfxContainer: {fileID: 0}

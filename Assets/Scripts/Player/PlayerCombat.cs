@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -47,6 +48,7 @@ public class PlayerCombat : MonoBehaviour
     public bool RangedWeaponEquipped => EquippedWeapon != null;
 
     private float rangedCooldownTimer;
+
     public float rangedCooldownPercent => RangedWeaponEquipped && EquippedWeapon.cooldown > 0f
         ? Mathf.Clamp01(rangedCooldownTimer / EquippedWeapon.cooldown) : 0f;
 
@@ -57,8 +59,8 @@ public class PlayerCombat : MonoBehaviour
     private Coroutine dashCancelRoutine;
 
     public int currentAmmo;
-    public event Action<int> onAmmoChanged;
-    public event Action<float> onReloadChanged;
+    public event Action<int> OnAmmoChanged;
+    public event Action<float> OnReloadChanged;
 
     private void Awake()
     {
@@ -266,9 +268,6 @@ public class PlayerCombat : MonoBehaviour
         if (currentState == CombatState.Recovery)
             InterruptRecovery();
 
-        //if (dashAttackWindow)
-        //    PerformDashAttack();
-
         if (dashCancelWindow)
             p.Movement.InterruptDash();
 
@@ -393,6 +392,9 @@ public class PlayerCombat : MonoBehaviour
 
         GameEvents.HitConfirmed(hitData);
 
+        // Lock to melee targets
+        p.Targeting.SetLock(hit.GetComponent<EnemyController>());
+
         target.RecieveHit(hitData);
     }
 
@@ -429,6 +431,8 @@ public class PlayerCombat : MonoBehaviour
         // STARTUP
         currentState = CombatState.Startup;
 
+        GameEvents.AttackStarted(AttackType.Secondary, GetAttackDirection(AttackType.Secondary));
+
         yield return new WaitForSeconds(weapon.windupTime);
 
         if (EquippedWeapon != weapon)
@@ -444,7 +448,7 @@ public class PlayerCombat : MonoBehaviour
         weapon.Fire(direction);
 
         currentAmmo -= weapon.ammoUsed;
-        onAmmoChanged?.Invoke(currentAmmo);
+        OnAmmoChanged?.Invoke(currentAmmo);
 
         yield return new WaitForSeconds(weapon.activeTime);
 
@@ -471,18 +475,19 @@ public class PlayerCombat : MonoBehaviour
         }
 
         EquippedWeapon = weapon;
-        currentAmmo = weapon.baseAmmo;
+        currentAmmo = 0;
         rangedCooldownTimer = 0f;
-
-        onAmmoChanged?.Invoke(currentAmmo);
 
         if (weapon != null)
         {
+            currentAmmo = weapon.baseAmmo;
 
             Debug.Log($"[PlayerCombat] new weapon {weapon.name} equipped");
             ProjectilePools.RequestPool(weapon);
             weapon.OnEquip(p);
         }
+
+        OnAmmoChanged?.Invoke(currentAmmo);
 
         // Fire Event
     }
@@ -490,7 +495,6 @@ public class PlayerCombat : MonoBehaviour
     public void UnequipRangedWeapon() => EquipRangedWeapon(null);
 
     #endregion
-
 
     #region Utility
 
@@ -518,7 +522,7 @@ public class PlayerCombat : MonoBehaviour
         {
             rangedCooldownTimer -= Time.deltaTime;
             if(RangedWeaponEquipped)
-                onReloadChanged?.Invoke(rangedCooldownTimer / EquippedWeapon.cooldown);
+                OnReloadChanged?.Invoke(rangedCooldownTimer / EquippedWeapon.cooldown);
         }
     }
 

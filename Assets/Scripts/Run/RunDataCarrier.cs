@@ -21,7 +21,7 @@ public static class RunDataCarrier
         return temp;
     }
 
-    public static void BuildData(int seed, RunLoadout loadout, RunMap map)
+    public static void BuildNewRunData(int seed, RunLoadout loadout, RunMap map)
     {
         IsNewRun = true;
         preparedConfig = new RunConfig()

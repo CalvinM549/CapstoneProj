@@ -40,6 +40,7 @@ public class SceneLoader : MonoBehaviour
     {
         fadeOverlay.alpha = 0f;
 
+#if UNITY_EDITOR
         for (int i = 0; i < SceneManager.sceneCount; i++)
         {
             UnityEngine.SceneManagement.Scene scene = SceneManager.GetSceneAt(i);
@@ -51,8 +52,9 @@ public class SceneLoader : MonoBehaviour
             }
         }
 
-        if(AutoLoadMenu)    
-            LoadSceneImmediate(MAINMENU);
+#else
+        LoadSceneImmediate(MAINMENU);
+#endif
     }
 
     public void LoadMainMenu() => LoadScene(MAINMENU);

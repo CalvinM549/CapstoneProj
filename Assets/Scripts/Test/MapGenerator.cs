@@ -28,7 +28,7 @@ public class MapGenerator : MonoBehaviour
 
     private void Start()
     {
-        generation = new(db.rooms, 1002, mapBounds);
+        generation = new(db.rooms, mapBounds, walkLength);
     }
 
     private void Update()
@@ -45,7 +45,7 @@ public class MapGenerator : MonoBehaviour
 
         ResetWalk();
 
-        visited = generation.RunSimpleRandomWalk(walkLength);
+        visited = generation.RunSimpleRandomWalk();
 
         walkRoutine = StartCoroutine(AnimateWalk());
     }

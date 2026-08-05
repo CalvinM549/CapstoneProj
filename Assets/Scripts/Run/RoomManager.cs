@@ -21,6 +21,8 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private Doorway[] doorways;
     public Vector2 defaultEntryPoint;
 
+    [SerializeField] private Transform[] enemySpawnPoints;
+
     private RunState run;
 
     public event Action<RoomManager> OnCleared;

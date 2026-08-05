@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using static UnityEngine.Rendering.STP;
 
@@ -28,6 +29,7 @@ public class RunManager : MonoBehaviour
     [SerializeField] private float fadeTime;
     [SerializeField] private CanvasGroup fadeOverlay;
 
+    [SerializeField] private MapDisplay mapDisplay;
     [SerializeField] private RunEndOverlay endOverlay;
 
     public RoomPoolService roomService; // Pools rooms, holds useful values etc
@@ -40,6 +42,8 @@ public class RunManager : MonoBehaviour
     private RoomManager activeRoom;
 
     [SerializeField] private Player playerPrefab;
+
+    public event Action<Vector2Int> onPlayerRoomChanged;
 
     private void Awake()
     {
@@ -63,6 +67,8 @@ public class RunManager : MonoBehaviour
     {
         UpdateRunTick();
     }
+
+    #region Initializing Runs
 
     public void InitializeRun()
     {
@@ -93,6 +99,9 @@ public class RunManager : MonoBehaviour
         activePlayer = Instantiate(playerPrefab, playerContainer);
         activePlayer.SetupNew(config.loadout);
 
+        if(mapDisplay != null)
+            mapDisplay.InitializeMapView(currentRun.map.tiles.Keys.ToList());
+
         EnterNode(config.map.startNode, null);
     }
 
@@ -113,6 +122,8 @@ public class RunManager : MonoBehaviour
 
         //EnterNode(config.map.startNode, null);
     }
+
+    #endregion
 
     private void HandleRunEnd(bool victory)
     {
@@ -163,6 +174,8 @@ public class RunManager : MonoBehaviour
 
         activePlayer.PrepareForRoomChange();
 
+        onPlayerRoomChanged?.Invoke(node.coordinates);
+
         activeRoom.Activate();
     }
 
@@ -173,6 +186,8 @@ public class RunManager : MonoBehaviour
 
         currentRun.roomsCleared++;
         currentRun.map.currentNode.cleared = true;
+
+        mapDisplay.HandleRoomCleared(currentRun.map.currentNode.coordinates);
 
         state = RoomState.RoomTransition;
 

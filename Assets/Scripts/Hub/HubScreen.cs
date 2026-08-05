@@ -5,6 +5,11 @@ public abstract class HubScreen : MonoBehaviour
     public abstract HubState ScreenType { get; }
     protected HubManager manager;
 
+    public virtual void Initialize()
+    {
+
+    }
+
     public virtual void Open(HubManager hub)
     {
         gameObject.SetActive(true);

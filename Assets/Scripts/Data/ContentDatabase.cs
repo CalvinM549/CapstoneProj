@@ -46,10 +46,9 @@ public class ContentDatabase<TEntry> : ScriptableObject where TEntry : Scriptabl
         return lookup.TryGetValue(id, out TEntry entry) ? entry : null;
     }
 
-    public TEntry GetRandom(int seed)
+    public TEntry GetRandom()
     {
         BuildLookupIfNeeded();
-        UnityEngine.Random.InitState(seed);
         int randomIndex = UnityEngine.Random.Range(0, All.Count);
         return All[randomIndex];
     }

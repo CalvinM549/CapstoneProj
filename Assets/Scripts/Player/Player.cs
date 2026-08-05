@@ -15,7 +15,6 @@ public class Player : MonoBehaviour
     public PlayerVFX VFX { get; private set; }
     public PlayerStats Stats { get; private set; }
 
-
     private void Awake()
     {
         Movement    = GetComponent<PlayerMovement>();

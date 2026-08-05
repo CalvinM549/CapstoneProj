@@ -13,14 +13,14 @@ public class PlayerWeaponUI : MonoBehaviour
 
     private void Start()
     {
-        player.Combat.onAmmoChanged += HandleAmmoChange;
-        player.Combat.onReloadChanged += HandleReloadChanged;
+        player.Combat.OnAmmoChanged += HandleAmmoChange;
+        player.Combat.OnReloadChanged += HandleReloadChanged;
     }
 
     private void OnDisable()
     {
-        player.Combat.onAmmoChanged -= HandleAmmoChange;
-        player.Combat.onReloadChanged -= HandleReloadChanged;
+        player.Combat.OnAmmoChanged -= HandleAmmoChange;
+        player.Combat.OnReloadChanged -= HandleReloadChanged;
     }
 
     private void Update()

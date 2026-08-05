@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine;
 public enum HubState
 {
     Main,
-    Draft,
+    RunPrep,
     Loadout,
     Archive
 }
@@ -19,9 +20,9 @@ public class HubManager : MonoBehaviour
     [HideInInspector] public PlayerProfile activeProfile;
     public RunLoadout pendingLoadout;
     public RunMap pendingMap;
-    public int currentSeed {  get; private set; }
+    public int pendingSeed {  get; private set; }
 
-    public bool CanBeginRun => pendingMap != null && pendingLoadout != null && currentSeed != 0;
+    public bool CanBeginRun => pendingMap != null && pendingLoadout != null && pendingSeed != 0;
     private bool loadingToRun = false;
 
     private readonly Dictionary<HubState, HubScreen> screens = new();
@@ -30,10 +31,14 @@ public class HubManager : MonoBehaviour
     // Services
     private MapGenerationService mapGeneration;
 
+    public event Action<RunMap> onMapGenerated;
+
     [Header("Testing Values")]
 
     [SerializeField] private PlayerWeapon defaultWeapon;
     [SerializeField] private RoomData[] defaultRooms;
+    [SerializeField] private int walkLength;
+    [SerializeField] private Vector2Int mapBounds;
 
     [SerializeField] private TextMeshProUGUI seedText;
 
@@ -46,25 +51,20 @@ public class HubManager : MonoBehaviour
 
         // Gather screens
         foreach (var screen in GetComponentsInChildren<HubScreen>(includeInactive: true))
+        {
+            screen.Initialize();
             screens[screen.ScreenType] = screen;
+        }
 
     }
 
     public void InitializeHub()
     {
-        mapGeneration = new(db.rooms, 1002, new Vector2Int(5, 2)); // Replace bounds
+        mapGeneration = new(db.rooms, mapBounds, walkLength); // Replace bounds
 
         pendingLoadout = BuildDefaultLoadout();
 
-        pendingMap = mapGeneration.GenerateMapWithSeed(1002); // TEMP FUNCTION
-        //pendingMap = BuildTestingMap(); // TEMP FUNCTION
-        currentSeed = 1002; // TEMP FUNCTION
-
-        //ShowScreen(HubState.Main);
-
-
-        seedText.text = currentSeed.ToString();
-        seedText.color = CanBeginRun ? Color.green : Color.red;
+        GenerateNewMap();
     }
 
     private RunLoadout BuildDefaultLoadout()
@@ -79,15 +79,21 @@ public class HubManager : MonoBehaviour
 
     }
 
-    private RunMap BuildRunMap()
+    public void GenerateNewMap()
     {
-        RunMap map = new()
-        {
+        int seed = Mathf.RoundToInt(UnityEngine.Random.Range(0, 100000));
 
-        };
+        print(seed);
 
-        return map;
+        pendingMap = mapGeneration.GenerateMapWithSeed(seed);
+        onMapGenerated?.Invoke(pendingMap);
+
+        pendingSeed = seed;
+
+        seedText.text = seed.ToString();
+        seedText.color = CanBeginRun ? Color.green : Color.red;
     }
+
 
     public RunMap BuildTestingMap()
     {
@@ -122,7 +128,7 @@ public class HubManager : MonoBehaviour
         SaveProfile();
 
         loadingToRun = true;
-        RunDataCarrier.BuildData(currentSeed, pendingLoadout, pendingMap);
+        RunDataCarrier.BuildNewRunData(pendingSeed, pendingLoadout, pendingMap);
         SceneLoader.Instance.LoadRun();
     }
 

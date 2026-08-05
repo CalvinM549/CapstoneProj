@@ -6,16 +6,14 @@ using System.Linq;
 public class MapGenerationService
 {
     private RoomDatabase roomDatabase;
-    private int rngSeed;
     private Vector2Int mapBounds;
+    private int mapNodes;
 
-    private int iterations;
-
-    public MapGenerationService(RoomDatabase data, int seed, Vector2Int bounds)
+    public MapGenerationService(RoomDatabase data, Vector2Int bounds, int nodes)
     {
         roomDatabase = data;
-        rngSeed = seed;
         mapBounds = bounds;
+        mapNodes = nodes;
     }
 
     //public RunMap GenerateTestingMap(RoomData[] rooms)
@@ -57,7 +55,9 @@ public class MapGenerationService
     {
         RunMap map = new();
 
-        var grid = RunSimpleRandomWalk(5);
+        RNGManager.Instance.InitRNG(seed);
+
+        var grid = RunSimpleRandomWalk();
 
         map.tiles = GenerateMapNodes(grid);
         map.startNode = map.tiles[Vector2Int.zero];
@@ -72,7 +72,7 @@ public class MapGenerationService
 
     #region RandomWalk
 
-    public HashSet<Vector2Int> RunSimpleRandomWalk(int nodeCount)
+    public HashSet<Vector2Int> RunSimpleRandomWalk()
     {
         HashSet<Vector2Int> visited = new();
 
@@ -82,7 +82,7 @@ public class MapGenerationService
         int currentIteration = 0;
         int currentStep = 0;
 
-        while (currentStep < nodeCount && currentIteration < 100) // Fail state
+        while (currentStep < mapNodes && currentIteration < 100) // Fail state
         {
             currentIteration++;
             Vector2Int randomDirection = DirectionExtensions.Random().ToGridOffset();
@@ -153,7 +153,7 @@ public class MapGenerationService
             nodeIndex++;
             MapNode node = new()
             {
-                room = roomDatabase.GetRandom(rngSeed + nodeIndex), // Replace with weighted function?
+                room = roomDatabase.GetRandom(), // Replace with weighted function?
                 coordinates = square,
                 cleared = false
             };
@@ -166,6 +166,7 @@ public class MapGenerationService
 
     private void ConnectNodes(Dictionary<Vector2Int, MapNode> map)
     {
+
         foreach (var kvp in map)
         {
             Vector2Int tile = kvp.Key;
@@ -175,7 +176,7 @@ public class MapGenerationService
             {
                 if (node.connections.ContainsKey(direction)) continue;
 
-                if (map.TryGetValue(kvp.Key + direction.ToGridOffset(), out MapNode adjacent))
+                if (map.TryGetValue(tile + direction.ToGridOffset(), out MapNode adjacent))
                 {
                     node.ConnectTo(adjacent, direction);
                 }
