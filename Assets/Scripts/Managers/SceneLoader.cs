@@ -1,15 +1,12 @@
 using DG.Tweening;
 using System;
 using System.Collections;
-using Unity.VectorGraphics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader Instance { get; private set; }
-
-    [SerializeField] private bool AutoLoadMenu;
 
     [SerializeField] private float fadeTime;
     [SerializeField] private CanvasGroup fadeOverlay;
@@ -53,7 +50,7 @@ public class SceneLoader : MonoBehaviour
         }
 
 #else
-        LoadSceneImmediate(MAINMENU);
+        LoadScene(HUB);
 #endif
     }
 
@@ -75,7 +72,8 @@ public class SceneLoader : MonoBehaviour
 
     private void LoadSceneImmediate(string sceneName)
     {
-        var async = SceneManager.LoadSceneAsync(sceneName);
+        SceneManager.LoadScene(sceneName);
+        onSceneLoaded?.Invoke(sceneName);
     }
 
     private void LoadScene(string sceneName, Action onLoad = null)

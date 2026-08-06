@@ -19,7 +19,7 @@ public class CategorizedContentDatabase<TEntry, TCategory> : ContentDatabase<TEn
 
     private void BuildCategoryLookupIfNeeded()
     {
-        if (byCategory == null) return;
+        if (byCategory != null) return;
 
         byCategory = new Dictionary<TCategory, List<TEntry>>();
         foreach (var entry in All)

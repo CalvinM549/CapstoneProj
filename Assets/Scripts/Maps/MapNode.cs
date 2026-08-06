@@ -16,4 +16,6 @@ public class RunMap
     public Dictionary<Vector2Int, MapNode> tiles = new();
     public MapNode currentNode;
     public MapNode startNode;
+
+    public int totalNodes;
 }

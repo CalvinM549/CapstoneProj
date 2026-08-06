@@ -93,6 +93,8 @@ public class InputManager : MonoBehaviour
     private void HandleExitPressed(InputAction.CallbackContext ctx)
     {
         // Depending on game context, display settings vs exit menus etc
+
+        SceneLoader.Instance.QuitGame();
     }
 
     public Vector2 GetMousePosition()

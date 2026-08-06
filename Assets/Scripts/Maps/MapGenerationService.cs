@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using System.Linq;
 
 public class MapGenerationService
 {
@@ -15,41 +14,6 @@ public class MapGenerationService
         mapBounds = bounds;
         mapNodes = nodes;
     }
-
-    //public RunMap GenerateTestingMap(RoomData[] rooms)
-    //{
-    //    List<List<MapNode>> temp = new List<List<MapNode>>();
-    //    int currentNodeIndex = 0;
-
-    //    if (rooms.Length <= 0) Debug.Log("[MapGenerationService] No Rooms given");
-
-    //    for (int layerIndex = 0; layerIndex < rooms.Length; layerIndex++)
-    //    {
-    //        List<MapNode> layer = new();
-
-    //        // Loop through nodes in layer usually
-    //        MapNode newNode = new MapNode()
-    //        {
-    //            room = rooms[layerIndex],
-    //            nodeIndex = currentNodeIndex,
-    //            // Setup Connections - refer to Aesthosis??
-    //            cleared = false
-    //        };
-    //        layer.Add(newNode);
-    //        currentNodeIndex++;
-
-    //        temp.Add(layer);
-
-    //    }
-
-    //    RunMap map = new RunMap()
-    //    {
-    //        //rows = temp,
-    //        startNode = temp[0][0]
-    //    };
-
-    //    return map;
-    //}
 
     public RunMap GenerateMapWithSeed(int seed) // Add chapter sorting later lol
     {
@@ -122,17 +86,6 @@ public class MapGenerationService
         }
 
         return true;
-
-        //if (!currentMap.Contains(pos + Direction.North.ToGridOffset()))
-        //    return false;
-        //if (!currentMap.Contains(pos + Direction.South.ToGridOffset()))
-        //    return false;
-        //if (!currentMap.Contains(pos + Direction.East.ToGridOffset()))
-        //    return false;
-        //if (!currentMap.Contains(pos + Direction.West.ToGridOffset()))
-        //    return false;
-
-        //return true;
     }
 
     #endregion

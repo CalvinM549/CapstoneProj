@@ -21,6 +21,9 @@ public class GameplayInputReader
 
     public event Action ToolPressed;
 
+    public event Action InventoryPressed;
+    public event Action InventoryCanceled;
+
     // INTERACTION
     public event Action InteractPressed;
 
@@ -46,6 +49,8 @@ public class GameplayInputReader
 
         actions.Gameplay.LockOn.performed += OnTargetPerformed;
 
+        actions.Gameplay.Inventory.performed += OnInventoryPerformed;
+        actions.Gameplay.Inventory.canceled += OnInventoryCanceled;
     }
 
     public void Unsubscribe()
@@ -60,6 +65,9 @@ public class GameplayInputReader
         actions.Gameplay.RangedAttack.canceled -= OnRangedCanceled;
 
         actions.Gameplay.LockOn.performed -= OnTargetPerformed;
+
+        actions.Gameplay.Inventory.performed -= OnInventoryPerformed;
+        actions.Gameplay.Inventory.canceled -= OnInventoryCanceled;
     }
 
     #region Movement
@@ -108,6 +116,21 @@ public class GameplayInputReader
     {
         TargetPressed?.Invoke();
     }
+
+    #endregion
+
+    #region Other
+
+    private void OnInventoryPerformed(InputAction.CallbackContext context)
+    {
+        InventoryPressed?.Invoke();
+    }
+
+    private void OnInventoryCanceled(InputAction.CallbackContext context)
+    {
+        InventoryCanceled?.Invoke();
+    }
+
 
     #endregion
 }

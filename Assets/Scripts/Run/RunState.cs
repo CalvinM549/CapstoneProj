@@ -17,6 +17,7 @@ public class RunState
 
     public float runDurationTimer;
     public float playerHeatTimer;
+    public float maxHeatValue;
 
     // Rooms
     public float HeatLevel;
@@ -24,6 +25,8 @@ public class RunState
     // Stats
     public int EnemiesKilled;
     public int DamageTaken;
+
+    public event Action<float> OnHeatTick;
 
     #region Creation / Loading
 
@@ -63,6 +66,10 @@ public class RunState
         if (playerHeatTimer <= 0)
         {
             // Fire Event
+        }
+        else
+        {
+            OnHeatTick?.Invoke(playerHeatTimer / maxHeatValue);
         }
     }
 

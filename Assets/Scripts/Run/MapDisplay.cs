@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class MapDisplay : MonoBehaviour
 {
+    private GameplayInputReader inputs;
+
     [SerializeField] private CanvasGroup cg;
     [SerializeField] private Transform container;
 
@@ -22,24 +24,20 @@ public class MapDisplay : MonoBehaviour
         cg.gameObject.SetActive(false);
     }
 
-    private void OnDisable()
+    private void OnEnable()
     {
-        RunManager.Instance.onPlayerRoomChanged -= HandlePlayerRoomChanged;
+        inputs = InputManager.Instance.PlayerInputs;
+        inputs.InventoryPressed += HandleMapOpen;
+        inputs.InventoryCanceled += HandleMapClose;
+
     }
 
-    private void Update()
+    private void OnDisable()
     {
-#if UNITY_EDITOR
+        inputs.InventoryPressed -= HandleMapOpen;
+        inputs.InventoryCanceled -= HandleMapClose;
 
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            HandleMapOpen();
-        }
-        if (Input.GetKeyUp(KeyCode.Tab))
-        {
-            HandleMapClose();
-        }
-#endif
+        RunManager.Instance.onPlayerRoomChanged -= HandlePlayerRoomChanged;
     }
 
     private void HandleMapOpen()

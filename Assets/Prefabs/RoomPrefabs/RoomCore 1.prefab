@@ -265,6 +265,7 @@ MonoBehaviour:
   - {fileID: 7404070950988745312}
   - {fileID: 7900804769437759016}
   defaultEntryPoint: {x: 0, y: 0}
+  enemySpawnPoints: []
 --- !u!114 &5079066438295307434
 MonoBehaviour:
   m_ObjectHideFlags: 0

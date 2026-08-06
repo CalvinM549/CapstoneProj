@@ -8,6 +8,8 @@ public class RunPrepScreen : HubScreen
     public override HubState ScreenType => HubState.RunPrep;
     private int tempSeed; // Generated seed (can be overriden)
 
+    [SerializeField] private Transform mapOrigin;
+    
     [SerializeField] private GameObject tilePrefab;
     [SerializeField] private float delay;
     private Coroutine walkRoutine;
@@ -40,18 +42,26 @@ public class RunPrepScreen : HubScreen
 
     public void RegenMap()
     {
-        foreach (var tile in spawnedTiles)
-            Destroy(tile);
-
-        spawnedTiles.Clear();
+        ClearCurrent();
 
         HubManager.Instance.GenerateNewMap();
     }
 
+    private void ClearCurrent()
+    {
+        if (walkRoutine != null)
+            StopCoroutine(walkRoutine);
+
+
+        foreach (var tile in spawnedTiles)
+            Destroy(tile);
+
+        spawnedTiles.Clear();
+    }
+
     private void HandleMapGenerated(RunMap map)
     {
-        if(walkRoutine != null)
-            StopCoroutine(walkRoutine);
+        ClearCurrent();
 
         List<Vector2Int> tiles = map.tiles.Keys.ToList();
 
@@ -73,8 +83,10 @@ public class RunPrepScreen : HubScreen
     private void SpawnTile(Vector2Int gridPos, Color colour)
     {
         Vector2 spawnWorldPos = new Vector2(gridPos.x, gridPos.y);
-        GameObject newTile = Instantiate(tilePrefab, spawnWorldPos, Quaternion.identity);
+        GameObject newTile = Instantiate(tilePrefab, mapOrigin);
         spawnedTiles.Add(newTile);
+
+        newTile.transform.localPosition = spawnWorldPos;
         newTile.GetComponent<SpriteRenderer>().color = colour;
         newTile.transform.localScale = Vector3.one * 0.9f;
         newTile.transform.parent = this.transform;
