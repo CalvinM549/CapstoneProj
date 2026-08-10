@@ -10,8 +10,6 @@ public class MissileWeapon : PlayerWeapon
 
     private Transform currentTarget;
 
-    public override bool CanFire() => true;
-
     public override void Fire(Vector2 direction)
     {
         currentTarget = p.Targeting.HasTarget ? p.Targeting.LockedTarget : null;
@@ -42,6 +40,7 @@ public class MissileWeapon : PlayerWeapon
 
     private void FireSingle(Vector2 direction)
     {
+        if (currentAmmo <= 0) return;
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         VFXManager.Instance.PlayVFX(VFXType.ShootIntense, p.transform.position, Quaternion.Euler(0f, 0f, angle));
@@ -58,5 +57,8 @@ public class MissileWeapon : PlayerWeapon
         }
 
         homing.HomingTarget = currentTarget;
+
+        currentAmmo--;
+        ammoUsedEvent?.Invoke(currentAmmo);
     }
 }

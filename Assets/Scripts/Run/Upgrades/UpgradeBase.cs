@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,7 +31,7 @@ public class UpgradeBase : ScriptableObject
     public Sprite icon;
     // Rarity?
 
-    public UpgradeSlot slot         = UpgradeSlot.None;
+    public UpgradeSlot slot = UpgradeSlot.None;
     public UpgradeCategory[] categories;
 
     public int maxStacks = 1;
@@ -79,6 +80,7 @@ public class UpgradeBase : ScriptableObject
     #endregion
 }
 
+[Serializable]
 public class UpgradeStatModifierEntry
 {
     public string statID;

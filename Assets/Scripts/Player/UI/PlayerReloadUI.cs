@@ -3,24 +3,36 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerWeaponUI : MonoBehaviour
+public class PlayerReloadUI : MonoBehaviour
 {
+    private PlayerUI playerUI;
+
     [SerializeField] private TextMeshProUGUI ammoTracker;
     [SerializeField] private Image reloadTracker;
     private bool reloadCharged;
     
-    [SerializeField] private Player player;
+    private Player player;
 
-    private void Start()
+    private void Awake()
     {
-        player.Combat.OnAmmoChanged += HandleAmmoChange;
-        player.Combat.OnReloadChanged += HandleReloadChanged;
+        playerUI = GetComponent<PlayerUI>();
+    }
+
+    private void OnEnable()
+    {
+        playerUI.Initialized += HandleUIReady;
+
+        if(playerUI.player != null) HandleUIReady(playerUI.player);
     }
 
     private void OnDisable()
     {
-        player.Combat.OnAmmoChanged -= HandleAmmoChange;
-        player.Combat.OnReloadChanged -= HandleReloadChanged;
+        playerUI.Initialized -= HandleUIReady;
+
+        if (player != null)
+        {
+            player.Combat.OnReloadChanged -= HandleReloadChanged;
+        }
     }
 
     private void Update()
@@ -28,13 +40,19 @@ public class PlayerWeaponUI : MonoBehaviour
         UpdateReloadPosition();
     }
 
+    private void HandleUIReady(Player p)
+    {
+        player = p;
+
+        player.Combat.OnReloadChanged += HandleReloadChanged;
+    }
+
     private void UpdateReloadPosition()
     {
-        if (reloadTracker != null && !TimescaleManager.IsPaused)
-        {
-            var pos = Camera.main.ScreenToWorldPoint(InputManager.Instance.GetMousePosition());
-            reloadTracker.transform.position = new Vector3(pos.x, pos.y, 0f);
-        }
+
+        if (reloadTracker == null || TimescaleManager.IsPaused) return;
+
+        reloadTracker.transform.position = playerUI.mouseWorldPos;
     }
 
     private void HandleReloadChanged(float value)
@@ -56,14 +74,5 @@ public class PlayerWeaponUI : MonoBehaviour
 
         if (fillValue < lastValue && reloadCharged)
             reloadCharged = false;
-    }
-
-    private void HandleAmmoChange(int ammo)
-    {
-        ammoTracker.text = string.Empty;
-        for (int i = 0; i < ammo; i++)
-        {
-            ammoTracker.text += "I ";
-        }
     }
 }

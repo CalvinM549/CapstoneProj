@@ -38,6 +38,7 @@ public class HubManager : MonoBehaviour
     [SerializeField] private PlayerWeapon defaultWeapon;
     [SerializeField] private RoomData[] defaultRooms;
     [SerializeField] private int walkLength;
+    [SerializeField] private int walkerCount;
     [SerializeField] private Vector2Int mapBounds;
 
     [SerializeField] private TextMeshProUGUI seedText;
@@ -60,7 +61,7 @@ public class HubManager : MonoBehaviour
 
     public void InitializeHub()
     {
-        mapGeneration = new(db.rooms, mapBounds, walkLength); // Replace bounds
+        mapGeneration = new(db.rooms, mapBounds, walkLength, walkerCount, 1f, 0.3f); // Replace bounds
 
         pendingLoadout = BuildDefaultLoadout();
 
@@ -85,7 +86,7 @@ public class HubManager : MonoBehaviour
 
         print(seed);
 
-        pendingMap = mapGeneration.GenerateMapWithSeed(seed);
+        pendingMap = mapGeneration.GenerateMapWithSeed(seed, 0);
         onMapGenerated?.Invoke(pendingMap);
 
         pendingSeed = seed;
@@ -103,7 +104,7 @@ public class HubManager : MonoBehaviour
 
         for (int i = 0; i < defaultRooms.Length; i++)
         {
-            MapNode newNode = new MapNode()
+            RoomNode newNode = new RoomNode()
             {
                 room = defaultRooms[i],
                 coordinates = new Vector2Int(0, i),

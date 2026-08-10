@@ -809,7 +809,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Err
+  m_text: '[Error]'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 572120a1cdd482c43a6b6afed33dc201, type: 2}
   m_sharedMaterial: {fileID: 5220693059894657429, guid: 572120a1cdd482c43a6b6afed33dc201, type: 2}
@@ -1219,8 +1219,9 @@ MonoBehaviour:
   defaultRooms:
   - {fileID: 11400000, guid: 61b90bca84cd7a941870de9c451536ae, type: 2}
   - {fileID: 11400000, guid: f42d973c574c6514888fe6d295865f7e, type: 2}
-  walkLength: 8
-  mapBounds: {x: 3, y: 2}
+  walkLength: 12
+  walkerCount: 3
+  mapBounds: {x: 2, y: 2}
   seedText: {fileID: 690470051}
 --- !u!4 &982274027
 Transform:
@@ -1263,7 +1264,7 @@ Transform:
   m_GameObject: {fileID: 1065085012}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.64, z: 0}
+  m_LocalPosition: {x: 0, y: -2.22, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

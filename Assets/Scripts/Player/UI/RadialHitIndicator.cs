@@ -6,10 +6,12 @@ using UnityEngine.UI;
 
 public class RadialHitIndicator : MonoBehaviour
 {
+    PlayerUI playerUI;
+
     [SerializeField] private HitMarker markerPrefab;
     [SerializeField] private Transform markerContainer;
 
-    [SerializeField] private Transform playerTransform;
+    private Transform playerTransform;
 
     [SerializeField] private int poolSize;
 
@@ -35,11 +37,16 @@ public class RadialHitIndicator : MonoBehaviour
     private void Awake()
     {
         markerPool = new ObjectPool<HitMarker>(markerPrefab, poolSize, markerContainer);
+
+        playerUI = GetComponent<PlayerUI>();
     }
 
     private void OnEnable()
     {
         GameEvents.OnPlayerHit += HandlePlayerHit;
+
+        playerUI.Initialized += HandleUIReady;
+        if (playerUI.player != null) HandleUIReady(playerUI.player);
     }
 
     private void OnDisable()
@@ -47,10 +54,14 @@ public class RadialHitIndicator : MonoBehaviour
         GameEvents.OnPlayerHit -= HandlePlayerHit;
     }
 
+    private void HandleUIReady(Player p)
+    {
+        playerTransform = p.transform;
+    }
 
     private void HandlePlayerHit(HitData hit)
     {
-        if (playerTransform == null) return;
+        if (playerTransform == null) playerTransform = playerUI.playerPos;
                 
         Vector2 direction = ((Vector2)playerTransform.position - hit.sourcePos).normalized;
         if (direction == Vector2.zero) return;

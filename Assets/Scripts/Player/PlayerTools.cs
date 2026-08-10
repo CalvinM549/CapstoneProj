@@ -3,31 +3,39 @@ using UnityEngine.InputSystem;
 
 public class PlayerTools : MonoBehaviour
 {
-    private InputSystem_Actions inputActions;
+    private GameplayInputReader input;
 
     private Player p;
 
     public bool ToolEquipped => equippedTool != null;
     public PlayerTool equippedTool;
 
-    private void Awake()
+    public void Initialize(PlayerTool tool)
     {
-        p = GetComponent<Player>();
-
         if (equippedTool != null)
             equippedTool.OnEquip(p);
     }
 
+    public void RestoreFromSave()
+    {
+
+    }
+
+    private void Awake()
+    {
+        p = GetComponent<Player>();
+    }
+
     private void OnEnable()
     {
-        // SETUP NEW INPUTS
+        input = InputManager.Instance.PlayerInputs;
 
-        //inputActions.Player.UseTool.performed += OnUseToolInput;
+        input.ToolPressed += OnUseToolInput;
     }
 
     private void OnDisable()
     {
-        //inputActions.Player.UseTool.performed -= OnUseToolInput;
+        input.ToolPressed -= OnUseToolInput;
     }
 
     private void Update()
@@ -37,9 +45,8 @@ public class PlayerTools : MonoBehaviour
             equippedTool.UpdateTool();
     }
 
-    private void OnUseToolInput(InputAction.CallbackContext context)
+    private void OnUseToolInput()
     {
-        // Re-impliment when tools are more setup
         //UseEquippedTool();
     }
 

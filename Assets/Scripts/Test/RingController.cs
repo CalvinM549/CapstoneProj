@@ -108,7 +108,7 @@ public class RingController : MonoBehaviour
     private void OnValidate()
     {
         if(ring == null) ring = GetComponent<ProceduralRing>();
-        if (ring != null) ring.ArcOffset = arcDegrees;
+        if (ring != null) ring.ArcOffset = arcOffset;
     }
 #endif
 }

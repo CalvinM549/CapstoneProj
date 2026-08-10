@@ -18,10 +18,10 @@ public class RadialDashUI : MonoBehaviour
 
     private class ChargeIcon
     {
-        public RectTransform pivot;
-        public Image fillImage;
-        public float lastValue;
+        public RectTransform pivot { get; }
+        public Image fillImage { get; }
 
+        public float lastValue;
         private bool charged;
 
         private Tween tween;
@@ -62,6 +62,7 @@ public class RadialDashUI : MonoBehaviour
         public void Kill()
         {
             tween?.Kill();
+            fillImage.DOKill();
             pivot?.DOKill();
         }
     }
@@ -115,42 +116,17 @@ public class RadialDashUI : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            float angleDeg = count > 1 ? startAngle + step * i : arcCenterAngle;
+            float angle = RadialUIHelper.AngleForIndex(i, count, arcCenterAngle, gapBetweenCharges);
+            var pivot = RadialUIHelper.CreatePivot(chargeContainer, chargePrefab, -angle, chargeRadius, out var instance);
 
-            float pivotAngle = -angleDeg;
-            var pivot = CreateChargePivot(pivotAngle);
-            var fillImage = ConfigureFillImage(pivot);
-
-            var icon = new ChargeIcon(pivot, fillImage, dashCooldowns[i]);
-            chargeIcons.Add(icon);
+            var fillImage = ConfigureFillImage(instance);
+            chargeIcons.Add(new ChargeIcon(pivot, fillImage, dashCooldowns[i]));
         }
     }
 
-    private RectTransform CreateChargePivot(float pivotAngle)
+    private Image ConfigureFillImage(GameObject iconInstance)
     {
-        var pivotGO = new GameObject("ChargePivot", typeof(RectTransform));
-        var pivot = pivotGO.GetComponent<RectTransform>();
-
-        pivot.SetParent(chargeContainer, false);
-        pivot.anchoredPosition = Vector2.zero;
-        pivot.sizeDelta = Vector2.zero;
-        pivot.localRotation = Quaternion.Euler(0f, 0f, pivotAngle);
-
-        var iconGO = Instantiate(chargePrefab, pivot);
-        var iconRect = iconGO.GetComponent<RectTransform>();
-
-        iconRect.anchoredPosition = new Vector2(0f, chargeRadius);
-        iconRect.localRotation = Quaternion.Euler(0f, 0f, -pivotAngle);
-
-        return pivot;
-    }
-
-    private Image ConfigureFillImage(RectTransform pivot)
-    {
-        var iconTransform = pivot.GetChild(0);
-        var img = iconTransform.GetComponent<Image>();
-        if(img == null)
-            img = iconTransform.GetComponentInChildren<Image>();
+        var img = iconInstance.GetComponent<Image>() ?? iconInstance.GetComponentInChildren<Image>();
 
         img.type = Image.Type.Filled;
         img.fillMethod = Image.FillMethod.Radial360;

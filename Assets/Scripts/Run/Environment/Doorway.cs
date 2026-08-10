@@ -8,10 +8,10 @@ public class Doorway : MonoBehaviour
     public Transform entryPoint;
     public Direction direction; // Direction the player must enter from
 
-    public MapNode Destination {  get; private set; }
+    public RoomNode Destination {  get; private set; }
     public bool IsLocked { get; private set; } = true;
 
-    public void SetDestination(MapNode node) => Destination = node;
+    public void SetDestination(RoomNode node) => Destination = node;
 
     public void Lock()
     {

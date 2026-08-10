@@ -1,9 +1,7 @@
 using DG.Tweening;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class RadialStructureUI : MonoBehaviour
 {
@@ -22,6 +20,8 @@ public class RadialStructureUI : MonoBehaviour
 
         public float PercentHealth => currentHealth / maxHealth;
 
+        private Color baseColor;
+
         private readonly RingController controller;
 
         public UISegment(HealthSegment segment, RingController controller)
@@ -29,24 +29,28 @@ public class RadialStructureUI : MonoBehaviour
             currentHealth = segment.currentHealth;
             maxHealth = segment.maxHealth;
 
+            baseColor = controller.Ring.color;
             this.controller = controller;
-
         }
 
         public void UpdateSegment(HealthSegment newValues, float tweenDuration)
         {
             bool valueChanged = newValues.currentHealth != currentHealth;
+            bool damage = newValues.currentHealth < currentHealth;
 
             currentHealth   = newValues.currentHealth;
             maxHealth       = newValues.maxHealth;
 
-            controller.SetFill(PercentHealth, tweenDuration);
-
+            
             if (valueChanged)
             {
-                controller.FlashColour(Color.red, tweenDuration);
-            }
+                if(!damage) controller.SetColourImmediate(baseColor);
 
+                controller.SetFill(PercentHealth, tweenDuration);
+
+                Color flash = damage ? Color.red : Color.green;
+                controller.FlashColour(flash, tweenDuration);
+            }
         }
 
         public void SetFillImmediate()
@@ -125,7 +129,7 @@ public class RadialStructureUI : MonoBehaviour
 
         controller.Initialize(arcOffset,
             arcSpan, 
-            controller.Ring != null ? controller.Ring.color : Color.pink);
+            controller.Ring != null ? controller.Ring.color : Color.magenta);
         return controller;
     }
 }

@@ -63,6 +63,16 @@ public class PlayerMovement : MonoBehaviour
 
     #region MonobehaviourThings
 
+    public void Initialize()
+    {
+
+    }
+
+    public void RestoreFromSave()
+    {
+
+    }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -90,13 +100,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        currentDashCharges = data.maxDashCharges;
-        dashRechargeTimers = new float[data.maxDashCharges];
-        dashRechargePercentages = new float[data.maxDashCharges];
+        SetDashCharges(data.maxDashCharges);
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            SetDashCharges(dashRechargeTimers.Length + 1);
+        }
+
         UpdateDashRecharge();
         dashBuffer.TryConsume(CanDash, StartDash);
     }
@@ -119,6 +132,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleDashInput()
     {
+        if (!p.CanAct || TimescaleManager.IsPaused) return;
+
         if (CanDash())
         {
             StartDash();
@@ -147,13 +162,14 @@ public class PlayerMovement : MonoBehaviour
 
     private bool CanMove()
     {
-        if (IsDashing) return false;
-        if (isForcedPush) return false;
-        if (isSelfPush) return false;
-        if (isOverrideMovement) return false;
-        if (isUsingTool) return false;
-
-        return true;
+        return (
+            !TimescaleManager.IsPaused
+            && p.CanAct
+            && !isDashing
+            && !isForcedPush
+            && !isSelfPush
+            && !isOverrideMovement
+            && !isUsingTool);
     }
 
     private void ApplyMovement()
@@ -321,11 +337,27 @@ public class PlayerMovement : MonoBehaviour
             if (dashRechargeTimers[i] <= 0)
             {
                 dashRechargeTimers[i] = 0;
-                currentDashCharges = Mathf.Min(currentDashCharges + 1, data.maxDashCharges);
+                currentDashCharges = Mathf.Min(currentDashCharges + 1, dashRechargeTimers.Length);
             }
 
             dashRechargePercentages[i] = Mathf.Abs((dashRechargeTimers[i] / data.dashRechargeTime) - 1);
         }
+
+        GameEvents.DashChargeChange(dashRechargePercentages);
+    }
+
+    public void RestoreDashCharge()
+    {
+
+    }
+
+    private void SetDashCharges(int count)
+    {
+        print($"Creating {count} dash charges");
+
+        currentDashCharges = count;
+        dashRechargeTimers = new float[count];
+        dashRechargePercentages = new float[count];
 
         GameEvents.DashChargeChange(dashRechargePercentages);
     }

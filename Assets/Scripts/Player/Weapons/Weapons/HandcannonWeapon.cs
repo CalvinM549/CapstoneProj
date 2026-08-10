@@ -3,8 +3,6 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Player/Weapon/HandCannon")]
 public class HandcannonWeapon : PlayerWeapon
 {
-    public override bool CanFire() => true;
-
     public override void Fire(Vector2 direction)
     {
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
@@ -16,5 +14,8 @@ public class HandcannonWeapon : PlayerWeapon
         p.Movement.PushPlayer(-direction, 15, 0.25f, true);
 
         var projectile = ProjectilePools.FireProjectile(this, Projectiles[0], p.transform.position, direction);
+
+        currentAmmo--;
+        ammoUsedEvent?.Invoke(currentAmmo);
     }
 }

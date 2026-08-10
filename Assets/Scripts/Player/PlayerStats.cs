@@ -18,11 +18,9 @@ public class PlayerStats : MonoBehaviour
     private void Awake()
     {
         p = GetComponent<Player>();
-
-        //InitializeStats();
     }
 
-    private void InitializeStats()
+    public void Initialize()
     {
         // Movement
         Register(StatRef.PlayerBaseSpeed, 1f);
@@ -31,12 +29,17 @@ public class PlayerStats : MonoBehaviour
 
 
         // Health
+        Register(StatRef.PlayerBaseStructureHealth, 8);
 
         // Combat
+        Register(StatRef.PlayerBaseMeleeDamage, 1f);
+        Register(StatRef.PlayerBaseRangedDamage, 1f);
+        Register(StatRef.PlayerBaseGlobalDamage, 1f);
+
 
         // Momentum
 
-        // Head
+        // Heat
     }
 
     #region Helpers

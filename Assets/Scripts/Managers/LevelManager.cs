@@ -80,13 +80,13 @@ public class LevelManager : MonoBehaviour // Depreciated
         {
             pauseMenuUI.gameObject.SetActive(true);
             pauseMenuUI.DOFade(1f, 0.5f).SetUpdate(true);
-            TimescaleManager.Instance.PauseGame();
+            TimescaleManager.Instance.PauseGame(this);
         }
         else
         {
             pauseMenuUI.gameObject.SetActive(false);
             pauseMenuUI.alpha = 0f;
-            TimescaleManager.Instance.UnpauseGame();
+            TimescaleManager.Instance.UnpauseGame(this);
         }
     }
 
@@ -140,7 +140,7 @@ public class LevelManager : MonoBehaviour // Depreciated
 
         yield return new WaitForSeconds(2f);
 
-        TimescaleManager.Instance.PauseGame();
+        TimescaleManager.Instance.PauseGame(this);
     }
 
     public void ResetLevel()

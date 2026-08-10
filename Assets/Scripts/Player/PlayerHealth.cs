@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class  PlayerHealth : MonoBehaviour, IDamageable
 {
-
+    [Header("Config")]
     [SerializeField] private HealthData data;
     [SerializeField] private bool UseIFrames;
+
+    private StatValue structureHealth;
 
     private Player p;
 
@@ -27,44 +29,15 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
     private Coroutine hitStunRoutine;
     private Coroutine iFrameRoutine;
 
-
-    private void Awake()
-    {
-        p = GetComponent<Player>();
-
-        IsAlive = true;
-    }
-
-    private void Start()
-    {
-        InitializeHealth(data.segmentBaseCount);
-    }
-
     public void Initialize()
     {
+        structureHealth = p.Stats.GetStatValue(StatRef.PlayerBaseStructureHealth);
+        structureHealth.OnChanged += HandleStructureHealthChanged;
+
         InitializeHealth(data.segmentBaseCount);
     }
 
-    private void InitializeHealth(int segmentCount)
-    {
-        if (isInitialized) return;
-
-        healthSegments.Clear();
-
-        for (int i = 0; i < segmentCount; i++)
-        {
-            bool isActive = i == segmentCount - 1;
-            healthSegments.Add(new HealthSegment(data.segmentMaxHealth, isActive));
-        }
-
-        activeHealthIndex = healthSegments.Count - 1;
-
-        GameEvents.PlayerHealthChanged(healthSegments);
-
-        isInitialized = true;
-    }
-
-    public void Restore(int activeIndex, List<SegmentSave> savedSegments)
+    public void RestoreFromSave(int activeIndex, List<SegmentSave> savedSegments)
     {
         isInitialized = false;
         InitializeHealth(savedSegments.Count);
@@ -78,15 +51,55 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         GameEvents.PlayerHealthChanged(healthSegments);
     }
 
-    public void RestoreCurrentSegment()
+    private void Awake()
     {
-        if (ActiveSegment == null)
+        p = GetComponent<Player>();
+
+        IsAlive = true;
+    }
+
+    private void OnEnable()
+    {
+        
+    }
+
+    private void OnDisable()
+    {
+        structureHealth.OnChanged -= HandleStructureHealthChanged;
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.J))
         {
-            Debug.LogWarning("[PlayerHealth] No active health segment found");
-            return;
+            RestoreSegments(2);
         }
-        ActiveSegment.RestoreSegment();
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            InitializeHealth(healthSegments.Count + 1);
+        }
+    }
+
+    private void InitializeHealth(int segmentCount)
+    {
+        healthSegments.Clear();
+
+        for (int i = 0; i < segmentCount; i++)
+        {
+            bool isActive = i == segmentCount - 1;
+            healthSegments.Add(new HealthSegment(structureHealth.Value, isActive));
+        }
+
+        activeHealthIndex = healthSegments.Count - 1;
+
         GameEvents.PlayerHealthChanged(healthSegments);
+
+    }
+
+    private void HandleStructureHealthChanged()
+    {
+
     }
 
     #region Recieving Damage
@@ -109,7 +122,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
         HealthSegment segment = ActiveSegment;
 
-        float overflow = segment.ReduceHealth(hit.damage); // overflow value unused atm
+        segment.ReduceHealth(hit.damage); // overflow value unused atm
 
         if (segment.IsDestroyed)
         {
@@ -140,7 +153,10 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
     private void ApplyHitStun(HitData hit)
     {
-        StartCoroutine(HitStunRoutine(hit.hitstunTime));
+        if(hitStunRoutine != null)
+            StopCoroutine(hitStunRoutine);
+
+        hitStunRoutine = StartCoroutine(HitStunRoutine(hit.hitstunTime));
     }
 
     public void GrantIFrames(float duration)
@@ -169,6 +185,47 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         yield return new WaitForSeconds(duration);
 
         IsHitstunned = false;
+    }
+
+    #endregion
+
+    #region Restoring Health
+
+    public void RestoreCurrentSegment()
+    {
+        if (ActiveSegment == null)
+        {
+            Debug.LogWarning("[PlayerHealth] No active health segment found");
+            return;
+        }
+        ActiveSegment.RestoreSegment();
+        GameEvents.PlayerHealthChanged(healthSegments);
+    }
+
+    public void RestoreSegments(int count)
+    {
+        if (count <= 0) return;
+
+        int healed = 0;
+
+        for (int i = 0; i < healthSegments.Count && healed < count; i++)
+        {
+            HealthSegment segment = healthSegments[i];
+            if (!segment.IsDestroyed) continue;
+
+            segment.RestoreSegment();
+            healthSegments.Remove(segment);
+            healthSegments.Insert(0, segment);
+
+            activeHealthIndex++;
+            healed++;
+        }
+
+        if(healed < count)
+            RestoreCurrentSegment();
+
+        if(healed > 0)
+            GameEvents.PlayerHealthChanged(healthSegments);
     }
 
     #endregion

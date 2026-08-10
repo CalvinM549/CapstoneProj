@@ -64,17 +64,19 @@ public class GameManager : MonoBehaviour
         {
             case SceneLoader.MAINMENU:
                 currentState = GameState.Menu;
+                SetCursorActive(true);
                 TitleManager.Instance.InitializeMenu();
-                // Set cursor?
                 break;
 
             case SceneLoader.HUB:
                 currentState = GameState.Hub;
+                SetCursorActive(true);
                 HubManager.Instance.InitializeHub();
                 break;
 
             case SceneLoader.RUN:
                 currentState = GameState.Run;
+                SetCursorActive(false);
                 RunManager.Instance.InitializeRun();
                 break;
         }
@@ -83,6 +85,11 @@ public class GameManager : MonoBehaviour
     private void SetCursor()
     {
         Cursor.SetCursor(combatCursor, Vector2.zero, CursorMode.Auto);
+    }
+
+    private void SetCursorActive(bool active)
+    {
+        Cursor.visible = active;
     }
 
     #region Profile Utilities

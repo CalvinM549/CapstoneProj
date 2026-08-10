@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum FireType
@@ -12,7 +13,7 @@ public abstract class PlayerWeapon : DatabaseEntry, IProjectileEmitter
     public string weaponName;
     public float cooldown = 1f;
     public int baseAmmo;
-    public int ammoUsed;
+    [HideInInspector] public int currentAmmo;
 
     public FireType fireType;
     public bool automatic;
@@ -28,11 +29,22 @@ public abstract class PlayerWeapon : DatabaseEntry, IProjectileEmitter
     public bool PoolRequested { get; set; }
 
     protected Player p;
+    protected Action<int> ammoUsedEvent;
 
-    public virtual void OnEquip(Player p) { this.p = p; }
-    public virtual void OnUnequip() { p = null; }
+    public virtual void OnEquip(Player p, Action<int> ammoUseEvent)
+    {
+        this.p = p;
+        currentAmmo = baseAmmo;
+        ammoUsedEvent = ammoUseEvent;
+
+        ammoUsedEvent?.Invoke(currentAmmo);
+    }
+    public virtual void OnUnequip()
+    {
+        p = null;
+        ammoUsedEvent = null;
+    }
     public virtual void UpdateWeapon() { }
-
-    public abstract bool CanFire();
+    public virtual bool CanFire() { return currentAmmo > 0; }
     public abstract void Fire(Vector2 direction);
 }

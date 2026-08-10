@@ -6,12 +6,13 @@ using UnityEngine.InputSystem;
 
 public class PlayerCombat : MonoBehaviour
 {
-    public bool useDashCancel;
-    [Space]
-
     public WeaponData data;
 
     private Player p;
+
+    private StatValue globalDamage;
+    private StatValue meleeDamage;
+    private StatValue rangedDamage;
 
     [SerializeField] private PlayerHitboxController hitboxes;
     [SerializeField] private LayerMask wallLayer;
@@ -58,9 +59,26 @@ public class PlayerCombat : MonoBehaviour
     private bool dashCancelWindow;
     private Coroutine dashCancelRoutine;
 
-    public int currentAmmo;
+    public int CurrentAmmo => EquippedWeapon.currentAmmo;
+    private int currentAmmo;
     public event Action<int> OnAmmoChanged;
     public event Action<float> OnReloadChanged;
+
+    public void Initialize(PlayerWeapon weapon)
+    {
+        // Gather statsValue refs
+        globalDamage = p.Stats.GetStatValue(StatRef.PlayerBaseGlobalDamage);
+        meleeDamage = p.Stats.GetStatValue(StatRef.PlayerBaseMeleeDamage);
+        rangedDamage = p.Stats.GetStatValue(StatRef.PlayerBaseRangedDamage);
+
+        if(weapon != null)
+            EquipRangedWeapon(weapon);
+    }
+
+    public void RestoreFromSave()
+    {
+
+    }
 
     private void Awake()
     {
@@ -90,7 +108,6 @@ public class PlayerCombat : MonoBehaviour
         hitboxes.OnPlayerHitboxContact += HandleHitDetection;
 
         GameEvents.OnPlayerDashStart += HandleDashStart;
-        //GameEvents.OnPlayerDashEnd += HandleDashEnd;
     }
 
     private void OnDisable()
@@ -106,7 +123,6 @@ public class PlayerCombat : MonoBehaviour
         hitboxes.OnPlayerHitboxContact -= HandleHitDetection;
 
         GameEvents.OnPlayerDashStart -= HandleDashStart;
-        //GameEvents.OnPlayerDashEnd -= HandleDashEnd;
 
         if (RangedWeaponEquipped) ProjectilePools.ReleasePool(EquippedWeapon);
     }
@@ -165,20 +181,6 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-    //private void OnHeavyAttackInput(InputAction.CallbackContext ctx)
-    //{
-    //    if (!CanAttack()) return;
-
-    //    if (CanMeleeAttack())
-    //    {
-    //        HandleMeleeInput(false);
-    //    }
-    //    else if(ShouldBufferHeavy())
-    //    {
-    //        bufferedHeavy = new();
-    //    }
-    //}
-
     private void OnRangedInputStarted()
     {
         rangedInputHeld = true;
@@ -221,31 +223,27 @@ public class PlayerCombat : MonoBehaviour
 
     private bool CanAttack()
     {
-        if (TimescaleManager.IsPaused) return false;
-        if (p.Health.IsHitstunned) return false;
-        if (!p.Health.IsAlive) return false;
-
-        if (!useDashCancel && p.Movement.IsDashing) return false;
-
-        return true;
+        return (
+            !TimescaleManager.IsPaused
+            && p.CanAct
+            && p.Health.IsAlive
+            && !p.Health.IsHitstunned);
     }
 
     private bool CanMeleeAttack()
     {
-        if (comboCooldownTimer > 0) return false;
-        if (currentState is CombatState.Active or CombatState.Startup) return false;
-
-        return true;
+        return (
+            comboCooldownTimer <= 0f 
+            && CurrentState is CombatState.Idle or CombatState.Recovery);
     }
 
     private bool CanRangedAttack()
     {
-        if (!RangedWeaponEquipped) return false;
-        if (rangedCooldownTimer > 0f) return false;
-        if (!RangedAttackCheck()) return false;
-        if (!EquippedWeapon.CanFire()) return false;
-
-        return true;
+        return (
+            RangedWeaponEquipped 
+            && rangedCooldownTimer <= 0f 
+            && RangedAttackCheck() 
+            && EquippedWeapon.CanFire());
     }
 
     private bool RangedAttackCheck()
@@ -377,7 +375,7 @@ public class PlayerCombat : MonoBehaviour
 
         HitData hitData = new HitData()
         {
-            damage = attack.damage,
+            damage = Mathf.RoundToInt((float)attack.damage * globalDamage.Value * meleeDamage.Value),
             attackType = attack.type,
             sourcePos = transform.position,
             knockbackDirection = knockbackDir,
@@ -447,9 +445,6 @@ public class PlayerCombat : MonoBehaviour
         Vector2 direction = GetAttackDirection(AttackType.Secondary);
         weapon.Fire(direction);
 
-        currentAmmo -= weapon.ammoUsed;
-        OnAmmoChanged?.Invoke(currentAmmo);
-
         yield return new WaitForSeconds(weapon.activeTime);
 
         // RECOVERY
@@ -484,7 +479,7 @@ public class PlayerCombat : MonoBehaviour
 
             Debug.Log($"[PlayerCombat] new weapon {weapon.name} equipped");
             ProjectilePools.RequestPool(weapon);
-            weapon.OnEquip(p);
+            weapon.OnEquip(p, OnAmmoChanged);
         }
 
         OnAmmoChanged?.Invoke(currentAmmo);
@@ -493,6 +488,21 @@ public class PlayerCombat : MonoBehaviour
     }
 
     public void UnequipRangedWeapon() => EquipRangedWeapon(null);
+
+    public void RestoreAmmo(int amount)
+    {
+        if (!RangedWeaponEquipped) return;
+
+        var weapon = EquippedWeapon;
+
+        weapon.currentAmmo = Mathf.Min(weapon.currentAmmo + amount, weapon.baseAmmo);
+        OnAmmoChanged.Invoke(weapon.currentAmmo);
+    }
+
+    public void RestoreAmmo(float percent)
+    {
+
+    }
 
     #endregion
 

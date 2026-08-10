@@ -1,31 +1,37 @@
 using UnityEngine;
 
-public class UpgradeStation : MonoBehaviour
+public class UpgradeStation : SimpleInteractable
 {
     [SerializeField] private Collider2D triggerVolume;
     [SerializeField] private SpriteRenderer visual;
 
     [SerializeField] private Vector2 standPos;
 
-    public bool IsEnabled { get; private set; } = false;
+    private bool isEnabled = false;
 
     public void Enable()
     {
-        IsEnabled = true;
+        isEnabled = true;
         triggerVolume.enabled = false;
         // Trigger animation
     }
 
     public void Disable()
     {
-        IsEnabled = false;
+        isEnabled = false;
         triggerVolume.enabled = false;
         // Trigger Animation
     }
 
+    protected override void OnInteract()
+    {
+        if (!isEnabled) return;
+        base.OnInteract();
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!IsEnabled || !collision.CompareTag("Player")) return;
+        if (!isEnabled || !collision.CompareTag("Player")) return;
 
         collision.GetComponent<Player>().Movement.MoveToPosition(standPos);
         // Disable movement allow

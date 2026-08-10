@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MapDisplay : MonoBehaviour
+public class MapOverlayUI : MonoBehaviour
 {
     private GameplayInputReader inputs;
 

@@ -15,7 +15,6 @@ public static class StatRef
     public static string PlayerBaseGlobalDamage = "player_globalDamage";
 
     // Health
-    public static string PlayerBaseStructureCount = "player_baseStructureCount";
     public static string PlayerBaseStructureHealth = "player_baseStructureHealth";
 
     // Momentum

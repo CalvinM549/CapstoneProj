@@ -38,6 +38,8 @@ public class RunPrepScreen : HubScreen
     public override void OnOpen(HubManager hub)
     {
         manager = hub;
+
+        //display etc
     }
 
     public void RegenMap()

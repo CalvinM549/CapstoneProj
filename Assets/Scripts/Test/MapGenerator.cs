@@ -27,7 +27,7 @@ public class MapGenerator : MonoBehaviour
 
     private void Start()
     {
-        generation = new(db.rooms, mapBounds, walkLength);
+        generation = new(db.rooms, mapBounds, walkLength, 0, 1f, 0.3f);
     }
 
     private void Update()

@@ -40,6 +40,8 @@ public class PlayerTargeting : MonoBehaviour
 
     private void HandleLockInput()
     {
+        if (!p.CanAct) return;
+
         if (HasTarget)
             CycleLock();
         else

@@ -36,7 +36,7 @@ public class RoomPoolService
         }
     }
 
-    public RoomManager GetRoom(MapNode node)
+    public RoomManager GetRoom(RoomNode node)
     {
         if (activeRoom != null) Debug.LogError("[RoomPoolService] existing room active, return old to pool first");
 

@@ -5,8 +5,10 @@ using UnityEngine;
 public class RunState
 {
     // Run
-    public int RunSeed;
+    public int seed;
     public float difficultyScore;
+
+    private Player player;
 
     // Map
     public int chapterIndex;
@@ -16,28 +18,37 @@ public class RunState
     // Draft things
 
     public float runDurationTimer;
-    public float playerHeatTimer;
-    public float maxHeatValue;
+
+    // Stability
+    public float stabilityTimer;
+    public float maxStability = 120f;
+
+    public bool StabilityDepleted => stabilityTimer <= 0f;
+
+    public event Action<float> OnStabilityTick;
+    public event Action OnStabilityDepleted;
+
+    private bool stabilityDepletedFired;
 
     // Rooms
-    public float HeatLevel;
 
     // Stats
     public int EnemiesKilled;
     public int DamageTaken;
 
-    public event Action<float> OnHeatTick;
-
     #region Creation / Loading
 
-    public RunState(int seed, RunMap map)
+    public RunState(int seed, RunMap map, Player player)
     {
-        RunSeed = seed;
+        this.seed = seed;
         this.map = map;
 
-        runDurationTimer = 0f;
-        playerHeatTimer = 120f; // Change to variable start time??
+        this.player = player;
 
+        runDurationTimer = 0f;
+        stabilityTimer = maxStability; // Change to variable start time??
+
+        // Run Stats reset
         roomsCleared = 0;
 
         EnemiesKilled = 0;
@@ -62,16 +73,43 @@ public class RunState
     public void Tick(float dt)
     {
         runDurationTimer += dt;
-        playerHeatTimer -= dt;
-        if (playerHeatTimer <= 0)
+
+        if (stabilityDepletedFired) return;
+
+        if (stabilityTimer <= 0)
         {
-            // Fire Event
+            stabilityTimer = 0f;
+            stabilityDepletedFired = true;
+            OnStabilityDepleted?.Invoke();
+            return;
         }
-        else
-        {
-            OnHeatTick?.Invoke(playerHeatTimer / maxHeatValue);
-        }
+
+        OnStabilityTick?.Invoke(stabilityTimer / maxStability);
     }
+
+    #region Resource Adjustments
+
+    public void DepleteStability(float amount)
+    {
+        stabilityTimer = Mathf.Max(0f, stabilityTimer - amount);
+    }
+
+    public void RestoreStability(float amount, bool fullRestore)
+    {
+        stabilityTimer = fullRestore ? maxStability : Mathf.Min(maxStability, stabilityTimer + amount);
+    }
+
+    public void RestoreAmmo(int amount)
+    {
+        player.Combat.RestoreAmmo(Mathf.Max(0, amount));
+    }
+
+    public void GrantPlayerUpgrade()
+    {
+
+    }
+
+    #endregion
 
     // Calculate Rating for run
 

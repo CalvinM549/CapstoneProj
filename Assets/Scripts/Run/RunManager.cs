@@ -9,7 +9,7 @@ using static UnityEngine.Rendering.STP;
 
 public class RunManager : MonoBehaviour
 {
-    private enum RoomState
+    private enum ActiveRunState
     {
         Draft,
         RoomActive,
@@ -22,6 +22,10 @@ public class RunManager : MonoBehaviour
 
     public GameDatabase db;
 
+    [Header("Refs")]
+
+    [SerializeField] private Player playerPrefab;
+
     [SerializeField] private Transform roomContainer;
     [SerializeField] private Transform enemyContainer;
     [SerializeField] private Transform playerContainer;
@@ -29,19 +33,22 @@ public class RunManager : MonoBehaviour
     [SerializeField] private float fadeTime;
     [SerializeField] private CanvasGroup fadeOverlay;
 
-    [SerializeField] private MapDisplay mapDisplay;
+    [SerializeField] private MapOverlayUI mapDisplay;
     [SerializeField] private RunEndOverlay endOverlay;
+
+    [Header("Run Config")]
+
+    [SerializeField] private float optionalRouteCost = 5f;
 
     public RoomPoolService roomService; // Pools rooms, holds useful values etc
     public EnemyService enemyService; // Pools enemies, allows for spawning and handling etc
-    private RoomState state;
+    private ActiveRunState state;
 
     private RunState currentRun;
 
     private Player activePlayer;
     private RoomManager activeRoom;
 
-    [SerializeField] private Player playerPrefab;
 
     public event Action<Vector2Int> onPlayerRoomChanged;
 
@@ -54,7 +61,10 @@ public class RunManager : MonoBehaviour
 
         roomService = new RoomPoolService(db.rooms, roomContainer);
         enemyService = new EnemyService(db.enemies, enemyContainer);
+    }
 
+    private void OnEnable()
+    {
         GameEvents.OnRunEnded += HandleRunEnd;
     }
 
@@ -93,11 +103,13 @@ public class RunManager : MonoBehaviour
             return;
         }
 
-        currentRun = new(config.seed, config.map);
-        roomService.BuildPool(config.map);
-
         activePlayer = Instantiate(playerPrefab, playerContainer);
+        RunUIManager.Instance.Initialize(activePlayer);
         activePlayer.SetupNew(config.loadout);
+
+
+        currentRun = new(config.seed, config.map, activePlayer);
+        roomService.BuildPool(config.map);
 
         if(mapDisplay != null)
             mapDisplay.InitializeMapView(currentRun.map.tiles.Keys.ToList());
@@ -138,7 +150,7 @@ public class RunManager : MonoBehaviour
 
     #region Room Transitions
 
-    private void EnterNode(MapNode node, Direction? arrivingFrom)
+    private void EnterNode(RoomNode node, Direction? arrivingFrom)
     {
         // Remove Current Room
 
@@ -148,7 +160,7 @@ public class RunManager : MonoBehaviour
             activeRoom = null;
         }
 
-        state = RoomState.RoomActive;
+        state = ActiveRunState.RoomActive;
         currentRun.map.currentNode = node;
 
         // Get active room from pool
@@ -179,30 +191,39 @@ public class RunManager : MonoBehaviour
         activeRoom.Activate();
     }
 
+    private void HandleGateActivated(RoomManager room)
+    {
+        // Sets up new area to move into
+    }
+
     private void HandleRoomCleared(RoomManager room)
     {
         room.OnCleared -= HandleRoomCleared;
         room.OnFailure -= HandleRoomFailed;
 
-        currentRun.roomsCleared++;
-        currentRun.map.currentNode.cleared = true;
+        if (!currentRun.map.currentNode.cleared)
+        {
+            currentRun.roomsCleared++;
+            currentRun.map.currentNode.cleared = true;
+        }
 
-        mapDisplay.HandleRoomCleared(currentRun.map.currentNode.coordinates);
+        if (mapDisplay != null)
+            mapDisplay.HandleRoomCleared(currentRun.map.currentNode.coordinates);
 
-        state = RoomState.RoomTransition;
+        state = ActiveRunState.RoomTransition;
 
-        // Save game?
+        SaveCurrentRun();
     }
 
     private void HandleRoomFailed(RoomManager room)
     {
-        state = RoomState.RunFailure;
+        state = ActiveRunState.RunFailure;
 
         // Fire Run End Event
     }
 
     // Called by doorways when walked through to progress
-    public void TransitionTo(MapNode nextNode, Direction exitDirection)
+    public void TransitionTo(RoomNode nextNode, Direction exitDirection)
     {
         // Disable current room
         //DoTransitionFade(true); // Do Visual hiding
@@ -214,15 +235,15 @@ public class RunManager : MonoBehaviour
         //EnterNode(nextNode, null); // Change null to exit direction
     }
 
-    private IEnumerator TransitionRoutine(MapNode nextNode, Direction dir)
+    private IEnumerator TransitionRoutine(RoomNode nextNode, Direction dir)
     {
         DoTransitionFade(true);
-        TimescaleManager.Instance.PauseGame();
+        TimescaleManager.Instance.PauseGame(this);
         yield return new WaitForSecondsRealtime(fadeTime);
 
         EnterNode(nextNode, null); // Change null to exit direction
 
-        TimescaleManager.Instance.UnpauseGame();
+        TimescaleManager.Instance.UnpauseGame(this);
         DoTransitionFade(false);
     }
 
@@ -243,34 +264,50 @@ public class RunManager : MonoBehaviour
         if (currentRun == null) return;
         if (TimescaleManager.IsPaused) return;
 
-        switch (state)
+        if (activeRoom == null) return;
+
+        switch (activeRoom.State)
         {
-            case RoomState.RoomActive:
+            case RoomState.Active:
                 currentRun.Tick(Time.deltaTime);
                 break;
-
-            case RoomState.RoomTransition:
+            case RoomState.Idle:
                 currentRun.Tick(Time.deltaTime / 2);
                 break;
 
-            case RoomState.Draft:
-            case RoomState.RunComplete:
-            case RoomState.RunFailure:
+            default: 
                 break;
-
         }
+
+        //switch (state)
+        //{
+        //    case ActiveRunState.RoomActive:
+        //        currentRun.Tick(Time.deltaTime);
+        //        break;
+
+        //    case ActiveRunState.RoomTransition:
+        //        currentRun.Tick(Time.deltaTime / 2);
+        //        break;
+
+        //    case ActiveRunState.Draft:
+        //    case ActiveRunState.RunComplete:
+        //    case ActiveRunState.RunFailure:
+        //        break;
+        //}
     }
 
     #region Save System
 
     private void SaveCurrentRun()
     {
+        return; // TODO 
+
         var profile = GameManager.Instance.ActiveProfile;
         if(profile == null) return;
 
         var save = new RunSaveData()
         {
-            seed = currentRun.RunSeed,
+            seed = currentRun.seed,
             player = activePlayer.PackPlayerState()
         };
 

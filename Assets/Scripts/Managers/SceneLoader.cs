@@ -102,7 +102,7 @@ public class SceneLoader : MonoBehaviour
         TimescaleManager.Instance.KillAllTimeSlows();
 
         if(TimescaleManager.IsPaused)
-            TimescaleManager.Instance.UnpauseGame();
+            TimescaleManager.Instance.ForceUnpause();
 
         if (fadeOverlay != null)
         {

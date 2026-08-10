@@ -12,7 +12,6 @@ public class PlayerUpgrades : MonoBehaviour
     [SerializeField] private MajorUpgrade PropulsionTemplate;
     [SerializeField] private MajorUpgrade BrainTemplate;
 
-
     public Dictionary<UpgradeSlot, MajorUpgrade> majorSlots = new();
     public Dictionary<MajorUpgrade, List<SubUpgrade>> subUpgrades = new();
 

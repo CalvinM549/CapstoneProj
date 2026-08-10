@@ -1,18 +1,20 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TimescaleManager : MonoBehaviour
 {
     public static TimescaleManager Instance { get; private set; }
 
+
+    private List<object> pauseSources = new();
     public static bool IsPaused {  get; private set; }
-
-    private Coroutine currentHitstopRoutine;
-
-    private int pauseSources;
     private float lastTimeScale;
 
+    private Coroutine currentHitstopRoutine;
     private float hitstopTimeElapsed;
+
+
 
     [SerializeField] private float hitstopTimeScale = 0.05f;
 
@@ -42,9 +44,11 @@ public class TimescaleManager : MonoBehaviour
         GameEvents.OnPlayerDeath -= DeathStop;
     }
 
-    public void PauseGame()
+    public void PauseGame(object source)
     {
-        pauseSources++;
+        if (pauseSources.Contains(source)) return;
+
+        pauseSources.Add(source);
 
         if (!IsPaused)
         {
@@ -54,15 +58,23 @@ public class TimescaleManager : MonoBehaviour
         }
     }
 
-    public void UnpauseGame()
+    public void UnpauseGame(object source)
     {
-        pauseSources--;
+        pauseSources.Remove(source);
 
-        if (pauseSources <= 0 && IsPaused)
+        if (pauseSources.Count == 0 && IsPaused)
         {
             Time.timeScale = lastTimeScale;
             IsPaused = false;
         }
+    }
+
+    public void ForceUnpause()
+    {
+        pauseSources.Clear();
+
+        Time.timeScale = 1f;
+        IsPaused = false;
     }
 
     private void HandleHitstop(HitData hit)

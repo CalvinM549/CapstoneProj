@@ -66,7 +66,7 @@ public static class DirectionExtensions
         };
     }
 
-    public static void ConnectTo(this MapNode a, MapNode b, Direction fromA)
+    public static void ConnectTo(this RoomNode a, RoomNode b, Direction fromA)
     {
         a.connections[fromA] = b;
         b.connections[fromA.Opposite()] = a;

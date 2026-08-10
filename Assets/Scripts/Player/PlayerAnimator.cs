@@ -24,8 +24,6 @@ public class PlayerAnimator : MonoBehaviour
     private Material baseMaterial;
     [SerializeField] private Material hitMaterial;
 
-
-
     private void Awake()
     {
         animator = GetComponentInChildren<Animator>();
@@ -61,7 +59,6 @@ public class PlayerAnimator : MonoBehaviour
 
     private void Update()
     {
-        //HandleMovementSprite();
         UpdateMovementAnimation();
         UpdateAttackAnimation();
         UpdateAutoFlip();

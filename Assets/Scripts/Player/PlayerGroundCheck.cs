@@ -7,6 +7,8 @@ public class PlayerGroundCheck : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform checkPosition; 
 
+    // Implement stairs check??
+
     private Vector2 lastSafePosition;
 
     private bool wasGroundedLastFrame;

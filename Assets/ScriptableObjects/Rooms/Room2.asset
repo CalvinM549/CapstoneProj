@@ -15,6 +15,7 @@ MonoBehaviour:
   id: random_01
   type: 1
   tag: -1
+  allowedConnections: -1
   difficultyCost: 0
   timerCost: 0
   roomPrefab: {fileID: 6074118564554837086, guid: ee44d11f9bceef04daa6f13f08b15c14, type: 3}

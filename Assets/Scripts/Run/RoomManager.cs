@@ -1,10 +1,9 @@
 using System;
-using System.Linq;
 using UnityEngine;
 
 public enum RoomState
 {
-    Spawning,
+    Idle,
     Active,
     Cleared,
     Failed
@@ -18,6 +17,9 @@ public class RoomManager : MonoBehaviour
     private IObjectiveTracker objectiveTracker;
 
     [SerializeField] private UpgradeStation upgradeStation;
+    [SerializeField] private GateStation gateStation;
+    [SerializeField] private RestStation restStation;
+
     [SerializeField] private Doorway[] doorways;
     public Vector2 defaultEntryPoint;
 
@@ -46,7 +48,7 @@ public class RoomManager : MonoBehaviour
 #endif
     }
 
-    public void Initialize(MapNode node, RunState run)
+    public void Initialize(RoomNode node, RunState run)
     {
         Data = node.room;
         this.run = run;
@@ -62,9 +64,18 @@ public class RoomManager : MonoBehaviour
                 door.gameObject.SetActive(false);
         }
 
-        State = RoomState.Spawning;
+        State = RoomState.Idle;
 
-        if (node.cleared)
+        if (upgradeStation != null)
+            upgradeStation.OnActivated.AddListener(HandleUpgradeActivated);
+ 
+        if (restStation != null)
+            restStation.OnActivated.AddListener(HandleRestActivated);
+
+        if(gateStation != null)
+            gateStation.OnActivated.AddListener(HandleGateActivated);
+
+        if (node.cleared || objectiveTracker == null)
         {
             // Keep door in open state
         }
@@ -81,8 +92,11 @@ public class RoomManager : MonoBehaviour
     public void Activate()
     {
         State = RoomState.Active;
-        if(objectiveTracker != null)
+
+        if (objectiveTracker != null)
             objectiveTracker.OnEncounterCleared += HandleEncounterCleared;
+        else
+            HandleEncounterCleared();
     }
 
     public Vector2 GetEntryPointFor(Direction fromDirection)
@@ -105,8 +119,11 @@ public class RoomManager : MonoBehaviour
         if(objectiveTracker != null)
             objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
 
-        if(upgradeStation != null) // The case in rest / shop rooms?
-            upgradeStation.Enable();
+        if(upgradeStation != null) upgradeStation.Enable();
+
+        if(restStation != null) restStation.Enable();
+
+        if(gateStation != null) gateStation.Enable();
 
         foreach (var door in doorways)
             door.Unlock();
@@ -121,6 +138,23 @@ public class RoomManager : MonoBehaviour
         OnFailure?.Invoke(this);
     }
 
+    private void HandleRestActivated()
+    {
+        run.RestoreStability(100f, true);
+        run.RestoreAmmo(5);
+        // restore player health
+    }
+
+    private void HandleUpgradeActivated()
+    {
+
+    }
+
+    private void HandleGateActivated()
+    {
+
+    }
+
     public void ResetForPool()
     {
         OnCleared = null;
@@ -129,6 +163,6 @@ public class RoomManager : MonoBehaviour
         if (objectiveTracker != null)
             objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
 
-        State = RoomState.Spawning;
+        State = RoomState.Idle;
     }
 }
