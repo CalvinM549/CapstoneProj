@@ -2,12 +2,26 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+public enum EnemyState
+{
+    Spawning,
+    Active,
+    Staggered,
+    Dead
+}
+
 public class EnemyController : MonoBehaviour, IDamageable
 {
     [Header("Stats")]
-    [SerializeField] protected EnemyData data;
-    public EnemyData Data => data;
+    public EnemyData data {  get; set; }
 
+    [SerializeField] private Material damageMaterial;
+
+    private EnemyAIController ai;    
+    protected SpriteRenderer sr;
+    protected Animator animator;
+    protected Rigidbody2D rb;
+    
     protected Transform playerTransform;
     public bool hasPlayerLock;
 
@@ -16,16 +30,14 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     public event Action<float, float, HitData> OnHit;
 
-    protected SpriteRenderer sr;
-    protected Animator animator;
-    protected Rigidbody2D rb;
+
+
 
     protected bool isFacingRight = true;
 
     private Material baseMaterial;
     protected Sprite baseSprite;
 
-    [SerializeField] private Material damageMaterial;
 
     private Coroutine hitFXRoutine;
 
@@ -34,17 +46,31 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     public void OnSpawn()
     {
+        // Reset Values
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = 0f;
 
+        animator.Rebind();
+        animator.Update(0f);
+
+        ai.ResetController(data.aiProfile);
+        ai.enabled = true;
     }
 
     public void OnDespawn()
     {
-
+        ai.enabled = false;
         StopAllCoroutines();
+    }
+
+    private void HandleDeath()
+    {
+
     }
 
     protected virtual void Awake()
     {
+        ai = GetComponent<EnemyAIController>();
         animator = GetComponentInChildren<Animator>();
         sr = animator.GetComponent<SpriteRenderer>();
 

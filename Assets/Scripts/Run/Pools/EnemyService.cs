@@ -44,7 +44,7 @@ public class EnemyService
         enemy.ResetForPool();
         enemy.gameObject.SetActive(false);
 
-        var stack = pooledEnemies[enemy.Data.Id];
+        var stack = pooledEnemies[enemy.data.Id];
         stack.Push(enemy);
     }
 

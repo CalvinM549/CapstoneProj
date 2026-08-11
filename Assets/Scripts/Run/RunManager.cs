@@ -105,6 +105,8 @@ public class RunManager : MonoBehaviour
 
         activePlayer = Instantiate(playerPrefab, playerContainer);
         RunUIManager.Instance.Initialize(activePlayer);
+        AIManager.Instance.Initialize(activePlayer);
+
         activePlayer.SetupNew(config.loadout);
 
 

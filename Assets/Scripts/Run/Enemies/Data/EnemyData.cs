@@ -16,8 +16,7 @@ public class EnemyData : DatabaseEntry
     public float baseSpeed;
 
     [Header("AI")]
-    // AI Controller
-    public float detectionRadius;
+    public AIProfile aiProfile;
 }
 
 [Serializable]
