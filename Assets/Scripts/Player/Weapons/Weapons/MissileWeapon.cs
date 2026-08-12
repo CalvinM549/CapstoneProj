@@ -42,14 +42,10 @@ public class MissileWeapon : PlayerWeapon
     {
         if (currentAmmo <= 0) return;
 
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        VFXManager.Instance.PlayVFX(VFXType.ShootIntense, p.transform.position, Quaternion.Euler(0f, 0f, angle));
+        VFXManager.Instance.PlayVFX(VFXType.ShootIntense, p.transform.position, direction);
         CameraManager.Instance.CameraShake(0.5f);
 
         var projectile = ProjectilePools.FireProjectile(this, Projectiles[0], p.transform.position, direction);
-
-        Debug.Log($"[MissileWeapon] Got projectile of type {projectile.GetType().Name}");
-
         if (projectile is not HomingProjectile homing)
         {
             Debug.Log($"[MissileWeapon] Projectile set is not a HomingProjectile type");

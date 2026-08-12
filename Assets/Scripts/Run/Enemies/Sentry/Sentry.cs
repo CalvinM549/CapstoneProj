@@ -1,186 +1,186 @@
-using System.Collections;
-using UnityEngine;
+//using System.Collections;
+//using UnityEngine;
 
-public class Sentry : EnemyController, IProjectileEmitter
-{
-    [SerializeField] bool isElite;
-    [SerializeField] private Transform[] patrolPoints;
-    private int currentPoint = 0;
+//public class Sentry : EnemyController, IProjectileEmitter
+//{
+//    [SerializeField] bool isElite;
+//    [SerializeField] private Transform[] patrolPoints;
+//    private int currentPoint = 0;
 
-    [SerializeField] private int burstCount = 3;
-    [SerializeField] private float burstInterval = 0.15f;
+//    [SerializeField] private int burstCount = 3;
+//    [SerializeField] private float burstInterval = 0.15f;
 
-    [SerializeField] private float attackCooldown;
+//    [SerializeField] private float attackCooldown;
 
-    [SerializeField] private float spreadAngle = 10f;
+//    [SerializeField] private float spreadAngle = 10f;
 
-    [SerializeField] private Sprite fireSprite;
+//    [SerializeField] private Sprite fireSprite;
 
-    private bool isFiring = false;
-    private float attackCooldownTimer;
+//    private bool isFiring = false;
+//    private float attackCooldownTimer;
 
-    [SerializeField] private Transform firePoint;
-    [SerializeField] private ProjectileData bulletData;
+//    [SerializeField] private Transform firePoint;
+//    [SerializeField] private ProjectileData bulletData;
 
-    [SerializeField] private GameObject bulletFlashEffect;
-    [SerializeField] private GameObject windupEffect;
+//    [SerializeField] private GameObject bulletFlashEffect;
+//    [SerializeField] private GameObject windupEffect;
 
-    [SerializeField] private ProjectileData[] projectiles;
-    public ProjectileData[] Projectiles => projectiles;
+//    [SerializeField] private ProjectileData[] projectiles;
+//    public ProjectileData[] Projectiles => projectiles;
 
-    public bool IsPlayerProjectile => false;
+//    public bool IsPlayerProjectile => false;
 
-    public bool PoolRequested { get; set; }
+//    public bool PoolRequested { get; set; }
 
-    protected override void Awake()
-    {
-        base.Awake();
+//    protected override void Awake()
+//    {
+//        base.Awake();
 
-        attackCooldownTimer = Random.Range(0, attackCooldown);
-    }
+//        attackCooldownTimer = Random.Range(0, attackCooldown);
+//    }
 
-    protected override void OnEnable()
-    {
-        ProjectilePools.RequestPool(this);
-    }
+//    protected override void OnEnable()
+//    {
+//        ProjectilePools.RequestPool(this);
+//    }
 
-    protected override void OnDisable()
-    {
-        ProjectilePools.ReleasePool(this);
-    }
+//    protected override void OnDisable()
+//    {
+//        ProjectilePools.ReleasePool(this);
+//    }
 
-    protected override void Update()
-    {
-        HandleCooldown();
-        UpdateMovement();
+//    protected override void Update()
+//    {
+//        HandleCooldown();
+//        UpdateMovement();
 
-        base.Update();
+//        base.Update();
 
-        if (attackCooldownTimer <= 0f && isFiring != true)
-            DoBurst();
+//        if (attackCooldownTimer <= 0f && isFiring != true)
+//            DoBurst();
 
-        if (isFiring)
-        {
-            Vector2 direction = playerTransform.position - transform.position;
+//        if (isFiring)
+//        {
+//            Vector2 direction = playerTransform.position - transform.position;
 
-            if (direction.x > 0 && !isFacingRight)
-                FlipFacing();
-            else if (direction.x < 0 && isFacingRight)
-                FlipFacing();
-        }
-    }
+//            if (direction.x > 0 && !isFacingRight)
+//                FlipFacing();
+//            else if (direction.x < 0 && isFacingRight)
+//                FlipFacing();
+//        }
+//    }
 
-    private void HandleCooldown()
-    {
-        if(attackCooldownTimer > 0f)
-            attackCooldownTimer -= Time.deltaTime;
-    }
+//    private void HandleCooldown()
+//    {
+//        if(attackCooldownTimer > 0f)
+//            attackCooldownTimer -= Time.deltaTime;
+//    }
 
-    private void UpdateMovement()
-    {
-        if (patrolPoints.Length <= 0 || patrolPoints[0] == null) return;
+//    private void UpdateMovement()
+//    {
+//        if (patrolPoints.Length <= 0 || patrolPoints[0] == null) return;
 
-        if (isFiring)
-        {
-            animator.SetBool("IsWalking", false);
-            return;
-        }
+//        if (isFiring)
+//        {
+//            animator.SetBool("IsWalking", false);
+//            return;
+//        }
 
-        animator.SetBool("IsWalking", true);
+//        animator.SetBool("IsWalking", true);
 
-        Vector3 targetPoint = patrolPoints[currentPoint].transform.position;
+//        Vector3 targetPoint = patrolPoints[currentPoint].transform.position;
 
-        Vector2 direction = transform.position - targetPoint;
-        if (direction.x > 0 && isFacingRight)
-            FlipFacing();
-        else if(direction.x < 0 && !isFacingRight)
-            FlipFacing();
+//        Vector2 direction = transform.position - targetPoint;
+//        if (direction.x > 0 && isFacingRight)
+//            FlipFacing();
+//        else if(direction.x < 0 && !isFacingRight)
+//            FlipFacing();
 
-            transform.position = Vector2.MoveTowards(transform.position, targetPoint, (data.baseSpeed * Time.deltaTime));
-        if (transform.position == targetPoint)
-        {
-            if (currentPoint >= patrolPoints.Length - 1)
-                currentPoint = 0;
-            else
-                currentPoint++;
-        }
-    }
+//            transform.position = Vector2.MoveTowards(transform.position, targetPoint, (data.baseSpeed * Time.deltaTime));
+//        if (transform.position == targetPoint)
+//        {
+//            if (currentPoint >= patrolPoints.Length - 1)
+//                currentPoint = 0;
+//            else
+//                currentPoint++;
+//        }
+//    }
 
-    private void DoBurst()
-    {
-        if (isFiring) return;
+//    private void DoBurst()
+//    {
+//        if (isFiring) return;
 
-        StartCoroutine(FireBurstRoutine());
-    }
+//        StartCoroutine(FireBurstRoutine());
+//    }
 
-    private IEnumerator FireBurstRoutine()
-    {
-        isFiring = true;
+//    private IEnumerator FireBurstRoutine()
+//    {
+//        isFiring = true;
 
-        animator.Play("FireReady");
-        // Windup
+//        animator.Play("FireReady");
+//        // Windup
 
-        sr.sprite = fireSprite;
+//        sr.sprite = fireSprite;
 
-        Instantiate(windupEffect, firePoint);
+//        Instantiate(windupEffect, firePoint);
 
-        yield return new WaitForSeconds(1.5f);
+//        yield return new WaitForSeconds(1.5f);
 
-        // Firing
-        var direction = playerTransform.position - transform.position;
-        var distance = Vector2.Distance(transform.position, playerTransform.position);
+//        // Firing
+//        var direction = playerTransform.position - transform.position;
+//        var distance = Vector2.Distance(transform.position, playerTransform.position);
 
-        // LOS Check
-        if (!Physics2D.Raycast(transform.position, direction, distance, GameManager.Instance.WallLayer))
-        {
-            // IF LOS is clear
+//        // LOS Check
+//        if (!Physics2D.Raycast(transform.position, direction, distance, GameManager.Instance.WallLayer))
+//        {
+//            // IF LOS is clear
 
-            for (int i = 0; i < burstCount; i++)
-            {
+//            for (int i = 0; i < burstCount; i++)
+//            {
 
-                // Do tracking for each bullet
-                if (isElite)
-                    direction = playerTransform.position - transform.position;
+//                // Do tracking for each bullet
+//                if (isElite)
+//                    direction = playerTransform.position - transform.position;
 
-                float spread = Random.Range(-spreadAngle * 0.5f, spreadAngle * 0.5f);
-                Vector2 fireDir = Quaternion.Euler(0f, 0f, spread) * direction;
+//                float spread = Random.Range(-spreadAngle * 0.5f, spreadAngle * 0.5f);
+//                Vector2 fireDir = Quaternion.Euler(0f, 0f, spread) * direction;
 
-                if (fireDir.x > 0 && !isFacingRight)
-                    FlipFacing();
-                else if (fireDir.x < 0 && isFacingRight)
-                    FlipFacing();
+//                if (fireDir.x > 0 && !isFacingRight)
+//                    FlipFacing();
+//                else if (fireDir.x < 0 && isFacingRight)
+//                    FlipFacing();
 
-                FireProjectile(Projectiles[0], firePoint.position, direction);
+//                FireProjectile(Projectiles[0], firePoint.position, direction);
 
-                if (i < burstCount - 1)
-                    yield return new WaitForSeconds(burstInterval);
-            }
+//                if (i < burstCount - 1)
+//                    yield return new WaitForSeconds(burstInterval);
+//            }
 
-            attackCooldownTimer = attackCooldown;
+//            attackCooldownTimer = attackCooldown;
 
-        }
-        else
-        {
-            yield return new WaitForSeconds(0.3f);
-            //if LOS is not clear
-            attackCooldownTimer = attackCooldown / 2; // put on reduced CD
-        }
+//        }
+//        else
+//        {
+//            yield return new WaitForSeconds(0.3f);
+//            //if LOS is not clear
+//            attackCooldownTimer = attackCooldown / 2; // put on reduced CD
+//        }
 
-        yield return new WaitForSeconds(0.2f);
+//        yield return new WaitForSeconds(0.2f);
 
-        animator.Play("ReturnFromFire");
+//        animator.Play("ReturnFromFire");
 
-        yield return new WaitForSeconds(1.5f);
+//        yield return new WaitForSeconds(1.5f);
 
 
-        isFiring = false;
+//        isFiring = false;
 
-        sr.sprite = baseSprite;
-    }
+//        sr.sprite = baseSprite;
+//    }
 
-    public void FireProjectile(ProjectileData projectile, Vector2 firePos, Vector2 direction)
-    {
-        ProjectilePools.FireProjectile(this, projectile, firePos, direction);
-        Instantiate(bulletFlashEffect, firePoint);
-    }
-}
+//    public void FireProjectile(ProjectileData projectile, Vector2 firePos, Vector2 direction)
+//    {
+//        ProjectilePools.FireProjectile(this, projectile, firePos, direction);
+//        Instantiate(bulletFlashEffect, firePoint);
+//    }
+//}

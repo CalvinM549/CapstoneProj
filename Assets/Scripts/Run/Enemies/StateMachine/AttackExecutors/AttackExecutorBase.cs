@@ -2,16 +2,15 @@ using UnityEngine;
 
 public abstract class AttackExecutorBase : MonoBehaviour, IAttackExecutor
 {
-    [SerializeField] protected float telegraphDuration;
-    [SerializeField] protected float range;
+    [SerializeField] protected EnemyAttackData attackData;
+    
+    public bool Executing { get; protected set; }
+    public EnemyAttackData AttackData => attackData;
 
-    public float TelegraphDuration => telegraphDuration;
-
-    public virtual bool CanExecute(EnemyAIController ai) => ai.context.distanceToTarget <= range;
-
+    public virtual bool CanExecute(EnemyAIController ai) => ai.context.distanceToTarget <= attackData.attackRange;
     public abstract void BeginTelegraph(EnemyAIController ai);
     public abstract void Execute(EnemyAIController ai);
-    public abstract void CancelTelegraph(EnemyAIController ai);
+    public abstract void Interrupt(EnemyAIController ai);
 
     public virtual void ResetForPool() { }
 

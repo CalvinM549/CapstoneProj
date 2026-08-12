@@ -283,13 +283,13 @@ GameObject:
   - component: {fileID: 8107065280727358240}
   - component: {fileID: 2621895607124036595}
   - component: {fileID: 3108158908165989089}
-  - component: {fileID: 6511229668004776600}
+  - component: {fileID: -411551462821502722}
   - component: {fileID: 1577401330717255328}
   - component: {fileID: 5875639385763828447}
   - component: {fileID: 1158100212670289406}
   - component: {fileID: 6567632816481895069}
   m_Layer: 8
-  m_Name: SentryEnemy 1
+  m_Name: SentryEnemy_Burst
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -358,7 +358,7 @@ MonoBehaviour:
   profile: {fileID: 11400000, guid: 95aea7d8549a16a479308147e8771809, type: 2}
   rb: {fileID: 6567632816481895069}
   self: {fileID: 8107065280727358240}
---- !u!114 &6511229668004776600
+--- !u!114 &-411551462821502722
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -367,16 +367,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 3209857631965518025}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0089f77e94e8be4bbcde44f0a103e1d, type: 3}
+  m_Script: {fileID: 11500000, guid: 3766bec6b27d20f49a0b5dd4d04af946, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectileAttackExecutor
+  m_EditorClassIdentifier: Assembly-CSharp::BurstAttackExecutor
   attackData: {fileID: 11400000, guid: 74d360a8b45227048bc693fb017deb48, type: 2}
   firePos: {fileID: 1641652615450869957}
-  spreadAngle: 0
-  shootFlashFX: 5
+  spreadAngle: 15
+  shootFlashFX: 0
   laserSight: {fileID: 2790749708199632404}
   projectiles:
-  - {fileID: 11400000, guid: fac50c36672fe6a479235690055d0d00, type: 2}
+  - {fileID: 11400000, guid: 01066313aac4e63428ff95025550a777, type: 2}
+  burstCount: 5
+  burstInterval: 0.2
 --- !u!114 &1577401330717255328
 MonoBehaviour:
   m_ObjectHideFlags: 0

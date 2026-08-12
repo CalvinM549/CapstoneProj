@@ -15,6 +15,8 @@ public class PlayerInteract : MonoBehaviour
     private Dictionary<IInteractable, Transform> nearbyInteractables;
     private LayerMask interactionLayer; // not sure if needed
 
+    private IInteractable current;
+
     public event Action<bool> CanInteractUpdated;
 
     private void Awake()

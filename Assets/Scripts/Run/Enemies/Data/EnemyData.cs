@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 
-[CreateAssetMenu(fileName = "EnemyData", menuName = "Enemies/NewEnemyData", order = 1)]
+[CreateAssetMenu(fileName = "EnemyData", menuName = "Enemy/NewEnemyData", order = 1)]
 public class EnemyData : DatabaseEntry
 {
     [Header("Name")]

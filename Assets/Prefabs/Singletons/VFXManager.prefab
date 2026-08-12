@@ -64,5 +64,5 @@ MonoBehaviour:
   - type: 5
     prefab: {fileID: 2525816426480259238, guid: 2fa7df641f7774247abd70c5068abdfb, type: 3}
     initialPoolSize: 4
-    maxPoolSize: 4
+    maxPoolSize: 10
   vfxContainer: {fileID: 0}

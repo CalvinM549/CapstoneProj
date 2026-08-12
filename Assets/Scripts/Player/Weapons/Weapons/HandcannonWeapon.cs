@@ -5,9 +5,7 @@ public class HandcannonWeapon : PlayerWeapon
 {
     public override void Fire(Vector2 direction)
     {
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-        VFXManager.Instance.PlayVFX(VFXType.ShootIntense, p.transform.position, Quaternion.Euler(0f, 0f, angle));
+        VFXManager.Instance.PlayVFX(VFXType.ShootIntense, p.transform.position, direction);
         CameraManager.Instance.CameraShake(1f);
         TimescaleManager.Instance.RequestTimeSlow(0.2f);
 

@@ -70,6 +70,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
     private void Update()
     {
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.J))
         {
             RestoreSegments(2);
@@ -79,6 +80,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         {
             InitializeHealth(healthSegments.Count + 1);
         }
+#endif
     }
 
     private void InitializeHealth(int segmentCount)

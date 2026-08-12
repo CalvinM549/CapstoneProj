@@ -3,7 +3,7 @@ using UnityEngine;
 public static class EnemyStates
 {
     public static readonly IdleState Idle = new();
-    public static readonly ChaseState Chase = new();
+    public static readonly MoveIntoRangeState MoveIntoRange = new();
     public static readonly AttackState Attack = new();
     public static readonly RepositionState Reposition = new();
     public static readonly StaggeredState Staggered = new();
@@ -22,6 +22,7 @@ public class IdleState : IEnemyState
     public void Enter(EnemyAIController ai)
     {
         ai.Body.linearVelocity = Vector2.zero;
+        // Set idle animation
     }
 
     public void Tick(EnemyAIController ai, float dt)
@@ -30,7 +31,7 @@ public class IdleState : IEnemyState
         if (AIManager.Instance.TryFindTarget(ai, out var target))
         {
             ai.context.target = target;
-            ai.ChangeState(EnemyStates.Chase);
+            ai.ChangeState(EnemyStates.MoveIntoRange);
         }
     }
     public void Exit(EnemyAIController ai)
@@ -38,15 +39,18 @@ public class IdleState : IEnemyState
     }
 }
 
-public class ChaseState : IEnemyState
+public class MoveIntoRangeState : IEnemyState
 {
     public void Enter(EnemyAIController ai)
     {
+        var ctx = ai.context;
+        ctx.currentAttackRange = ai.GetValidExecutor().AttackData.attackRange;
     }
 
     public void Tick(EnemyAIController ai, float dt)
     {
-        ref var ctx = ref ai.context;
+        var ctx = ai.context;
+
         if (ctx.target == null)
         {
             ai.ChangeState(EnemyStates.Idle);
@@ -56,7 +60,7 @@ public class ChaseState : IEnemyState
         Vector2 toTarget = (Vector2)ctx.target.position - ai.Body.position;
         ctx.distanceToTarget = toTarget.magnitude;
 
-        if (ctx.distanceToTarget < ai.profile.attackRange)
+        if (ctx.distanceToTarget < ctx.currentAttackRange && AIManager.Instance.TryFindTarget(ai, out var target))
         {
             ai.ChangeState(EnemyStates.Attack);
             return;
@@ -77,7 +81,7 @@ public class AttackState : IEnemyState
     public void Enter(EnemyAIController ai)
     {
         var ctx = ai.context;
-        var executor = SelectExecutor(ai);
+        var executor = ai.GetExecutor(ctx.activeExecutorIndex);
 
         if (executor == null)
         {
@@ -85,7 +89,6 @@ public class AttackState : IEnemyState
             return;
         }
 
-        ctx.activeExecutorIndex = ai.attackExecutors.IndexOf(executor);
         ctx.timeSinceAttack = 0f;
         ai.Body.linearVelocity = Vector2.zero;
         executor.BeginTelegraph(ai);
@@ -94,12 +97,16 @@ public class AttackState : IEnemyState
     public void Tick(EnemyAIController ai, float dt)
     {
         var ctx = ai.context;
-        var executor = ai.attackExecutors[ctx.activeExecutorIndex];
+        var executor = ai.GetExecutor(ctx.activeExecutorIndex);
         ctx.timeSinceAttack += dt;
 
-        if (ctx.timeSinceAttack >= executor.TelegraphDuration)
+        if (ctx.timeSinceAttack >= executor.AttackData.telegraphDuration && !executor.Executing)
         {
             executor.Execute(ai);
+        }
+
+        if (ctx.timeSinceAttack >= executor.AttackData.winddownDuration + executor.AttackData.telegraphDuration && !executor.Executing)
+        {
             ai.ChangeState(EnemyStates.Reposition);
         }
     }
@@ -107,66 +114,70 @@ public class AttackState : IEnemyState
     public void Exit(EnemyAIController ai)
     {
         var executor = ai.attackExecutors[ai.context.activeExecutorIndex];
-        executor.CancelTelegraph(ai);
-    }
-
-    private IAttackExecutor SelectExecutor(EnemyAIController ai)
-    {
-        ref var ctx = ref ai.context;
-        var pattern = ai.profile.attackPattern;
-        var executor = ai.attackExecutors[pattern[ctx.attackPatternIndex % pattern.Length]];
-        ctx.attackPatternIndex++;
-        return executor.CanExecute(ai) ? executor : FallbackToInRange(ai);
-    }
-
-    private IAttackExecutor FallbackToInRange(EnemyAIController ai)
-    {
-        ref var ctx = ref ai.context;
-        for (int i = 0; i < ai.attackExecutors.Count; i++)
-        {
-            var executor = ai.attackExecutors[i];
-            if (!executor.CanExecute(ai)) continue;
-            else return executor;
-        }
-
-        return null;
+        executor.Interrupt(ai);
     }
 }
 
 public class RepositionState : IEnemyState
 {
+    private const float defaultRepositionDuration = 0.3f;
+
     public void Enter(EnemyAIController ai)
     {
-        throw new System.NotImplementedException();
-    }
-
-    public void Exit(EnemyAIController ai)
-    {
-        throw new System.NotImplementedException();
+        ai.context.stateTimer = ai.profile.repositionDuration > 0
+            ? ai.profile.repositionDuration
+            : defaultRepositionDuration;
     }
 
     public void Tick(EnemyAIController ai, float dt)
     {
-        throw new System.NotImplementedException();
+        var ctx = ai.context;
+
+        if (ctx.target == null)
+        {
+            ai.ChangeState(EnemyStates.Idle);
+            return;
+        }
+
+        ctx.stateTimer -= dt;
+
+        if (ai.profile.moveSpeed > 0f)
+        {
+            Vector2 toTarget = (Vector2)ctx.target.position - ai.Body.position;
+            Vector2 lateralDir = Vector2.Perpendicular(toTarget.normalized);
+            ai.Body.linearVelocity = lateralDir * (ai.profile.moveSpeed);
+        }
+
+        if (ctx.stateTimer <= 0f)
+            ai.ChangeState(EnemyStates.MoveIntoRange);
+
+
     }
+
+    public void Exit(EnemyAIController ai)
+    {
+        ai.Body.linearVelocity = Vector2.zero;
+    }
+
 }
 
 public class StaggeredState : IEnemyState
 {
     public void Enter(EnemyAIController ai)
     {
-        ai.context.staggerTimer = ai.profile.staggerDuration;
-        ai.Body.linearVelocity = Vector2.zero;
+        // Do animation change
     }
 
     public void Tick(EnemyAIController ai, float dt)
     {
         ai.context.staggerTimer -= dt;
         if (ai.context.staggerTimer <= 0f)
-            ai.ChangeState(ai.context.target != null ? EnemyStates.Chase : EnemyStates.Idle);
+            ai.ChangeState(ai.context.target != null ? EnemyStates.MoveIntoRange : EnemyStates.Idle);
     }
 
     public void Exit(EnemyAIController ai)
-    { }
+    {
+        // reset animation trigger
+    }
 
 }

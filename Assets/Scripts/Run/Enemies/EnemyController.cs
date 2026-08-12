@@ -13,7 +13,7 @@ public enum EnemyState
 public class EnemyController : MonoBehaviour, IDamageable
 {
     [Header("Stats")]
-    public EnemyData data {  get; set; }
+    public EnemyData data;
 
     [SerializeField] private Material damageMaterial;
 
@@ -44,6 +44,44 @@ public class EnemyController : MonoBehaviour, IDamageable
     public bool IsAlive { get; set; }
     public bool IsIFrame = false;
 
+    protected virtual void Awake()
+    {
+        ai = GetComponent<EnemyAIController>();
+        animator = GetComponentInChildren<Animator>();
+        sr = animator.GetComponent<SpriteRenderer>();
+
+        rb = GetComponent<Rigidbody2D>();
+        currentHealth = data.baseHealth;
+        IsAlive = true;
+
+        baseSprite = sr.sprite;
+        baseMaterial = sr.material;
+    }
+
+    private void Start()
+    {
+        AIManager.Instance.RegisterEnemy(ai);
+        OnSpawn();
+    }
+
+    private void Update()
+    {
+        if (!IsIFrame)
+        {
+            animator.SetBool("IsWalking", rb.linearVelocity.magnitude > 0.1);
+
+            if (rb.linearVelocityX > 0 && !isFacingRight)
+                FlipFacing();
+            else if (rb.linearVelocityX < 0 && isFacingRight)
+                FlipFacing();
+        }
+    }
+
+    private void OnDisable()
+    {
+        AIManager.Instance.UnregisterEnemy(ai);
+    }
+
     public void OnSpawn()
     {
         // Reset Values
@@ -68,34 +106,6 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     }
 
-    protected virtual void Awake()
-    {
-        ai = GetComponent<EnemyAIController>();
-        animator = GetComponentInChildren<Animator>();
-        sr = animator.GetComponent<SpriteRenderer>();
-
-        rb = GetComponent<Rigidbody2D>();
-        currentHealth = data.baseHealth;
-        IsAlive = true;
-
-        baseSprite = sr.sprite;
-        baseMaterial = sr.material;
-    }
-
-    protected virtual void Start()
-    {
-        playerTransform = GameObject.FindWithTag("Player").transform;
-    }
-
-    protected virtual void OnEnable() { }
-    protected virtual void OnDisable() { }
-    protected virtual void Update() { }
-
-    public virtual void Initialize(Transform player) // Occurs when spawned??
-    {
-        playerTransform = player;
-    }
-
     public virtual void ResetForPool()
     {
         // reset health
@@ -110,6 +120,10 @@ public class EnemyController : MonoBehaviour, IDamageable
         if (!hit.isPlayerAttack) return;
 
         ApplyDamage(hit);
+
+        ai.ChangeState(EnemyStates.Staggered);
+        ai.context.staggerTimer = hit.hitstunTime;
+
         ApplyKnockback(hit.knockbackDirection, hit.knockbackForce);
 
         OnHit?.Invoke(currentHealth, data.baseHealth, hit);
@@ -134,11 +148,13 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         if (direction.magnitude < 0.1f) return;
 
+
         rb.linearVelocity = (direction * force);
     }
 
     protected virtual void Die()
     {
+        OnDespawn();
         IsAlive = false;
 
         VFXManager.Instance.PlayVFX(VFXType.ExplosionComplex, transform.position);
@@ -185,6 +201,5 @@ public class EnemyController : MonoBehaviour, IDamageable
         scaler.x *= -1;
         sr.transform.localScale = scaler;
     }
-
 }
 

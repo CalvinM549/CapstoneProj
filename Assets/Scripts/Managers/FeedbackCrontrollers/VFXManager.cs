@@ -70,4 +70,10 @@ public class VFXManager : MonoBehaviour
     }
 
     public void PlayVFX(VFXType type, Vector2 position) => PlayVFX(type, position, Quaternion.identity);
+
+    public void PlayVFX(VFXType type, Vector2 position, Vector2 direction)
+    {
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        PlayVFX(type, position, rotation: Quaternion.Euler(0f, 0f, angle));
+    }
 }

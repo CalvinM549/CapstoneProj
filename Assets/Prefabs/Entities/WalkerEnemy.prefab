@@ -639,7 +639,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3732140446805786319}
-  - component: {fileID: 751752948261942227}
   - component: {fileID: 8344917708549136039}
   - component: {fileID: 3977424246301497259}
   - component: {fileID: -7337528523074580318}
@@ -669,40 +668,6 @@ Transform:
   - {fileID: 3759263323830915513}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &751752948261942227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5450977226773447880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbb56a1feff6a024aab375992f32ff17, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Walker
-  data: {fileID: 11400000, guid: efaf8b375c9fb0c49abfb6da8f57708d, type: 2}
-  hasPlayerLock: 0
-  damageMaterial: {fileID: 2100000, guid: 59148e3b6fbfc0d4abc10ce34622bba0, type: 2}
-  damageParticles: {fileID: 0}
-  damageSparkParticles: {fileID: 8408503184216056463, guid: 36528c7ab0e669c4b998815da77898f0, type: 3}
-  deathParticles: {fileID: 2440599528421495951, guid: 0e6512685a4c1ec4494d9de4be3ea57a, type: 3}
-  IsIFrame: 0
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  attackCooldown: 3
-  missileCount: 4
-  missileInterval: 0.15
-  missileScatter: 10
-  firePoints:
-  - {fileID: 4917937133216604836}
-  - {fileID: 245196786240200423}
-  - {fileID: 5690652633924857973}
-  - {fileID: 3921943643914501270}
-  telegraphPrefab: {fileID: 218590311699264157, guid: 5d196bc5d7140714bbdedb4febf859c8, type: 3}
-  projectiles:
-  - {fileID: 11400000, guid: 378de1946b275b34aba2e663469c276a, type: 2}
 --- !u!114 &8344917708549136039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -710,7 +675,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5450977226773447880}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a28529bb84145bf4fb6b969200b9cf9b, type: 3}
   m_Name: 
@@ -798,7 +763,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5450977226773447880}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f5456d8b3bd54d9478908bd951325b2a, type: 3}
   m_Name: 
