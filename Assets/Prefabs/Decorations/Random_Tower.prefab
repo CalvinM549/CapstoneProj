@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7385433771475464649}
   - component: {fileID: 837027903386241355}
   - component: {fileID: 1486404345662150148}
+  - component: {fileID: 3295846736447946160}
   m_Layer: 0
   m_Name: Random_Tower
   m_TagString: Untagged
@@ -129,3 +130,19 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 1.19}
   m_Size: {x: 1.68, y: 2.24}
   m_Direction: 0
+--- !u!114 &3295846736447946160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2774263239228627906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d767b456b15af94aa0c1ff78c3b27ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RestStation
+  OnActivated:
+    m_PersistentCalls:
+      m_Calls: []
+  singleUse: 1

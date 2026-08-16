@@ -904,6 +904,7 @@ GameObject:
   m_Component:
   - component: {fileID: 699692057}
   - component: {fileID: 699692056}
+  - component: {fileID: 699692058}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -940,6 +941,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &699692058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699692055}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8ad75f1eec0b004f9aa52615fbe8134, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapOverlayUI
+  cg: {fileID: 1346455880}
+  container: {fileID: 1346455879}
+  nodeImagePrefab: {fileID: 6731426581203076449, guid: 650d77a1e368cec44bcff0c7e2220bf0, type: 3}
+  cellSize: 80
 --- !u!1 &711992037
 GameObject:
   m_ObjectHideFlags: 0
@@ -6935,7 +6952,7 @@ MonoBehaviour:
   playerContainer: {fileID: 1576677028}
   fadeTime: 0.4
   fadeOverlay: {fileID: 2055147081}
-  mapDisplay: {fileID: 0}
+  mapDisplay: {fileID: 699692058}
   endOverlay: {fileID: 1343042431}
   optionalRouteCost: 5
 --- !u!4 &1343042430

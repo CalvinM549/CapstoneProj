@@ -18,6 +18,7 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
     public bool PoolRequested {  get; set; }
 
     protected bool hasFired = false;
+    protected Vector2 laserAdjustment;
 
     private void OnEnable()
     {
@@ -36,8 +37,7 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
     {
         if (laserSight != null && laserSight.enabled && targetPos != null)
         {
-
-            laserSight.SetPosition(1, targetPos.position);
+            laserSight.SetPosition(1, (Vector2)targetPos.position + laserAdjustment);
             laserSight.SetPosition(0, firePos.position);
         }
     }
@@ -47,13 +47,14 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
         targetPos = ai.context.target;
         if (laserSight != null)
         {
+            laserAdjustment = Random.insideUnitCircle * 0.5f; 
+
             laserSight.enabled = true;
-            laserSight.SetPosition(1, targetPos.position);
+            laserSight.SetPosition(1, (Vector2)targetPos.position + laserAdjustment);
             laserSight.SetPosition(0, firePos.localPosition);
         }
 
         ai.GetComponentInChildren<Animator>().Play("FireReady");
-        print($"{ai.gameObject.name} starting telegraph");
         hasFired = false;
         // any other things
     }

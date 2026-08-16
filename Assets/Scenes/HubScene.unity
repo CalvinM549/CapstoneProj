@@ -1744,13 +1744,15 @@ MonoBehaviour:
     Q / MMB
     - Lock Target
 
+    F - Interact
+
 
     Tap LMB - Light Melee
 
-    Hold LMB - Heavy Melee
+    Hold LMB - Heavy
+    Melee
 
-    RMB
-    - Ranged Attack'
+    RMB - Ranged Attack'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 572120a1cdd482c43a6b6afed33dc201, type: 2}
   m_sharedMaterial: {fileID: 5220693059894657429, guid: 572120a1cdd482c43a6b6afed33dc201, type: 2}

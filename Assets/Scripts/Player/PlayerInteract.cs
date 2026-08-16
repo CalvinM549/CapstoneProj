@@ -12,7 +12,7 @@ public class PlayerInteract : MonoBehaviour
 
     private float interactDistance;
 
-    private Dictionary<IInteractable, Transform> nearbyInteractables;
+    private Dictionary<IInteractable, Transform> nearbyInteractables = new();
     private LayerMask interactionLayer; // not sure if needed
 
     private IInteractable current;
@@ -38,6 +38,8 @@ public class PlayerInteract : MonoBehaviour
 
     private void HandleInteractPressed()
     {
+        print(1);
+
         if (TimescaleManager.IsPaused || !p.CanAct) return;
 
         IInteractable interactable = GetClosestInteractable();
@@ -71,6 +73,8 @@ public class PlayerInteract : MonoBehaviour
         {
             nearbyInteractables.Add(interactable, collision.transform);
             CanInteractUpdated?.Invoke(true);
+
+            print("added to interactables");
         }
     }
 

@@ -129,6 +129,7 @@ public class RoomManager : MonoBehaviour
             door.Unlock();
 
         OnCleared?.Invoke(this);
+        GameEvents.RoomCompleted();
     }
 
     public void HandleEncounterFailure()
@@ -142,7 +143,7 @@ public class RoomManager : MonoBehaviour
     {
         run.RestoreStability(100f, true);
         run.RestoreAmmo(5);
-        // restore player health
+        run.RestoreStructure(3);
     }
 
     private void HandleUpgradeActivated()

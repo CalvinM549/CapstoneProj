@@ -15,7 +15,7 @@ MonoBehaviour:
   id: corridor01
   type: 1
   tag: 48
-  allowedConnections: -1
+  allowedConnections: 10
   difficultyCost: 0
   timerCost: 0
   roomPrefab: {fileID: 4043302354256458430, guid: fefe4fca15b94dc47bf248cc8480b350, type: 3}

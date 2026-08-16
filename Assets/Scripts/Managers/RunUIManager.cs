@@ -33,21 +33,6 @@ public class RunUIManager : MonoBehaviour
             Destroy(gameObject);
     }
 
-    private void OnEnable()
-    {
-        
-    }
-
-    private void OnDisable()
-    {
-        
-    }
-
-    private void Update()
-    {
-        
-    }
-
     public void Initialize(Player player)
     {
         playerTrackingPos = player.transform;
@@ -55,7 +40,7 @@ public class RunUIManager : MonoBehaviour
         activePlayerUI = Instantiate(playerUIPrefab, transform);
         activePlayerUI.gameObject.SetActive(true);
         activePlayerUI.Initialize(player);
-    }
+    }   
 
     // Hold player UI??
 
@@ -70,20 +55,25 @@ public class RunUIManager : MonoBehaviour
         TimescaleManager.Instance.PauseGame(this);
     }
 
-    public void ToggleOverlay(IRunUIOverlay overlay)
+    public void ToggleOverlay(IRunUIOverlay overlay, bool doPause)
     {
         if (ReferenceEquals(activeOverlay, overlay))
         {
             overlay.Hide();
             activeOverlay = null;
-            TimescaleManager.Instance.UnpauseGame(this);
+
+            if(doPause)
+                TimescaleManager.Instance.UnpauseGame(overlay);
+    
             return;
         }
 
         activeOverlay?.Hide();
         overlay.Show();
         activeOverlay = overlay;
-        TimescaleManager.Instance.PauseGame(this);
+
+        if(doPause)
+            TimescaleManager.Instance.PauseGame(overlay);
     }
 }
 

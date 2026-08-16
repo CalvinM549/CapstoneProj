@@ -13,7 +13,6 @@ public class PlayerUpgrades : MonoBehaviour
     [SerializeField] private MajorUpgrade BrainTemplate;
 
     public Dictionary<UpgradeSlot, MajorUpgrade> majorSlots = new();
-    public Dictionary<MajorUpgrade, List<SubUpgrade>> subUpgrades = new();
 
     private readonly Dictionary<AuxUpgrade, int> auxUpgrades = new();
 
@@ -41,9 +40,6 @@ public class PlayerUpgrades : MonoBehaviour
     public MajorUpgrade GetMajor(UpgradeSlot slot) => 
         majorSlots.TryGetValue(slot, out var upgrade) ? upgrade : null;
 
-    public IReadOnlyList<SubUpgrade> GetSubUpgrades(MajorUpgrade major) => 
-        subUpgrades.TryGetValue(major, out var list) ? list : Array.Empty<SubUpgrade>();
-
     public int GetAuxStacks(AuxUpgrade upgrade) => 
         auxUpgrades.TryGetValue(upgrade, out var amount) ? amount : 0;
 
@@ -51,24 +47,7 @@ public class PlayerUpgrades : MonoBehaviour
         majorSlots.Values
             .Where(m => m != null && !m.isTemplate)
             .Cast<UpgradeBase>()
-            .Concat(subUpgrades.Values.SelectMany(l => l))
             .Concat(auxUpgrades.Keys);
-
-    public IEnumerable<SubUpgrade> AvaliableSubUpgrades
-    {
-        get
-        {
-            foreach (MajorUpgrade major in majorSlots.Values)
-            {
-                if (major == null || major.isTemplate) continue;
-                foreach (SubUpgrade sub in major.subUpgradesUnlocked)
-                {
-                    if (!subUpgrades[major].Contains(sub))
-                        yield return sub;
-                }
-            }
-        }
-    }
 
     #endregion
 
@@ -90,35 +69,6 @@ public class PlayerUpgrades : MonoBehaviour
         upgrade.Apply(p);
 
         // Fire event
-        return true;
-    }
-
-    public bool GrantSub(SubUpgrade upgrade)
-    {
-        MajorUpgrade activeMajor = GetMajor(upgrade.requiredMajor?.slot ?? UpgradeSlot.None);
-        if (activeMajor != upgrade.requiredMajor)
-        {
-            Debug.LogWarning($"[PlayerUpgrades] SubUpgrade '{upgrade.upgradeName}' requires {upgrade.requiredMajor.upgradeName} which isnt active");
-            return false;
-        }
-
-        if (subUpgrades[upgrade.requiredMajor].Contains(upgrade))
-        {
-            Debug.LogWarning($"[PlayerUpgrades] SubUpgrade '{upgrade.upgradeName}' has already been chosen");
-            return false;
-        }
-
-
-        if (!subUpgrades.TryGetValue(upgrade.requiredMajor, out List<SubUpgrade> list))
-        {
-            list = new List<SubUpgrade>();
-            subUpgrades[upgrade.requiredMajor] = list;
-        }
-
-        list.Add(upgrade);
-
-        upgrade.Apply(p);
-        // Fire Event
         return true;
     }
 
@@ -149,13 +99,6 @@ public class PlayerUpgrades : MonoBehaviour
 
     private void RemoveMajorInternal(MajorUpgrade upgrade)
     {
-        if (subUpgrades.TryGetValue(upgrade, out List<SubUpgrade> subs))
-        {
-            foreach (SubUpgrade sub in subs)
-                sub.Remove(p);
-            subUpgrades.Remove(upgrade);
-        }
-
         upgrade.Remove(p);
         majorSlots[upgrade.slot] = null;
 

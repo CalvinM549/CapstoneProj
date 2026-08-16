@@ -18,4 +18,4 @@ MonoBehaviour:
   baseHealth: 8
   baseDamage: 0
   baseSpeed: 0
-  detectionRadius: 0
+  aiProfile: {fileID: 11400000, guid: 259d0df511099744b8912ab074c80294, type: 2}

@@ -51,6 +51,8 @@ public class GameplayInputReader
 
         actions.Gameplay.Inventory.performed += OnInventoryPerformed;
         actions.Gameplay.Inventory.canceled += OnInventoryCanceled;
+
+        actions.Gameplay.Interact.performed += OnInteractPerformed;
     }
 
     public void Unsubscribe()
@@ -68,6 +70,8 @@ public class GameplayInputReader
 
         actions.Gameplay.Inventory.performed -= OnInventoryPerformed;
         actions.Gameplay.Inventory.canceled -= OnInventoryCanceled;
+
+        actions.Gameplay.Interact.performed -= OnInteractPerformed;
     }
 
     #region Movement
@@ -129,6 +133,11 @@ public class GameplayInputReader
     private void OnInventoryCanceled(InputAction.CallbackContext context)
     {
         InventoryCanceled?.Invoke();
+    }
+
+    private void OnInteractPerformed(InputAction.CallbackContext context)
+    {
+        InteractPressed?.Invoke();
     }
 
 

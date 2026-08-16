@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MapOverlayUI : MonoBehaviour
+public class MapOverlayUI : MonoBehaviour, IRunUIOverlay
 {
     private GameplayInputReader inputs;
 
@@ -29,7 +29,6 @@ public class MapOverlayUI : MonoBehaviour
         inputs = InputManager.Instance.PlayerInputs;
         inputs.InventoryPressed += HandleMapOpen;
         inputs.InventoryCanceled += HandleMapClose;
-
     }
 
     private void OnDisable()
@@ -40,18 +39,32 @@ public class MapOverlayUI : MonoBehaviour
         RunManager.Instance.onPlayerRoomChanged -= HandlePlayerRoomChanged;
     }
 
-    private void HandleMapOpen()
+    public void Show()
     {
         if (isActive) return;
         isActive = true;
         cg.gameObject.SetActive(true);
     }
 
-    private void HandleMapClose()
+    public void Hide()
     {
         if (!isActive) return;
         isActive = false;
         cg.gameObject.SetActive(false);
+    }
+    
+    private void HandleMapOpen()
+    {
+        if (isActive) return;
+
+        RunUIManager.Instance.ToggleOverlay(this, false);
+    }
+
+    private void HandleMapClose()
+    {
+        if (!isActive) return;
+
+        RunUIManager.Instance.ToggleOverlay(this, false);
     }
 
     private void HandlePlayerRoomChanged(Vector2Int newTile)

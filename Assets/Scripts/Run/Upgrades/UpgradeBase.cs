@@ -20,25 +20,30 @@ public enum UpgradeCategory
     Movement
 }
 
-public class UpgradeBase : ScriptableObject
+public class UpgradeBase : DatabaseEntry, ICategorizedEntry<UpgradeSlot>, IWeightedLoot
 {
     [Header("Display")]
     public string upgradeName = "New Upgrade";
-    public string upgradeID = "";
     [TextArea] public string flavourText;
     [TextArea] public string effectText;
 
     public Sprite icon;
-    // Rarity?
 
     public UpgradeSlot slot = UpgradeSlot.None;
-    public UpgradeCategory[] categories;
 
     public int maxStacks = 1;
 
-    protected Player player { get; private set; }
 
-    // Upgrade effects
+    [Header("Loot")]
+    public float baseDropRate = 1f;
+    public string[] synergyTags = Array.Empty<string>();
+
+    public float BaseDropWeight => baseDropRate;
+    public IReadOnlyList<string> SynergyTags => synergyTags;
+    public UpgradeSlot Category => slot;
+
+    [Header("Effects")]
+    protected Player player { get; private set; }
 
     public List<UpgradeStatModifierEntry> statModifiers = new();
 

@@ -11,6 +11,9 @@ public static class GameEvents
     public static event Action<bool> OnRunEnded;
     public static void RunEnded(bool victory) => OnRunEnded?.Invoke(victory);
 
+    public static event Action OnRoomCompleted;
+    public static void RoomCompleted() => OnRoomCompleted?.Invoke();
+
     #endregion
 
     #region Inputs
@@ -58,6 +61,9 @@ public static class GameEvents
     public static void AttackWhiff(AttackType type) => OnAttackWhiff?.Invoke(type);
 
     #endregion
+
+    public static event Action OnAmmoUsedEmpty;
+    public static void AmmoUsedEmpty() => OnAmmoUsedEmpty?.Invoke();
 
     #region Player
     public static event Action<HitData> OnPlayerHit;

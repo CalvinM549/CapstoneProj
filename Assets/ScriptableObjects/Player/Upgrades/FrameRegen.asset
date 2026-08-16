@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6614b9ee6449bb64d9c8ff6bfddd805c, type: 3}
+  m_Name: FrameRegen
+  m_EditorClassIdentifier: Assembly-CSharp::Frame_01
+  id: 101bc2a4-949d-4510-9d33-34da0489e756
+  upgradeName: Recursive Plating
+  flavourText: '[]'
+  effectText: Regenerate 1 structure upon completing a room
+  icon: {fileID: 3389911732521518902, guid: e5a42e43f2430bb4d931ad8ef9bd048c, type: 3}
+  slot: 0
+  maxStacks: 1
+  baseDropRate: 1
+  synergyTags: []
+  statModifiers: []
+  isTemplate: 0
+  structureHealed: 1

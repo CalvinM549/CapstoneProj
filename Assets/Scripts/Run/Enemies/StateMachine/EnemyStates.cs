@@ -44,7 +44,12 @@ public class MoveIntoRangeState : IEnemyState
     public void Enter(EnemyAIController ai)
     {
         var ctx = ai.context;
-        ctx.currentAttackRange = ai.GetValidExecutor().AttackData.attackRange;
+        var executor = ai.GetValidExecutor();
+
+        if (executor != null)
+        {
+            ctx.currentAttackRange = ai.GetValidExecutor().AttackData.attackRange;
+        }
     }
 
     public void Tick(EnemyAIController ai, float dt)

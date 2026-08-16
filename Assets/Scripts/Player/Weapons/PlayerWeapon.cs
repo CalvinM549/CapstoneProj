@@ -45,6 +45,18 @@ public abstract class PlayerWeapon : DatabaseEntry, IProjectileEmitter
         ammoUsedEvent = null;
     }
     public virtual void UpdateWeapon() { }
-    public virtual bool CanFire() { return currentAmmo > 0; }
+    public virtual bool CanFire() 
+    { 
+        if (currentAmmo > 0)
+        {
+            return true;
+        }
+        else
+        {
+            GameEvents.AmmoUsedEmpty();
+            return false;
+        }
+
+    }
     public abstract void Fire(Vector2 direction);
 }

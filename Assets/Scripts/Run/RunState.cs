@@ -104,6 +104,11 @@ public class RunState
         player.Combat.RestoreAmmo(Mathf.Max(0, amount));
     }
 
+    public void RestoreStructure(int amount)
+    {
+        player.Health.RestoreSegments(Mathf.Max(0, amount));
+    }
+
     public void GrantPlayerUpgrade()
     {
 

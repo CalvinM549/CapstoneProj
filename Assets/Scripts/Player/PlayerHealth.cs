@@ -108,6 +108,8 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
     public void RecieveHit(HitData hit)
     {
+        if (DebugManager.GodMode) return;
+
         if (!IsAlive) return;
         if (IsIframe) return;
         if (p.Tools.TryInterceptWithTool(hit)) return; // For parry tools etc

@@ -19,7 +19,7 @@ public class BurstAttackExecutor : ProjectileAttackExecutor
 
         if (burstRoutine != null)
         {
-            StopCoroutine(burstRoutine);
+            ai.StopCoroutine(burstRoutine);
             burstRoutine = null;
         }
 
@@ -47,7 +47,7 @@ public class BurstAttackExecutor : ProjectileAttackExecutor
 
         if (burstRoutine != null)
         {
-            StopCoroutine(burstRoutine);
+            ai.StopCoroutine(burstRoutine);
             burstRoutine = null;
         }
     }

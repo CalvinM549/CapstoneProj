@@ -20,6 +20,4 @@ public class RNGManager : MonoBehaviour
     {
         rng = new(seed);
     }
-
-
 }

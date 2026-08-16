@@ -12,15 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a065e1eb24036848b655c429670802f, type: 3}
   m_Name: WalkerAIProfile
   m_EditorClassIdentifier: Assembly-CSharp::AIProfile
-  aggroRange: 0
-  attackPattern: 
-  attackRange: 0
-  repositionDuration: 0
-  moveSpeed: 0
-  tickInterval: 0
+  aggroRange: 20
+  repositionDuration: 3
+  moveSpeed: 0.5
+  tickInterval: 0.1
   targetLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 0
