@@ -1198,28 +1198,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HubManager
   db: {fileID: 11400000, guid: 2e6ffc4f57ba51f428c00a9eb207ee3f, type: 2}
-  activeProfile:
-    slotIndex: 0
-    profileID: 
-    profileName: 
-    metaCurrency: 0
-    bestRunTime: 0
-    runsAttempted: 0
-    runVictoryCount: 0
-    runFailureCount: 0
-    BaseSegments: 0
-    BaseTimer: 0
-    unlockedArchives: []
-    unlockedTools: []
-    unlockedWeapons: []
-    savedPresets: []
-    tutorialSeen: 0
-    skipCutscene: 0
+  config: {fileID: 11400000, guid: 7ddd848d53847534eae05a37bb512472, type: 2}
   defaultWeapon: {fileID: 11400000, guid: c4986f5c1d5dddb4fb844e5fe6a1591e, type: 2}
   defaultRooms:
   - {fileID: 11400000, guid: 61b90bca84cd7a941870de9c451536ae, type: 2}
   - {fileID: 11400000, guid: f42d973c574c6514888fe6d295865f7e, type: 2}
-  walkLength: 12
+  walkLength: 10
   walkerCount: 3
   mapBounds: {x: 2, y: 2}
   seedText: {fileID: 690470051}
@@ -1866,8 +1850,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 373}
-  m_SizeDelta: {x: 531.3047, y: 149.3914}
+  m_AnchoredPosition: {x: 0, y: 382.00543}
+  m_SizeDelta: {x: 531.3047, y: 167.4023}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1642036644
 MonoBehaviour:
@@ -1889,7 +1873,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hub Testing Environment
+  m_text: '// [VAGRANT] //
+
+    Hub Testing Environment'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 572120a1cdd482c43a6b6afed33dc201, type: 2}
   m_sharedMaterial: {fileID: 5220693059894657429, guid: 572120a1cdd482c43a6b6afed33dc201, type: 2}

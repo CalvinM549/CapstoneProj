@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d6e6e56bbc526a4c81799b99447ee31, type: 3}
+  m_Name: DebugMissiles
+  m_EditorClassIdentifier: Assembly-CSharp::MissileWeapon
+  id: 312c186d-9bd2-47fd-848a-722458ad93ec
+  weaponName: DebugMissileLauncher
+  cooldown: 0.1
+  baseAmmo: 50
+  currentAmmo: 47
+  fireType: 2
+  automatic: 0
+  windupTime: 0
+  activeTime: 0
+  recoveryTime: 0
+  projectiles:
+  - {fileID: 11400000, guid: 3f95f2f91692c5243a1e7c4fe29c075e, type: 2}
+  burstCount: 1
+  burstSpread: 0
+  burstDelay: 0.1

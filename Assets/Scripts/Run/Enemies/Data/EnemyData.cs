@@ -10,6 +10,8 @@ public class EnemyData : DatabaseEntry
 
     public EnemyController prefab;
 
+    public float cost;
+
     [Space]
     public float baseHealth;
     public float baseDamage;

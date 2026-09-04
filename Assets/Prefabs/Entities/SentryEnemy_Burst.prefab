@@ -377,8 +377,8 @@ MonoBehaviour:
   laserSight: {fileID: 2790749708199632404}
   projectiles:
   - {fileID: 11400000, guid: 01066313aac4e63428ff95025550a777, type: 2}
-  burstCount: 5
-  burstInterval: 0.2
+  burstCount: 3
+  burstInterval: 0.12
 --- !u!114 &1577401330717255328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -998,7 +998,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &74569562210896902
 RectTransform:
   m_ObjectHideFlags: 0

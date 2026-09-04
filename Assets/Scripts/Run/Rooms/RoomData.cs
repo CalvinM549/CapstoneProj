@@ -26,7 +26,7 @@ public enum RoomTag
     Environmental = 1 << 6,
 }
 
-[CreateAssetMenu(menuName = "Run/Room Def")]
+[CreateAssetMenu(menuName = "Map/Room Def")]
 public class RoomData : DatabaseEntry, ICategorizedEntry<RoomType>
 {
     public RoomType type;

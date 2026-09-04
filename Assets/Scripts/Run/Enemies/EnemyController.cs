@@ -17,12 +17,12 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     [SerializeField] private Material damageMaterial;
 
+    // References
     private EnemyAIController ai;    
     protected SpriteRenderer sr;
     protected Animator animator;
     protected Rigidbody2D rb;
     
-    protected Transform playerTransform;
     public bool hasPlayerLock;
 
     protected float currentHealth;
@@ -30,13 +30,9 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     public event Action<float, float, HitData> OnHit;
 
-
-
-
     protected bool isFacingRight = true;
 
     private Material baseMaterial;
-    protected Sprite baseSprite;
 
 
     private Coroutine hitFXRoutine;
@@ -54,7 +50,6 @@ public class EnemyController : MonoBehaviour, IDamageable
         currentHealth = data.baseHealth;
         IsAlive = true;
 
-        baseSprite = sr.sprite;
         baseMaterial = sr.material;
     }
 

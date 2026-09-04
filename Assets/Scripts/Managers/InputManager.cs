@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
 public enum InputContext
 {
     Uninitialized,
@@ -17,13 +16,14 @@ public class InputManager : MonoBehaviour
 
     private InputSystem_Actions inputActions;
 
-    public GameplayInputReader PlayerInputs {  get; private set; }
+    public GameplayInputReader GameplayInputs {  get; private set; }
     public MenuInputReader MenuInputs { get; private set; }
 
     public InputContext CurrentContext { get; private set; } = InputContext.Uninitialized;
 
     public event Action<InputContext> ContextChanged;
 
+    public event Action ExitPressed;
 
     private void Awake()
     {
@@ -37,12 +37,12 @@ public class InputManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         inputActions = new InputSystem_Actions();
-        PlayerInputs = new GameplayInputReader(inputActions);
+        GameplayInputs = new GameplayInputReader(inputActions);
         MenuInputs = new MenuInputReader(inputActions);
 
         inputActions.Global.Enable();
 
-        inputActions.Global.Exit.performed += HandleExitPressed;
+        inputActions.Global.Exit.performed += OnExitPressed;
         
         SetContext(InputContext.Gameplay);
 
@@ -53,9 +53,9 @@ public class InputManager : MonoBehaviour
     {
         if (inputActions == null) return;
 
-        PlayerInputs?.Unsubscribe();
+        GameplayInputs?.Unsubscribe();
         MenuInputs?.Unsubscribe();
-        inputActions.Global.Exit.performed -= HandleExitPressed;
+        inputActions.Global.Exit.performed -= OnExitPressed;
 
         inputActions.Disable();
         inputActions.Dispose();
@@ -90,11 +90,9 @@ public class InputManager : MonoBehaviour
         ContextChanged?.Invoke(newContext);
     }
 
-    private void HandleExitPressed(InputAction.CallbackContext ctx)
+    private void OnExitPressed(InputAction.CallbackContext ctx)
     {
-        // Depending on game context, display settings vs exit menus etc
-
-        SceneLoader.Instance.QuitGame();
+        ExitPressed?.Invoke();
     }
 
     public Vector2 GetMousePosition()

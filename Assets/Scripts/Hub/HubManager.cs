@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -16,13 +17,8 @@ public class HubManager : MonoBehaviour
     public static HubManager Instance;
 
     public GameDatabase db;
+    [SerializeField] private MapGenerationConfig config;
 
-    [HideInInspector] public PlayerProfile activeProfile;
-    public RunLoadout pendingLoadout;
-    public RunMap pendingMap;
-    public int pendingSeed {  get; private set; }
-
-    public bool CanBeginRun => pendingMap != null && pendingLoadout != null && pendingSeed != 0;
     private bool loadingToRun = false;
 
     private readonly Dictionary<HubState, HubScreen> screens = new();
@@ -31,7 +27,13 @@ public class HubManager : MonoBehaviour
     // Services
     private MapGenerationService mapGeneration;
 
-    public event Action<RunMap> onMapGenerated;
+    private RunLoadout pendingLoadout;
+    private RunMap pendingMap;
+    private int pendingSeed;
+
+    public event Action<int> OnPendingSeedChanged;
+    public event Action<RunMap> OnPendingMapChanged;
+    public event Action<RunLoadout> OnPendingLoadoutChanged;
 
     [Header("Testing Values")]
 
@@ -57,11 +59,12 @@ public class HubManager : MonoBehaviour
             screens[screen.ScreenType] = screen;
         }
 
+        loadingToRun = false;
     }
 
     public void InitializeHub()
     {
-        mapGeneration = new(db.rooms, mapBounds, walkLength, walkerCount, 1f, 0.3f); // Replace bounds
+        mapGeneration = new(db.rooms, config);
 
         pendingLoadout = BuildDefaultLoadout();
 
@@ -77,56 +80,62 @@ public class HubManager : MonoBehaviour
         };
 
         return loadout;
+    }
 
+    public void ShowScreen(HubState type)
+    {
+        if (activeScreen != null)
+            activeScreen.Close();
+
+        activeScreen = screens[type];
+        activeScreen.Open(this);
+
+        // Run Event?
+    }
+
+    #region Run Generation
+
+    public void InitializeNewRNG()
+    {
+        int seed = Mathf.RoundToInt(UnityEngine.Random.Range(0, 100000));
+        RNGManager.Instance.InitRNG(seed);
+        pendingSeed = seed;
+
+        seedText.text = seed.ToString();
+
+    }
+
+    public void InitializeSetSeed(string inputSeed)
+    {
+        int seed = inputSeed.GetHashCode();
+        RNGManager.Instance.InitRNG(seed);
+        pendingSeed = seed;
+
+        seedText.text = seed.ToString();
+
+        seedText.color = CanBeginRun() ? Color.green : Color.red;
     }
 
     public void GenerateNewMap()
     {
-        int seed = Mathf.RoundToInt(UnityEngine.Random.Range(0, 100000));
+        InitializeNewRNG();
 
-        print(seed);
+        pendingMap = mapGeneration.GenerateMapWithSeed(pendingSeed, 0);
+        OnPendingMapChanged?.Invoke(pendingMap);
 
-        pendingMap = mapGeneration.GenerateMapWithSeed(seed, 0);
-        onMapGenerated?.Invoke(pendingMap);
-
-        pendingSeed = seed;
-
-        seedText.text = seed.ToString();
-        seedText.color = CanBeginRun ? Color.green : Color.red;
+        seedText.color = CanBeginRun() ? Color.green : Color.red;
     }
 
-
-    public RunMap BuildTestingMap()
+    private bool CanBeginRun()
     {
-        RunMap map = new();
-        
-        if (defaultRooms.Length <= 0) print("[HubManager] no rooms lol");
-
-        for (int i = 0; i < defaultRooms.Length; i++)
-        {
-            RoomNode newNode = new RoomNode()
-            {
-                room = defaultRooms[i],
-                coordinates = new Vector2Int(0, i),
-                // Setup Connections - refer to Aesthosis??
-                cleared = false
-            };
-
-            map.tiles[newNode.coordinates] = newNode;
-        }
-
-        map.startNode = map.tiles[Vector2Int.zero];
-        map.startNode.ConnectTo(map.tiles[new Vector2Int(0, 1)], Direction.East);
-
-
-        return map;
+        return pendingMap != null && pendingLoadout != null && pendingSeed != 0;
     }
 
     public void BeginNewRunFromHub()
     {
         if (loadingToRun) return;
 
-        SaveProfile();
+        GameManager.Instance.SaveActiveProfile();
 
         loadingToRun = true;
         RunDataCarrier.BuildNewRunData(pendingSeed, pendingLoadout, pendingMap);
@@ -137,37 +146,14 @@ public class HubManager : MonoBehaviour
     {
         if (loadingToRun) return;
 
-        SaveProfile();
+        GameManager.Instance.SaveActiveProfile();
 
         loadingToRun = true;
         SceneLoader.Instance.LoadRun();
     }
 
-
-    public void ShowScreen(HubState type)
-    {
-        if(activeScreen != null)
-            activeScreen.Close();
-
-        activeScreen = screens[type];
-        activeScreen.Open(this);
-
-        // Run Event?
-    }
-
-    #region Profile Helpers
-
-    private void LoadActiveProfile(int saveSlot)
-    {
-        activeProfile = null;
-    }
-
-    private void SaveProfile()
-    {
-        print("[HubManager] IMPLEMENT PROFILE SAVING");
-    }
-
     #endregion
+
 
     #region LoadoutHelpers
 

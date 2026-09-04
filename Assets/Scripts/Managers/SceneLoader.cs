@@ -70,12 +70,6 @@ public class SceneLoader : MonoBehaviour
 
     #region Utilities
 
-    private void LoadSceneImmediate(string sceneName)
-    {
-        SceneManager.LoadScene(sceneName);
-        onSceneLoaded?.Invoke(sceneName);
-    }
-
     private void LoadScene(string sceneName, Action onLoad = null)
     {
         if (fadeOverlay != null)

@@ -7,7 +7,6 @@ public static class EnemyStates
     public static readonly AttackState Attack = new();
     public static readonly RepositionState Reposition = new();
     public static readonly StaggeredState Staggered = new();
-
 }
 
 public interface IEnemyState

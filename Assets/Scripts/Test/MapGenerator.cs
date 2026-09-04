@@ -8,6 +8,7 @@ public class MapGenerator : MonoBehaviour
     public MapGenerationService generation;
 
     public GameDatabase db;
+    public MapGenerationConfig config;
 
     [SerializeField] private Vector2Int startPosition = Vector2Int.zero;
 
@@ -43,6 +44,9 @@ public class MapGenerator : MonoBehaviour
         //RunRandomWalk();
 
         ResetWalk();
+
+        int seed = Mathf.RoundToInt(UnityEngine.Random.Range(0, 100000));
+        RNGManager.Instance.InitRNG(seed);
 
         visited = generation.RunSimpleRandomWalk();
 

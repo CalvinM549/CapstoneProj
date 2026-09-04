@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System;
 
@@ -24,7 +23,6 @@ public class RadialDashUI : MonoBehaviour
         public float lastValue;
         private bool charged;
 
-        private Tween tween;
         private Color baseColour;
 
         public ChargeIcon(RectTransform pivotRef, Image imageRef, float initialValue)
@@ -38,8 +36,10 @@ public class RadialDashUI : MonoBehaviour
 
         public void UpdateCharge(float newValue)
         {
-            tween?.Kill();
-            tween = fillImage.DOFillAmount(newValue, 0.3f).SetEase(Ease.OutQuart);
+            //tween?.Kill();
+            //tween = fillImage.DOFillAmount(newValue, 0.3f).SetEase(Ease.OutQuart);
+
+            fillImage.fillAmount = newValue;
 
             if (newValue >= 0.99f && !charged)
             {
@@ -61,9 +61,8 @@ public class RadialDashUI : MonoBehaviour
 
         public void Kill()
         {
-            tween?.Kill();
+            pivot.DOKill();
             fillImage.DOKill();
-            pivot?.DOKill();
         }
     }
 
@@ -99,11 +98,11 @@ public class RadialDashUI : MonoBehaviour
 
     private void BuildCharges(float[] dashCooldowns)
     {
-        foreach (var oldCharge in chargeIcons)
+        foreach (var old in chargeIcons)
         {
-            oldCharge.Kill();
-            if (oldCharge.pivot != null)
-                Destroy(oldCharge.pivot.gameObject);
+            old.Kill();
+            if (old.pivot != null)
+                Destroy(old.pivot.gameObject);
         }
 
         chargeIcons.Clear();

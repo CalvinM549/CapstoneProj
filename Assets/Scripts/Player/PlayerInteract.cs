@@ -8,14 +8,8 @@ public class PlayerInteract : MonoBehaviour
 
     private GameplayInputReader input;
 
-    [Header("Config")]
-
-    private float interactDistance;
-
     private Dictionary<IInteractable, Transform> nearbyInteractables = new();
     private LayerMask interactionLayer; // not sure if needed
-
-    private IInteractable current;
 
     public event Action<bool> CanInteractUpdated;
 
@@ -26,7 +20,7 @@ public class PlayerInteract : MonoBehaviour
 
     private void OnEnable()
     {
-        input = InputManager.Instance.PlayerInputs;
+        input = InputManager.Instance.GameplayInputs;
 
         input.InteractPressed += HandleInteractPressed;
     }

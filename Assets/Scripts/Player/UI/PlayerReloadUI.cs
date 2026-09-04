@@ -7,7 +7,6 @@ public class PlayerReloadUI : MonoBehaviour
 {
     private PlayerUI playerUI;
 
-    [SerializeField] private TextMeshProUGUI ammoTracker;
     [SerializeField] private Image reloadTracker;
     private bool reloadCharged;
     

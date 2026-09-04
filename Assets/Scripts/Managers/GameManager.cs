@@ -11,10 +11,12 @@ public class GameManager : MonoBehaviour
     {
         Menu,
         Hub,
-        Run
+        Gameplay
     }
 
     public static GameManager Instance;
+
+    [SerializeField] private GameDatabase db;
 
     public GameState CurrentState => currentState;
     private GameState currentState;
@@ -65,7 +67,7 @@ public class GameManager : MonoBehaviour
             case SceneLoader.MAINMENU:
                 currentState = GameState.Menu;
                 SetCursorActive(true);
-                TitleManager.Instance.InitializeMenu();
+                MainMenuManager.Instance.InitializeMenu();
                 break;
 
             case SceneLoader.HUB:
@@ -75,16 +77,11 @@ public class GameManager : MonoBehaviour
                 break;
 
             case SceneLoader.RUN:
-                currentState = GameState.Run;
+                currentState = GameState.Gameplay;
                 SetCursorActive(false);
                 RunManager.Instance.InitializeRun();
                 break;
         }
-    }
-
-    private void SetCursor()
-    {
-        Cursor.SetCursor(combatCursor, Vector2.zero, CursorMode.Auto);
     }
 
     private void SetCursorActive(bool active)
@@ -97,24 +94,21 @@ public class GameManager : MonoBehaviour
     public void SetActiveProfile(PlayerProfile profile)
     {
         ActiveProfile = profile;
-        metaProgression = new(profile);
+        metaProgression = new(profile, db);
+    }
+
+    public void SaveActiveProfile()
+    {
+        print("[GameManager] IMPLEMENT PROFILE SAVING");
     }
 
     #endregion
 
     #region Run Utilities
 
-    private void BeginRunFromHub() // Called from hub
+    public void ExitGame()
     {
-        // Build data
-        // Load to new scene
-    }
 
-    private void InitializeRun() // Called after run scene is initialized
-    {
-        // Begins a run with the correct information, i.e. saved run info vs built info
-
-        RunManager.Instance.BeginNewRun();
     }
 
     #endregion

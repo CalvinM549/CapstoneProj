@@ -16,10 +16,10 @@ MonoBehaviour:
   weaponName: HandCannon
   cooldown: 3
   baseAmmo: 10
-  ammoUsed: 1
+  currentAmmo: 9
   fireType: 0
   automatic: 0
-  windupTime: 0.3
+  windupTime: 0.25
   activeTime: 0.15
   recoveryTime: 0.2
   projectiles:

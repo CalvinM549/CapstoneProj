@@ -54,5 +54,6 @@ public class PlayerProfile
 [Serializable]
 public class SavedLoadoutPreset
 {
-
+    public string weaponID;
+    public string toolID;
 }

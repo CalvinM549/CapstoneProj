@@ -3,21 +3,9 @@ using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
-using static UnityEngine.Rendering.STP;
-
-
 
 public class RunManager : MonoBehaviour
 {
-    private enum ActiveRunState
-    {
-        Draft,
-        RoomActive,
-        RoomTransition,
-        RunComplete,
-        RunFailure
-    }
-
     public static RunManager Instance { get; private set; }
 
     public GameDatabase db;
@@ -33,18 +21,15 @@ public class RunManager : MonoBehaviour
     [SerializeField] private float fadeTime;
     [SerializeField] private CanvasGroup fadeOverlay;
 
-    [SerializeField] private MapOverlayUI mapDisplay;
+    [SerializeField] private MapOverlayScreen mapDisplay;
     [SerializeField] private RunEndOverlay endOverlay;
 
     [Header("Run Config")]
 
-    [SerializeField] private float optionalRouteCost = 5f;
-
     public RoomPoolService roomService; // Pools rooms, holds useful values etc
     public EnemyService enemyService; // Pools enemies, allows for spawning and handling etc
-    private ActiveRunState state;
 
-    private RunState currentRun;
+    public RunState currentRun;
 
     private Player activePlayer;
     private RoomManager activeRoom;
@@ -104,17 +89,14 @@ public class RunManager : MonoBehaviour
         }
 
         activePlayer = Instantiate(playerPrefab, playerContainer);
-        RunUIManager.Instance.Initialize(activePlayer);
+        UIManager.Instance.Initialize(activePlayer);
         AIManager.Instance.Initialize(activePlayer);
 
         activePlayer.SetupNew(config.loadout);
-
+        activePlayer.SetPlayerCanAct(true);
 
         currentRun = new(config.seed, config.map, activePlayer);
         roomService.BuildPool(config.map);
-
-        if(mapDisplay != null)
-            mapDisplay.InitializeMapView(currentRun.map.tiles.Keys.ToList());
 
         EnterNode(config.map.startNode, null);
     }
@@ -147,6 +129,8 @@ public class RunManager : MonoBehaviour
         if (profile != null)
             RunSaveSystem.DeleteForSlot(profile.slotIndex);
 
+        activePlayer.SetPlayerCanAct(false);
+
         endOverlay.Display(victory, currentRun);
     }
 
@@ -162,7 +146,6 @@ public class RunManager : MonoBehaviour
             activeRoom = null;
         }
 
-        state = ActiveRunState.RoomActive;
         currentRun.map.currentNode = node;
 
         // Get active room from pool
@@ -179,8 +162,15 @@ public class RunManager : MonoBehaviour
         activeRoom.OnFailure += HandleRoomFailed;
 
         // Setup Player
+        Doorway entryDoor = null;
+        if (arrivingFrom.HasValue)
+        {
+            entryDoor = activeRoom.GetDoorwayFor(arrivingFrom.Value.Opposite());
+            entryDoor?.DisableUntilPlayerExit();
+        }
+
         Vector2 spawnPos = arrivingFrom.HasValue
-            ? activeRoom.GetEntryPointFor(arrivingFrom.Value.Opposite())
+            ? entryDoor.entryPoint.position
             : activeRoom.defaultEntryPoint;
 
         GameEvents.PlayerTransitionTeleport(spawnPos);
@@ -209,41 +199,45 @@ public class RunManager : MonoBehaviour
             currentRun.map.currentNode.cleared = true;
         }
 
-        if (mapDisplay != null)
-            mapDisplay.HandleRoomCleared(currentRun.map.currentNode.coordinates);
-
-        state = ActiveRunState.RoomTransition;
-
+        CheckFloorVictory();
         SaveCurrentRun();
     }
 
     private void HandleRoomFailed(RoomManager room)
     {
-        state = ActiveRunState.RunFailure;
-
         // Fire Run End Event
+    }
+
+    private void CheckFloorVictory()
+    {
+        if (currentRun.roomsCleared == currentRun.map.totalNodes)
+        {
+            HandleRunEnd(true);
+        }
+        else
+        {
+            return;
+        }
     }
 
     // Called by doorways when walked through to progress
     public void TransitionTo(RoomNode nextNode, Direction exitDirection)
     {
-        // Disable current room
-        //DoTransitionFade(true); // Do Visual hiding
-
         StartCoroutine(TransitionRoutine(nextNode, exitDirection));
-
-        //roomService.ReturnToPool(activeRoom);
-        //activeRoom = null;
-        //EnterNode(nextNode, null); // Change null to exit direction
     }
 
     private IEnumerator TransitionRoutine(RoomNode nextNode, Direction dir)
     {
         DoTransitionFade(true);
-        TimescaleManager.Instance.PauseGame(this);
+        activePlayer.Movement.StartDoorwayMovement();
+
+
         yield return new WaitForSecondsRealtime(fadeTime);
 
-        EnterNode(nextNode, null); // Change null to exit direction
+        TimescaleManager.Instance.PauseGame(this);
+
+        activePlayer.Movement.EndDoorwayMovement();
+        EnterNode(nextNode, dir);
 
         TimescaleManager.Instance.UnpauseGame(this);
         DoTransitionFade(false);

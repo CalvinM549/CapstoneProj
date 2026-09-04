@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Player/Upgrades/NewAux")]
+[CreateAssetMenu(menuName = "Upgrades/NewAux")]
 public class AuxUpgrade : UpgradeBase
 {
     public AuxUpgrade()

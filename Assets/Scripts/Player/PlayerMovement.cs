@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -26,6 +27,10 @@ public class PlayerMovement : MonoBehaviour
     private int enemyLayerIndex;
 
     private Player p;
+
+    private StatValue baseSpeed;
+    private StatValue dashCharges;
+    private StatValue dashRechargeRate;
 
     private GameplayInputReader input;
     private Rigidbody2D rb;
@@ -61,11 +66,19 @@ public class PlayerMovement : MonoBehaviour
     private Coroutine currentDashRoutine;
     private Coroutine currentPushRoutine;
 
+    private Func<bool> canDashDelegate;
+    private Action startDashDelegate;
+
     #region MonobehaviourThings
 
     public void Initialize()
     {
+        baseSpeed = p.Stats.GetStatValue(StatRef.PlayerBaseSpeed);
+        dashCharges = p.Stats.GetStatValue(StatRef.PlayerDashCharges);
+        dashRechargeRate = p.Stats.GetStatValue(StatRef.PlayerDashRecharge);
 
+        p.Stats.Subscribe(StatRef.PlayerDashCharges, HandleDashChargeStatChanged);
+        SetDashCharges(dashCharges.ValueInt);
     }
 
     public void RestoreFromSave()
@@ -82,11 +95,13 @@ public class PlayerMovement : MonoBehaviour
         enemyLayerIndex = LayerMask.NameToLayer("Enemy");
 
         dashBuffer = new InputBuffer(data.inputBufferWindow);
+        canDashDelegate = CanDash;
+        startDashDelegate = StartDash;
     }
 
     private void OnEnable()
     {
-        input = InputManager.Instance.PlayerInputs;
+        input = InputManager.Instance.GameplayInputs;
 
         input.MoveChanged += HandleMoveChanged;
         input.DashPressed += HandleDashInput;
@@ -96,28 +111,32 @@ public class PlayerMovement : MonoBehaviour
     {
         input.MoveChanged -= HandleMoveChanged;
         input.DashPressed -= HandleDashInput;
-    }
 
-    private void Start()
-    {
-        SetDashCharges(data.maxDashCharges);
+        p.Stats.Unsubscribe(StatRef.PlayerDashCharges, HandleDashChargeStatChanged);
     }
 
     private void Update()
     {
+#if UNITY_EDITOR
+
         if (Input.GetKeyDown(KeyCode.M))
         {
-            SetDashCharges(dashRechargeTimers.Length + 1);
+            var dashChargeBuff = new StatModifier(1, StatModType.Flat);
+            dashCharges.AddStatModifier(dashChargeBuff);
         }
 
+#endif
+
         UpdateDashRecharge();
-        dashBuffer.TryConsume(CanDash, StartDash);
+        dashBuffer.TryConsume(canDashDelegate, startDashDelegate);
     }
 
     private void FixedUpdate()
     {
         if(CanMove())  
             ApplyMovement();
+        else if(!p.Health.IsAlive)
+            DecelerateToZero();
     }
 
     #endregion
@@ -201,7 +220,7 @@ public class PlayerMovement : MonoBehaviour
             lastMoveDirection = inputDirection.normalized;
             
             float accel = GetAcceleration() * multiplier;
-            Vector2 targetVelocity = data.baseSpeed * multiplier * p.Momentum.GetMomentumSpeedMultiplier() * inputDirection.normalized;
+            Vector2 targetVelocity = baseSpeed.Value * multiplier * p.Momentum.GetMomentumSpeedMultiplier() * inputDirection.normalized;
 
             rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, accel * Time.fixedDeltaTime);
         }
@@ -321,8 +340,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void UpdateDashRecharge()
     {
-        float rechargeRate = 1.0f; // alter based on things ig
-
         for (int i = 0; i < dashRechargeTimers.Length; i++)
         {
             if (dashRechargeTimers[i] <= 0)
@@ -332,7 +349,7 @@ public class PlayerMovement : MonoBehaviour
                 continue;
             }
 
-            dashRechargeTimers[i] -= Time.deltaTime * rechargeRate;
+            dashRechargeTimers[i] -= Time.deltaTime * dashRechargeRate.Value;
 
             if (dashRechargeTimers[i] <= 0)
             {
@@ -351,13 +368,31 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    private void SetDashCharges(int count)
+    private void HandleDashChargeStatChanged()
     {
-        print($"Creating {count} dash charges");
+        SetDashCharges(dashCharges.ValueInt);
+    }
 
-        currentDashCharges = count;
-        dashRechargeTimers = new float[count];
-        dashRechargePercentages = new float[count];
+    private void SetDashCharges(int newCount)
+    {
+        newCount = Mathf.Max(0, newCount);
+        int oldCount = dashRechargeTimers?.Length ?? 0;
+        if (oldCount == newCount) return;
+
+        var newTimers = new float[newCount];
+        var newPercentages = new float[newCount];
+
+        int keep = Mathf.Min(oldCount, newCount);
+        for (int i = 0; i < keep; i++)
+        {
+            newTimers[i] = dashRechargeTimers[i];
+            newPercentages[i] = dashRechargePercentages[i];
+        }
+
+        dashRechargeTimers = newTimers;
+        dashRechargePercentages = newPercentages;
+
+        currentDashCharges = Mathf.Clamp(currentDashCharges + (newCount - oldCount), 0, newCount);
 
         GameEvents.DashChargeChange(dashRechargePercentages);
     }
@@ -407,6 +442,20 @@ public class PlayerMovement : MonoBehaviour
 
         isSelfPush = false;
         isForcedPush = false;
+    }
+
+    #endregion
+
+    #region Doorway Transition
+
+    public void StartDoorwayMovement()
+    {
+        isOverrideMovement = true;
+    }
+
+    public void EndDoorwayMovement()
+    {
+        isOverrideMovement = false;
     }
 
     #endregion

@@ -23,12 +23,13 @@ public class PlayerStats : MonoBehaviour
     public void Initialize()
     {
         // Movement
-        Register(StatRef.PlayerBaseSpeed, 1f);
-        Register(StatRef.PlayerDashCharges, 2f);
+        Register(StatRef.PlayerBaseSpeed, movementData.baseSpeed);
+        Register(StatRef.PlayerDashCharges, movementData.maxDashCharges);
         Register(StatRef.PlayerDashRecharge, 1f);
 
 
         // Health
+        Register(StatRef.PlayerStructureCount, healthData.segmentBaseCount);
         Register(StatRef.PlayerBaseStructureHealth, 8);
 
         // Combat
@@ -36,8 +37,9 @@ public class PlayerStats : MonoBehaviour
         Register(StatRef.PlayerBaseRangedDamage, 1f);
         Register(StatRef.PlayerBaseGlobalDamage, 1f);
 
-
         // Momentum
+        Register(StatRef.PlayerMomentumGainMult, 1f);
+        Register(StatRef.PlayerMomentumDrainMult, 1f);
 
         // Heat
     }
@@ -101,9 +103,7 @@ public class PlayerStats : MonoBehaviour
         StartCoroutine(TemporaryModifierRoutine(statID, modifier, duration));
     }
 
-
     #endregion
-
 
     #region Utility
 

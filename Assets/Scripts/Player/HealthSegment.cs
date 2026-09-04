@@ -54,15 +54,11 @@ public class HealthSegment
     {
         IsDestroyed = false;
         currentHealth = maxHealth;
-
-        // Trigger event
     }
 
     public void Destroy()
     {
         currentHealth = 0f;
         IsDestroyed = true;
-
-        // Trigger Event
     }
 }

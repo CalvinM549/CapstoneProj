@@ -21,13 +21,13 @@ public class RunPrepScreen : HubScreen
     {
         base.Initialize();
 
-        HubManager.Instance.onMapGenerated += HandleMapGenerated;
+        HubManager.Instance.OnPendingMapChanged += HandleMapGenerated;
     }
 
     private void OnDisable()
     {
         if (HubManager.Instance != null)
-            HubManager.Instance.onMapGenerated -= HandleMapGenerated;
+            HubManager.Instance.OnPendingMapChanged -= HandleMapGenerated;
     }
 
     public override void OnClose()

@@ -47,6 +47,7 @@ public class GameplayInputReader
         actions.Gameplay.RangedAttack.performed += OnRangedPerformed;
         actions.Gameplay.RangedAttack.canceled += OnRangedCanceled;
 
+        actions.Gameplay.UseTool.performed += OnUseToolPerformed;
         actions.Gameplay.LockOn.performed += OnTargetPerformed;
 
         actions.Gameplay.Inventory.performed += OnInventoryPerformed;
@@ -66,6 +67,7 @@ public class GameplayInputReader
         actions.Gameplay.RangedAttack.performed -= OnRangedPerformed;
         actions.Gameplay.RangedAttack.canceled -= OnRangedCanceled;
 
+        actions.Gameplay.UseTool.performed -= OnUseToolPerformed;
         actions.Gameplay.LockOn.performed -= OnTargetPerformed;
 
         actions.Gameplay.Inventory.performed -= OnInventoryPerformed;
@@ -116,6 +118,11 @@ public class GameplayInputReader
         RangedCanceled?.Invoke();
     }
 
+    private void OnUseToolPerformed(InputAction.CallbackContext ctx)
+    {
+        ToolPressed?.Invoke();
+    }
+
     private void OnTargetPerformed(InputAction.CallbackContext ctx)
     {
         TargetPressed?.Invoke();
@@ -133,6 +140,18 @@ public class GameplayInputReader
     private void OnInventoryCanceled(InputAction.CallbackContext context)
     {
         InventoryCanceled?.Invoke();
+    }
+
+    private void OnMapPerformed(InputAction.CallbackContext context)
+    {
+        if (UIManager.Instance == null) return;
+
+        UIManager.Instance.OpenScreen("mapScreen");
+    }
+
+    private void OnMapCanceled(InputAction.CallbackContext context)
+    {
+
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext context)

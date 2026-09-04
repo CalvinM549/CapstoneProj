@@ -12,13 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a065e1eb24036848b655c429670802f, type: 3}
   m_Name: SentryAIProfile
   m_EditorClassIdentifier: Assembly-CSharp::AIProfile
-  aggroRange: 15
-  repositionDuration: 1
-  moveSpeed: 3
-  tickInterval: 0.1
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 128
+  aggroRange: 17
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 64
+  requireLineOfSight: 1
+  moveSpeed: 3
+  repositionDuration: 1
+  repositionSpeedMult: 0
+  attackPattern: 
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  tickInterval: 0.1

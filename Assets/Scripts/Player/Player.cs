@@ -19,6 +19,10 @@ public class Player : MonoBehaviour
 
     public bool CanAct { get; private set; }
 
+    public LayerMask WallLayer;
+    public LayerMask GroundLayer;
+    public LayerMask EnemyLayer;
+
     private void Awake()
     {
         Movement    = GetComponent<PlayerMovement>();
@@ -40,6 +44,8 @@ public class Player : MonoBehaviour
             CameraManager.Instance.SetPlayer(transform);
     }
 
+    #region Setup
+
     public void SetupNew(RunLoadout loadout)
     {
         if (loadout == null)
@@ -55,10 +61,10 @@ public class Player : MonoBehaviour
 
         Movement.Initialize();
         Health.Initialize();
+        Upgrades.Initialize();
+        Momentum.Initialize();
         Tools.Initialize(loadout.tool);
         Combat.Initialize(loadout.weapon);
-
-        SetPlayerCanAct(true);
     }
 
     public void SetupFromSave(PlayerStateSave save)
@@ -75,12 +81,15 @@ public class Player : MonoBehaviour
         var equippedWeapon = db.weapons.Get(save.equippedWeapon);
 
         // Restore from save
+        Stats.Initialize();
 
-        Tools.EquipTool(equippedTool);
+        Tools.Initialize(equippedTool);
         Combat.Initialize(equippedWeapon);
         Upgrades.RestoreFromSave(save.upgradeSave);
         //Health.Restore();
     }
+
+    #endregion
 
     public PlayerStateSave PackPlayerState()
     {
@@ -101,7 +110,6 @@ public class Player : MonoBehaviour
     public void SetPlayerCanAct(bool value)
     {
         CanAct = value;
-        // Event??
     }
 
     #region Utilities

@@ -11,13 +11,15 @@ public enum MomentumZone
 
 public class PlayerMomentum : MonoBehaviour
 {
+    private Player p;
+
     [SerializeField] private MomentumData data;
 
     private float currentMomentum = 0f;
     private MomentumZone currentZone = MomentumZone.Empty;
 
-    private float gainMultiplier = 1.0f;
-    private float drainMultiplier = 1.0f;
+    private StatValue gainMult;
+    private StatValue drainMult;
 
     private float momentumTimer;
     private bool passiveDrainActive = false;
@@ -25,6 +27,17 @@ public class PlayerMomentum : MonoBehaviour
     public float CurrentMomentum => currentMomentum;
     public float PercentMomentum => currentMomentum / data.capacity;
     public MomentumZone CurrentZone => currentZone;
+
+    public void Initialize()
+    {
+        gainMult = p.Stats.GetStatValue(StatRef.PlayerMomentumGainMult);
+        drainMult = p.Stats.GetStatValue(StatRef.PlayerMomentumDrainMult);
+    }
+
+    private void Awake()
+    {
+        p = GetComponent<Player>();
+    }
 
     private void OnEnable()
     {
@@ -53,7 +66,7 @@ public class PlayerMomentum : MonoBehaviour
     {
         if (amount <= 0) return;
 
-        currentMomentum = Mathf.Clamp(currentMomentum + (amount * gainMultiplier), 0f, data.capacity);
+        currentMomentum = Mathf.Clamp(currentMomentum + (amount * gainMult.Value), 0f, data.capacity);
 
         if (currentMomentum == data.capacity)
         {
@@ -76,7 +89,7 @@ public class PlayerMomentum : MonoBehaviour
     {
         if (amount <= 0) return;
 
-        currentMomentum = Mathf.Clamp(currentMomentum - (amount * drainMultiplier), 0f, data.capacity);
+        currentMomentum = Mathf.Clamp(currentMomentum - (amount * drainMult.Value), 0f, data.capacity);
 
         if (!passiveDrainActive)
         {

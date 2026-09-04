@@ -20,19 +20,21 @@ public enum UpgradeCategory
     Movement
 }
 
-public class UpgradeBase : DatabaseEntry, ICategorizedEntry<UpgradeSlot>, IWeightedLoot
+public class UpgradeBase : DatabaseEntry, ICategorizedEntry<UpgradeSlot>, IRollableLoot
 {
     [Header("Display")]
     public string upgradeName = "New Upgrade";
     [TextArea] public string flavourText;
     [TextArea] public string effectText;
-
     public Sprite icon;
 
+    public string Name => upgradeName;
+    public string FlavourDescription => flavourText;
+    public string EffectDescription => effectText;
+    public Sprite Icon => icon;
+
     public UpgradeSlot slot = UpgradeSlot.None;
-
     public int maxStacks = 1;
-
 
     [Header("Loot")]
     public float baseDropRate = 1f;
@@ -44,6 +46,8 @@ public class UpgradeBase : DatabaseEntry, ICategorizedEntry<UpgradeSlot>, IWeigh
 
     [Header("Effects")]
     protected Player player { get; private set; }
+
+
 
     public List<UpgradeStatModifierEntry> statModifiers = new();
 

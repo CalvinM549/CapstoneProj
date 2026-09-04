@@ -21,7 +21,7 @@ MonoBehaviour:
     dashForce: 4
     hitstopDuration: 0.1
     knockback: 1
-    hitstunTime: 0.15
+    hitstunTime: 0.05
   - type: 0
     damage: 1
     startupTime: 0.01
@@ -30,7 +30,7 @@ MonoBehaviour:
     dashForce: 4
     hitstopDuration: 0.1
     knockback: 1
-    hitstunTime: 0.15
+    hitstunTime: 0.05
   - type: 0
     damage: 2
     startupTime: 0.01
@@ -39,7 +39,7 @@ MonoBehaviour:
     dashForce: 6
     hitstopDuration: 0.1
     knockback: 1
-    hitstunTime: 0.2
+    hitstunTime: 0.15
   heavyAttack:
     type: 1
     damage: 3

@@ -1,0 +1,71 @@
+using System;
+using UnityEngine;
+
+public class UIScreen : MonoBehaviour
+{
+    public string screenName;
+
+    public bool pausesGame;
+    public bool blockPlayerInput;
+    public bool blockUIInput;
+
+    public bool isVisible {  get; protected set; }
+
+    public event Action OnOpen;
+    public event Action OnClose;
+
+    [SerializeField] protected CanvasGroup cg;
+    private Animator animator;
+    private RectTransform rt;
+
+    public bool IsTransitioning {  get; private set; }
+
+    private void Awake()
+    {
+        if(cg == null) cg = GetComponent<CanvasGroup>();
+
+        cg.alpha = 0f;
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
+    }
+
+    public void Open(object payload)
+    {
+        gameObject.SetActive(true);
+        OnBeforeOpen(payload);
+
+        IsTransitioning = true;
+
+        // Play transition, delay next
+
+        cg.interactable = true;
+        cg.blocksRaycasts = true;
+        IsTransitioning = false;
+        OnOpened();
+        OnOpen?.Invoke();
+    }
+
+    public void Close()
+    {
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
+        IsTransitioning = true;
+
+        // Play transition, delay next
+
+        IsTransitioning = false;
+        OnClosed();
+        gameObject.SetActive(false);
+        OnClose?.Invoke();
+    }
+
+    public virtual void HandleCancel()
+    {
+        // Depends on the screen, default to close
+        UIManager.Instance.CloseTop();
+    }
+
+    protected virtual void OnBeforeOpen(object payload) { }
+    protected virtual void OnOpened() { }
+    protected virtual void OnClosed() { }
+}

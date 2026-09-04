@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomData
   id: COMBAT_start
   type: 1
-  tag: 0
+  tag: -1
   allowedConnections: -1
   difficultyCost: 0
   timerCost: 0

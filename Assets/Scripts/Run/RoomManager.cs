@@ -99,6 +99,19 @@ public class RoomManager : MonoBehaviour
             HandleEncounterCleared();
     }
 
+    public Doorway GetDoorwayFor(Direction fromDirection)
+    {
+        foreach (var door in doorways)
+        {
+            if (door.direction == fromDirection && door.gameObject.activeSelf)
+                return door;
+        }
+
+        print($"[RoomManager] No doorway matching direction {fromDirection}, using default instead");
+        return null;
+
+    }
+
     public Vector2 GetEntryPointFor(Direction fromDirection)
     {
         foreach (var door in doorways)

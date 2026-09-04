@@ -9,6 +9,7 @@ public class RunState
     public float difficultyScore;
 
     private Player player;
+    public RewardContext rewardContext;
 
     // Map
     public int chapterIndex;

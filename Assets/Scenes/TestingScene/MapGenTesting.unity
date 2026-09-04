@@ -164,6 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerator
   db: {fileID: 11400000, guid: 2e6ffc4f57ba51f428c00a9eb207ee3f, type: 2}
+  config: {fileID: 11400000, guid: 7ddd848d53847534eae05a37bb512472, type: 2}
   startPosition: {x: 0, y: 0}
   walkLength: 12
   mapBounds: {x: 2, y: 2}
@@ -171,6 +172,50 @@ MonoBehaviour:
   delay: 0.05
   displayNode: {fileID: 4839949032228345143, guid: 03f0d82f061ac3c46aae952e2b282303, type: 3}
   pathLine: {fileID: 0}
+--- !u!1 &1026557989
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1026557991}
+  - component: {fileID: 1026557990}
+  m_Layer: 0
+  m_Name: RNG
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1026557990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1026557989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be5f917f746e03a42a9ba3d66dc1d5af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RNGManager
+--- !u!4 &1026557991
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1026557989}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 556.86676, y: 561.45404, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1463863604
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,3 +359,4 @@ SceneRoots:
   m_Roots:
   - {fileID: 1463863607}
   - {fileID: 396569831}
+  - {fileID: 1026557991}

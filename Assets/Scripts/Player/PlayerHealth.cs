@@ -8,6 +8,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
     [SerializeField] private HealthData data;
     [SerializeField] private bool UseIFrames;
 
+    private StatValue structureCount;
     private StatValue structureHealth;
 
     private Player p;
@@ -24,8 +25,6 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
     private bool isIframe = false;
 
-    private bool isInitialized = false;
-
     private Coroutine hitStunRoutine;
     private Coroutine iFrameRoutine;
 
@@ -33,14 +32,16 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
     {
         structureHealth = p.Stats.GetStatValue(StatRef.PlayerBaseStructureHealth);
         structureHealth.OnChanged += HandleStructureHealthChanged;
+        structureCount = p.Stats.GetStatValue(StatRef.PlayerStructureCount);
 
-        InitializeHealth(data.segmentBaseCount);
+        p.Stats.Subscribe(StatRef.PlayerStructureCount, HandleStructureCountStatChanged);
+
+        SetSegmentCount(structureCount.ValueInt);
     }
 
     public void RestoreFromSave(int activeIndex, List<SegmentSave> savedSegments)
     {
-        isInitialized = false;
-        InitializeHealth(savedSegments.Count);
+        SetSegmentCount(savedSegments.Count);
         activeHealthIndex = Mathf.Clamp(activeIndex, 0, healthSegments.Count - 1);
 
         for (int i = 0; i < healthSegments.Count && i < savedSegments.Count; i++)
@@ -66,6 +67,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
     private void OnDisable()
     {
         structureHealth.OnChanged -= HandleStructureHealthChanged;
+        p.Stats.Unsubscribe(StatRef.PlayerStructureCount, HandleStructureCountStatChanged);
     }
 
     private void Update()
@@ -78,25 +80,65 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
         if (Input.GetKeyDown(KeyCode.K))
         {
-            InitializeHealth(healthSegments.Count + 1);
+            var structureCountBuff = new StatModifier(1, StatModType.Flat);
+            structureCount.AddStatModifier(structureCountBuff);
         }
 #endif
     }
 
-    private void InitializeHealth(int segmentCount)
+    private void HandleStructureCountStatChanged()
     {
-        healthSegments.Clear();
+        SetSegmentCount(structureCount.ValueInt);
+    }
 
-        for (int i = 0; i < segmentCount; i++)
+    private void SetSegmentCount(int newCount)
+    {
+        newCount = Mathf.Max(newCount, 0);
+        int oldCount = healthSegments.Count;
+        if (oldCount == newCount) return;
+
+        if (newCount > oldCount)
         {
-            bool isActive = i == segmentCount - 1;
-            healthSegments.Add(new HealthSegment(structureHealth.Value, isActive));
+            GrantSegments(newCount);
+        }
+        else
+        {
+            LoseSegments(newCount);
+        }
+
+        GameEvents.PlayerHealthChanged(healthSegments);
+    }
+
+    private void GrantSegments(int newCount)
+    {
+        if (healthSegments.Count > 0)
+            ActiveSegment.IsActive = false;
+
+        int toAdd = newCount - healthSegments.Count;
+        for (int i = 0; i < toAdd; i++)
+        {
+            healthSegments.Add(new HealthSegment(structureHealth.Value, false));
         }
 
         activeHealthIndex = healthSegments.Count - 1;
+        ActiveSegment.IsActive = true;
+    }
 
-        GameEvents.PlayerHealthChanged(healthSegments);
+    private void LoseSegments(int newCount)
+    {
+        while (healthSegments.Count > newCount && healthSegments.Count - 1 > activeHealthIndex)
+            healthSegments.RemoveAt(healthSegments.Count - 1);
 
+        while (healthSegments.Count > newCount && healthSegments.Count > 0)
+        {
+            healthSegments.RemoveAt(healthSegments.Count - 1);
+            activeHealthIndex = Mathf.Min(activeHealthIndex, healthSegments.Count - 1);
+        }
+
+        if (healthSegments.Count > 0)
+            ActiveSegment.IsActive = true;
+        else
+            PlayerDeath();
     }
 
     private void HandleStructureHealthChanged()
@@ -227,6 +269,8 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
         if(healed < count)
             RestoreCurrentSegment();
+
+        //Debug.Log($"[PlayerHealth] toHeal: {count} | healed: {healed}");
 
         if(healed > 0)
             GameEvents.PlayerHealthChanged(healthSegments);

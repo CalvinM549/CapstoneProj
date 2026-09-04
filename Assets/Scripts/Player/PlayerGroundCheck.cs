@@ -4,7 +4,6 @@ public class PlayerGroundCheck : MonoBehaviour
 {
     private Player p;
 
-    [SerializeField] private LayerMask groundLayer;
     [SerializeField] private Transform checkPosition; 
 
     // Implement stairs check??
@@ -45,7 +44,7 @@ public class PlayerGroundCheck : MonoBehaviour
 
     private bool IsPlayerOverGround()
     {
-        return Physics2D.OverlapPoint(checkPosition.position, groundLayer) != null;
+        return Physics2D.OverlapPoint(checkPosition.position, p.GroundLayer) != null;
     }
 
     private void FallIntoVoid()
@@ -54,6 +53,6 @@ public class PlayerGroundCheck : MonoBehaviour
 
         // Reset player velocity
 
-        print("You have fallen into the abyss");
+        //print("You have fallen into the abyss");
     }
 }

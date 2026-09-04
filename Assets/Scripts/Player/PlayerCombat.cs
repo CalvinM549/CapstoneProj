@@ -14,8 +14,7 @@ public class PlayerCombat : MonoBehaviour
     private StatValue meleeDamage;
     private StatValue rangedDamage;
 
-    [SerializeField] private PlayerHitboxController hitboxes;
-    [SerializeField] private LayerMask wallLayer;
+    [SerializeField] private PlayerMeleeHitboxController hitboxes;
 
     private GameplayInputReader input;
 
@@ -43,8 +42,6 @@ public class PlayerCombat : MonoBehaviour
     private float comboCooldownTimer = 0f;
 
     // Ranged
-
-    [SerializeField] private PlayerWeapon tempWeapon;
     public PlayerWeapon EquippedWeapon { get; private set; }
     public bool RangedWeaponEquipped => EquippedWeapon != null;
 
@@ -52,9 +49,6 @@ public class PlayerCombat : MonoBehaviour
 
     public float rangedCooldownPercent => RangedWeaponEquipped && EquippedWeapon.cooldown > 0f
         ? Mathf.Clamp01(rangedCooldownTimer / EquippedWeapon.cooldown) : 0f;
-
-    private bool rangedInputHeld;
-    private Coroutine autoFireRoutine;
 
     private bool dashCancelWindow;
     private Coroutine dashCancelRoutine;
@@ -90,13 +84,12 @@ public class PlayerCombat : MonoBehaviour
 
     private void Start()
     {
-        if(EquippedWeapon == null)
-            EquipRangedWeapon(tempWeapon);
+
     }
 
     private void OnEnable()
     {
-        input = InputManager.Instance.PlayerInputs;
+        input = InputManager.Instance.GameplayInputs;
 
         input.MeleePressed += OnLightAttackInput;
         input.MeleeCanceled += OnMeleeInputCancelled;
@@ -183,8 +176,6 @@ public class PlayerCombat : MonoBehaviour
 
     private void OnRangedInputStarted()
     {
-        rangedInputHeld = true;
-
         if (!CanAttack()) return;
 
         if (CanRangedAttack())
@@ -199,7 +190,7 @@ public class PlayerCombat : MonoBehaviour
 
     private void OnRangedAttackCancel()
     {
-        rangedInputHeld = false;
+
     }
 
     private bool ShouldBufferLight()
@@ -364,7 +355,7 @@ public class PlayerCombat : MonoBehaviour
         Vector2 direction = hit.transform.position - transform.position;
         float distance = Vector2.Distance(transform.position, hit.transform.position);
 
-        if (Physics2D.Raycast(transform.position, direction, distance, wallLayer))
+        if (Physics2D.Raycast(transform.position, direction, distance, p.WallLayer))
         {
             // Wall stagger / particles?
             return;

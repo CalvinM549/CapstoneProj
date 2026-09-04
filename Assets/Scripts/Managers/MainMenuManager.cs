@@ -3,9 +3,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class TitleManager : MonoBehaviour
+public class MainMenuManager : MonoBehaviour
 {
-    public static TitleManager Instance { get; private set; }
+    public static MainMenuManager Instance { get; private set; }
 
     // Default UI
     [SerializeField] private CanvasGroup baseGroup;

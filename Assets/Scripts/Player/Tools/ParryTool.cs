@@ -45,7 +45,7 @@ public class ParryTool : PlayerTool // Setup dash parry cancel
 
         // Ping Event
         GameEvents.PlayerParryEnd();
-        ReduceCooldown(Cooldown * 0.5f);
+        ReduceCooldown(cooldown * 0.5f);
     }
 
     protected override void OnUpdate()

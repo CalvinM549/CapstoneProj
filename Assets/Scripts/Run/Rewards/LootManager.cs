@@ -3,9 +3,9 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct LootResult<TEntry>
+public struct LootResult
 {
-    public TEntry Item;
+    public IRollableLoot Item;
     public RarityTier Rarity;
 }
 
@@ -19,14 +19,24 @@ public enum RarityTier
 
 public class LootManager : MonoBehaviour
 {
+    public static LootManager Instance;
+
     [SerializeField] private GameDatabase db;
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
 
     #region Generic rollers
 
     public List<TEntry> GetEligableCandidates<TEntry>(
         IEnumerable<TEntry> allItems, 
         Func<TEntry, bool> extraFiller = null) 
-        where TEntry : ScriptableObject, IDatabaseEntry, IWeightedLoot
+        where TEntry : ScriptableObject, IDatabaseEntry, IRollableLoot
     {
         IEnumerable<TEntry> filtered = allItems;
         if(extraFiller != null)
@@ -39,7 +49,7 @@ public class LootManager : MonoBehaviour
         TEntry item, 
         RewardContext ctx, 
         RewardCategory category) 
-        where TEntry : IDatabaseEntry, IWeightedLoot
+        where TEntry : IDatabaseEntry, IRollableLoot
     {
         float weight = item.BaseDropWeight;
 
@@ -117,14 +127,14 @@ public class LootManager : MonoBehaviour
         return RarityTier.Common;
     }
 
-    public List<LootResult<TEntry>> GenerateOffer<TEntry>(
+    public List<LootResult> GenerateOffer<TEntry>(
         IEnumerable<TEntry> allItems, 
         RewardCategory category, 
         int offerCount, 
         RewardContext context, 
         int runDepth, 
         Func<TEntry, bool> extraFiller = null)
-        where TEntry : ScriptableObject, IDatabaseEntry, IWeightedLoot
+        where TEntry : ScriptableObject, IDatabaseEntry, IRollableLoot
     {
         var rng = RNGManager.Instance.rng;
 
@@ -133,7 +143,7 @@ public class LootManager : MonoBehaviour
         var chosen = SampleIdentities(candidates, weights, offerCount);
 
         var offer = chosen
-            .Select(item => new LootResult<TEntry> { Item = item, Rarity = RollRarity(runDepth) })
+            .Select(item => new LootResult { Item = item, Rarity = RollRarity(runDepth) })
             .ToList();
 
         context.ResetPity(category);
@@ -146,7 +156,7 @@ public class LootManager : MonoBehaviour
     #endregion
 
 
-    public List<LootResult<UpgradeBase>> GenerateMajorUpgradeOffer(int offerCount, RewardContext ctx, int runDepth)
+    public List<LootResult> GenerateMajorUpgradeOffer(int offerCount, RewardContext ctx, int runDepth)
     {
         var pool = System.Enum.GetValues(typeof(UpgradeSlot))
             .Cast<UpgradeSlot>()
@@ -156,10 +166,24 @@ public class LootManager : MonoBehaviour
         return GenerateOffer(pool, RewardCategory.MajorUpgrade, offerCount, ctx, runDepth);
     }
 
-    public List<LootResult<UpgradeBase>> GenerateAuxUpgradeOffer(int offerCount, RewardContext ctx, int runDepth)
+    public List<LootResult> GenerateAuxUpgradeOffer(int offerCount, RewardContext ctx, int runDepth)
     {
         var pool = db.upgrades.GetByCategory(UpgradeSlot.None);
 
         return GenerateOffer(pool, RewardCategory.AuxUpgrade, offerCount, ctx, runDepth);
+    }
+
+    public List<LootResult> GenerateWeaponOffer(int offerCount, RewardContext ctx, int runDepth)
+    {
+        var pool = db.weapons.All;
+
+        return GenerateOffer(pool, RewardCategory.Weapon, offerCount, ctx, runDepth);
+    }
+
+    public List<LootResult> GenerateToolOffer(int offerCount, RewardContext ctx, int runDepth)
+    {
+        var pool = db.tools.All;
+
+        return GenerateOffer(pool, RewardCategory.Tool, offerCount, ctx, runDepth);
     }
 }

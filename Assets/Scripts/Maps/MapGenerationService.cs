@@ -31,6 +31,16 @@ public class MapGenerationService
         this.difficultyPerDepth = difficultyPerDepth;
     }
 
+    public MapGenerationService(RoomDatabase data, MapGenerationConfig config)
+    {
+        this.db = data;
+
+        this.bounds = config.zoneSize;
+        this.nodeCount = config.roomCount;
+        this.walkerCount = Mathf.Max(1, walkerCount);
+        this.baseDifficulty = config.baseDifficulty;
+        this.difficultyPerDepth = config.difficultyPerDepth;
+    }
 
 
     public RunMap GenerateMapWithSeed(int seed) // Add chapter sorting later lol

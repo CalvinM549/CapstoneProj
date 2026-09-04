@@ -16,12 +16,3 @@ public class RoomConnection
     public bool isRequired;
 }
 
-public class RunMap
-{
-    //public List<List<MapNode>> rows = new();
-    public Dictionary<Vector2Int, RoomNode> tiles = new();
-    public RoomNode currentNode;
-    public RoomNode startNode;
-
-    public int totalNodes;
-}

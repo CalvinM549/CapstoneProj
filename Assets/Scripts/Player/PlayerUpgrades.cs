@@ -23,14 +23,14 @@ public class PlayerUpgrades : MonoBehaviour
         p = GetComponent<Player>();
     }
 
-    private void Start()
-    {
-        ApplyTemplates();
-    }
-
     #endregion
 
     #region Utilities
+
+    public void Initialize()
+    {
+        ApplyTemplates();
+    }
 
     public void RestoreFromSave(PlayerUpgradeSave save)
     {
@@ -81,7 +81,7 @@ public class PlayerUpgrades : MonoBehaviour
             return false;
         }
 
-        auxUpgrades[upgrade] = current++;
+        auxUpgrades[upgrade] = current + 1;
 
         upgrade.Apply(p);
         // Fire Event

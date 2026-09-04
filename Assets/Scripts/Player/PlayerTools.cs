@@ -3,9 +3,11 @@ using UnityEngine.InputSystem;
 
 public class PlayerTools : MonoBehaviour
 {
+    private Player p;
+
     private GameplayInputReader input;
 
-    private Player p;
+    private StatValue toolRechargeRate;
 
     public bool ToolEquipped => equippedTool != null;
     public PlayerTool equippedTool;
@@ -28,7 +30,7 @@ public class PlayerTools : MonoBehaviour
 
     private void OnEnable()
     {
-        input = InputManager.Instance.PlayerInputs;
+        input = InputManager.Instance.GameplayInputs;
 
         input.ToolPressed += OnUseToolInput;
     }
@@ -47,9 +49,8 @@ public class PlayerTools : MonoBehaviour
 
     private void OnUseToolInput()
     {
-        //UseEquippedTool();
+        UseEquippedTool();
     }
-
 
     public void EquipTool(PlayerTool tool)
     {
@@ -74,7 +75,7 @@ public class PlayerTools : MonoBehaviour
         if (!ToolEquipped) return;
 
         if (equippedTool.UseTool(p.GetMouseDirection()))
-            Debug.Log($"[PlayerTools] {equippedTool.ToolName} used!");
+            Debug.Log($"[PlayerTools] {equippedTool.toolName} used!");
     }
 
     public bool TryInterceptWithTool(HitData hit)
@@ -82,9 +83,4 @@ public class PlayerTools : MonoBehaviour
         if (!ToolEquipped) return false;
         return equippedTool.TryIntercept(hit);
     }
-
-    #region Utlities
-
-
-    #endregion
 }

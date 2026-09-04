@@ -23,7 +23,7 @@ public class PlayerTargeting : MonoBehaviour
 
     private void OnEnable()
     {
-        inputs = InputManager.Instance.PlayerInputs;
+        inputs = InputManager.Instance.GameplayInputs;
 
         inputs.TargetPressed += HandleLockInput;
     }
