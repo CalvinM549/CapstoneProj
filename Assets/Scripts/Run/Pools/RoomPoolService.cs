@@ -17,7 +17,7 @@ public class RoomPoolService
         roomContainer = container;
     }
 
-    public void BuildPool(RunMap map)
+    public void BuildPool(SectorMap map)
     {
         pooledRooms = new Dictionary<Vector2Int, RoomManager>();
 
@@ -36,7 +36,7 @@ public class RoomPoolService
         }
     }
 
-    public RoomManager GetRoom(RoomNode node)
+    public RoomManager GetRoom(MapNode node)
     {
         if (activeRoom != null) Debug.LogError("[RoomPoolService] existing room active, return old to pool first");
 

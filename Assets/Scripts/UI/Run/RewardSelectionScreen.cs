@@ -13,8 +13,6 @@ public class RewardSelectionScreen : UIScreen
     private List<OptionCardUI> activeCards = new();
     private Action<LootResult> onSelected;
 
-    private ChoiceRequest activeRequest;
-
     protected override void OnBeforeOpen(object payload)
     {
         var data = (ChoiceRequest)payload;
@@ -22,6 +20,8 @@ public class RewardSelectionScreen : UIScreen
 
         foreach(var button in activeCards)
             Destroy(button.gameObject);
+        
+        activeCards.Clear();
 
         foreach (var option in data.options)
         {
@@ -40,6 +40,13 @@ public class RewardSelectionScreen : UIScreen
 
         UIManager.Instance.CloseTop();
     }
+
+    public void OnNoneSelected()
+    {
+        // remove trigger somehow
+
+        UIManager.Instance.CloseTop();
+    }
 }
 
 public struct ChoiceRequest
@@ -47,4 +54,11 @@ public struct ChoiceRequest
     public string prompt;
     public List<LootResult> options;
     public Action<LootResult> onSelected;
+
+    public ChoiceRequest(string prompt, List<LootResult> options, Action<LootResult> onSelected)
+    {
+        this.prompt = prompt;
+        this.options = options;
+        this.onSelected = onSelected;
+    }
 }

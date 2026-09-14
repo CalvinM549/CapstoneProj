@@ -4,14 +4,13 @@ using UnityEngine.UI;
 
 public class MapOverlayScreen : UIScreen
 {
-    [SerializeField] private Transform container;
+    [SerializeField] private Transform mapContainer;
 
     [SerializeField] private GameObject nodeImagePrefab;
     [SerializeField] private float cellSize;
 
     private Vector2Int currentTile;
     private Dictionary<Vector2Int, Image> tileDict;
-    private Dictionary<Vector2Int, bool> completionDict;
 
 
     private void OnEnable()
@@ -26,7 +25,7 @@ public class MapOverlayScreen : UIScreen
 
     protected override void OnBeforeOpen(object payload)
     {
-        var tiles = RunManager.Instance.currentRun.map.tiles;
+        var tiles = RunManager.Instance.currentRun.map;
         InitializeMapView(tiles);
     }
     
@@ -39,18 +38,21 @@ public class MapOverlayScreen : UIScreen
         currentTile = newTile;
     }
 
-    public void InitializeMapView(Dictionary<Vector2Int, RoomNode> tiles)
+    public void InitializeMapView(SectorMap activeMap)
     {
-        foreach (Transform child in container)
+        foreach (Transform child in mapContainer)
             Destroy(child.gameObject);
 
         tileDict = new();
-        completionDict = new();
 
+        var tiles = activeMap.tiles;
+        currentTile = activeMap.currentNode.coordinates;
+        
         foreach (var tile in tiles)
         {
-            var color = Color.gray3;
-            SpawnTile(tile.Key, color);
+            var colour = tile.Value.cleared ? Color.gray6 : Color.gray3;
+            if(tile.Key == currentTile) colour = Color.white;
+            SpawnTile(tile.Key, colour);
         }
     }
 
@@ -58,12 +60,11 @@ public class MapOverlayScreen : UIScreen
     {
         Vector3 spawnPos = new Vector3(gridPos.x * cellSize, gridPos.y * cellSize, 0f);
 
-        GameObject newTile = Instantiate(nodeImagePrefab, container);
+        GameObject newTile = Instantiate(nodeImagePrefab, mapContainer);
         var image = newTile.GetComponent<Image>();
         image.color = color;
         newTile.transform.localPosition = spawnPos;
 
-        completionDict[gridPos] = false;
         tileDict[gridPos] = image;
     }
 }

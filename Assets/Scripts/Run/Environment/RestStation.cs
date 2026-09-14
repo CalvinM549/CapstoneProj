@@ -4,19 +4,26 @@ public class RestStation : SimpleInteractable
 {
     private bool isEnabled = false;
 
+    private void OnEnable()
+    {
+        GameEvents.OnRoomCompleted += HandleRoomCompleted;
+    }
 
+    private void OnDisable()
+    {
+        GameEvents.OnRoomCompleted -= HandleRoomCompleted;
+    }
 
-    public void Enable()
+    public void HandleRoomCompleted()
     {
         isEnabled = true;
+        // trigger animation
 
-        GetComponent<SpriteRenderer>().color = Color.green;
+        GetComponent<SpriteRenderer>().color = Color.green; // replace with anim trigger
     }
 
     protected override void OnInteract()
     {
-        print("Rest interacted2");
-
         if (!isEnabled) return;
         base.OnInteract();
 

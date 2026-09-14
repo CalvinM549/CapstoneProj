@@ -2,45 +2,51 @@ using UnityEngine;
 
 public class UpgradeStation : SimpleInteractable
 {
-    [SerializeField] private Collider2D triggerVolume;
     [SerializeField] private SpriteRenderer visual;
 
     [SerializeField] private Vector2 standPos;
 
     private bool isEnabled = false;
 
-    public void Enable()
+    private void OnEnable()
     {
-        isEnabled = true;
-        triggerVolume.enabled = false;
-        // Trigger animation
+        GameEvents.OnRoomCompleted += HandleRoomCompleted;
     }
 
-    public void Disable()
+    private void OnDisable()
     {
-        isEnabled = false;
-        triggerVolume.enabled = false;
-        // Trigger Animation
+        GameEvents.OnRoomCompleted -= HandleRoomCompleted;
+    }
+
+    public void HandleRoomCompleted()
+    {
+        isEnabled = true;
+        // trigger animation
+
+        GetComponent<SpriteRenderer>().color = Color.green; // replace with anim trigger
     }
 
     protected override void OnInteract()
     {
+        print("Upgrade Interacted");
+
         if (!isEnabled) return;
         base.OnInteract();
-    }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (!isEnabled || !collision.CompareTag("Player")) return;
+        var current = RunManager.Instance.currentRun;
 
-        collision.GetComponent<Player>().Movement.MoveToPosition(standPos);
-        // Disable movement allow
+        var offer = LootManager.Instance.GenerateAuxUpgradeOffer(3, current.rewardContext, current.roomsCleared);
 
+        ChoiceRequest request = new("Select Upgrade", offer, OnSelected);
+
+        UIManager.Instance.OpenScreen("rewardScreen", request);
         // Activate loot system
     }
 
-    private void OnUsed()
+    private void OnSelected(LootResult chosen)
     {
-        // Trigger Animation
+        print($"{chosen.Item.Name} Chosen");
+        RunManager.Instance.currentRun.GrantPlayerUpgrade();
     }
 }
+

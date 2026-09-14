@@ -155,10 +155,26 @@ public class LootManager : MonoBehaviour
 
     #endregion
 
+    public List<LootResult> GenerateLootOffer(int offerCount, RewardCategory rewardType, RewardContext ctx, int runDepth)
+    {
+        switch (rewardType)
+        {
+            case RewardCategory.MajorUpgrade:
+                return GenerateMajorUpgradeOffer(offerCount, ctx, runDepth);
+            case RewardCategory.AuxUpgrade:
+                return GenerateAuxUpgradeOffer(offerCount, ctx, runDepth);
+            case RewardCategory.Weapon:
+                return GenerateWeaponOffer(offerCount, ctx, runDepth);
+            case RewardCategory.Tool:
+                return GenerateToolOffer(offerCount, ctx, runDepth);
+        }
+
+        return null;
+    }
 
     public List<LootResult> GenerateMajorUpgradeOffer(int offerCount, RewardContext ctx, int runDepth)
     {
-        var pool = System.Enum.GetValues(typeof(UpgradeSlot))
+        var pool = Enum.GetValues(typeof(UpgradeSlot))
             .Cast<UpgradeSlot>()
             .Where(slot => slot != UpgradeSlot.None && !ctx.FilledMajorSlots.Contains(slot))
             .SelectMany(slot => db.upgrades.GetByCategory(slot));

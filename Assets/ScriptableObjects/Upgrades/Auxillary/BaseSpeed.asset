@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5064e4fb7b11be40af6ab109cffd00f, type: 3}
+  m_Name: BaseSpeed
+  m_EditorClassIdentifier: Assembly-CSharp::AuxUpgrade
+  id: d5fc505f-7c4d-4b6e-b8d4-2997d5a9b278
+  upgradeName: Jet Tuning
+  flavourText: 
+  effectText: Increase Speed by 5%
+  icon: {fileID: 4066830363745794116, guid: df393a1c4f8a5ac4ba2113d56c4718ee, type: 3}
+  slot: 4
+  maxStacks: 1
+  baseDropRate: 1
+  synergyTags: []
+  statModifiers:
+  - statID: player.movement.baseSpeed
+    value: 5
+    modifierType: 200

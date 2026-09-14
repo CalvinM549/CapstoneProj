@@ -13,7 +13,6 @@ public class OptionCardUI : MonoBehaviour
 
     public void Setup(LootResult option, Action onPicked)
     {
-
         icon.sprite = option.Item.Icon;
         title.text = option.Item.Name;
 
@@ -21,7 +20,7 @@ public class OptionCardUI : MonoBehaviour
         effectBox.text = option.Item.EffectDescription;
 
         button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(() => onPicked());
+        button.onClick.AddListener(() => onPicked?.Invoke());
     }
 
     public void ResetForPool()
@@ -39,6 +38,5 @@ public class OptionCardUI : MonoBehaviour
             effectBox.text = string.Empty;
 
         button.onClick.RemoveAllListeners();
-
     }
 }

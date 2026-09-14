@@ -13,16 +13,15 @@ public class RunManager : MonoBehaviour
     [Header("Refs")]
 
     [SerializeField] private Player playerPrefab;
+    [SerializeField] private PlayerUI playerUIPrefab;
 
     [SerializeField] private Transform roomContainer;
     [SerializeField] private Transform enemyContainer;
     [SerializeField] private Transform playerContainer;
+    [SerializeField] private Transform playerUIContainer;
 
     [SerializeField] private float fadeTime;
     [SerializeField] private CanvasGroup fadeOverlay;
-
-    [SerializeField] private MapOverlayScreen mapDisplay;
-    [SerializeField] private RunEndOverlay endOverlay;
 
     [Header("Run Config")]
 
@@ -89,8 +88,10 @@ public class RunManager : MonoBehaviour
         }
 
         activePlayer = Instantiate(playerPrefab, playerContainer);
-        UIManager.Instance.Initialize(activePlayer);
         AIManager.Instance.Initialize(activePlayer);
+
+        var playerUI = Instantiate(playerUIPrefab, playerUIContainer);
+        playerUI.Initialize(activePlayer);
 
         activePlayer.SetupNew(config.loadout);
         activePlayer.SetPlayerCanAct(true);
@@ -131,12 +132,12 @@ public class RunManager : MonoBehaviour
 
         activePlayer.SetPlayerCanAct(false);
 
-        endOverlay.Display(victory, currentRun);
+        //endOverlay.Display(victory, currentRun);
     }
 
     #region Room Transitions
 
-    private void EnterNode(RoomNode node, Direction? arrivingFrom)
+    private void EnterNode(MapNode node, Direction? arrivingFrom)
     {
         // Remove Current Room
 
@@ -171,7 +172,7 @@ public class RunManager : MonoBehaviour
 
         Vector2 spawnPos = arrivingFrom.HasValue
             ? entryDoor.entryPoint.position
-            : activeRoom.defaultEntryPoint;
+            : activeRoom.fallbackEntryPoint;
 
         GameEvents.PlayerTransitionTeleport(spawnPos);
         activePlayer.transform.position = spawnPos;
@@ -221,15 +222,15 @@ public class RunManager : MonoBehaviour
     }
 
     // Called by doorways when walked through to progress
-    public void TransitionTo(RoomNode nextNode, Direction exitDirection)
+    public void TransitionTo(MapNode nextNode, Direction exitDirection)
     {
         StartCoroutine(TransitionRoutine(nextNode, exitDirection));
     }
 
-    private IEnumerator TransitionRoutine(RoomNode nextNode, Direction dir)
+    private IEnumerator TransitionRoutine(MapNode nextNode, Direction dir)
     {
         DoTransitionFade(true);
-        activePlayer.Movement.StartDoorwayMovement();
+        activePlayer.Movement.StartDoorwayMovement(dir);
 
 
         yield return new WaitForSecondsRealtime(fadeTime);

@@ -13,26 +13,12 @@ public enum RoomType
     Boss
 }
 
-[Flags]
-public enum RoomTag
-{
-    None = 0,
-    Melee = 1 << 0,
-    Ranged = 1 << 1,
-    Swarm = 1 << 2,
-    Turret = 1 << 3,
-    OpenArena = 1 << 4,
-    Narrow = 1 << 5,
-    Environmental = 1 << 6,
-}
 
 [CreateAssetMenu(menuName = "Map/Room Def")]
 public class RoomData : DatabaseEntry, ICategorizedEntry<RoomType>
 {
     public RoomType type;
     public RoomType Category => type;
-
-    public RoomTag tag;
 
     public DirectionMask allowedConnections = DirectionMask.All;
 

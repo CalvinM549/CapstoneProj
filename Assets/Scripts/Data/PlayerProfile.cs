@@ -22,10 +22,10 @@ public class PlayerProfile
     public float BaseTimer;
     
     // Unlocks
-    public List<string> unlockedArchives;
+    public HashSet<string> unlockedArchives;
 
-    public List<string> unlockedTools;
-    public List<string> unlockedWeapons;
+    public HashSet<string> unlockedTools;
+    public HashSet<string> unlockedWeapons;
 
     public List<SavedLoadoutPreset> savedPresets;
 

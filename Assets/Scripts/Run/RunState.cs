@@ -13,7 +13,7 @@ public class RunState
 
     // Map
     public int chapterIndex;
-    public RunMap map;
+    public SectorMap map;
     public int roomsCleared;
     public Doorway lastDoorway; // used to re-load spawn pos
     // Draft things
@@ -39,12 +39,14 @@ public class RunState
 
     #region Creation / Loading
 
-    public RunState(int seed, RunMap map, Player player)
+    public RunState(int seed, SectorMap map, Player player)
     {
         this.seed = seed;
         this.map = map;
 
         this.player = player;
+
+        this.rewardContext = new();
 
         runDurationTimer = 0f;
         stabilityTimer = maxStability; // Change to variable start time??

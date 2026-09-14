@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class ContentDatabase<TEntry> : ScriptableObject where TEntry : ScriptableObject, IDatabaseEntry
 {
-    [SerializeField] private TEntry[] entries = Array.Empty<TEntry>();
+    [SerializeField] protected TEntry[] entries = Array.Empty<TEntry>();
 
     private Dictionary<string, TEntry> lookup;
 
@@ -80,17 +84,17 @@ public class ContentDatabase<TEntry> : ScriptableObject where TEntry : Scriptabl
         }
     }
 
-    [ContextMenu("Auto-Populate From Project")]
-    private void AutoPopulate()
-    {
-        var guids = UnityEditor.AssetDatabase.FindAssets($"t:{typeof(TEntry).Name}");
-        entries = guids
-            .Select(g => UnityEditor.AssetDatabase.LoadAssetAtPath<TEntry>(UnityEditor.AssetDatabase.GUIDToAssetPath(g)))
-            .Where(e => e != null)
-            .ToArray();
-        UnityEditor.EditorUtility.SetDirty(this);
-        Debug.Log($"[{name}] populated {entries.Length} entries");
-    }
+    //[ContextMenu("Auto-Populate From Project")]
+    //private void AutoPopulate()
+    //{
+    //    var guids = AssetDatabase.FindAssets($"t:{typeof(TEntry).Name}");
+    //    entries = guids
+    //        .Select(g => AssetDatabase.LoadAssetAtPath<TEntry>(AssetDatabase.GUIDToAssetPath(g)))
+    //        .Where(e => e != null)
+    //        .ToArray();
+    //    EditorUtility.SetDirty(this);
+    //    Debug.Log($"[{name}] populated {entries.Length} entries");
+    //}
 
 #endif
 }

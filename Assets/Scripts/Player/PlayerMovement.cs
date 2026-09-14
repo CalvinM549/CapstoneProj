@@ -448,8 +448,10 @@ public class PlayerMovement : MonoBehaviour
 
     #region Doorway Transition
 
-    public void StartDoorwayMovement()
+    public void StartDoorwayMovement(Direction exitDir)
     {
+        PushPlayer(exitDir.ToGridOffset(), 20, 0.4f, false);
+
         isOverrideMovement = true;
     }
 

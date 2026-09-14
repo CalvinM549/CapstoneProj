@@ -32,8 +32,6 @@ public class PlayerInteract : MonoBehaviour
 
     private void HandleInteractPressed()
     {
-        print(1);
-
         if (TimescaleManager.IsPaused || !p.CanAct) return;
 
         IInteractable interactable = GetClosestInteractable();

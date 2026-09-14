@@ -16,7 +16,7 @@ MonoBehaviour:
   upgradeName: Pulse Cooling
   flavourText: 
   effectText: Dash charges recharge 10% faster
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 932a1e4a765865045b5c77534675cfac, type: 3}
   slot: 4
   maxStacks: 3
   baseDropRate: 1

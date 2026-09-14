@@ -21,7 +21,7 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private RestStation restStation;
 
     [SerializeField] private Doorway[] doorways;
-    public Vector2 defaultEntryPoint;
+    public Vector2 fallbackEntryPoint;
 
     [SerializeField] private Transform[] enemySpawnPoints;
 
@@ -48,7 +48,7 @@ public class RoomManager : MonoBehaviour
 #endif
     }
 
-    public void Initialize(RoomNode node, RunState run)
+    public void Initialize(MapNode node, RunState run)
     {
         Data = node.room;
         this.run = run;
@@ -121,7 +121,7 @@ public class RoomManager : MonoBehaviour
         }
 
         print($"[RoomManager] No doorway matching direction {fromDirection}, using default instead");
-        return defaultEntryPoint;
+        return fallbackEntryPoint;
     }
 
     private void HandleEncounterCleared()
@@ -131,12 +131,6 @@ public class RoomManager : MonoBehaviour
         State = RoomState.Cleared;
         if(objectiveTracker != null)
             objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
-
-        if(upgradeStation != null) upgradeStation.Enable();
-
-        if(restStation != null) restStation.Enable();
-
-        if(gateStation != null) gateStation.Enable();
 
         foreach (var door in doorways)
             door.Unlock();

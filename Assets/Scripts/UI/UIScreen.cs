@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using UnityEngine;
 
@@ -29,6 +30,8 @@ public class UIScreen : MonoBehaviour
         cg.blocksRaycasts = false;
     }
 
+    public void Initialize() { print($"Initializing {screenName}"); }
+
     public void Open(object payload)
     {
         gameObject.SetActive(true);
@@ -37,12 +40,17 @@ public class UIScreen : MonoBehaviour
         IsTransitioning = true;
 
         // Play transition, delay next
-
-        cg.interactable = true;
-        cg.blocksRaycasts = true;
-        IsTransitioning = false;
-        OnOpened();
-        OnOpen?.Invoke();
+        cg.DOKill();
+        cg.DOFade(1f, 0.2f)
+            .SetUpdate(true)
+            .OnComplete(() =>
+        {
+            cg.interactable = true;
+            cg.blocksRaycasts = true;
+            IsTransitioning = false;
+            OnOpened();
+            OnOpen?.Invoke();
+        });
     }
 
     public void Close()
@@ -52,11 +60,16 @@ public class UIScreen : MonoBehaviour
         IsTransitioning = true;
 
         // Play transition, delay next
-
-        IsTransitioning = false;
-        OnClosed();
-        gameObject.SetActive(false);
-        OnClose?.Invoke();
+        cg.DOKill();
+        cg.DOFade(0f, 0.2f)
+            .SetUpdate(true)
+            .OnComplete(() =>
+        {
+            IsTransitioning = false;
+            OnClosed();
+            gameObject.SetActive(false);
+            OnClose?.Invoke();
+        });
     }
 
     public virtual void HandleCancel()

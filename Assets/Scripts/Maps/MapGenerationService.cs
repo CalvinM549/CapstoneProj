@@ -43,9 +43,9 @@ public class MapGenerationService
     }
 
 
-    public RunMap GenerateMapWithSeed(int seed) // Add chapter sorting later lol
+    public SectorMap GenerateMapWithSeed(int seed) // Add chapter sorting later lol
     {
-        RunMap map = new();
+        SectorMap map = new();
 
         RNGManager.Instance.InitRNG(seed);
 
@@ -62,9 +62,9 @@ public class MapGenerationService
         return map;
     }
 
-    public RunMap GenerateMapWithSeed(int seed, int chapter = 0) // Add chapter sorting later lol
+    public SectorMap GenerateMapWithSeed(int seed, int chapter = 0) // Add chapter sorting later lol
     {
-        RunMap map = new();
+        SectorMap map = new();
 
         RNGManager.Instance.InitRNG(seed);
 
@@ -224,9 +224,9 @@ public class MapGenerationService
         return analysis;
     }
 
-    private Dictionary<Vector2Int, RoomNode> GenerateMapNodes(HashSet<Vector2Int> grid, GridAnalysis analysis, int chapter)
+    private Dictionary<Vector2Int, MapNode> GenerateMapNodes(HashSet<Vector2Int> grid, GridAnalysis analysis, int chapter)
     {
-        Dictionary<Vector2Int, RoomNode> map = new();
+        Dictionary<Vector2Int, MapNode> map = new();
 
         Vector2Int endPos = analysis.depth.Aggregate((a, b) => b.Value > a.Value ? b : a).Key;
 
@@ -238,7 +238,7 @@ public class MapGenerationService
             RoomType category = DetermineCategory(square, endPos);
             RoomData room = SelectRoom(category, requiredDoors, depth, chapter);
 
-            map[square] = new RoomNode
+            map[square] = new MapNode
             {
                 room = room,
                 coordinates = square,
@@ -300,17 +300,17 @@ public class MapGenerationService
         return candidates[^1];
     }
 
-    private void ConnectNodes(Dictionary<Vector2Int, RoomNode> map)
+    private void ConnectNodes(Dictionary<Vector2Int, MapNode> map)
     {
         foreach (var kvp in map)
         {
             Vector2Int tile = kvp.Key;
-            RoomNode node = kvp.Value;
+            MapNode node = kvp.Value;
 
             foreach (Direction direction in Enum.GetValues(typeof(Direction)))
             {
                 if (node.connections.ContainsKey(direction)) continue;
-                if (!map.TryGetValue(tile + direction.ToGridOffset(), out RoomNode adjacent)) continue;
+                if (!map.TryGetValue(tile + direction.ToGridOffset(), out MapNode adjacent)) continue;
 
                 if(!node.room.CanConnectDirection(direction)) continue;
                 if(!adjacent.room.CanConnectDirection(direction.Opposite())) continue;
@@ -322,11 +322,11 @@ public class MapGenerationService
 
     #region Node Generation
 
-    private Dictionary<Vector2Int, RoomNode> GenerateMapNodes(HashSet<Vector2Int> grid)
+    private Dictionary<Vector2Int, MapNode> GenerateMapNodes(HashSet<Vector2Int> grid)
     {
         // Random generation for nodes atm, no weight
 
-        Dictionary<Vector2Int, RoomNode> map = new();
+        Dictionary<Vector2Int, MapNode> map = new();
         int nodeIndex = 0;
 
         foreach (var square in grid)
@@ -334,7 +334,7 @@ public class MapGenerationService
             //if (square == Vector2Int.zero)
             // Get specific node
             nodeIndex++;
-            RoomNode node = new()
+            MapNode node = new()
             {
                 room = db.GetRandom(), // Replace with weighted function?
                 coordinates = square,

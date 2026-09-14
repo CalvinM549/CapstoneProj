@@ -4,37 +4,47 @@ using UnityEngine;
 public class Doorway : MonoBehaviour
 {
     [SerializeField] private Collider2D triggerVolume;
-    [SerializeField] private Collider2D blockingCollider;
+    [SerializeField] private SpriteRenderer doorVisual; // Temp
+    [SerializeField] private GameObject wallFiller;
 
-    [SerializeField] private SpriteRenderer doorVisual;
+    [SerializeField] private GameObject doorIndicator;
+    [SerializeField] private Animator animator;
 
+    private int isOpenHash = Animator.StringToHash("isOpen");
+    
     public Transform entryPoint;
     public Direction direction; // Direction the player must enter from
 
     private bool preventReentry;
     private Coroutine preventReentryRoutine;
 
-    public RoomNode Destination {  get; private set; }
+    public MapNode Destination {  get; private set; }
     public bool IsLocked { get; private set; } = true;
 
     private void Awake()
     {
-        if (blockingCollider != null)
-            blockingCollider.enabled = IsLocked;
-
+        //if(animator == null) animator = GetComponent<Animator>();
     }
 
-    public void SetDestination(RoomNode node) => Destination = node;
+    public void SetDestination(MapNode node) => Destination = node;
 
     public void Lock()
     {
         IsLocked = true;
         triggerVolume.enabled = false;
 
-        if (blockingCollider != null)
-            blockingCollider.enabled = true;
+        if(wallFiller != null)
+            wallFiller.SetActive(false);
+
+        if (doorVisual != null)
+            doorVisual.gameObject.SetActive(true);
+
+        if(doorIndicator != null)
+            doorIndicator.SetActive(false);
 
         doorVisual.color = Color.red;
+
+        //animator.SetBool(isOpenHash, false);
         // Trigger door animation
     }
 
@@ -43,11 +53,18 @@ public class Doorway : MonoBehaviour
         IsLocked = false;
         triggerVolume.enabled = true;
 
-        if (blockingCollider != null)
-            blockingCollider.enabled = false;
+
+        //doorIndicator.SetActive(true);
 
         doorVisual.color = Color.white;
+
+        //animator.SetBool(isOpenHash, true);
         // Trigger animation
+    }
+
+    public void Hide()
+    {
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

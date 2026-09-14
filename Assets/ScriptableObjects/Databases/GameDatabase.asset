@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffac8262dba9cc84d8501f7a152c5ab9, type: 3}
   m_Name: GameDatabase
   m_EditorClassIdentifier: Assembly-CSharp::GameDatabase
-  rooms: {fileID: 11400000, guid: 5573619e827273b46928a47ccddfae4e, type: 2}
   tools: {fileID: 11400000, guid: cda2765f53331ae4994cc8c13530afdf, type: 2}
   weapons: {fileID: 11400000, guid: 3bad365638e715c419d86e72791af41c, type: 2}
+  upgrades: {fileID: 11400000, guid: f1bd6b8ecfb0eb849a982733f3913bff, type: 2}
+  rooms: {fileID: 11400000, guid: 5573619e827273b46928a47ccddfae4e, type: 2}
+  enemies: {fileID: 0}
+  archives: {fileID: 11400000, guid: 325733aec86014044b7f2851abad504f, type: 2}

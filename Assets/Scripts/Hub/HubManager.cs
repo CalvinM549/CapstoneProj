@@ -28,11 +28,11 @@ public class HubManager : MonoBehaviour
     private MapGenerationService mapGeneration;
 
     private RunLoadout pendingLoadout;
-    private RunMap pendingMap;
+    private SectorMap pendingMap;
     private int pendingSeed;
 
     public event Action<int> OnPendingSeedChanged;
-    public event Action<RunMap> OnPendingMapChanged;
+    public event Action<SectorMap> OnPendingMapChanged;
     public event Action<RunLoadout> OnPendingLoadoutChanged;
 
     [Header("Testing Values")]

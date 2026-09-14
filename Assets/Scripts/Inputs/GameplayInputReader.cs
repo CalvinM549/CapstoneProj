@@ -50,10 +50,14 @@ public class GameplayInputReader
         actions.Gameplay.UseTool.performed += OnUseToolPerformed;
         actions.Gameplay.LockOn.performed += OnTargetPerformed;
 
+        actions.Gameplay.Interact.performed += OnInteractPerformed;
+
         actions.Gameplay.Inventory.performed += OnInventoryPerformed;
         actions.Gameplay.Inventory.canceled += OnInventoryCanceled;
 
-        actions.Gameplay.Interact.performed += OnInteractPerformed;
+        actions.Gameplay.Map.performed += OnMapPerformed;
+        actions.Gameplay.Map.canceled += OnMapCanceled;
+
     }
 
     public void Unsubscribe()
@@ -70,10 +74,13 @@ public class GameplayInputReader
         actions.Gameplay.UseTool.performed -= OnUseToolPerformed;
         actions.Gameplay.LockOn.performed -= OnTargetPerformed;
 
+        actions.Gameplay.Interact.performed -= OnInteractPerformed;
+
         actions.Gameplay.Inventory.performed -= OnInventoryPerformed;
         actions.Gameplay.Inventory.canceled -= OnInventoryCanceled;
 
-        actions.Gameplay.Interact.performed -= OnInteractPerformed;
+        actions.Gameplay.Map.performed -= OnMapPerformed;
+        actions.Gameplay.Map.canceled -= OnMapCanceled;
     }
 
     #region Movement
@@ -144,14 +151,21 @@ public class GameplayInputReader
 
     private void OnMapPerformed(InputAction.CallbackContext context)
     {
-        if (UIManager.Instance == null) return;
+        var ui = UIManager.Instance;
+        if (ui == null) return;
+
+        if (ui.ScreenOpen) return;
 
         UIManager.Instance.OpenScreen("mapScreen");
     }
 
     private void OnMapCanceled(InputAction.CallbackContext context)
     {
+        var ui = UIManager.Instance;
+        if (ui == null) return;
 
+        if (ui.Current != null && ui.Current.screenName == "mapScreen")
+            ui.CloseTop();
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext context)

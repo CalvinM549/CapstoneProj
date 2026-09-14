@@ -61,7 +61,7 @@ public class RunPrepScreen : HubScreen
         spawnedTiles.Clear();
     }
 
-    private void HandleMapGenerated(RunMap map)
+    private void HandleMapGenerated(SectorMap map)
     {
         ClearCurrent();
 

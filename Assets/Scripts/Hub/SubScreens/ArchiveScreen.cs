@@ -1,23 +1,35 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class ArchiveScreen : HubScreen
+public struct ArchiveScreenPayload
 {
-    public override HubState ScreenType => HubState.Archive;
-    private CanvasGroup cg;
+    public IReadOnlyList<ArchiveData> AllEntries;
+    public HashSet<string> UnlockedIDs;
+}
 
-    private void Awake()
-    {
-        cg = GetComponent<CanvasGroup>();
-    }
+public class ArchiveScreen : UIScreen
+{
+    [SerializeField] private Transform container;
+    [SerializeField] private ArchiveEntryUI entryPrefab;
 
-    public override void OnClose()
-    {
-        throw new System.NotImplementedException();
-    }
+    private readonly List<ArchiveEntryUI> spawned = new();
 
-    public override void OnOpen(HubManager hub)
+    protected override void OnBeforeOpen(object payload)
     {
-        // Display first tab, load profile's archive states
-        throw new System.NotImplementedException();
+        var data = (ArchiveScreenPayload)payload;
+
+        foreach (var instance in spawned)
+            Destroy(instance.gameObject);
+
+        spawned.Clear();
+
+        foreach (var entry in data.AllEntries)
+        {
+            bool unlocked = data.UnlockedIDs.Contains(entry.Id);
+
+            var tile = Instantiate(entryPrefab, container);
+            tile.Setup(entry, unlocked);
+            spawned.Add(tile);
+        }
     }
 }
