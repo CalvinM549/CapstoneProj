@@ -99,7 +99,7 @@ public class RunManager : MonoBehaviour
         currentRun = new(config.seed, config.map, activePlayer);
         roomService.BuildPool(config.map);
 
-        EnterNode(config.map.startNode, null);
+        EnterNode(config.map.entryNode, null);
     }
 
     public void ResumeSavedRun()

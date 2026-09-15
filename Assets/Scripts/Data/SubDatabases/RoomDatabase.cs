@@ -18,4 +18,16 @@ public class RoomDatabase : CategorizedContentDatabase<RoomData, RoomType>
             yield return room;
         }
     }
+
+    public IEnumerable<RoomData> GetCandidates(RoomType type, int chapter)
+    {
+        foreach (var room in GetByCategory(type))
+        {
+            if (room == null) continue;
+
+            if (chapter < room.minChapter || chapter > room.maxChapter) continue;
+
+            yield return room;
+        }
+    }
 }

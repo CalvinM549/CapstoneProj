@@ -6,8 +6,8 @@ public enum RoomType
     Start,
     Combat,
     Elite,
-    Hazard,
-    Reward,
+    Story,
+    Vault,
     Shop,
     Rest,
     Boss
