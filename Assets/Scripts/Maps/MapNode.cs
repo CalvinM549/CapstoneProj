@@ -15,7 +15,7 @@ public class MapNode
     public Vector2Int coordinates;
     public Dictionary<Direction, MapNode> connections = new();
 
-    public List<MapNode> connections2;
+    public List<MapNode> connections2 = new();
 
     public bool visited;
     public bool cleared;

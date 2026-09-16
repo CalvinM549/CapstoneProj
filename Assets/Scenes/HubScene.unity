@@ -1287,7 +1287,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f42d973c574c6514888fe6d295865f7e, type: 2}
   walkLength: 10
   walkerCount: 3
-  mapBounds: {x: 2, y: 2}
+  mapBounds: {x: 4, y: 4}
   seedText: {fileID: 690470051}
 --- !u!4 &982274027
 Transform:
@@ -1365,7 +1365,7 @@ Transform:
   m_GameObject: {fileID: 1065085012}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.22, z: 0}
+  m_LocalPosition: {x: -8.04, y: -4.62, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

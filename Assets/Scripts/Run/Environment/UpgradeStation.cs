@@ -1,12 +1,23 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class UpgradeStation : SimpleInteractable
+public class UpgradeStation : MonoBehaviour, IInteractable
 {
     [SerializeField] private SpriteRenderer visual;
 
     [SerializeField] private Vector2 standPos;
 
-    private bool isEnabled = false;
+    [SerializeField] private bool isMajorUpgrade;
+
+    private bool isEnabled;
+    private bool used;
+
+    private void Start()
+    {
+        used = false;
+        isEnabled = false;
+    }
 
     private void OnEnable()
     {
@@ -23,30 +34,58 @@ public class UpgradeStation : SimpleInteractable
         isEnabled = true;
         // trigger animation
 
-        GetComponent<SpriteRenderer>().color = Color.green; // replace with anim trigger
+        // setup reminder bs
+
+        Color color = isMajorUpgrade ? Color.blue : Color.green;
+        GetComponent<SpriteRenderer>().color = color; // replace with anim trigger
     }
 
-    protected override void OnInteract()
+    public void Interact()
     {
         print("Upgrade Interacted");
 
         if (!isEnabled) return;
-        base.OnInteract();
+        if (used) return;
+
+        // move player to stand pos
 
         var current = RunManager.Instance.currentRun;
 
-        var offer = LootManager.Instance.GenerateAuxUpgradeOffer(3, current.rewardContext, current.roomsCleared);
+        List<LootResult> offer = new();
+        if (isMajorUpgrade)
+        {
+            offer = LootManager.Instance.GenerateMajorUpgradeOffer(3, current.rewardContext, current.roomsCleared);
+        }
+        else
+        {
+            offer = LootManager.Instance.GenerateAuxUpgradeOffer(3, current.rewardContext, current.roomsCleared);
+        }
 
         ChoiceRequest request = new("Select Upgrade", offer, OnSelected);
 
         UIManager.Instance.OpenScreen("rewardScreen", request);
-        // Activate loot system
+
+        used = true;
     }
 
     private void OnSelected(LootResult chosen)
     {
         print($"{chosen.Item.Name} Chosen");
-        RunManager.Instance.currentRun.GrantPlayerUpgrade();
+
+        if (chosen.Item is AuxUpgrade auxRef)
+        {
+            RunManager.Instance.activePlayer.Upgrades.GrantAux(auxRef);
+        }
+        else if(chosen.Item is MajorUpgrade majorRef)
+        {
+            RunManager.Instance.activePlayer.Upgrades.GrantMajor(majorRef);
+        }
+        else
+        {
+            Debug.LogError($"[UpgradeStation] upgrade {chosen.Item.Name} isnt aux");
+        }
+
+        // reset anim trigger
     }
 }
 

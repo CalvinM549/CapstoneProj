@@ -10,6 +10,8 @@ public class Doorway : MonoBehaviour
     [SerializeField] private GameObject doorIndicator;
     [SerializeField] private Animator animator;
 
+    [SerializeField] private DoorwayPreviewUI previewUI;
+
     private int isOpenHash = Animator.StringToHash("isOpen");
     
     public Transform entryPoint;
@@ -26,7 +28,12 @@ public class Doorway : MonoBehaviour
         //if(animator == null) animator = GetComponent<Animator>();
     }
 
-    public void SetDestination(MapNode node) => Destination = node;
+    public void SetDestination(MapNode node)
+    {
+        Destination = node;
+        if(previewUI != null ) 
+            previewUI.InitializeWithDestination(Destination);
+    }
 
     public void Lock()
     {
@@ -42,6 +49,9 @@ public class Doorway : MonoBehaviour
         if(doorIndicator != null)
             doorIndicator.SetActive(false);
 
+        if (previewUI != null)
+            previewUI.gameObject.SetActive(false);
+
         doorVisual.color = Color.red;
 
         //animator.SetBool(isOpenHash, false);
@@ -56,15 +66,19 @@ public class Doorway : MonoBehaviour
 
         //doorIndicator.SetActive(true);
 
+        if (previewUI != null)
+            previewUI.gameObject.SetActive(true);
+
+
         doorVisual.color = Color.white;
 
         //animator.SetBool(isOpenHash, true);
         // Trigger animation
     }
 
-    public void Hide()
+    public void Seal() // inaccessable
     {
-        
+        IsLocked = true;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

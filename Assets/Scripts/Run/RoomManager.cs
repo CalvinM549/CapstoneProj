@@ -16,10 +16,6 @@ public class RoomManager : MonoBehaviour
 
     private IObjectiveTracker objectiveTracker;
 
-    [SerializeField] private UpgradeStation upgradeStation;
-    [SerializeField] private GateStation gateStation;
-    [SerializeField] private RestStation restStation;
-
     [SerializeField] private Doorway[] doorways;
     public Vector2 fallbackEntryPoint;
 
@@ -53,27 +49,37 @@ public class RoomManager : MonoBehaviour
         Data = node.room;
         this.run = run;
 
-        foreach (var door in doorways)
+        //// set doors
+        //foreach (var door in doorways)
+        //{
+        //    if (node.connections.TryGetValue(door.direction, out var neighbor))
+        //    {
+        //        door.gameObject.SetActive(true);
+        //        door.SetDestination(neighbor);
+        //    }
+        //    else
+        //        door.gameObject.SetActive(false);
+        //}
+
+        for (int i = 0; i < doorways.Length; i++)
         {
-            if (node.connections.TryGetValue(door.direction, out var neighbor))
+            var currentDoor = doorways[i];
+
+            if (node.connections2.Count >= i + 1)
             {
-                door.gameObject.SetActive(true);
-                door.SetDestination(neighbor);
+                var connectedRoom = node.connections2[i];
+                print($"Connected {currentDoor.name} to {connectedRoom.id}");
+                currentDoor.gameObject.SetActive(true);
+                currentDoor.SetDestination(connectedRoom);
             }
             else
-                door.gameObject.SetActive(false);
+            {
+                currentDoor.gameObject.SetActive(false);
+            }
         }
 
+
         State = RoomState.Idle;
-
-        if (upgradeStation != null)
-            upgradeStation.OnActivated.AddListener(HandleUpgradeActivated);
- 
-        if (restStation != null)
-            restStation.OnActivated.AddListener(HandleRestActivated);
-
-        if(gateStation != null)
-            gateStation.OnActivated.AddListener(HandleGateActivated);
 
         if (node.cleared || objectiveTracker == null)
         {
@@ -109,7 +115,6 @@ public class RoomManager : MonoBehaviour
 
         print($"[RoomManager] No doorway matching direction {fromDirection}, using default instead");
         return null;
-
     }
 
     public Vector2 GetEntryPointFor(Direction fromDirection)
@@ -132,6 +137,8 @@ public class RoomManager : MonoBehaviour
         if(objectiveTracker != null)
             objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
 
+        // get reward
+
         foreach (var door in doorways)
             door.Unlock();
 
@@ -151,16 +158,6 @@ public class RoomManager : MonoBehaviour
         run.RestoreStability(100f, true);
         run.RestoreAmmo(5);
         run.RestoreStructure(3);
-    }
-
-    private void HandleUpgradeActivated()
-    {
-
-    }
-
-    private void HandleGateActivated()
-    {
-
     }
 
     public void ResetForPool()

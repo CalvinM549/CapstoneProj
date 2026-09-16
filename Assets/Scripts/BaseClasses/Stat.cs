@@ -102,7 +102,7 @@ public class StatValue
                     percentAdd += mod.value;
                     break;
                 case StatModType.PercentMult:
-                    percentMult *= mod.value;
+                    percentMult += mod.value;
                     break;
             }
         }

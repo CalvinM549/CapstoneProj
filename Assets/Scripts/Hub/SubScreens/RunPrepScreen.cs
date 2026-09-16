@@ -65,7 +65,7 @@ public class RunPrepScreen : HubScreen
     {
         ClearCurrent();
 
-        List<Vector2Int> tiles = map.tiles.Keys.ToList();
+        List<Vector2Int> tiles = map.nodes.Select(n => n.coordinates).ToList();
 
         walkRoutine = StartCoroutine(AnimateWalk(tiles));
     }
@@ -90,7 +90,7 @@ public class RunPrepScreen : HubScreen
 
         newTile.transform.localPosition = spawnWorldPos;
         newTile.GetComponent<SpriteRenderer>().color = colour;
-        newTile.transform.localScale = Vector3.one * 0.9f;
+        newTile.transform.localScale = new Vector2(0.75f, 1f);
         newTile.transform.parent = this.transform;
     }
 

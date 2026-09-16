@@ -7,6 +7,7 @@ public class RunState
     // Run
     public int seed;
     public float difficultyScore;
+    public int currency;
 
     private Player player;
     public RewardContext rewardContext;
@@ -114,7 +115,22 @@ public class RunState
 
     public void GrantPlayerUpgrade()
     {
+        
+    }
 
+    public void GrantCurrency(int amount)
+    {
+        currency = Math.Max(currency + amount, 9999);
+        // fire event for ui
+    }
+
+    public bool TryUseCurrency(int cost)
+    {
+        if (currency < cost) return false;
+
+        currency = currency -= cost;
+        // fire event for ui
+        return true;
     }
 
     #endregion

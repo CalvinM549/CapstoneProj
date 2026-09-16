@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d94221119f0d4545877991a75d232fc, type: 3}
   m_Name: GenerationConfig
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerationConfig
-  zoneSize: {x: 2, y: 2}
+  zoneSize: {x: 2, y: 3}
   extraRoomConnectionChance: 0
   roomCount: 10
   walkerCount: 3

@@ -70,6 +70,8 @@ public class LootManager : MonoBehaviour
         var pool = new List<TEntry>(candidates);
         var chosen = new List<TEntry>();
 
+        pool = pool.OrderBy(x => UnityEngine.Random.value).ToList();
+
         count = Mathf.Min(count, pool.Count);
 
         for (int i = 0; i < count; i++)

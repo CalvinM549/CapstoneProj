@@ -23,5 +23,5 @@ MonoBehaviour:
   synergyTags: []
   statModifiers:
   - statID: player.movement.baseSpeed
-    value: 5
+    value: 0.05
     modifierType: 200

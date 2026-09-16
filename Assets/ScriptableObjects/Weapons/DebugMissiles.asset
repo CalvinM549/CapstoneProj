@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MissileWeapon
   id: 312c186d-9bd2-47fd-848a-722458ad93ec
   weaponName: DebugMissileLauncher
+  flavourText: 
+  effectText: 
+  icon: {fileID: 0}
   cooldown: 0.1
-  baseAmmo: 50
-  currentAmmo: 47
+  baseAmmo: 100
   fireType: 2
   automatic: 0
   windupTime: 0
@@ -24,6 +26,9 @@ MonoBehaviour:
   recoveryTime: 0
   projectiles:
   - {fileID: 11400000, guid: 3f95f2f91692c5243a1e7c4fe29c075e, type: 2}
+  baseDropRate: 1
+  synergyTags: []
+  currentAmmo: 17
   burstCount: 1
   burstSpread: 0
   burstDelay: 0.1

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: WeaponBoost
   m_EditorClassIdentifier: Assembly-CSharp::MajorUpgrade
   id: 2e0cb5fc-af6b-4261-a5e8-f477af41eef0
-  upgradeName: Weapon Boost
+  upgradeName: Lethality
   flavourText: '[]'
-  effectText: Gain 15% increased damage
+  effectText: Deal 50% increased damage
   icon: {fileID: 7327918497195353323, guid: 7dad683fcc225e94283d985a27d6d8f4, type: 3}
   slot: 1
   maxStacks: 1
@@ -23,6 +23,6 @@ MonoBehaviour:
   synergyTags: []
   statModifiers:
   - statID: player.combat.globalDamage
-    value: 0.15
+    value: 0.5
     modifierType: 300
   isTemplate: 0

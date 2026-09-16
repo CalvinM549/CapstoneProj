@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Room2
   m_EditorClassIdentifier: Assembly-CSharp::RoomData
   id: random_01
-  type: 1
-  tag: -1
+  type: 2
   allowedConnections: -1
   difficultyCost: 0
   timerCost: 0

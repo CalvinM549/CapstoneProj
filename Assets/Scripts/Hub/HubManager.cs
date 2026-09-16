@@ -120,7 +120,10 @@ public class HubManager : MonoBehaviour
     {
         InitializeNewRNG();
 
-        pendingMap = mapGeneration.GenerateMapWithSeed(pendingSeed, 0);
+        //pendingMap = mapGeneration.GenerateMapWithSeed(pendingSeed, 0);
+        
+        pendingMap = mapGeneration.GenerateWithSeed(pendingSeed);
+
         OnPendingMapChanged?.Invoke(pendingMap);
 
         seedText.color = CanBeginRun() ? Color.green : Color.red;

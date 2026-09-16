@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Corridor1
   m_EditorClassIdentifier: Assembly-CSharp::RoomData
   id: corridor01
-  type: 1
-  tag: 48
+  type: 2
   allowedConnections: 10
   difficultyCost: 0
   timerCost: 0

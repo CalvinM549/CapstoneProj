@@ -3,6 +3,7 @@ using UnityEngine;
 
 public enum RoomType
 {
+    unset,
     Start,
     Combat,
     Elite,
@@ -12,7 +13,6 @@ public enum RoomType
     Rest,
     Boss
 }
-
 
 [CreateAssetMenu(menuName = "Map/Room Def")]
 public class RoomData : DatabaseEntry, ICategorizedEntry<RoomType>
@@ -27,6 +27,7 @@ public class RoomData : DatabaseEntry, ICategorizedEntry<RoomType>
 
     public RoomManager roomPrefab;
     // Rewards
+    // Shop inventory
 
     // Used for restricting rooms per chapter
     public int minChapter = 0;

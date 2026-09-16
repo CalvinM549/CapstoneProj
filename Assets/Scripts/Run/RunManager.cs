@@ -30,9 +30,8 @@ public class RunManager : MonoBehaviour
 
     public RunState currentRun;
 
-    private Player activePlayer;
-    private RoomManager activeRoom;
-
+    public Player activePlayer;
+    public RoomManager activeRoom;
 
     public event Action<Vector2Int> onPlayerRoomChanged;
 
@@ -97,9 +96,9 @@ public class RunManager : MonoBehaviour
         activePlayer.SetPlayerCanAct(true);
 
         currentRun = new(config.seed, config.map, activePlayer);
-        roomService.BuildPool(config.map);
+        roomService.BuildPool(config.map); // change out for new system
 
-        EnterNode(config.map.entryNode, null);
+        EnterNode(currentRun.map.entryNode, null);
     }
 
     public void ResumeSavedRun()
@@ -137,6 +136,22 @@ public class RunManager : MonoBehaviour
 
     #region Room Transitions
 
+    private void EnterFirstNode(MapNode node)
+    {
+        if (roomService == null)
+        {
+            Debug.LogError("[RunManager] No RoomService existing :(");
+            return;
+        }
+
+        activeRoom = roomService.GetRoom(node);
+        currentRun.map.currentNode = node;
+
+        activeRoom.Initialize(node, currentRun);
+
+        // do other stuff
+    }
+
     private void EnterNode(MapNode node, Direction? arrivingFrom)
     {
         // Remove Current Room
@@ -159,6 +174,8 @@ public class RunManager : MonoBehaviour
         activeRoom = roomService.GetRoom(node);
         activeRoom.Initialize(node, currentRun);
 
+        roomService.BuildConnectedRooms(node);
+
         activeRoom.OnCleared += HandleRoomCleared;
         activeRoom.OnFailure += HandleRoomFailed;
 
@@ -170,7 +187,7 @@ public class RunManager : MonoBehaviour
             entryDoor?.DisableUntilPlayerExit();
         }
 
-        Vector2 spawnPos = arrivingFrom.HasValue
+        Vector2 spawnPos = arrivingFrom.HasValue && entryDoor != null
             ? entryDoor.entryPoint.position
             : activeRoom.fallbackEntryPoint;
 
@@ -184,11 +201,6 @@ public class RunManager : MonoBehaviour
         activeRoom.Activate();
     }
 
-    private void HandleGateActivated(RoomManager room)
-    {
-        // Sets up new area to move into
-    }
-
     private void HandleRoomCleared(RoomManager room)
     {
         room.OnCleared -= HandleRoomCleared;
@@ -200,7 +212,7 @@ public class RunManager : MonoBehaviour
             currentRun.map.currentNode.cleared = true;
         }
 
-        CheckFloorVictory();
+        CheckSectorVictory();
         SaveCurrentRun();
     }
 
@@ -209,11 +221,11 @@ public class RunManager : MonoBehaviour
         // Fire Run End Event
     }
 
-    private void CheckFloorVictory()
+    private void CheckSectorVictory()
     {
         if (currentRun.roomsCleared == currentRun.map.totalNodes)
         {
-            HandleRunEnd(true);
+            HandleRunEnd(true); // temp for demo
         }
         else
         {

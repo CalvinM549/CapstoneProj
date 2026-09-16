@@ -25,14 +25,14 @@ public class MapOverlayScreen : UIScreen
 
     protected override void OnBeforeOpen(object payload)
     {
-        var tiles = RunManager.Instance.currentRun.map;
-        InitializeMapView(tiles);
+        var map = RunManager.Instance.currentRun.map;
+        InitializeMapView(map);
     }
     
     private void HandlePlayerRoomChanged(Vector2Int newTile)
     {
-        var runTiles = RunManager.Instance.currentRun.map.tiles;
-        tileDict[currentTile].color = runTiles[currentTile].cleared ? Color.gray6 : Color.gray3;
+        var runTiles = RunManager.Instance.currentRun.map;
+        tileDict[currentTile].color = Color.gray6;
         tileDict[newTile].color = Color.white;
 
         currentTile = newTile;
@@ -45,14 +45,14 @@ public class MapOverlayScreen : UIScreen
 
         tileDict = new();
 
-        var tiles = activeMap.tiles;
+        var tiles = activeMap.nodes;
         currentTile = activeMap.currentNode.coordinates;
         
         foreach (var tile in tiles)
         {
-            var colour = tile.Value.cleared ? Color.gray6 : Color.gray3;
-            if(tile.Key == currentTile) colour = Color.white;
-            SpawnTile(tile.Key, colour);
+            var colour = tile.cleared ? Color.gray6 : Color.gray3;
+            if(tile.coordinates == currentTile) colour = Color.white;
+            SpawnTile(tile.coordinates, colour);
         }
     }
 

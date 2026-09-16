@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using System.Linq;
 
 public class MapGenerationService
-{
+{   
     private RoomDatabase db;
     private Vector2Int bounds;
     private int nodeCount;
@@ -404,6 +404,8 @@ public class MapGenerationService
         AssignRooms(rows, chapter);
         // assign rooms
 
+        PrintDebugMap(rows);
+
         return BuildSectorMap(rows, seed);
     }
 
@@ -416,8 +418,11 @@ public class MapGenerationService
         for (int i = 0; i < rowCount; i++)
         {
             float t = (float)i / (rowCount - 1);
-            // peaks a bit before the midpoint, tapers toward both ends
-            float widthT = 1f - Mathf.Abs(t - 0.4f) / 0.6f;
+
+            float val1 = UnityEngine.Random.Range(0.2f, 0.6f);
+            float val2 = UnityEngine.Random.Range(0.4f, 0.8f);
+
+            float widthT = 1f - Mathf.Abs(t - val1) / val2;
             curve[i] = Mathf.RoundToInt(Mathf.Lerp(1, maxWidth, Mathf.Clamp01(widthT)));
         }
 
@@ -505,9 +510,9 @@ public class MapGenerationService
 
         while (queue.Count > 0)
         {
-            var n = queue.Dequeue();
-            if (!visited.Add(n.id)) continue;
-            foreach (var connection in n.connections2)
+            var current = queue.Dequeue();
+            if (!visited.Add(current.id)) continue;
+            foreach (var connection in current.connections2)
                 queue.Enqueue(connection);
         }
 
@@ -536,7 +541,7 @@ public class MapGenerationService
 
     private void PlaceGuaranteed(List<List<MapNode>> rows, RoomType type, int count)
     {
-        var eligibleRows = Enumerable.Range(1, rows.Count - 2).ToList(); // exclude first / last
+        var eligibleRows = Enumerable.Range(2, rows.Count - 2).ToList(); // exclude first / last
 
         for (int i = 0; i < count && eligibleRows.Count > 0; i++)
         {
@@ -631,6 +636,11 @@ public class MapGenerationService
         map.totalNodes = map.nodes.Count;
 
         return map;
+    }
+
+    private void PrintDebugMap(List<List<MapNode>> rows)
+    {
+        Debug.Log(rows);
     }
 
     #endregion
