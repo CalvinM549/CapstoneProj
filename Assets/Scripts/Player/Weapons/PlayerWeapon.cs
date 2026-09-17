@@ -45,6 +45,13 @@ public abstract class PlayerWeapon : DatabaseEntry, IRollableLoot, IProjectileEm
     public float baseDropRate = 1f;
     public string[] synergyTags = Array.Empty<string>();
 
+
+    public bool spawnInShops = true;
+    public int shopPrice = 50;
+
+    public bool Buyable => spawnInShops;
+    public int ShopPrice => shopPrice;
+
     public float BaseDropWeight => baseDropRate;
     public IReadOnlyList<string> SynergyTags => synergyTags;
 

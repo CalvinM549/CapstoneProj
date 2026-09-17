@@ -208,7 +208,7 @@ public class RunManager : MonoBehaviour
 
         if (!currentRun.map.currentNode.cleared)
         {
-            currentRun.roomsCleared++;
+            currentRun.currentDepth++;
             currentRun.map.currentNode.cleared = true;
         }
 
@@ -223,7 +223,7 @@ public class RunManager : MonoBehaviour
 
     private void CheckSectorVictory()
     {
-        if (currentRun.roomsCleared == currentRun.map.totalNodes)
+        if (currentRun.currentDepth == currentRun.map.totalNodes)
         {
             HandleRunEnd(true); // temp for demo
         }

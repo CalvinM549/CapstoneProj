@@ -1,32 +1,86 @@
+using System;
 using UnityEngine;
 
-public class RestStation : SimpleInteractable
+public enum RestAction
 {
-    private bool isEnabled = false;
+    RepairStructure,
+    RestoreAmmo,
+    FullRestore
+}
+
+public class RestStation : MonoBehaviour, IInteractable
+{
+    [SerializeField] private string prompt;
+    public string InteractPrompt => prompt;
+
+    [SerializeField] private int costPerStructure;
+    [SerializeField] private int ammoRestoreCost;
+    [SerializeField] private int fullRestoreCost;
+
+    private bool used;
+    private bool freeActionAvaliable = true;
+
+    private MapNode node;
+    private RunState run;
+
+    private void Start()
+    {
+        used = false;
+        freeActionAvaliable = true;
+}
 
     private void OnEnable()
     {
-        GameEvents.OnRoomCompleted += HandleRoomCompleted;
+        
     }
 
     private void OnDisable()
     {
-        GameEvents.OnRoomCompleted -= HandleRoomCompleted;
+        
     }
 
-    public void HandleRoomCompleted()
+    public void Interact()
     {
-        isEnabled = true;
-        // trigger animation
+        if (used) return;
 
-        GetComponent<SpriteRenderer>().color = Color.green; // replace with anim trigger
+        UIManager.Instance.OpenScreen("restScreen", this);
     }
 
-    protected override void OnInteract()
+    public bool TryPerform(RestAction action)
     {
-        if (!isEnabled) return;
-        base.OnInteract();
+        Action apply = action switch
+        {
+            RestAction.RepairStructure => () => run.RestoreStructure(3),
+            RestAction.RestoreAmmo => () => run.RestoreAmmo(5),
+            RestAction.FullRestore => () =>
+            {
+                run.RestoreStability(100f, true);
+                run.RestoreStructure(3);
+                run.RestoreAmmo(5);
+            }
+            ,
+            _ => null
+        };
 
-        gameObject.SetActive(false);
+        if (apply == null) return false;
+
+        if (freeActionAvaliable)
+        {
+            apply();
+            return true;
+        }
+
+        if (!run.TryUseCurrency(GetCost(action))) return false;
+
+        apply();
+        return true;
     }
+
+    public int GetCost(RestAction action) => action switch
+    {
+        RestAction.RepairStructure => costPerStructure,
+        RestAction.RestoreAmmo => ammoRestoreCost,
+        RestAction.FullRestore => fullRestoreCost,
+        _ => 0
+    };
 }

@@ -19,6 +19,12 @@ public abstract class PlayerTool : DatabaseEntry, IRollableLoot
     public float baseDropWeight = 1f;
     public string[] synergyTags = Array.Empty<string>();
 
+
+    public bool spawnInShops = true;
+    public int shopPrice = 50;
+    public bool Buyable => spawnInShops;
+    public int ShopPrice => shopPrice;
+
     public float BaseDropWeight => baseDropWeight;
     public IReadOnlyList<string> SynergyTags => synergyTags;
 
@@ -50,7 +56,6 @@ public abstract class PlayerTool : DatabaseEntry, IRollableLoot
     }
 
     protected abstract bool OnUse(Vector2 direction);
-
 
     public virtual bool TryIntercept(HitData incoming) => false;
 

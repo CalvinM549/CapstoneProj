@@ -4,10 +4,14 @@ using UnityEngine.Events;
 
 public class SimpleInteractable : MonoBehaviour, IInteractable
 {
+    [SerializeField] private string prompt;
+    public string InteractPrompt => prompt;
+
     public UnityEvent OnActivated;
     protected bool used = false;
 
     [SerializeField] protected bool singleUse = true;
+
 
     private void Start()
     {

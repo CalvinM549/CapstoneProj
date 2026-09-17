@@ -34,20 +34,28 @@ public class UpgradeBase : DatabaseEntry, ICategorizedEntry<UpgradeSlot>, IRolla
     public Sprite Icon => icon;
 
     public UpgradeSlot slot = UpgradeSlot.None;
-    public int maxStacks = 1;
 
     [Header("Loot")]
     public float baseDropRate = 1f;
     public string[] synergyTags = Array.Empty<string>();
 
+    public bool spawnInShops = true;
+    public int shopPrice = 50;
+
     public float BaseDropWeight => baseDropRate;
     public IReadOnlyList<string> SynergyTags => synergyTags;
     public UpgradeSlot Category => slot;
+
+
+    public bool Buyable => spawnInShops;
+    public int ShopPrice => shopPrice;
+
 
     [Header("Effects")]
     protected Player player { get; private set; }
 
 
+    public int maxStacks = 1;
 
     public List<UpgradeStatModifierEntry> statModifiers = new();
 
@@ -65,6 +73,8 @@ public class UpgradeBase : DatabaseEntry, ICategorizedEntry<UpgradeSlot>, IRolla
         OnRemove(player);
         player = null;
     }
+
+    // Inheritance Things
 
     protected virtual void OnApply(Player player) { }
 

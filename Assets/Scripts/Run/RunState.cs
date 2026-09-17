@@ -15,8 +15,12 @@ public class RunState
     // Map
     public int chapterIndex;
     public SectorMap map;
-    public int roomsCleared;
+    public int currentDepth;
     public Doorway lastDoorway; // used to re-load spawn pos
+
+    public int runDirection;
+    
+    
     // Draft things
 
     public float runDurationTimer;
@@ -53,7 +57,7 @@ public class RunState
         stabilityTimer = maxStability; // Change to variable start time??
 
         // Run Stats reset
-        roomsCleared = 0;
+        currentDepth = 0;
 
         EnemiesKilled = 0;
         DamageTaken = 0;
@@ -120,7 +124,7 @@ public class RunState
 
     public void GrantCurrency(int amount)
     {
-        currency = Math.Max(currency + amount, 9999);
+        currency = Math.Min(currency + amount, 9999);
         // fire event for ui
     }
 

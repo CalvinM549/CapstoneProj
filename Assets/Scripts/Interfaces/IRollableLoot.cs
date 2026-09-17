@@ -10,4 +10,6 @@ public interface IRollableLoot
 
     float BaseDropWeight { get; }
     IReadOnlyList<string> SynergyTags { get; }
+    bool Buyable { get; }
+    int ShopPrice {  get; }
 }

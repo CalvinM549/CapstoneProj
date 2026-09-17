@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public enum MovementCondition
 {
@@ -25,6 +26,9 @@ public class PlayerMovement : MonoBehaviour
 
     private int playerLayerIndex;
     private int enemyLayerIndex;
+    private int environmentLayerIndex;
+
+    [SerializeField] private LayerMask dashIgnore;
 
     private Player p;
 
@@ -93,6 +97,7 @@ public class PlayerMovement : MonoBehaviour
 
         playerLayerIndex = LayerMask.NameToLayer("Player");
         enemyLayerIndex = LayerMask.NameToLayer("Enemy");
+        environmentLayerIndex = LayerMask.NameToLayer("Environment");
 
         dashBuffer = new InputBuffer(data.inputBufferWindow);
         canDashDelegate = CanDash;
@@ -281,7 +286,10 @@ public class PlayerMovement : MonoBehaviour
         GameEvents.PlayerDashStart();
         p.Health.GrantIFrames(data.dashIFrameDuration);
         p.VFX.PlayDashTrail();
+
         Physics2D.IgnoreLayerCollision(playerLayerIndex, enemyLayerIndex, true);
+        Physics2D.IgnoreLayerCollision(playerLayerIndex, environmentLayerIndex, true);
+        
         //
 
         rb.linearVelocity = direction * data.dashSpeed;
@@ -293,15 +301,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void EndDash()
     {
-
-        //Vector2 exitVelocity = moveDirection.magnitude > 0.1f
-        //    ? Vector2.Lerp(CurrentMoveDirection, moveDirection.normalized, 0.5f) * data.baseSpeed
-        //    : data.baseSpeed * data.dashExitMultiplier * CurrentMoveDirection;
-
-        //rb.linearVelocity = exitVelocity;
-        
-        //rb.linearVelocity *= data.dashExitMultiplier;
-
         Vector2 exitDir = inputDirection.magnitude > 0.1f 
             ? Vector2.Lerp(CurrentMoveDirection.normalized, inputDirection.normalized, 0.6f) 
             : CurrentMoveDirection.normalized;
@@ -309,6 +308,7 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = exitDir * exitSpeed;
 
         Physics2D.IgnoreLayerCollision(playerLayerIndex, enemyLayerIndex, false);
+        Physics2D.IgnoreLayerCollision(playerLayerIndex, environmentLayerIndex, false);
 
         GameEvents.PlayerDashEnd();
 

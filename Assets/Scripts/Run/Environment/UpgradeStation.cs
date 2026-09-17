@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class UpgradeStation : MonoBehaviour, IInteractable
 {
+
+    [SerializeField] private string prompt;
+    public string InteractPrompt => prompt;
+
     [SerializeField] private SpriteRenderer visual;
 
     [SerializeField] private Vector2 standPos;
@@ -42,8 +46,6 @@ public class UpgradeStation : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        print("Upgrade Interacted");
-
         if (!isEnabled) return;
         if (used) return;
 
@@ -54,11 +56,11 @@ public class UpgradeStation : MonoBehaviour, IInteractable
         List<LootResult> offer = new();
         if (isMajorUpgrade)
         {
-            offer = LootManager.Instance.GenerateMajorUpgradeOffer(3, current.rewardContext, current.roomsCleared);
+            offer = LootManager.Instance.GenerateMajorUpgradeOffer(3, current.rewardContext, current.currentDepth);
         }
         else
         {
-            offer = LootManager.Instance.GenerateAuxUpgradeOffer(3, current.rewardContext, current.roomsCleared);
+            offer = LootManager.Instance.GenerateAuxUpgradeOffer(3, current.rewardContext, current.currentDepth);
         }
 
         ChoiceRequest request = new("Select Upgrade", offer, OnSelected);
