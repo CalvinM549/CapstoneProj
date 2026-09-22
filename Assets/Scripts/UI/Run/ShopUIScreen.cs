@@ -7,7 +7,10 @@ public class ShopUIScreen : UIScreen
 {
     [SerializeField] private Transform slotContainer;
     [SerializeField] private ShopItemCardUI slotPrefab;
-    [SerializeField] private TextMeshProUGUI currencyText;
+
+    [SerializeField] private TextMeshProUGUI selectedTitle;
+    [SerializeField] private TextMeshProUGUI selectedDescription;
+    [SerializeField] private TextMeshProUGUI selectedFlavour;
 
     private ShopStation shop;
     private List<ShopItemCardUI> slots;
@@ -26,8 +29,15 @@ public class ShopUIScreen : UIScreen
             slot.Setup(shop.Stock[i], () => HandleBuy(i));
             slots.Add(slot);
         }
+    }
 
-        // setup currency tracker?
+    private void UpdateSelected(int index)
+    {
+        var item = shop.Stock[index].Item;
+
+        selectedTitle.text = item.Name;
+        selectedDescription.text = item.EffectDescription;
+        selectedFlavour.text = item.FlavourDescription;
     }
 
     private void HandleBuy(int index)

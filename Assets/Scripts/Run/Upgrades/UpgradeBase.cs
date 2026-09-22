@@ -11,16 +11,7 @@ public enum UpgradeSlot
     None
 }
 
-public enum UpgradeCategory
-{
-    General,
-    Frame,
-    Weapons,
-    Brain,
-    Movement
-}
-
-public class UpgradeBase : DatabaseEntry, ICategorizedEntry<UpgradeSlot>, IRollableLoot
+public class UpgradeBase : DatabaseEntry, ICategorizedEntry<UpgradeSlot>, ILootEntry
 {
     [Header("Display")]
     public string upgradeName = "New Upgrade";

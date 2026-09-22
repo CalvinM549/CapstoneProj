@@ -22,6 +22,7 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private Transform[] enemySpawnPoints;
 
     private RunState run;
+    private MapNode node;
 
     public event Action<RoomManager> OnCleared;
     public event Action<RoomManager> OnFailure;
@@ -47,19 +48,11 @@ public class RoomManager : MonoBehaviour
     public void Initialize(MapNode node, RunState run)
     {
         Data = node.room;
+        this.node = node;
         this.run = run;
 
-        //// set doors
-        //foreach (var door in doorways)
-        //{
-        //    if (node.connections.TryGetValue(door.direction, out var neighbor))
-        //    {
-        //        door.gameObject.SetActive(true);
-        //        door.SetDestination(neighbor);
-        //    }
-        //    else
-        //        door.gameObject.SetActive(false);
-        //}
+        foreach (var roomObj in GetComponentsInChildren<StationBase>())
+            roomObj.Setup(node, run, OnCleared);
 
         for (int i = 0; i < doorways.Length; i++)
         {

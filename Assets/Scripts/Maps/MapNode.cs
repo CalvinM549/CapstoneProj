@@ -1,6 +1,4 @@
-using NUnit.Framework;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class MapNode
@@ -19,6 +17,9 @@ public class MapNode
 
     public bool visited;
     public bool cleared;
+
+    public NodeRewards rewards;
+    public List<LootResult> cachedLoot;
 }
 
 public class RoomConnection
@@ -27,3 +28,9 @@ public class RoomConnection
     public bool isRequired;
 }
 
+public struct NodeRewards
+{
+    public RewardCategory category;
+    public int baseOfferCount;
+    public bool isShop;
+}

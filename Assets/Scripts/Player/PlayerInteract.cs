@@ -65,8 +65,6 @@ public class PlayerInteract : MonoBehaviour
         {
             nearbyInteractables.Add(interactable, collision.transform);
             CanInteractUpdated?.Invoke(true);
-
-            print("added to interactables");
         }
     }
 

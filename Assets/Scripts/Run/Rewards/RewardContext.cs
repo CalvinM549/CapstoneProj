@@ -34,4 +34,11 @@ public class RewardContext
     }
 
     public int GetUpgradeStacks(string upgradeId) => OwnedUpgradeStacks.TryGetValue(upgradeId, out var stacks) ? stacks : 0;
+
+    
+
+    public void RegisterOffer(RewardCategory category, List<LootResult> result)
+    {
+
+    }
 }

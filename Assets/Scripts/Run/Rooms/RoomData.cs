@@ -11,7 +11,7 @@ public enum RoomType
     Vault,
     Shop,
     Rest,
-    Boss
+    End
 }
 
 [CreateAssetMenu(menuName = "Map/Room Def")]

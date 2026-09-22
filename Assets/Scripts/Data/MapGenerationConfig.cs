@@ -17,9 +17,9 @@ public class MapGenerationConfig : ScriptableObject
     public int rewardRoomCount;
     [Range(0f, 1f)] public float shopChance = 0.3f;
 
-    // Gates
-    public int minGates;
-    public int maxGates;
-    [Range(0f, 1f)] public float gatUnlockRequirement = 0.6f;
+    // Loot
+    public float weaponRewardProbability;
+    public float toolRewardProbability;
+    public float MajorRewardProbability;
 
 }

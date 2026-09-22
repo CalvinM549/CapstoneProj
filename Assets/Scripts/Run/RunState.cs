@@ -95,6 +95,42 @@ public class RunState
         OnStabilityTick?.Invoke(stabilityTimer / maxStability);
     }
 
+    #region Loot
+
+    public void GrantLoot(LootResult result)
+    {
+        switch (result.Item)
+        {
+            case MajorUpgrade m:
+                player.Upgrades.GrantMajor(m);
+                rewardContext.FilledMajorSlots.Add(m.slot);
+                break;
+
+            case AuxUpgrade a:
+                player.Upgrades.GrantAux(a);
+                rewardContext.OwnedUpgradeStacks[a.Id] = rewardContext.GetUpgradeStacks(a.Id) + 1;
+                break;
+
+            case PlayerWeapon w:
+                player.Combat.EquipRangedWeapon(w);
+                rewardContext.ownedWeaponIds.Add(w.Id);
+                break;
+
+            case PlayerTool t:
+                player.Tools.EquipTool(t);
+                rewardContext.ownedToolIds.Add(t.Id);
+                break;
+
+            default:
+                Debug.LogError("[RunState] Attempting to grant unknown loot type");
+                break;
+        }
+
+        rewardContext.SeenItemIdsThisRun.Add(result.Item.Id);
+    }
+
+    #endregion
+
     #region Resource Adjustments
 
     public void DepleteStability(float amount)
@@ -125,7 +161,8 @@ public class RunState
     public void GrantCurrency(int amount)
     {
         currency = Math.Min(currency + amount, 9999);
-        // fire event for ui
+
+        GameEvents.CurrencyChanged(currency);
     }
 
     public bool TryUseCurrency(int cost)
@@ -133,6 +170,8 @@ public class RunState
         if (currency < cost) return false;
 
         currency = currency -= cost;
+        GameEvents.CurrencyChanged(currency);
+
         // fire event for ui
         return true;
     }

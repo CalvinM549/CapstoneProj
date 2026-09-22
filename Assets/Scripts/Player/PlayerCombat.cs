@@ -56,6 +56,7 @@ public class PlayerCombat : MonoBehaviour
     public int CurrentAmmo => EquippedWeapon.currentAmmo;
     private int currentAmmo;
     public event Action<int> OnAmmoChanged;
+    public event Action<int> OnWeaponChanged;
     public event Action<float> OnReloadChanged;
 
     public void Initialize(PlayerWeapon weapon)
@@ -473,6 +474,7 @@ public class PlayerCombat : MonoBehaviour
             weapon.OnEquip(p, OnAmmoChanged);
         }
 
+        OnWeaponChanged?.Invoke(currentAmmo);
         OnAmmoChanged?.Invoke(currentAmmo);
 
         // Fire Event

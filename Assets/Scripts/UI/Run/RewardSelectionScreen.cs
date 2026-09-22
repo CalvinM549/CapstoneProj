@@ -47,11 +47,6 @@ public class RewardSelectionScreen : UIScreen
 
         UIManager.Instance.CloseTop();
     }
-
-    public override void HandleCancel()
-    {
-        //
-    }
 }
 
 public struct ChoiceRequest

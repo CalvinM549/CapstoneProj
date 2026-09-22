@@ -15,6 +15,8 @@ public class AIProfile : ScriptableObject
     public float repositionDuration;
     public float repositionSpeedMult;
 
+    public bool repositionAwayFromTarget = false;
+
     [Header("Combat")]
     public int[] attackPattern;
     public LayerMask targetLayer;

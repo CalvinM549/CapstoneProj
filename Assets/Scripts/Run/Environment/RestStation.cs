@@ -8,7 +8,7 @@ public enum RestAction
     FullRestore
 }
 
-public class RestStation : MonoBehaviour, IInteractable
+public class RestStation : StationBase, IInteractable
 {
     [SerializeField] private string prompt;
     public string InteractPrompt => prompt;
@@ -17,26 +17,12 @@ public class RestStation : MonoBehaviour, IInteractable
     [SerializeField] private int ammoRestoreCost;
     [SerializeField] private int fullRestoreCost;
 
-    private bool used;
     private bool freeActionAvaliable = true;
+    public bool FreeActionAvaliable => freeActionAvaliable;
 
-    private MapNode node;
-    private RunState run;
-
-    private void Start()
+    protected override void OnSetup(MapNode node, RunState run)
     {
-        used = false;
         freeActionAvaliable = true;
-}
-
-    private void OnEnable()
-    {
-        
-    }
-
-    private void OnDisable()
-    {
-        
     }
 
     public void Interact()
@@ -67,6 +53,7 @@ public class RestStation : MonoBehaviour, IInteractable
         if (freeActionAvaliable)
         {
             apply();
+            freeActionAvaliable = false;
             return true;
         }
 
@@ -83,4 +70,5 @@ public class RestStation : MonoBehaviour, IInteractable
         RestAction.FullRestore => fullRestoreCost,
         _ => 0
     };
+
 }

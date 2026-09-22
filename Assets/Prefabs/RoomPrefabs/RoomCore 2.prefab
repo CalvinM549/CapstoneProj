@@ -461,8 +461,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Doorway
   triggerVolume: {fileID: 2271630991269795481}
-  blockingCollider: {fileID: 0}
   doorVisual: {fileID: 7916919902793324090}
+  wallFiller: {fileID: 0}
+  doorIndicator: {fileID: 0}
+  animator: {fileID: 0}
+  previewUI: {fileID: 0}
   entryPoint: {fileID: 8805080461067878991}
   direction: 2
 --- !u!212 &7916919902793324090
@@ -617,8 +620,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Doorway
   triggerVolume: {fileID: 6066514161126408997}
-  blockingCollider: {fileID: 0}
   doorVisual: {fileID: 6932567646712661582}
+  wallFiller: {fileID: 0}
+  doorIndicator: {fileID: 0}
+  animator: {fileID: 0}
+  previewUI: {fileID: 0}
   entryPoint: {fileID: 3617976182438262150}
   direction: 1
 --- !u!212 &6932567646712661582
@@ -8926,6 +8932,7 @@ Transform:
   - {fileID: 1835031836756994024}
   - {fileID: 7046026497188954682}
   - {fileID: 4548207702499184583}
+  - {fileID: 4126417134337346208}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6074118564554837086
@@ -8940,15 +8947,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7124e38a97a015c4b83c71edd0fd05fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomManager
-  upgradeStation: {fileID: 0}
-  gateStation: {fileID: 0}
-  restStation: {fileID: 0}
   doorways:
   - {fileID: 2830731349363013467}
   - {fileID: 7924119539597299592}
   - {fileID: 329167734511156411}
   - {fileID: 2468142913136760936}
-  defaultEntryPoint: {x: 0, y: 0}
+  fallbackEntryPoint: {x: 0, y: 0}
   enemySpawnPoints: []
 --- !u!114 &310529178051923541
 MonoBehaviour:
@@ -14332,8 +14336,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Doorway
   triggerVolume: {fileID: 8160704123083597493}
-  blockingCollider: {fileID: 0}
   doorVisual: {fileID: 5690000477493678478}
+  wallFiller: {fileID: 0}
+  doorIndicator: {fileID: 0}
+  animator: {fileID: 0}
+  previewUI: {fileID: 0}
   entryPoint: {fileID: 3818473079742792152}
   direction: 3
 --- !u!212 &5690000477493678478
@@ -15205,8 +15212,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Doorway
   triggerVolume: {fileID: 7904603886751996139}
-  blockingCollider: {fileID: 0}
   doorVisual: {fileID: 8472771630473674250}
+  wallFiller: {fileID: 0}
+  doorIndicator: {fileID: 0}
+  animator: {fileID: 0}
+  previewUI: {fileID: 0}
   entryPoint: {fileID: 4188502451230594614}
   direction: 0
 --- !u!212 &8472771630473674250
@@ -17851,6 +17861,68 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 8107065280727358240, guid: 81495c7e28177f244a0f84f6a871be7f, type: 3}
   m_PrefabInstance: {fileID: 4815968592014192117}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6862833168676076393
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 622026299895219854}
+    m_Modifications:
+    - target: {fileID: 2774263239228627906, guid: d735c1028b4473546a3b36349077b460, type: 3}
+      propertyPath: m_Name
+      value: Random_Tower
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385433771475464649, guid: d735c1028b4473546a3b36349077b460, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7.9191265
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385433771475464649, guid: d735c1028b4473546a3b36349077b460, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -8.816527
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385433771475464649, guid: d735c1028b4473546a3b36349077b460, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385433771475464649, guid: d735c1028b4473546a3b36349077b460, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385433771475464649, guid: d735c1028b4473546a3b36349077b460, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385433771475464649, guid: d735c1028b4473546a3b36349077b460, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385433771475464649, guid: d735c1028b4473546a3b36349077b460, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385433771475464649, guid: d735c1028b4473546a3b36349077b460, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385433771475464649, guid: d735c1028b4473546a3b36349077b460, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7385433771475464649, guid: d735c1028b4473546a3b36349077b460, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d735c1028b4473546a3b36349077b460, type: 3}
+--- !u!4 &4126417134337346208 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7385433771475464649, guid: d735c1028b4473546a3b36349077b460, type: 3}
+  m_PrefabInstance: {fileID: 6862833168676076393}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8582226503208303182
 PrefabInstance:

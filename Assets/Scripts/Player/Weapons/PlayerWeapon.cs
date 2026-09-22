@@ -9,7 +9,7 @@ public enum FireType
     Independent
 }
 
-public abstract class PlayerWeapon : DatabaseEntry, IRollableLoot, IProjectileEmitter
+public abstract class PlayerWeapon : DatabaseEntry, ILootEntry, IProjectileEmitter
 {
     [Header("Display")]
     public string weaponName = "New Weapon";

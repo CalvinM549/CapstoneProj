@@ -108,6 +108,8 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     #region Taking Damage
 
+    protected virtual bool CanBeStaggered => true;
+
     public void RecieveHit(HitData hit)
     {
         if (!IsAlive) return;
@@ -116,8 +118,11 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         ApplyDamage(hit);
 
-        ai.ChangeState(EnemyStates.Staggered);
-        ai.context.staggerTimer = hit.hitstunTime;
+        if (CanBeStaggered)
+        {
+            ai.ChangeState(EnemyStates.Staggered);
+            ai.context.staggerTimer = hit.hitstunTime;
+        }
 
         ApplyKnockback(hit.knockbackDirection, hit.knockbackForce);
 
@@ -143,7 +148,6 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         if (direction.magnitude < 0.1f) return;
 
-
         rb.linearVelocity = (direction * force);
     }
 
@@ -153,6 +157,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         IsAlive = false;
 
         VFXManager.Instance.PlayVFX(VFXType.ExplosionComplex, transform.position);
+        RunManager.Instance.currencyDropService.DropBurst(transform.position, 30, 4);
 
         StopAllCoroutines();
 

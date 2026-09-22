@@ -5,9 +5,7 @@ public class Doorway : MonoBehaviour
 {
     [SerializeField] private Collider2D triggerVolume;
     [SerializeField] private SpriteRenderer doorVisual; // Temp
-    [SerializeField] private GameObject wallFiller;
 
-    [SerializeField] private GameObject doorIndicator;
     [SerializeField] private Animator animator;
 
     [SerializeField] private DoorwayPreviewUI previewUI;
@@ -40,21 +38,16 @@ public class Doorway : MonoBehaviour
         IsLocked = true;
         triggerVolume.enabled = false;
 
-        if(wallFiller != null)
-            wallFiller.SetActive(false);
-
         if (doorVisual != null)
             doorVisual.gameObject.SetActive(true);
-
-        if(doorIndicator != null)
-            doorIndicator.SetActive(false);
 
         if (previewUI != null)
             previewUI.gameObject.SetActive(false);
 
-        doorVisual.color = Color.red;
+        //doorVisual.color = Color.red;
 
-        //animator.SetBool(isOpenHash, false);
+        if (animator != null)
+            animator.SetBool(isOpenHash, false);
         // Trigger door animation
     }
 
@@ -70,15 +63,11 @@ public class Doorway : MonoBehaviour
             previewUI.gameObject.SetActive(true);
 
 
-        doorVisual.color = Color.white;
+        //doorVisual.color = Color.white;
 
-        //animator.SetBool(isOpenHash, true);
+        if (animator != null)
+            animator.SetBool(isOpenHash, true);
         // Trigger animation
-    }
-
-    public void Seal() // inaccessable
-    {
-        IsLocked = true;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

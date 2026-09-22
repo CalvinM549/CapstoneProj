@@ -14,6 +14,9 @@ public static class GameEvents
     public static event Action OnRoomCompleted;
     public static void RoomCompleted() => OnRoomCompleted?.Invoke();
 
+    public static event Action<int> OnCurrencyChanged;
+    public static void CurrencyChanged(int newValue) => OnCurrencyChanged?.Invoke(newValue);
+
     #endregion
 
     #region Inputs

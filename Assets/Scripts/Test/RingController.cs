@@ -12,6 +12,7 @@ public class RingController : MonoBehaviour
     private ProceduralRing ring;
     private Tween fillTween;
     private Tween colourTween;
+    private Tween radiusTween;
 
     private void Awake()
     {
@@ -89,6 +90,20 @@ public class RingController : MonoBehaviour
         colourTween = ring.DOColor(restore, duration);
     }
 
+    public void SetRadiusImmediate(float radius)
+    {
+        radiusTween?.Kill();
+        ring.Radius = radius;
+    }
+
+    public void SetRadius(float radius, float duration, Ease ease = Ease.InCubic)
+    {
+        radiusTween?.Kill();
+        radiusTween = DOTween
+            .To(() => ring.Radius, x => ring.Radius = x, radius, duration)
+            .SetEase(ease);
+    }
+
     public ProceduralRing Ring => ring;
 
     #region Helpers
@@ -100,6 +115,7 @@ public class RingController : MonoBehaviour
     {
         fillTween?.Kill();
         colourTween?.Kill();
+        radiusTween?.Kill();
     }
 
     #endregion

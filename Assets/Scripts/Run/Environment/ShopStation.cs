@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class ShopStation : MonoBehaviour, IInteractable
+public class ShopStation : StationBase, IInteractable
 {    
-    private RunState run;
     private List<LootResult> stock;
     private bool[] purchased;
 
@@ -17,13 +16,18 @@ public class ShopStation : MonoBehaviour, IInteractable
 
     public string InteractPrompt => "Open wares";
 
-    public void Setup(RoomData room, RunState run)
+    protected override void OnSetup(MapNode node, RunState run)
     {
-        this.run = run;
-
-        stock = offerableTypes
-            .SelectMany(type => LootManager.Instance.GenerateLootOffer(1, type, run.rewardContext, run.currentDepth))
-            .ToList();
+        stock = RunManager.Instance.lootService.Roll(new LootRequest
+            {
+                category = node.rewards.category,
+                count = 6,
+                isShop = true,
+                affectPity = true
+            },
+            run.rewardContext,
+            GameRng.NodeRng(run.seed, node.coordinates),
+            run.currentDepth);
 
         purchased = new bool[stock.Count];
     }
@@ -51,7 +55,7 @@ public class ShopStation : MonoBehaviour, IInteractable
         }
     }
 
-    private int GetPrice(IRollableLoot loot)
+    private int GetPrice(ILootEntry loot)
     {
         return loot.ShopPrice;
     }

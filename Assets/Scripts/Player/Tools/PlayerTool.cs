@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class PlayerTool : DatabaseEntry, IRollableLoot
+public abstract class PlayerTool : DatabaseEntry, ILootEntry
 {
     [Header("Display")]
     public string toolName;

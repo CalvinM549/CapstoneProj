@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -8,24 +9,54 @@ public class CurrencyUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI currencyCounter;
 
     [SerializeField] private float timeToAdjust;
+    [SerializeField] private float timeBeforeFade;
 
     private int currentCounter;
     private Coroutine tickRoutine;
 
+    private bool visible;
+    private float hideTimer;
+
+    private void Start()
+    {
+        cg.alpha = 0f;
+        visible = false;
+    }
+
     private void OnEnable()
     {
-        // game event hook
+        GameEvents.OnCurrencyChanged += HandleCurrencyChange;
     }
 
     private void OnDisable()
     {
-        
+        GameEvents.OnCurrencyChanged -= HandleCurrencyChange;
     }
 
     [ContextMenu("DoChangeTest")]
     public void TestMethod()
     {
         HandleCurrencyChange(currentCounter + Random.Range(1, 500));
+    }
+
+    private void Update()
+    {
+        if (visible && tickRoutine == null)
+        {
+            hideTimer += Time.deltaTime;
+        }
+
+        if (hideTimer >= timeBeforeFade && visible)
+        {
+            FadeGroup();
+        }
+    }
+
+    private void FadeGroup()
+    {
+        visible = false;
+        cg.DOKill();
+        cg.DOFade(0, 0.8f);
     }
 
     private void HandleCurrencyChange(int newValue)
@@ -35,6 +66,11 @@ public class CurrencyUI : MonoBehaviour
             StopCoroutine(tickRoutine);
             tickRoutine = null;
         }
+
+        visible = true;
+        hideTimer = 0f;
+        cg.DOKill();
+        cg.alpha = 1.0f;
 
         tickRoutine = StartCoroutine(TickRoutine(currentCounter, newValue, timeToAdjust));
     }
@@ -52,12 +88,14 @@ public class CurrencyUI : MonoBehaviour
             int currentInt = Mathf.RoundToInt(currentFloat);
 
             currentCounter = currentInt;
-            currencyCounter.text = currentInt.ToString();
+            currencyCounter.text = $"$[{currentInt.ToString()}]";
 
             yield return null;
         }
 
-        currencyCounter.text = end.ToString();
+        currencyCounter.text = $"$[{end.ToString()}]";
+
+        tickRoutine = null;
     }
 
 }

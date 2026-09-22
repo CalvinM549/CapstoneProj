@@ -20,6 +20,9 @@ public class RunManager : MonoBehaviour
     [SerializeField] private Transform playerContainer;
     [SerializeField] private Transform playerUIContainer;
 
+    [SerializeField] private Transform currencyContainer;
+    [SerializeField] private CurrencyPickup currencyPickupPrefab;
+
     [SerializeField] private float fadeTime;
     [SerializeField] private CanvasGroup fadeOverlay;
 
@@ -27,6 +30,8 @@ public class RunManager : MonoBehaviour
 
     public RoomPoolService roomService; // Pools rooms, holds useful values etc
     public EnemyService enemyService; // Pools enemies, allows for spawning and handling etc
+    public CurrencyDropService currencyDropService; // Allows for dropping pooled currency
+    public LootService lootService;
 
     public RunState currentRun;
 
@@ -44,6 +49,8 @@ public class RunManager : MonoBehaviour
 
         roomService = new RoomPoolService(db.rooms, roomContainer);
         enemyService = new EnemyService(db.enemies, enemyContainer);
+        currencyDropService = new CurrencyDropService(currencyPickupPrefab, currencyContainer);
+        lootService = new LootService(db);
     }
 
     private void OnEnable()
@@ -155,6 +162,7 @@ public class RunManager : MonoBehaviour
     private void EnterNode(MapNode node, Direction? arrivingFrom)
     {
         // Remove Current Room
+        currencyDropService.ForceCollectAll();
 
         if (activeRoom != null)
         {

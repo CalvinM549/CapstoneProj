@@ -12,6 +12,8 @@ public class EnemyData : DatabaseEntry
 
     public float cost;
 
+    public int currencyValue;
+
     [Space]
     public float baseHealth;
     public float baseDamage;

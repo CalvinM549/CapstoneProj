@@ -43,6 +43,7 @@ public class RadialAmmoUI : MonoBehaviour
     {
         player = p;
         player.Combat.OnAmmoChanged += HandleAmmoChanged;
+        player.Combat.OnWeaponChanged += HandleMaxAmmoChanged;
         GameEvents.OnAmmoUsedEmpty += HandleAmmoUseFailed;
     }
 
@@ -63,7 +64,10 @@ public class RadialAmmoUI : MonoBehaviour
     private void BuildPips(int count)
     {
         foreach (var pip in pips)
-            if (pip != null) Destroy(pip.transform.parent.gameObject);
+        {
+            pip?.DOKill();
+            Destroy(pip.transform.parent.gameObject);
+        }
         pips.Clear();
 
         if (count <= 0) return;
@@ -92,7 +96,7 @@ public class RadialAmmoUI : MonoBehaviour
             bool loaded = i < currentAmmo;
             Color target = loaded ? loadedColour : spentColour;
 
-            pips[i].DOKill();
+            pips[i]?.DOKill();
             pips[i].DOColor(target, 0.15f).SetEase(Ease.OutBack);
         }
     }

@@ -60,7 +60,9 @@ public class EnemyAIController : MonoBehaviour
         {
             var executor = attackExecutors[i];
             if (!executor.CanExecute(this)) continue;
-            else return executor;
+
+            context.activeExecutorIndex = i;
+            return executor;
         }
 
         return null;

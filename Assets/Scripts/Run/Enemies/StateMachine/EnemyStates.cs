@@ -149,7 +149,14 @@ public class RepositionState : IEnemyState
         {
             Vector2 toTarget = (Vector2)ctx.target.position - ai.Body.position;
             Vector2 lateralDir = Vector2.Perpendicular(toTarget.normalized);
-            ai.Body.linearVelocity = lateralDir * (ai.profile.moveSpeed);
+
+            Vector2 dir = ai.profile.repositionAwayFromTarget
+                ? (lateralDir - toTarget.normalized).normalized
+                : lateralDir;
+
+            float speed = ai.profile.moveSpeed * (ai.profile.repositionSpeedMult > 0f ? ai.profile.repositionSpeedMult : 1f);
+
+            ai.Body.linearVelocity = lateralDir * speed;
         }
 
         if (ctx.stateTimer <= 0f)

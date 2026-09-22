@@ -6,6 +6,7 @@ public class DoorwayPreviewUI : MonoBehaviour
     private Doorway door;
     [SerializeField] private CanvasGroup cg;
     [SerializeField] private TextMeshProUGUI typeName;
+    [SerializeField] private TextMeshProUGUI rewardName;
     [SerializeField] private TextMeshProUGUI flavourName;
     // icon?
 
