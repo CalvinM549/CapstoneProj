@@ -11,8 +11,6 @@ public class PlayerInteract : MonoBehaviour
     private Dictionary<IInteractable, Transform> nearbyInteractables = new();
     private LayerMask interactionLayer; // not sure if needed
 
-    public event Action<bool> CanInteractUpdated;
-
     private void Awake()
     {
         p = GetComponentInParent<Player>();
@@ -28,6 +26,11 @@ public class PlayerInteract : MonoBehaviour
     private void OnDisable()
     {
         input.InteractPressed -= HandleInteractPressed;
+    }
+
+    private void Update()
+    {
+        
     }
 
     private void HandleInteractPressed()
@@ -64,7 +67,7 @@ public class PlayerInteract : MonoBehaviour
         if (collision.TryGetComponent<IInteractable>(out var interactable))
         {
             nearbyInteractables.Add(interactable, collision.transform);
-            CanInteractUpdated?.Invoke(true);
+            interactable.ShowPrompt();
         }
     }
 
@@ -72,11 +75,12 @@ public class PlayerInteract : MonoBehaviour
     {
         if (collision.TryGetComponent<IInteractable>(out var interactable))
         {
-            if(nearbyInteractables.ContainsKey(interactable))
+            if (nearbyInteractables.ContainsKey(interactable))
+            {
                 nearbyInteractables.Remove(interactable);
+                interactable.HidePrompt();
+            }
 
-            if(nearbyInteractables.Count <= 0)
-                CanInteractUpdated?.Invoke(false);
         }
     }
 }

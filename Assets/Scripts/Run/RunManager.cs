@@ -26,6 +26,8 @@ public class RunManager : MonoBehaviour
     [SerializeField] private float fadeTime;
     [SerializeField] private CanvasGroup fadeOverlay;
 
+    [SerializeField] private RunEndOverlay runEndOverlay;
+
     [Header("Run Config")]
 
     public RoomPoolService roomService; // Pools rooms, holds useful values etc
@@ -138,7 +140,7 @@ public class RunManager : MonoBehaviour
 
         activePlayer.SetPlayerCanAct(false);
 
-        //endOverlay.Display(victory, currentRun);
+        runEndOverlay.Display(victory, currentRun);
     }
 
     #region Room Transitions
@@ -231,7 +233,7 @@ public class RunManager : MonoBehaviour
 
     private void CheckSectorVictory()
     {
-        if (currentRun.currentDepth == currentRun.map.totalNodes)
+        if (currentRun.currentDepth == currentRun.map.rowCount)
         {
             HandleRunEnd(true); // temp for demo
         }

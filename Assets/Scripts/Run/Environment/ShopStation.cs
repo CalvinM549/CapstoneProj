@@ -14,8 +14,6 @@ public class ShopStation : StationBase, IInteractable
     [Header("Config")]
     [SerializeField] private RewardCategory[] offerableTypes;
 
-    public string InteractPrompt => "Open wares";
-
     protected override void OnSetup(MapNode node, RunState run)
     {
         stock = RunManager.Instance.lootService.Roll(new LootRequest
@@ -32,9 +30,8 @@ public class ShopStation : StationBase, IInteractable
         purchased = new bool[stock.Count];
     }
 
-    public void Interact()
+    protected override void OnInteract()
     {
-        // open UI screen
         UIManager.Instance.OpenScreen("shopScreen", this);
     }
 

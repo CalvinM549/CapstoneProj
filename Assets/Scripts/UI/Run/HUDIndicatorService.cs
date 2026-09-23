@@ -18,6 +18,7 @@ public class HUDIndicatorService : MonoBehaviour
     [SerializeField] private Color pingColour;
 
     private readonly Dictionary<Transform, IndicatorIconUI> indicators = new();
+    private readonly Dictionary<Transform, RingController> activePings = new();
 
     private void Awake()
     {
@@ -33,6 +34,12 @@ public class HUDIndicatorService : MonoBehaviour
     {
         foreach (var kvp in indicators)
             Position(kvp.Key, kvp.Value);
+
+        foreach (var kvp in activePings)
+        {
+            Vector2 point = GetClampedScreenPoint(kvp.Key.position, out _, out _);
+            ((RectTransform)kvp.Value.transform).anchoredPosition = point;
+        }
     }
 
     public void IndicateStation(Transform anchor, Sprite icon)
@@ -91,9 +98,13 @@ public class HUDIndicatorService : MonoBehaviour
 
     public void PlayPing(Transform anchor)
     {
+        if (activePings.TryGetValue(anchor, out var existing)) return;
+
         Vector2 point = GetClampedScreenPoint(anchor.position, out _, out _);
 
         var ring = Instantiate(pingRingPrefab, root);
+        activePings[anchor] = ring;
+        
         ((RectTransform)ring.transform).anchoredPosition = point;
 
         ring.Initialize(0, 360f, pingColour);
@@ -101,10 +112,19 @@ public class HUDIndicatorService : MonoBehaviour
         ring.SetFillImmediate(1f);
         ring.SetRadiusImmediate(pingStartRadius);
 
-        ring.SetRadius(pingEndRadius, pingDuration, Ease.InCubic);
+        ring.SetRadius(pingEndRadius, pingDuration, Ease.InOutCubic);
         ring.Ring
             .DOFade(0f, pingDuration)
             .SetEase(Ease.InCubic)
-            .OnComplete(() => Destroy(ring.gameObject));
+            .OnComplete(() => CleanupPing(anchor));
+    }
+
+    private void CleanupPing(Transform anchor)
+    {
+        if (!activePings.TryGetValue(anchor, out var existing)) return;
+
+        existing?.DOKill();
+        Destroy(existing.gameObject);
+        activePings.Remove(anchor);
     }
 }

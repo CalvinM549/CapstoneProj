@@ -8,10 +8,8 @@ public enum RestAction
     FullRestore
 }
 
-public class RestStation : StationBase, IInteractable
+public class RestStation : StationBase
 {
-    [SerializeField] private string prompt;
-    public string InteractPrompt => prompt;
 
     [SerializeField] private int costPerStructure;
     [SerializeField] private int ammoRestoreCost;
@@ -25,7 +23,7 @@ public class RestStation : StationBase, IInteractable
         freeActionAvaliable = true;
     }
 
-    public void Interact()
+    protected override void OnInteract()
     {
         if (used) return;
 

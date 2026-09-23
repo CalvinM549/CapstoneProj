@@ -4,9 +4,6 @@ using UnityEngine;
 public class RewardStation : StationBase, IInteractable
 {
 
-    [SerializeField] private string prompt;
-    public string InteractPrompt => prompt;
-
     [SerializeField] private SpriteRenderer visual;
 
     [SerializeField] private Vector2 standPos;
@@ -39,14 +36,10 @@ public class RewardStation : StationBase, IInteractable
             
     }
 
-
-
-    public void Interact()
+    protected override void OnInteract()
     {
         if (!isEnabled) return;
         if (used) return;
-
-        // move player to stand pos
 
         ChoiceRequest request = new("Select Upgrade", offer, OnSelected);
 
@@ -60,6 +53,7 @@ public class RewardStation : StationBase, IInteractable
         run.GrantLoot(chosen);
 
         used = true;
+        RemoveIndicator();
         // reset anim trigger
     }
 

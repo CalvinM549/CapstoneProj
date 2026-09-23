@@ -1,10 +1,82 @@
 fileFormatVersion: 2
-guid: 2f2e2cb4e3952c24c92e9d97315191b3
+guid: d00f56318f613f24da040efd9a5721f8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1506208886050858202
-    second: Door_01_0
+      213: -2170222197936231859
+    second: stationSprite_0
+  - first:
+      213: -3561691048481126061
+    second: stationSprite_1
+  - first:
+      213: 3233419553936432743
+    second: stationSprite_2
+  - first:
+      213: -1541429291516565207
+    second: stationSprite_3
+  - first:
+      213: 3716541677829645014
+    second: stationSprite_4
+  - first:
+      213: -5133039547560328626
+    second: stationSprite_5
+  - first:
+      213: 2255107124876290330
+    second: stationSprite_6
+  - first:
+      213: -1625488214936368772
+    second: stationSprite_7
+  - first:
+      213: 2416735070611245536
+    second: stationSprite_8
+  - first:
+      213: 7071931815995690732
+    second: stationSprite_9
+  - first:
+      213: -7057811194480833968
+    second: stationSprite_10
+  - first:
+      213: 6144094235754673685
+    second: stationSprite_11
+  - first:
+      213: -5233074360175368819
+    second: stationSprite_12
+  - first:
+      213: 2822471539738468646
+    second: stationSprite_13
+  - first:
+      213: -7817613441849460115
+    second: stationSprite_14
+  - first:
+      213: -4882593994320945481
+    second: stationSprite_15
+  - first:
+      213: 9091810225846868364
+    second: stationSprite_16
+  - first:
+      213: 1679100249522825202
+    second: stationSprite_17
+  - first:
+      213: -4156407221041617395
+    second: stationSprite_18
+  - first:
+      213: -964424359517926687
+    second: stationSprite_19
+  - first:
+      213: -8077866027449302181
+    second: stationSprite_20
+  - first:
+      213: -5411812823534644763
+    second: stationSprite_21
+  - first:
+      213: 1376382583143150632
+    second: stationSprite_22
+  - first:
+      213: -657693033203878271
+    second: stationSprite_23
+  - first:
+      213: -6375317468167683353
+    second: stationSprite_24
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +172,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Door_01_0
+      name: stationSprite_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 32
-        height: 48
+        width: 80
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,470 +187,536 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 62bd6659ffed81be0800000000000000
-      internalID: -1506208886050858202
+      spriteID: d4ae758c862d1e1e0800000000000000
+      internalID: -2170222197936231859
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_01_1
+      name: stationSprite_1
       rect:
         serializedVersion: 2
-        x: 32
+        x: 80
         y: 0
-        width: 32
-        height: 48
+        width: 80
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 7de7d5d369563d14ca9f16c2cb660982
-      internalID: -1857918899
+      spriteID: 359089facd4529ec0800000000000000
+      internalID: -3561691048481126061
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_01_2
-      rect:
-        serializedVersion: 2
-        x: 64
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 44120194c00b04647ab1c7f5c396fcba
-      internalID: -32254449
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Door_01_3
-      rect:
-        serializedVersion: 2
-        x: 96
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a89d855d973221b4caf317b6825f7393
-      internalID: -398031009
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Door_01_4
-      rect:
-        serializedVersion: 2
-        x: 128
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: b20984d65b651ff43aa9ba2aa1a30637
-      internalID: -529368665
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Door_01_5
+      name: stationSprite_2
       rect:
         serializedVersion: 2
         x: 160
         y: 0
-        width: 32
-        height: 48
+        width: 80
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 9191ff7d9c566df45a7fc89d915d02b9
-      internalID: -1233166724
+      spriteID: 76ede22f3f96fdc20800000000000000
+      internalID: 3233419553936432743
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_01_6
+      name: stationSprite_3
       rect:
         serializedVersion: 2
-        x: 192
+        x: 240
         y: 0
-        width: 32
-        height: 48
+        width: 80
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: eab4708a3772ed5408ebace14d042927
-      internalID: -954083655
+      spriteID: 929e5c8e93ebb9ae0800000000000000
+      internalID: -1541429291516565207
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_01_7
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d7a7c05c1ceb2de41a7afad513aae7bc
-      internalID: 439036020
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Door_01_8
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a6e659b017da29345bd2995a88fa9a7b
-      internalID: 1250648658
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Door_01_9
-      rect:
-        serializedVersion: 2
-        x: 288
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6a6e04741d936404d822b53b35337846
-      internalID: 1310099957
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Door_01_10
+      name: stationSprite_4
       rect:
         serializedVersion: 2
         x: 320
         y: 0
-        width: 32
-        height: 48
+        width: 80
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 1fc83c8e20ebd3f4e8b509ee7a04a47c
-      internalID: 1082226110
+      spriteID: 6d268f307fec39330800000000000000
+      internalID: 3716541677829645014
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_01_11
+      name: stationSprite_5
       rect:
         serializedVersion: 2
-        x: 352
+        x: 400
         y: 0
-        width: 32
-        height: 48
+        width: 80
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 44b04ca2691b7e842b8629427f4e35cf
-      internalID: -1195437601
+      spriteID: e4282ad3ab7c3c8b0800000000000000
+      internalID: -5133039547560328626
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_01_12
-      rect:
-        serializedVersion: 2
-        x: 384
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 878e0f13d64764a409d4018955b853ff
-      internalID: -1581430344
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Door_01_13
-      rect:
-        serializedVersion: 2
-        x: 416
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 344f21a2b9928984983b331bc45d1ad8
-      internalID: -307465267
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Door_01_14
-      rect:
-        serializedVersion: 2
-        x: 448
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: dd2138826950d7b43a9cc82b4d423da3
-      internalID: -207501420
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Door_01_15
+      name: stationSprite_6
       rect:
         serializedVersion: 2
         x: 480
         y: 0
-        width: 32
-        height: 48
+        width: 80
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: fbea6f33b67cced42bd388b26c41225e
-      internalID: 1695669636
+      spriteID: a1924b46bffbb4f10800000000000000
+      internalID: 2255107124876290330
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_01_16
+      name: stationSprite_7
       rect:
         serializedVersion: 2
-        x: 512
+        x: 560
         y: 0
-        width: 32
-        height: 48
+        width: 80
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: ce53579f30fe08445b9b1f104d8304a3
-      internalID: -1304344358
+      spriteID: c79422aa41b1179e0800000000000000
+      internalID: -1625488214936368772
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_01_17
-      rect:
-        serializedVersion: 2
-        x: 544
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6e476cbcc7fd5fa4c9fef05202f79870
-      internalID: -2131912290
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Door_01_18
-      rect:
-        serializedVersion: 2
-        x: 576
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 757236d5f40f3ab48bbe54646e4f30ab
-      internalID: 1851951386
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Door_01_19
-      rect:
-        serializedVersion: 2
-        x: 608
-        y: 0
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bdf845f3f4e99fc4a9bb36396851c598
-      internalID: -209848060
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Door_01_20
+      name: stationSprite_8
       rect:
         serializedVersion: 2
         x: 640
         y: 0
-        width: 32
-        height: 48
+        width: 80
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 3fd4106541ca1e240b94e8672ea7428d
-      internalID: -187176567
+      spriteID: 0e903080eb7f98120800000000000000
+      internalID: 2416735070611245536
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Door_01_21
+      name: stationSprite_9
       rect:
         serializedVersion: 2
-        x: 672
+        x: 720
         y: 0
-        width: 32
-        height: 48
+        width: 80
+        height: 80
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: ec450dd05d45ad94bae1a30a8eb16de8
-      internalID: -973645932
+      spriteID: ceec438948c842260800000000000000
+      internalID: 7071931815995690732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_10
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05ac13dcc1e9d0e90800000000000000
+      internalID: -7057811194480833968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_11
+      rect:
+        serializedVersion: 2
+        x: 880
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 516bea49725344550800000000000000
+      internalID: 6144094235754673685
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_12
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d85ea8e68926067b0800000000000000
+      internalID: -5233074360175368819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_13
+      rect:
+        serializedVersion: 2
+        x: 1040
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 621e2ca49ee6b2720800000000000000
+      internalID: 2822471539738468646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_14
+      rect:
+        serializedVersion: 2
+        x: 1120
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6a7e3f7ef1428390800000000000000
+      internalID: -7817613441849460115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_15
+      rect:
+        serializedVersion: 2
+        x: 1200
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7be5b0a91aa8d3cb0800000000000000
+      internalID: -4882593994320945481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_16
+      rect:
+        serializedVersion: 2
+        x: 1280
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c89dddcda399c2e70800000000000000
+      internalID: 9091810225846868364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_17
+      rect:
+        serializedVersion: 2
+        x: 1360
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f7e31bd7cc5d4710800000000000000
+      internalID: 1679100249522825202
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_18
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0622ff67a97156c0800000000000000
+      internalID: -4156407221041617395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_19
+      rect:
+        serializedVersion: 2
+        x: 1520
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ea433e972dad92f0800000000000000
+      internalID: -964424359517926687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_20
+      rect:
+        serializedVersion: 2
+        x: 1600
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5340ba75a7a5ef80800000000000000
+      internalID: -8077866027449302181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_21
+      rect:
+        serializedVersion: 2
+        x: 1680
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e15056f8e065e4b0800000000000000
+      internalID: -5411812823534644763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_22
+      rect:
+        serializedVersion: 2
+        x: 1760
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 824384fbaa4e91310800000000000000
+      internalID: 1376382583143150632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_23
+      rect:
+        serializedVersion: 2
+        x: 1840
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18632a0cba76fd6f0800000000000000
+      internalID: -657693033203878271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stationSprite_24
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 0
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e2c5836a825687a0800000000000000
+      internalID: -6375317468167683353
       vertices: []
       indices: 
       edges: []
@@ -587,7 +725,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 342cfcc8f4d1254489e5ca33a05c1e64
+    spriteID: 6c6c0d776ff69a94e8228933578207f5
     internalID: 0
     vertices: []
     indices: 
@@ -597,30 +735,33 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":22.0,"y":1.0},"gridSpriteSize":{"x":32.0,"y":48.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":25.0,"y":1.0},"gridSpriteSize":{"x":80.0,"y":80.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Door_01_0: -1506208886050858202
-      Door_01_1: -1857918899
-      Door_01_10: 1082226110
-      Door_01_11: -1195437601
-      Door_01_12: -1581430344
-      Door_01_13: -307465267
-      Door_01_14: -207501420
-      Door_01_15: 1695669636
-      Door_01_16: -1304344358
-      Door_01_17: -2131912290
-      Door_01_18: 1851951386
-      Door_01_19: -209848060
-      Door_01_2: -32254449
-      Door_01_20: -187176567
-      Door_01_21: -973645932
-      Door_01_3: -398031009
-      Door_01_4: -529368665
-      Door_01_5: -1233166724
-      Door_01_6: -954083655
-      Door_01_7: 439036020
-      Door_01_8: 1250648658
-      Door_01_9: 1310099957
+      stationSprite_0: -2170222197936231859
+      stationSprite_1: -3561691048481126061
+      stationSprite_10: -7057811194480833968
+      stationSprite_11: 6144094235754673685
+      stationSprite_12: -5233074360175368819
+      stationSprite_13: 2822471539738468646
+      stationSprite_14: -7817613441849460115
+      stationSprite_15: -4882593994320945481
+      stationSprite_16: 9091810225846868364
+      stationSprite_17: 1679100249522825202
+      stationSprite_18: -4156407221041617395
+      stationSprite_19: -964424359517926687
+      stationSprite_2: 3233419553936432743
+      stationSprite_20: -8077866027449302181
+      stationSprite_21: -5411812823534644763
+      stationSprite_22: 1376382583143150632
+      stationSprite_23: -657693033203878271
+      stationSprite_24: -6375317468167683353
+      stationSprite_3: -1541429291516565207
+      stationSprite_4: 3716541677829645014
+      stationSprite_5: -5133039547560328626
+      stationSprite_6: 2255107124876290330
+      stationSprite_7: -1625488214936368772
+      stationSprite_8: 2416735070611245536
+      stationSprite_9: 7071931815995690732
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

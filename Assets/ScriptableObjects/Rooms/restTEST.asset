@@ -17,6 +17,6 @@ MonoBehaviour:
   allowedConnections: -1
   difficultyCost: 0
   timerCost: 0
-  roomPrefab: {fileID: 3310053853735739365, guid: f1fb2de7d569a774b9f954081e77caa2, type: 3}
+  roomPrefab: {fileID: 6074118564554837086, guid: 9b97fd0f6af8c6045b74d77fa63275dd, type: 3}
   minChapter: 0
   maxChapter: 99

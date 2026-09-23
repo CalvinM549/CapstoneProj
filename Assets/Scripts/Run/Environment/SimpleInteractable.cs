@@ -31,4 +31,14 @@ public class SimpleInteractable : MonoBehaviour, IInteractable
     {
         OnActivated?.Invoke();
     }
+
+    public void ShowPrompt()
+    {
+        //
+    }
+
+    public void HidePrompt()
+    {
+        //
+    }
 }

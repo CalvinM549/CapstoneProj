@@ -1,10 +1,13 @@
 using System;
 using UnityEngine;
 
-public class StationBase : MonoBehaviour
+public class StationBase : MonoBehaviour, IInteractable
 {
     [SerializeField] private bool startEnabled;
     [SerializeField] private Sprite indicatorIcon;
+    [SerializeField] private Transform indicatorPos;
+
+    [SerializeField] private CanvasGroup interactDisplay;
 
     private bool indicatorActive;
     protected bool isEnabled;
@@ -15,9 +18,15 @@ public class StationBase : MonoBehaviour
     protected MapNode node;
     protected RunState run;
 
+    [SerializeField] private string interactPrompt;
+    public string InteractPrompt => interactPrompt;
+
     private void Awake()
     {
         anim = GetComponent<Animator>();
+
+        if (indicatorPos == null)
+            indicatorPos = transform;
 
         isEnabled = startEnabled;
         used = false;
@@ -55,20 +64,37 @@ public class StationBase : MonoBehaviour
         ApplyIndicator();
 
         if (anim != null)
-            anim.SetTrigger("roomComplete");
+            anim.SetTrigger("Enable");
     }
 
     protected void ApplyIndicator()
     {
         if (indicatorActive) return;
         indicatorActive = true;
-        HUDIndicatorService.Instance.IndicateStation(transform, indicatorIcon);
+        HUDIndicatorService.Instance.IndicateStation(indicatorPos, indicatorIcon);
     }
 
     protected void RemoveIndicator()
     {
         if(!indicatorActive) return;
         indicatorActive = false;
-        HUDIndicatorService.Instance.RemoveIndicator(transform);
+        HUDIndicatorService.Instance.RemoveIndicator(indicatorPos);
+    }
+
+    public void Interact()
+    {
+        OnInteract();
+    }
+
+    protected virtual void OnInteract() { }
+
+    public void ShowPrompt()
+    {
+        interactDisplay.gameObject.SetActive(true);
+    }
+
+    public void HidePrompt()
+    {
+        interactDisplay.gameObject.SetActive(false);
     }
 }

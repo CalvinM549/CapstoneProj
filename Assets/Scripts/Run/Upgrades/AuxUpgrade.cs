@@ -7,4 +7,11 @@ public class AuxUpgrade : UpgradeBase
     {
         slot = UpgradeSlot.None;
     }
+
+    public virtual void OnStack() 
+    {
+        // default to apply again
+    }
+
+    public virtual void RemoveStack() { }
 }

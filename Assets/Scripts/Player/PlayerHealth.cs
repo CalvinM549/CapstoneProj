@@ -117,7 +117,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         int toAdd = newCount - healthSegments.Count;
         for (int i = 0; i < toAdd; i++)
         {
-            healthSegments.Add(new HealthSegment(structureHealth.Value, false));
+            healthSegments.Insert(0, new HealthSegment(structureHealth.Value, false));
         }
 
         activeHealthIndex = healthSegments.Count - 1;
@@ -250,21 +250,24 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
     public void RestoreSegments(int count)
     {
+        print($"restoring {count} segments");
+
         if (count <= 0) return;
 
         int healed = 0;
 
-        for (int i = 0; i < healthSegments.Count && healed < count; i++)
+        for (int index = 0; index < healthSegments.Count && healed < count; index++)
         {
-            HealthSegment segment = healthSegments[i];
-            if (!segment.IsDestroyed) continue;
+            HealthSegment currentSegment = healthSegments[index];
+            if (!currentSegment.IsDestroyed) continue;
 
-            segment.RestoreSegment();
-            healthSegments.Remove(segment);
-            healthSegments.Insert(0, segment);
+            currentSegment.RestoreSegment();
+            healthSegments.Remove(currentSegment);
+            healthSegments.Insert(0, currentSegment);
 
             activeHealthIndex++;
             healed++;
+            print($"Restoring segment at index : {index}, healed = {healed}");
         }
 
         if(healed < count)
