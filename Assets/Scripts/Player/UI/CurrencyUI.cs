@@ -31,6 +31,7 @@ public class CurrencyUI : MonoBehaviour
     private void OnDisable()
     {
         GameEvents.OnCurrencyChanged -= HandleCurrencyChange;
+        cg?.DOKill();
     }
 
     [ContextMenu("DoChangeTest")]
@@ -55,7 +56,7 @@ public class CurrencyUI : MonoBehaviour
     private void FadeGroup()
     {
         visible = false;
-        cg.DOKill();
+        cg?.DOKill();
         cg.DOFade(0, 0.8f);
     }
 
@@ -69,7 +70,7 @@ public class CurrencyUI : MonoBehaviour
 
         visible = true;
         hideTimer = 0f;
-        cg.DOKill();
+        cg?.DOKill();
         cg.alpha = 1.0f;
 
         tickRoutine = StartCoroutine(TickRoutine(currentCounter, newValue, timeToAdjust));

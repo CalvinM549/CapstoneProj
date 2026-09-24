@@ -20,9 +20,4 @@ public class ShopObjectiveHandler : MonoBehaviour, IObjectiveTracker
     {
         //
     }
-
-    private void HandleShopUsed()
-    {
-        OnEncounterCleared?.Invoke();
-    }
 }

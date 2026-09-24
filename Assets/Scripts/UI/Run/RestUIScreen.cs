@@ -36,7 +36,7 @@ public class RestUIScreen : UIScreen
 
         repairButton.SetCost(free ? "FREE" : rest.GetCost(RestAction.RepairStructure).ToString());
         ammoButton.SetCost(free ? "FREE" : rest.GetCost(RestAction.RestoreAmmo).ToString());
-        fullRestoreButton.SetCost(free ? "FREE" : rest.GetCost(RestAction.FullRestore).ToString());
+        fullRestoreButton.SetCost(rest.GetCost(RestAction.FullRestore).ToString());
     }
 
     private RestActionButtonUI GetButton(RestAction selected)

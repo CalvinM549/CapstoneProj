@@ -43,7 +43,7 @@ public class RadialHitIndicator : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEvents.OnPlayerHit += HandlePlayerHit;
+        GameEvents.OnPlayerTookDamage += HandlePlayerHit;
 
         playerUI.Initialized += HandleUIReady;
         if (playerUI.player != null) HandleUIReady(playerUI.player);
@@ -51,7 +51,7 @@ public class RadialHitIndicator : MonoBehaviour
 
     private void OnDisable()
     {
-        GameEvents.OnPlayerHit -= HandlePlayerHit;
+        GameEvents.OnPlayerTookDamage -= HandlePlayerHit;
     }
 
     private void HandleUIReady(Player p)
@@ -66,7 +66,7 @@ public class RadialHitIndicator : MonoBehaviour
         Vector2 direction = ((Vector2)playerTransform.position - hit.sourcePos).normalized;
         if (direction == Vector2.zero) return;
 
-        float normalizedDamage = Mathf.Clamp01((float)hit.damage / maxDamageRef);
+        float normalizedDamage = Mathf.Clamp01((float)hit.FinalDamage / maxDamageRef);
 
         SetupMarker(direction, normalizedDamage);
     }

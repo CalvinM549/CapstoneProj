@@ -66,6 +66,8 @@ public class PlayerInteract : MonoBehaviour
     {
         if (collision.TryGetComponent<IInteractable>(out var interactable))
         {
+            if (!interactable.CanInteract) return;
+
             nearbyInteractables.Add(interactable, collision.transform);
             interactable.ShowPrompt();
         }

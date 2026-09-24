@@ -20,6 +20,8 @@ public class PlayerUI : MonoBehaviour
 
     public event Action<Player> Initialized;
 
+    public bool Visible {  get; private set; }
+
     private void Awake()
     {
         mainCam = Camera.main;
@@ -54,13 +56,26 @@ public class PlayerUI : MonoBehaviour
     public void Initialize(Player p)
     {
         cg.alpha = 0f;
-        cg.DOFade(1f, 2f);
+        Visible = false;
+
         player = p;
         playerPos = p.transform;
 
         transform.position = playerPos.position;
 
         Initialized?.Invoke(p);
+    }
+
+    public void ToggleUI(bool show)
+    {
+        if (Visible == show) return;
+
+        float target = show ? 1f : 0.2f;
+
+        Visible = show;
+
+        cg?.DOKill();
+        cg.DOFade(target, 1f);
     }
 
     private void FixedUpdate()

@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: UpgradeDatabase
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeDatabase
   entries:
+  - {fileID: 11400000, guid: e5401393fab94b545ac09b282b79fa52, type: 2}
+  - {fileID: 11400000, guid: 13a1bb861f116fd4b95c2571322b43ba, type: 2}
   - {fileID: 11400000, guid: 162bbd224e04d1e45b3bb79ebb534ff9, type: 2}
   - {fileID: 11400000, guid: d0e29579d38b85743bf42e1759ac1079, type: 2}
   - {fileID: 11400000, guid: dece0e2c591273b4daa8acf74d755a66, type: 2}

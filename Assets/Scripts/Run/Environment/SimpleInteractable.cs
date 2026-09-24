@@ -11,6 +11,7 @@ public class SimpleInteractable : MonoBehaviour, IInteractable
     protected bool used = false;
 
     [SerializeField] protected bool singleUse = true;
+    public bool CanInteract { get { return !(singleUse && used); } }
 
 
     private void Start()

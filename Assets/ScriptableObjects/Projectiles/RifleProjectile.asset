@@ -16,7 +16,7 @@ MonoBehaviour:
   poolSize: 3
   lifetime: 1
   speed: 40
-  damage: 8
+  damage: 80
   damageType: 0
   knockback: 4
   hitstunTime: 0.2

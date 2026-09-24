@@ -40,7 +40,7 @@ public class PlayerAnimator : MonoBehaviour
 
         GameEvents.OnAttackStarted += HandleAttackStart;
 
-        GameEvents.OnPlayerHit += HandleHit;
+        GameEvents.OnPlayerTookDamage += HandleHit;
 
         GameEvents.OnPlayerDeath += HandleDeath;
     }
@@ -52,7 +52,7 @@ public class PlayerAnimator : MonoBehaviour
 
         GameEvents.OnAttackStarted -= HandleAttackStart;
 
-        GameEvents.OnPlayerHit -= HandleHit;
+        GameEvents.OnPlayerTookDamage -= HandleHit;
 
         GameEvents.OnPlayerDeath -= HandleDeath;
     }
@@ -113,8 +113,6 @@ public class PlayerAnimator : MonoBehaviour
 
     private void HandleAttackStart(AttackType type, Vector2 direction)
     {
-        if (type == AttackType.DashAttack) return;
-
         if (direction.x > 0 && IsFacingRight)
             FlipFacing();
         else if (direction.x < 0 && !IsFacingRight)

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class  PlayerHealth : MonoBehaviour, IDamageable
@@ -12,6 +13,8 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
     private StatValue structureHealth;
 
     private Player p;
+
+    private StatusEffectController statusController;
 
     public List<HealthSegment> healthSegments;
     private int activeHealthIndex;
@@ -55,6 +58,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
     private void Awake()
     {
         p = GetComponent<Player>();
+        statusController = GetComponent<StatusEffectController>();
 
         IsAlive = true;
     }
@@ -160,15 +164,22 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         ApplyKnockback(hit);
         ApplyHitStun(hit);
         ApplyDamage(hit);
+        ApplyStatuses(hit);
     }
 
     private void ApplyDamage(HitData hit)
     {
-        GameEvents.PlayerHit(hit);
+        float defenceMult = p.Stats.Get(StatRef.PlayerIncomingDamageMult);
+        hit.AddModifier(defenceMult - 1, StatModType.PercentAdd, this);
+
+        p.Upgrades.ModifyIncomingHit(hit);
+        GameEvents.PlayerRecievedHit(hit);
 
         HealthSegment segment = ActiveSegment;
 
-        segment.ReduceHealth(hit.damage); // overflow value unused atm
+        segment.ReduceHealth(hit.FinalDamage); // overflow value unused atm
+
+        GameEvents.PlayerTookDamage(hit);
 
         if (segment.IsDestroyed)
         {
@@ -190,6 +201,14 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
         if(UseIFrames)
             GrantIFrames(data.hitIFrameDuration);
+    }
+
+    private void ApplyStatuses(HitData hit)
+    {
+        foreach (var pending in hit.PendingStatusEffects)
+        {
+            statusController?.ApplyEffects(pending.data, pending.source, pending.appliedByPlayer, pending.stacks);
+        }
     }
 
     private void ApplyKnockback(HitData hit)

@@ -30,7 +30,7 @@ public class IdleState : IEnemyState
         if (AIManager.Instance.TryFindTarget(ai, out var target))
         {
             ai.context.target = target;
-            ai.ChangeState(EnemyStates.MoveIntoRange);
+            ai.ChangeState(ai.PostAggroState);
         }
     }
     public void Exit(EnemyAIController ai)
@@ -71,7 +71,7 @@ public class MoveIntoRangeState : IEnemyState
         }
 
         Vector2 dir = toTarget.normalized;
-        ai.Body.linearVelocity = dir * ai.profile.moveSpeed;
+        ai.Body.linearVelocity = dir * ai.speedStat.Value;
     }
 
     public void Exit(EnemyAIController ai)
@@ -89,7 +89,7 @@ public class AttackState : IEnemyState
 
         if (executor == null)
         {
-            ai.ChangeState(EnemyStates.Reposition);
+            ai.ChangeState(ai.PostAttackState);
             return;
         }
 
@@ -111,7 +111,7 @@ public class AttackState : IEnemyState
 
         if (ctx.timeSinceAttack >= executor.AttackData.winddownDuration + executor.AttackData.telegraphDuration && !executor.Executing)
         {
-            ai.ChangeState(EnemyStates.Reposition);
+            ai.ChangeState(ai.PostAttackState);
         }
     }
 
@@ -145,7 +145,7 @@ public class RepositionState : IEnemyState
 
         ctx.stateTimer -= dt;
 
-        if (ai.profile.moveSpeed > 0f)
+        if (ai.speedStat.Value > 0f)
         {
             Vector2 toTarget = (Vector2)ctx.target.position - ai.Body.position;
             Vector2 lateralDir = Vector2.Perpendicular(toTarget.normalized);
@@ -154,7 +154,7 @@ public class RepositionState : IEnemyState
                 ? (lateralDir - toTarget.normalized).normalized
                 : lateralDir;
 
-            float speed = ai.profile.moveSpeed * (ai.profile.repositionSpeedMult > 0f ? ai.profile.repositionSpeedMult : 1f);
+            float speed = ai.speedStat.Value * (ai.profile.repositionSpeedMult > 0f ? ai.profile.repositionSpeedMult : 1f);
 
             ai.Body.linearVelocity = lateralDir * speed;
         }

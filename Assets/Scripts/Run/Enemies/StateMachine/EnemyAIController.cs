@@ -9,6 +9,10 @@ public class EnemyAIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI stateDisplay;
 
     public EnemyContext context;
+    public EnemyStats stats {  get; private set; }
+    public StatValue speedStat { get; private set; } // cached for performance
+
+
     [HideInInspector] public AIProfile profile;
 
     [SerializeField] private Rigidbody2D rb;
@@ -18,6 +22,9 @@ public class EnemyAIController : MonoBehaviour
 
     private IEnemyState currentState;
 
+    public IEnemyState PostAggroState => EnemyStates.MoveIntoRange;
+    public IEnemyState PostAttackState => EnemyStates.Reposition;
+
     public Rigidbody2D Body => rb;
     public Transform Self => self;
     [NonSerialized] public float nextTickTime;
@@ -25,10 +32,13 @@ public class EnemyAIController : MonoBehaviour
     private void Awake()
     {
         GetComponents<IAttackExecutor>(attackExecutors);
+        stats = GetComponent<EnemyStats>();
     }
 
     public void ResetController(AIProfile newProfile)
     {
+        speedStat = stats.GetStatValue(StatRef.EnemyBaseSpeed);
+
         profile = newProfile;
         context = new();
         currentState = null;
@@ -50,6 +60,12 @@ public class EnemyAIController : MonoBehaviour
         currentState?.Tick(this, dt);
     }
 
+    public void ForceStagger(float duration)
+    {
+        context.staggerTimer = duration;
+        ChangeState(EnemyStates.Staggered);
+    }
+
     public int GetIndex(IAttackExecutor executor) => attackExecutors.IndexOf(executor);
 
     public IAttackExecutor GetExecutor(int index) => attackExecutors[index] ?? null;
@@ -67,6 +83,8 @@ public class EnemyAIController : MonoBehaviour
 
         return null;
     }
+
+
 }
 
 [Serializable]

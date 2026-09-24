@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
   lightAttacks:
   - type: 0
-    damage: 1
+    damage: 10
     startupTime: 0.01
     activeTime: 0.2
     recoveryTime: 0.1
@@ -23,7 +23,7 @@ MonoBehaviour:
     knockback: 1
     hitstunTime: 0.05
   - type: 0
-    damage: 1
+    damage: 10
     startupTime: 0.01
     activeTime: 0.2
     recoveryTime: 0.1
@@ -32,7 +32,7 @@ MonoBehaviour:
     knockback: 1
     hitstunTime: 0.05
   - type: 0
-    damage: 2
+    damage: 15
     startupTime: 0.01
     activeTime: 0.22
     recoveryTime: 0.3
@@ -42,7 +42,7 @@ MonoBehaviour:
     hitstunTime: 0.15
   heavyAttack:
     type: 1
-    damage: 3
+    damage: 30
     startupTime: 0.35
     activeTime: 0.25
     recoveryTime: 0.3

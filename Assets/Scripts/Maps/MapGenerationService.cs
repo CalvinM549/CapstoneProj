@@ -256,11 +256,12 @@ public class MapGenerationService
     {
         float progress = (float)depth / totalRows;
 
-        var weights = new (RoomType type, float weight)[]
+        var weights = new (RoomType type, float weight)[]// replace all with variables
         {
             (RoomType.Combat, 0.6f),
             (RoomType.Story, 0.15f),
-            (RoomType.Vault, 0.1f + progress * 0.15f) // replace all with variables
+            (RoomType.Rest, 0.1f),
+            (RoomType.Vault, 0.1f + progress * 0.15f) 
         };
 
         float total = weights.Sum(w => w.weight);
@@ -356,7 +357,7 @@ public class MapGenerationService
     {
         var weights = new (RewardCategory type, float weight)[]
         {
-            (RewardCategory.AuxUpgrade, type == RoomType.Shop ? 0.5f : 0.9f),
+            (RewardCategory.AuxUpgrade, type == RoomType.Shop ? 0.5f : 2f),
             (RewardCategory.MajorUpgrade, 0.15f + (0.01f * depth)),
             (RewardCategory.Weapon, 0.1f),
             (RewardCategory.Tool, 0.1f)

@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void SetCursorActive(bool active)
+    public void SetCursorActive(bool active)
     {
         Cursor.visible = active;
     }

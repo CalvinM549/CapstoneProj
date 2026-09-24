@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a065e1eb24036848b655c429670802f, type: 3}
   m_Name: KiterAIProfile
   m_EditorClassIdentifier: Assembly-CSharp::AIProfile
-  aggroRange: 10
+  aggroRange: 15
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 0
   requireLineOfSight: 1
-  moveSpeed: 10
   repositionDuration: 2
   repositionSpeedMult: 1.5
   repositionAwayFromTarget: 1

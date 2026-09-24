@@ -85,17 +85,14 @@ public class Projectile : MonoBehaviour
 
     protected virtual void HandleHit(IDamageable target)
     {
-        HitData hit = new HitData()
+        HitData hit = new HitData(data.damage, AttackType.Projectile, isPlayerProjectile)
         {
-            damage = data.damage,
-            attackType = AttackType.Secondary,
             sourcePos = sourcePosition,
             knockbackDirection = direction,
             knockbackForce = data.knockback,
             hitstopTime = data.hitstopDuration,
             hitstunTime = data.hitstunTime,
 
-            isPlayerAttack = isPlayerProjectile,
             isParryable = data.isParryable
         };
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c4fdf117cbd5294cb3d1f6b0c3c57ce, type: 3}
   m_Name: HandCannon
   m_EditorClassIdentifier: Assembly-CSharp::HandcannonWeapon
-  id: 80c2c507-f746-4a5b-8075-695769b46f2f
+  id: weapon_handCannon
   weaponName: HandCannon
   flavourText: 
   effectText: Fires individual, high-powered shots that push you backwards
@@ -28,4 +28,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6fe67ef6f404ff243b7d7bd3efaa01b8, type: 2}
   baseDropRate: 1
   synergyTags: []
+  spawnInShops: 1
+  shopPrice: 50
   currentAmmo: 9

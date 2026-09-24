@@ -38,10 +38,7 @@ public class HubManager : MonoBehaviour
     [Header("Testing Values")]
 
     [SerializeField] private PlayerWeapon defaultWeapon;
-    [SerializeField] private RoomData[] defaultRooms;
-    [SerializeField] private int walkLength;
-    [SerializeField] private int walkerCount;
-    [SerializeField] private Vector2Int mapBounds;
+    [SerializeField] private PlayerWeapon godModeWeapon;
 
     [SerializeField] private TextMeshProUGUI seedText;
 
@@ -58,6 +55,10 @@ public class HubManager : MonoBehaviour
             screen.Initialize();
             screens[screen.ScreenType] = screen;
         }
+
+        if (DebugManager.GodMode)
+            defaultWeapon = godModeWeapon;
+
 
         loadingToRun = false;
     }

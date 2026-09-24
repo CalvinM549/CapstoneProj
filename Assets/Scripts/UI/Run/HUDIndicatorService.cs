@@ -10,7 +10,13 @@ public class HUDIndicatorService : MonoBehaviour
     [SerializeField] private RectTransform root;
     [SerializeField] private float edgePadding;
 
+    [Header("Config")]
+    
     [SerializeField] private IndicatorIconUI indicatorPrefab;
+    [SerializeField] private float proximityFadeMin = 1.5f;
+    [SerializeField] private float proximityFadeMax = 4.0f;
+
+    [Space]
     [SerializeField] private RingController pingRingPrefab;
     [SerializeField] private float pingStartRadius;
     [SerializeField] private float pingEndRadius;
@@ -33,7 +39,7 @@ public class HUDIndicatorService : MonoBehaviour
     private void LateUpdate()
     {
         foreach (var kvp in indicators)
-            Position(kvp.Key, kvp.Value);
+            UpdateIndicator(kvp.Key, kvp.Value);
 
         foreach (var kvp in activePings)
         {
@@ -89,11 +95,15 @@ public class HUDIndicatorService : MonoBehaviour
         return point;
     }
 
-    private void Position(Transform anchor, IndicatorIconUI indicator)
+    private void UpdateIndicator(Transform anchor, IndicatorIconUI indicator)
     {
         Vector2 point = GetClampedScreenPoint(anchor.position, out bool offscreen, out Vector2 dir);
         indicator.RectTransform.anchoredPosition = point;
         indicator.SetPointing(offscreen, dir);
+
+        float distance = Vector2.Distance(anchor.position, RunManager.Instance.activePlayer.transform.position);
+        float alpha = Mathf.InverseLerp(proximityFadeMin, proximityFadeMax, distance);
+        indicator.SetAlpha(alpha);
     }
 
     public void PlayPing(Transform anchor)

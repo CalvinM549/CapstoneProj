@@ -21,6 +21,10 @@ public class DoorwayPreviewUI : MonoBehaviour
     public void InitializeWithDestination(MapNode destination)
     {
         typeName.text = $"[{destination.type.ToString()}]";
+
+        string rewardText = destination.rewards.Equals(default) ? "" : $"<{destination.rewards.category.ToString()}>";
+        rewardName.text = rewardText;
+
         flavourName.text = $"Sector {GenerateRandomCode(Random.Range(3, 7))}";
     }
 
@@ -39,7 +43,11 @@ public class DoorwayPreviewUI : MonoBehaviour
 
     private void Update()
     {
-        if (door.IsLocked) return;
+        if (door.IsLocked)
+        {
+            cg.alpha = 0f;
+            return;
+        }
 
         float distance = Vector2.Distance(door.transform.position, RunManager.Instance.activePlayer.transform.position);
         float alpha = Mathf.InverseLerp(maxDistance, minDistance, distance);

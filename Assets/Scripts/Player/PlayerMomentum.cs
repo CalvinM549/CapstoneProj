@@ -44,7 +44,7 @@ public class PlayerMomentum : MonoBehaviour
         GameEvents.OnHitConfirmed += HandleHitConfirmed;
         GameEvents.OnEnemyKilled += HandleEnemyKilled;
 
-        GameEvents.OnPlayerHit += HandlePlayerHit;
+        GameEvents.OnPlayerTookDamage += HandlePlayerHit;
         GameEvents.OnAttackWhiff += HandleAttackWhiff;
     }
 
@@ -53,7 +53,7 @@ public class PlayerMomentum : MonoBehaviour
         GameEvents.OnHitConfirmed -= HandleHitConfirmed;
         GameEvents.OnEnemyKilled -= HandleEnemyKilled;
 
-        GameEvents.OnPlayerHit -= HandlePlayerHit;
+        GameEvents.OnPlayerTookDamage -= HandlePlayerHit;
         GameEvents.OnAttackWhiff -= HandleAttackWhiff;
     }
 
@@ -154,7 +154,6 @@ public class PlayerMomentum : MonoBehaviour
         {
             AttackType.Light => data.lightAttackGain,
             AttackType.Heavy => data.heavyAttackGain,
-            AttackType.DashAttack => data.dashAttackGain,
             _ => data.lightAttackGain
         };
 
@@ -179,7 +178,6 @@ public class PlayerMomentum : MonoBehaviour
         {
             AttackType.Light => data.lightWhiffDrain, 
             AttackType.Heavy => data.heavyWhiffDrain,
-            AttackType.DashAttack => data.dashWhiffDrain,
             _ => data.lightWhiffDrain
         };
 

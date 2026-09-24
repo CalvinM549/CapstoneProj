@@ -73,7 +73,10 @@ public class UpgradeBase : DatabaseEntry, ICategorizedEntry<UpgradeSlot>, ILootE
 
     #region Helpers
 
-    private void ApplyStatModifiers(PlayerStats stats)
+    public virtual void ModifyOutgoingHit(HitData hit) { }
+    public virtual void ModifyIncomingHit(HitData hit) { }
+
+    protected void ApplyStatModifiers(PlayerStats stats)
     {
         foreach (var entry in statModifiers)
         {
@@ -82,7 +85,7 @@ public class UpgradeBase : DatabaseEntry, ICategorizedEntry<UpgradeSlot>, ILootE
         }
     }
 
-    private void RemoveStatModifiers(PlayerStats stats)
+    protected void RemoveStatModifiers(PlayerStats stats)
     {
         stats.RemoveModifiersFromSource(this);
     }

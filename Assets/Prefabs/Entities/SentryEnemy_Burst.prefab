@@ -288,6 +288,8 @@ GameObject:
   - component: {fileID: 5875639385763828447}
   - component: {fileID: 1158100212670289406}
   - component: {fileID: 6567632816481895069}
+  - component: {fileID: 5503192390672346386}
+  - component: {fileID: 8818470859561995703}
   m_Layer: 8
   m_Name: SentryEnemy_Burst
   m_TagString: Enemy
@@ -402,6 +404,7 @@ MonoBehaviour:
   showDuration: 0.1
   delayFillDelay: 0.5
   delayFillDuration: 1
+  damageForMaxScale: 100
   hitPunchScale: 0.15
   hitPunchDuration: 0.3
 --- !u!114 &5875639385763828447
@@ -482,6 +485,30 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &5503192390672346386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3209857631965518025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3aee36d0e7f4854ca7d46f5b4e3ec21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
+--- !u!114 &8818470859561995703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3209857631965518025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bf26c388f270a74f9bb356ce27bca96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectController
 --- !u!1 &3468195659002386673
 GameObject:
   m_ObjectHideFlags: 0

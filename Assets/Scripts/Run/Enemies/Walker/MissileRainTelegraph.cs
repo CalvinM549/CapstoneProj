@@ -57,10 +57,8 @@ public class MissileRainTelegraph : MonoBehaviour
             
             Vector2 knockbackDir = (hit.transform.position - transform.position).normalized;
 
-            var hitData = new HitData()
+            var hitData = new HitData(data.damage, AttackType.Projectile, false)
             {
-                // Setup hit properly
-                damage = data.damage,
                 damageType = data.damageType,
 
                 sourcePos = transform.position,
@@ -70,7 +68,6 @@ public class MissileRainTelegraph : MonoBehaviour
                 hitstopTime = data.hitstopDuration,
                 hitstunTime = data.hitstunTime,
 
-                isPlayerAttack = false,
                 isParryable = false,
 
             };

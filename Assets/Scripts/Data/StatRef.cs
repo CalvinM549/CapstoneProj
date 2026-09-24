@@ -10,9 +10,11 @@ public static class StatRef
     public static string PlayerDashRecharge = "player.movement.dashRechargeRate";
 
     // Combat
-    public static string PlayerBaseMeleeDamage = "player.combat.meleeDamage";
-    public static string PlayerBaseRangedDamage = "player.combat.rangedDamage";
-    public static string PlayerBaseGlobalDamage = "player.combat.globalDamage";
+    public static string PlayerMeleeDamageMult = "player.combat.meleeDamage";
+    public static string PlayerRangedDamageMult = "player.combat.rangedDamage";
+
+    public static string PlayerOutgoingDamageMult = "player.combat.globalDamage";
+    public static string PlayerIncomingDamageMult = "player.combat.incomingDamageMult";
 
     // Health
     public static string PlayerStructureCount = "player.health.structureCount";
@@ -25,6 +27,18 @@ public static class StatRef
     // Heat
     public static string PlayerHeatRate = "player_baseHeatRate";
 
+
+    #endregion
+
+    #region EnemyStats
+
+    public static string EnemyBaseSpeed = "enemy.movement.baseSpeed";
+
+
+    public static string EnemyOutgoingDamageMult = "enemy.combat.outgoingDamageMult";
+    public static string EnemyIncomingDamageMult = "enemy.combat.incomingDamageMult";
+
+    public static string EnemyMaxHealth = "enemy.health.maxHealth";
 
     #endregion
 }

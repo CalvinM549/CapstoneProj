@@ -62,7 +62,7 @@ public class CameraManager : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.OnHitConfirmed += HandleHitShake;
-        GameEvents.OnPlayerHit += HandlePlayerHit;
+        GameEvents.OnPlayerTookDamage += HandlePlayerHit;
 
         GameEvents.OnPlayerTransitionTeleport += HandlePlayerTransition;
     }
@@ -70,7 +70,7 @@ public class CameraManager : MonoBehaviour
     private void OnDisable()
     {
         GameEvents.OnHitConfirmed -= HandleHitShake;
-        GameEvents.OnPlayerHit -= HandlePlayerHit;
+        GameEvents.OnPlayerTookDamage -= HandlePlayerHit;
 
         GameEvents.OnPlayerTransitionTeleport -= HandlePlayerTransition;
     }
@@ -83,14 +83,11 @@ public class CameraManager : MonoBehaviour
         switch (hit.attackType)
         {
             case AttackType.Light:
-            case AttackType.Secondary:
+            case AttackType.Projectile:
                 CameraShake(lightHitShakeMag);
                 break;
             case AttackType.Heavy:
                 CameraShake(heavyHitShakeMag);
-                break;
-            case AttackType.DashAttack:
-                CameraShake(dashHitShakeMag);
                 break;
         }
     }

@@ -38,6 +38,7 @@ public class RunManager : MonoBehaviour
     public RunState currentRun;
 
     public Player activePlayer;
+    public PlayerUI activePlayerUI;
     public RoomManager activeRoom;
 
     public event Action<Vector2Int> onPlayerRoomChanged;
@@ -98,8 +99,8 @@ public class RunManager : MonoBehaviour
         activePlayer = Instantiate(playerPrefab, playerContainer);
         AIManager.Instance.Initialize(activePlayer);
 
-        var playerUI = Instantiate(playerUIPrefab, playerUIContainer);
-        playerUI.Initialize(activePlayer);
+        activePlayerUI = Instantiate(playerUIPrefab, playerUIContainer);
+        activePlayerUI.Initialize(activePlayer);
 
         activePlayer.SetupNew(config.loadout);
         activePlayer.SetPlayerCanAct(true);
@@ -139,6 +140,9 @@ public class RunManager : MonoBehaviour
             RunSaveSystem.DeleteForSlot(profile.slotIndex);
 
         activePlayer.SetPlayerCanAct(false);
+        activePlayer.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+
+        GameManager.Instance.SetCursorActive(true);
 
         runEndOverlay.Display(victory, currentRun);
     }
@@ -206,6 +210,8 @@ public class RunManager : MonoBehaviour
 
         activePlayer.PrepareForRoomChange();
 
+        activePlayerUI.ToggleUI(true);
+
         onPlayerRoomChanged?.Invoke(node.coordinates);
 
         activeRoom.Activate();
@@ -222,6 +228,7 @@ public class RunManager : MonoBehaviour
             currentRun.map.currentNode.cleared = true;
         }
 
+        activePlayerUI.ToggleUI(false);
         CheckSectorVictory();
         SaveCurrentRun();
     }

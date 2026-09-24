@@ -17,7 +17,8 @@ MonoBehaviour:
   prefab: {fileID: 2621895607124036595, guid: cb36320a61df2534a98ee71adc7e0f2c, type: 3}
   cost: 0
   currencyValue: 0
-  baseHealth: 5
-  baseDamage: 0
-  baseSpeed: 0
+  baseHealth: 30
+  moveSpeed: 10
+  baseDamageMult: 1
+  baseResistanceMult: 1
   aiProfile: {fileID: 11400000, guid: 435e0e804e571c249b0907ce5f4f72f1, type: 2}

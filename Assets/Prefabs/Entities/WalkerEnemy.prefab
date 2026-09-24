@@ -767,6 +767,60 @@ MonoBehaviour:
   m_FillOrigin: 2
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &4749525044357041034
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1775748686316237949}
+  - component: {fileID: 4084920833803562582}
+  m_Layer: 8
+  m_Name: StatusUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1775748686316237949
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4749525044357041034}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 433967155631806746}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4084920833803562582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4749525044357041034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58ce7c6dcab09594f8f7b4b49854a9c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RadialStatusUI
+  statusPrefab: {fileID: 4319820483148143173, guid: ec529cd106453aa4d9f62736cefe1de4, type: 3}
+  container: {fileID: 1775748686316237949}
+  radius: 1
+  arcSpanDegrees: 90
+  arcCenterAngle: -45
+  gapBetween: 20
 --- !u!1 &5450977226773447880
 GameObject:
   m_ObjectHideFlags: 0
@@ -783,6 +837,8 @@ GameObject:
   - component: {fileID: 3977424246301497259}
   - component: {fileID: -7337528523074580318}
   - component: {fileID: 1821819326195256611}
+  - component: {fileID: 8795286921195186393}
+  - component: {fileID: 3326548528107185677}
   m_Layer: 8
   m_Name: WalkerEnemy
   m_TagString: Enemy
@@ -874,6 +930,7 @@ MonoBehaviour:
   showDuration: 0.1
   delayFillDelay: 0.5
   delayFillDuration: 1
+  damageForMaxScale: 100
   hitPunchScale: 0.15
   hitPunchDuration: 0.3
 --- !u!114 &2044002914489777766
@@ -981,6 +1038,30 @@ MonoBehaviour:
     m_Bits: 8
   projectiles:
   - {fileID: 11400000, guid: 378de1946b275b34aba2e663469c276a, type: 2}
+--- !u!114 &8795286921195186393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5450977226773447880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3aee36d0e7f4854ca7d46f5b4e3ec21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
+--- !u!114 &3326548528107185677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5450977226773447880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bf26c388f270a74f9bb356ce27bca96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectController
 --- !u!1 &6285572152154448900
 GameObject:
   m_ObjectHideFlags: 0
@@ -1065,6 +1146,7 @@ RectTransform:
   - {fileID: 8171116340536590337}
   - {fileID: 961298751345951477}
   - {fileID: 4046511264064531383}
+  - {fileID: 1775748686316237949}
   m_Father: {fileID: 3732140446805786319}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}

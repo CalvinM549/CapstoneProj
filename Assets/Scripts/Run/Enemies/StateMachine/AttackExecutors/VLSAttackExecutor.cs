@@ -46,6 +46,9 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
 
         Executing = true;
 
+        if (attackData.hasHyperarmour)
+            controller.SetHyperArmour(true);
+
         if (barrageRoutine != null)
         {
             ai.StopCoroutine(barrageRoutine);
@@ -87,6 +90,11 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
         }
 
         ai.GetComponentInChildren<Animator>().SetBool("IsFiring", false);
+
+
+        if (attackData.hasHyperarmour)
+            controller.SetHyperArmour(false);
+
         Executing = false;
     }
 

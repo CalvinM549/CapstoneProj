@@ -6,6 +6,7 @@ public class RunState
 {
     // Run
     public int seed;
+
     public float difficultyScore;
     public int currency;
 

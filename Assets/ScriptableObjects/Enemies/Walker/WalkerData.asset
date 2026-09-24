@@ -15,7 +15,10 @@ MonoBehaviour:
   id: 198b9a91-b22e-4af9-952b-3bccd1dc7fa4
   enemyName: Walker
   prefab: {fileID: 0}
-  baseHealth: 8
-  baseDamage: 0
-  baseSpeed: 0
+  cost: 0
+  currencyValue: 0
+  baseHealth: 80
+  moveSpeed: 1
+  baseDamageMult: 1
+  baseResistanceMult: 1
   aiProfile: {fileID: 11400000, guid: 259d0df511099744b8912ab074c80294, type: 2}

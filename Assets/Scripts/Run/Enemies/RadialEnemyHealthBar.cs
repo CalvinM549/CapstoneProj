@@ -24,7 +24,6 @@ public class RadialEnemyHealthBar : MonoBehaviour
     [SerializeField] private float delayFillDelay;
     [SerializeField] private float delayFillDuration;
 
-
     [SerializeField] private float hitPunchScale;
     [SerializeField] private float hitPunchDuration;
 
@@ -100,8 +99,11 @@ public class RadialEnemyHealthBar : MonoBehaviour
         fillTween?.Kill();
         fillTween = fillImage.DOFillAmount(targetFill, mainBarDuration).SetEase(Ease.OutQuart);
 
-        punchTween?.Kill();
-        punchTween = barRoot.DOPunchScale(Vector3.one * hitPunchScale, hitPunchDuration, 5, 0.5f);
+        if (hit.attackType != AttackType.DamageOverTime)
+        {
+            punchTween?.Kill();
+            punchTween = barRoot.DOPunchScale(Vector3.one * hitPunchScale, hitPunchDuration, 5, 0.5f);
+        }
     }
 
     private void HandleLock(EnemyController enemy)

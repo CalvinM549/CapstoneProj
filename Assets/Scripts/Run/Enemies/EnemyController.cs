@@ -18,7 +18,12 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] private Material damageMaterial;
 
     // References
-    private EnemyAIController ai;    
+    protected EnemyAIController ai;
+    protected EnemyStats stats;
+    protected StatusEffectController statusController;
+
+    public EnemyStats Stats => stats;
+
     protected SpriteRenderer sr;
     protected Animator animator;
     protected Rigidbody2D rb;
@@ -40,15 +45,19 @@ public class EnemyController : MonoBehaviour, IDamageable
     public bool IsAlive { get; set; }
     public bool IsIFrame = false;
 
+    private bool hyperArmourActive;
+    protected virtual bool CanBeStaggered => !hyperArmourActive;
+
     protected virtual void Awake()
     {
         ai = GetComponent<EnemyAIController>();
+        stats = GetComponent<EnemyStats>();
+        statusController = GetComponent<StatusEffectController>();
+
         animator = GetComponentInChildren<Animator>();
         sr = animator.GetComponent<SpriteRenderer>();
 
         rb = GetComponent<Rigidbody2D>();
-        currentHealth = data.baseHealth;
-        IsAlive = true;
 
         baseMaterial = sr.material;
     }
@@ -77,9 +86,16 @@ public class EnemyController : MonoBehaviour, IDamageable
         AIManager.Instance.UnregisterEnemy(ai);
     }
 
-    public void OnSpawn()
+    #region Spawning / Despawning
+
+    public virtual void OnSpawn()
     {
-        // Reset Values
+        stats.Initialize(data, data.aiProfile);
+
+        currentHealth = stats.Get(StatRef.EnemyMaxHealth);
+        IsAlive = true;
+        hyperArmourActive = false;
+
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = 0f;
 
@@ -90,7 +106,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         ai.enabled = true;
     }
 
-    public void OnDespawn()
+    public virtual void OnDespawn()
     {
         ai.enabled = false;
         StopAllCoroutines();
@@ -106,42 +122,61 @@ public class EnemyController : MonoBehaviour, IDamageable
         // reset health
     }
 
+    #endregion
+
+    public void SetHyperArmour(bool active) => hyperArmourActive = active;
+
     #region Taking Damage
 
-    protected virtual bool CanBeStaggered => true;
 
     public void RecieveHit(HitData hit)
     {
         if (!IsAlive) return;
-        if (IsIFrame) return;
+        //if (IsIFrame) return;
         if (!hit.isPlayerAttack) return;
 
         ApplyDamage(hit);
+        ApplyStatuses(hit);
 
-        if (CanBeStaggered)
+        if (hit.attackType != AttackType.DamageOverTime)
         {
-            ai.ChangeState(EnemyStates.Staggered);
-            ai.context.staggerTimer = hit.hitstunTime;
-        }
+            if (CanBeStaggered)
+            {
+                ai.ChangeState(EnemyStates.Staggered);
+                ai.context.staggerTimer = hit.hitstunTime;
+            }
 
-        ApplyKnockback(hit.knockbackDirection, hit.knockbackForce);
+            ApplyKnockback(hit.knockbackDirection, hit.knockbackForce);
+
+            if (IsAlive)
+            {
+                if (hitFXRoutine != null)
+                    StopCoroutine(hitFXRoutine);
+                hitFXRoutine = StartCoroutine(HitFXRoutine(hit.hitstunTime));
+            }
+        }
 
         OnHit?.Invoke(currentHealth, data.baseHealth, hit);
         GameEvents.EnemyHit(this, hit);
 
-        if (IsAlive)
-        {
-            if(hitFXRoutine != null)
-                StopCoroutine(hitFXRoutine);
-            hitFXRoutine = StartCoroutine(HitFXRoutine(hit.hitstunTime));
-        }
         if (currentHealth <= 0)
             Die();
     }
 
     protected virtual void ApplyDamage(HitData hit)
     {
-        currentHealth = Mathf.Max(0, currentHealth - hit.damage);
+        float defenceMult = stats.Get(StatRef.EnemyIncomingDamageMult);
+        hit.AddModifier(defenceMult - 1, StatModType.PercentAdd, this);
+
+        currentHealth = Mathf.Max(0, currentHealth - hit.FinalDamage);
+    }
+
+    protected virtual void ApplyStatuses(HitData hit)
+    {
+        foreach (var pending in hit.PendingStatusEffects)
+        {
+            statusController?.ApplyEffects(pending.data, pending.source, pending.appliedByPlayer, pending.stacks);
+        }
     }
 
     protected virtual void ApplyKnockback(Vector2 direction, float force)
@@ -157,7 +192,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         IsAlive = false;
 
         VFXManager.Instance.PlayVFX(VFXType.ExplosionComplex, transform.position);
-        RunManager.Instance.currencyDropService.DropBurst(transform.position, 30, 4);
+        RunManager.Instance.currencyDropService.DropBurst(transform.position, data.baseCurrencyDrop, 4);
 
         StopAllCoroutines();
 
@@ -201,5 +236,13 @@ public class EnemyController : MonoBehaviour, IDamageable
         scaler.x *= -1;
         sr.transform.localScale = scaler;
     }
+
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, data.aiProfile.aggroRange);
+    }
+#endif
 }
 

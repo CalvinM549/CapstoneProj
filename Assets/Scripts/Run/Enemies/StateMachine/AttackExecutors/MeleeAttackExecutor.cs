@@ -1,59 +1,84 @@
+using System.Collections;
 using UnityEngine;
+using static UnityEngine.Analytics.IAnalytic;
 
 public class MeleeAttackExecutor : AttackExecutorBase
 {
-    [SerializeField] private Transform hitOrigin;
-    [SerializeField] private float hitRadius;
-    [SerializeField] private int damage;
-    [SerializeField] private float knockback;
+    [SerializeField] private EnemyMeleeHitbox hitbox;
 
-    [SerializeField] private float hitStunTime;
+    private void OnEnable()
+    {
+        hitbox.OnHitDetected += OnHitboxHit;
+    }
+
+    private void OnDisable()
+    {
+        hitbox.OnHitDetected -= OnHitboxHit;
+    }
 
     public override void BeginTelegraph(EnemyAIController ai)
     {
-        // Do telegraph anim
+        if (!string.IsNullOrEmpty(attackData.windupTrigger))
+            animator.SetTrigger(attackData.windupTrigger);
     }
 
     public override void Execute(EnemyAIController ai)
     {
         Executing = true;
 
-        var hits = Physics2D.OverlapCircleAll(hitOrigin.position, hitRadius, ai.profile.targetLayer);
-        foreach (var hit in hits)
-        {
-            if (!hit.CompareTag("Player")) continue;
+        if (attackData.hasHyperarmour)
+            controller.SetHyperArmour(true);
 
-            if (hit.TryGetComponent<IDamageable>(out var target))
-            {
-                Vector2 knockbackDir = (hit.transform.position - transform.position).normalized;
+        if (!string.IsNullOrEmpty(attackData.activeTrigger))
+            animator.SetTrigger(attackData.activeTrigger);
 
-                HandleHit(target, knockbackDir);
-            }
-        }
+        hitbox.Activate();
+        StartCoroutine(FinishAfterWinddown());
 
         Executing = false;
     }
 
-    private void HandleHit(IDamageable target, Vector2 dir)
+    private IEnumerator FinishAfterWinddown()
     {
-        HitData hit = new HitData()
-        {
-            damage = this.damage,
-            attackType = AttackType.Heavy,
-            sourcePos = transform.position,
-            knockbackDirection = dir,
-            knockbackForce = this.knockback,
-            hitstunTime = this.hitStunTime,
+        yield return new WaitForSeconds(attackData.winddownDuration);
+        hitbox.Deactivate();
 
-            isPlayerAttack = false,
-            isParryable = true
-        };
+        if (attackData.hasHyperarmour)
+            controller.SetHyperArmour(false);
 
-        target.RecieveHit(hit);
+        Executing = false;
     }
 
     public override void Interrupt(EnemyAIController ai)
     {
-        throw new System.NotImplementedException();
+        StopAllCoroutines();
+        hitbox.Deactivate();
+
+        if(attackData.hasHyperarmour)
+            controller.SetHyperArmour(false);
+
+        Executing = false;
+    }
+
+    private void OnHitboxHit(Collider2D collision)
+    {
+        if (!collision.TryGetComponent<IDamageable>(out var target)) return;
+
+        HitData hit = new HitData(attackData.baseDamage, attackData.attackType, isPlayerAttack: false)
+        {
+            sourcePos = transform.position,
+            knockbackDirection = ((Vector2)collision.transform.position - (Vector2)transform.position).normalized,
+            knockbackForce = attackData.knockbackForce,
+
+            hitstunTime = attackData.hitstunTime,
+            hitstopTime = attackData.hitstopTime,
+
+            isBlockable = attackData.isBlockable,
+            isParryable = attackData.isParryable
+        };
+
+        hit.AddModifier(controller.Stats.Get(StatRef.EnemyOutgoingDamageMult) - 1f, StatModType.PercentAdd, this);
+
+        target.RecieveHit(hit);
     }
 }

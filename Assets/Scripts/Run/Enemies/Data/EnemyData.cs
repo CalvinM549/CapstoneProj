@@ -12,12 +12,14 @@ public class EnemyData : DatabaseEntry
 
     public float cost;
 
-    public int currencyValue;
+    public int baseCurrencyDrop;
 
     [Space]
     public float baseHealth;
-    public float baseDamage;
-    public float baseSpeed;
+    public float moveSpeed;
+
+    public float baseDamageMult = 1f;
+    public float baseResistanceMult = 1f;
 
     [Header("AI")]
     public AIProfile aiProfile;

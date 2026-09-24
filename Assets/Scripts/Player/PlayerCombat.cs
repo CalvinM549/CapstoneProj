@@ -14,7 +14,7 @@ public class PlayerCombat : MonoBehaviour
     private StatValue meleeDamage;
     private StatValue rangedDamage;
 
-    [SerializeField] private PlayerMeleeHitboxController hitboxes;
+    [SerializeField] private PlayerMeleeController hitboxes;
 
     private GameplayInputReader input;
 
@@ -62,9 +62,9 @@ public class PlayerCombat : MonoBehaviour
     public void Initialize(PlayerWeapon weapon)
     {
         // Gather statsValue refs
-        globalDamage = p.Stats.GetStatValue(StatRef.PlayerBaseGlobalDamage);
-        meleeDamage = p.Stats.GetStatValue(StatRef.PlayerBaseMeleeDamage);
-        rangedDamage = p.Stats.GetStatValue(StatRef.PlayerBaseRangedDamage);
+        globalDamage = p.Stats.GetStatValue(StatRef.PlayerOutgoingDamageMult);
+        meleeDamage = p.Stats.GetStatValue(StatRef.PlayerMeleeDamageMult);
+        rangedDamage = p.Stats.GetStatValue(StatRef.PlayerRangedDamageMult);
 
         if(weapon != null)
             EquipRangedWeapon(weapon);
@@ -365,22 +365,26 @@ public class PlayerCombat : MonoBehaviour
 
         Vector2 knockbackDir = direction.normalized;
 
-        HitData hitData = new HitData()
+        HitData hitData = new HitData(attack.damage, attack.type, true)
         {
-            damage = Mathf.RoundToInt((float)attack.damage * globalDamage.Value * meleeDamage.Value),
-            attackType = attack.type,
             sourcePos = transform.position,
             knockbackDirection = knockbackDir,
             knockbackForce = attack.knockback,
             hitstopTime = attack.hitstopDuration,
             hitstunTime = attack.hitstunTime,
-            isPlayerAttack = true,
             isParryable = false
         };
+
+        hitData.AddModifier(globalDamage.Value - 1f, StatModType.PercentAdd, this);
+        hitData.AddModifier(meleeDamage.Value - 1f, StatModType.PercentAdd, this);
+
+        p.Upgrades.ModifyOutgoingHit(hitData);
 
         currentAttackConnected = true;
 
         GameEvents.HitConfirmed(hitData);
+
+        VFXManager.Instance.PlayVFX(VFXType.HitCross, hit.transform.position);
 
         // Lock to melee targets
         p.Targeting.SetLock(hit.GetComponent<EnemyController>());
@@ -404,7 +408,7 @@ public class PlayerCombat : MonoBehaviour
 
         if (EquippedWeapon.fireType == FireType.Independent)
         {
-            EquippedWeapon.Fire(GetAttackDirection(AttackType.Secondary));
+            EquippedWeapon.Fire(GetAttackDirection(AttackType.Projectile));
             return;
         }
 
@@ -421,7 +425,7 @@ public class PlayerCombat : MonoBehaviour
         // STARTUP
         currentState = CombatState.Startup;
 
-        GameEvents.AttackStarted(AttackType.Secondary, GetAttackDirection(AttackType.Secondary));
+        GameEvents.AttackStarted(AttackType.Projectile, GetAttackDirection(AttackType.Projectile));
 
         yield return new WaitForSeconds(weapon.windupTime);
 
@@ -434,7 +438,7 @@ public class PlayerCombat : MonoBehaviour
 
         // ACTIVE
         currentState = CombatState.Active;
-        Vector2 direction = GetAttackDirection(AttackType.Secondary);
+        Vector2 direction = GetAttackDirection(AttackType.Projectile);
         weapon.Fire(direction);
 
         yield return new WaitForSeconds(weapon.activeTime);
@@ -573,17 +577,14 @@ public class PlayerCombat : MonoBehaviour
             case AttackType.Heavy:
                 return p.GetMouseDirection();
 
-            case AttackType.Secondary:
+            case AttackType.Projectile:
                 if (p.Targeting.HasTarget)
                     return p.GetTargetDirection();
                 else
                     return p.GetMouseDirection();
         }
-        if (type == AttackType.DashAttack)
-            return p.Movement.LastMoveDirection;
 
-        else
-            return p.GetMouseDirection();
+        return p.GetMouseDirection();
     }
 
     private void HandleDashStart()

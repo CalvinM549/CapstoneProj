@@ -7,8 +7,6 @@ public class StationBase : MonoBehaviour, IInteractable
     [SerializeField] private Sprite indicatorIcon;
     [SerializeField] private Transform indicatorPos;
 
-    [SerializeField] private CanvasGroup interactDisplay;
-
     private bool indicatorActive;
     protected bool isEnabled;
     protected bool used;
@@ -17,9 +15,11 @@ public class StationBase : MonoBehaviour, IInteractable
 
     protected MapNode node;
     protected RunState run;
+    [SerializeField] private InteractPromptUI interactPromptUI;
 
     [SerializeField] private string interactPrompt;
     public string InteractPrompt => interactPrompt;
+    public bool CanInteract {  get { return isEnabled; } }
 
     private void Awake()
     {
@@ -30,6 +30,12 @@ public class StationBase : MonoBehaviour, IInteractable
 
         isEnabled = startEnabled;
         used = false;
+
+        if (interactPromptUI != null)
+        {
+            interactPromptUI.SetPrompt(interactPrompt);
+            interactPromptUI.gameObject.SetActive(false);
+        }
     }
 
     private void OnEnable()
@@ -90,11 +96,13 @@ public class StationBase : MonoBehaviour, IInteractable
 
     public void ShowPrompt()
     {
-        interactDisplay.gameObject.SetActive(true);
+        if (interactPromptUI != null)
+            interactPromptUI.gameObject.SetActive(true);
     }
 
     public void HidePrompt()
     {
-        interactDisplay.gameObject.SetActive(false);
+        if (interactPromptUI != null)
+            interactPromptUI.gameObject.SetActive(false);
     }
 }

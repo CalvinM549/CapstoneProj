@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerStats : MonoBehaviour
+public class PlayerStats : MonoBehaviour, IStatModifiable
 {
     private Player p;
 
@@ -30,12 +30,14 @@ public class PlayerStats : MonoBehaviour
 
         // Health
         Register(StatRef.PlayerStructureCount, healthData.segmentBaseCount);
-        Register(StatRef.PlayerBaseStructureHealth, 8);
+        Register(StatRef.PlayerBaseStructureHealth, healthData.segmentMaxHealth);
 
         // Combat
-        Register(StatRef.PlayerBaseMeleeDamage, 1f);
-        Register(StatRef.PlayerBaseRangedDamage, 1f);
-        Register(StatRef.PlayerBaseGlobalDamage, 1f);
+        Register(StatRef.PlayerMeleeDamageMult, 1f);
+        Register(StatRef.PlayerRangedDamageMult, 1f);
+
+        Register(StatRef.PlayerOutgoingDamageMult, 1f);
+        Register(StatRef.PlayerIncomingDamageMult, 1f);
 
         // Momentum
         Register(StatRef.PlayerMomentumGainMult, 1f);

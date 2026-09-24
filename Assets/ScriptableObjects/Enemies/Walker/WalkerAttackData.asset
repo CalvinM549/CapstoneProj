@@ -10,8 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 91b487034a4745f43960c0feb63f441c, type: 3}
-  m_Name: RifleWeaponData
+  m_Name: WalkerAttackData
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackData
-  attackRange: 8
+  attackRange: 10
   telegraphDuration: 1.5
   winddownDuration: 1.5
+  hasHyperarmour: 1
+  windupTrigger: 
+  activeTrigger: 
+  projectile: {fileID: 0}
+  attackType: 1
+  baseDamage: 0
+  knockbackForce: 0
+  hitstunTime: 0
+  hitstopTime: 0
+  isBlockable: 0
+  isParryable: 0

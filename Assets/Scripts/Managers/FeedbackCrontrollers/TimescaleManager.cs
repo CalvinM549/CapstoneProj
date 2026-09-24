@@ -40,6 +40,8 @@ public class TimescaleManager : MonoBehaviour
 
     private void OnDisable()
     {
+        StopAllCoroutines();
+
         GameEvents.OnHitConfirmed -= HandleHitstop;
         GameEvents.OnPlayerDeath -= DeathStop;
     }

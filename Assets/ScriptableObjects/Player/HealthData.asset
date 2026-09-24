@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bf1781972c34fb439257155e9334df9, type: 3}
   m_Name: HealthData
   m_EditorClassIdentifier: Assembly-CSharp::HealthData
-  maxHealth: 6
   hitIFrameDuration: 0.2
   segmentBaseCount: 5
-  segmentMaxHealth: 8
+  segmentMaxHealth: 80

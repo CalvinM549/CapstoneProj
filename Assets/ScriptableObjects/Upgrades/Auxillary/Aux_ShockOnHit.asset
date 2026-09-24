@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1da3063642f899243bb8bfed8c32253f, type: 3}
+  m_Name: Aux_ShockOnHit
+  m_EditorClassIdentifier: Assembly-CSharp::Aux_SerratedEdge
+  id: aux_shockBlade
+  upgradeName: Shock Blade
+  flavourText: Extra current running through blade creates a delayed shock, though
+    reduces the usual damage
+  effectText: Apply shock on melee attacks
+  icon: {fileID: -244606152550997219, guid: 7d0efe94e9a483a4aab1df291185753a, type: 3}
+  slot: 4
+  baseDropRate: 5
+  synergyTags: []
+  spawnInShops: 1
+  shopPrice: 50
+  maxStacks: 1
+  statModifiers:
+  - statID: player.combat.meleeDamage
+    value: -0.8
+    modifierType: 200
+  statusData: {fileID: 11400000, guid: 64a16057ddc7f33498d628eed0d1b15f, type: 2}
+  bleedStacksPerHit: 1

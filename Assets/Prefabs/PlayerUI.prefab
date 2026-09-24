@@ -502,7 +502,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cdd64cb98a75e344bf070048ca6dff9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerWeaponUI
-  ammoTracker: {fileID: 0}
   reloadTracker: {fileID: 7033128896761783072}
 --- !u!225 &5098035817483669377
 CanvasGroup:
@@ -601,7 +600,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 727094811320908163, guid: 782b6d47fcbe86b46a78ff2fb0e2ef69, type: 3}
       propertyPath: m_Name
-      value: UIRing
+      value: MomentumRing
       objectReference: {fileID: 0}
     - target: {fileID: 1067297810372369060, guid: 782b6d47fcbe86b46a78ff2fb0e2ef69, type: 3}
       propertyPath: m_Pivot.x

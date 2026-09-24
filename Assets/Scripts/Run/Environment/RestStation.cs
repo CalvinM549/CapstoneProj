@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum RestAction
@@ -14,6 +15,9 @@ public class RestStation : StationBase
     [SerializeField] private int costPerStructure;
     [SerializeField] private int ammoRestoreCost;
     [SerializeField] private int fullRestoreCost;
+
+    [SerializeField] private int structureRestored;
+    [SerializeField] private int ammoRestored;
 
     private bool freeActionAvaliable = true;
     public bool FreeActionAvaliable => freeActionAvaliable;
@@ -32,33 +36,36 @@ public class RestStation : StationBase
 
     public bool TryPerform(RestAction action)
     {
-        Action apply = action switch
+        if (freeActionAvaliable && action != RestAction.FullRestore)
         {
-            RestAction.RepairStructure => () => run.RestoreStructure(3),
-            RestAction.RestoreAmmo => () => run.RestoreAmmo(5),
-            RestAction.FullRestore => () =>
-            {
-                run.RestoreStability(100f, true);
-                run.RestoreStructure(3);
-                run.RestoreAmmo(5);
-            }
-            ,
-            _ => null
-        };
-
-        if (apply == null) return false;
-
-        if (freeActionAvaliable)
-        {
-            apply();
+            ApplyAction(action);
             freeActionAvaliable = false;
             return true;
         }
 
         if (!run.TryUseCurrency(GetCost(action))) return false;
 
-        apply();
+        ApplyAction(action);
         return true;
+    }
+
+    private void ApplyAction(RestAction action)
+    {
+        switch (action)
+        {
+            case RestAction.RepairStructure:
+                run.RestoreStructure(structureRestored);
+                break;
+
+            case RestAction.RestoreAmmo: 
+                run.RestoreAmmo(5);
+                break;
+
+            case RestAction.FullRestore:
+                run.RestoreStructure(999);
+                run.RestoreAmmo(999);
+                break;
+        }
     }
 
     public int GetCost(RestAction action) => action switch

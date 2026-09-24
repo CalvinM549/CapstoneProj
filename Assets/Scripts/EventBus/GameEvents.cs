@@ -69,7 +69,13 @@ public static class GameEvents
     public static void AmmoUsedEmpty() => OnAmmoUsedEmpty?.Invoke();
 
     #region Player
-    public static event Action<HitData> OnPlayerHit;
+    public static event Action<HitData> OnPlayerTookDamage;
+    public static void PlayerTookDamage(HitData hit) => OnPlayerTookDamage?.Invoke(hit);
+
+    public static event Action<HitData> OnPlayerRecivedHit;
+    public static void PlayerRecievedHit(HitData hit) => OnPlayerRecivedHit?.Invoke(hit);
+
+
     public static event Action OnPlayerDeath;
     public static event Action OnPlayerDashStart;
     public static event Action OnPlayerDashEnd;
@@ -78,7 +84,6 @@ public static class GameEvents
     public static event Action<float[]> OnDashChargeChange;
 
     public static void DashChargeChange(float[] rechargeStates) => OnDashChargeChange?.Invoke(rechargeStates);
-    public static void PlayerHit(HitData hit) => OnPlayerHit?.Invoke(hit);
     public static void PlayerHealthChanged(List<HealthSegment> newHealth) => OnPlayerHealthChanged?.Invoke(newHealth);
     //public static void PlayerHealthChanged(int currentHealth, int maxHealth) => OnPlayerHealthChange?.Invoke(currentHealth, maxHealth);
     public static void PlayerDeath() => OnPlayerDeath?.Invoke();

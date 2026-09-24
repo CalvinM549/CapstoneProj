@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerationConfig
   zoneSize: {x: 2, y: 3}
   extraRoomConnectionChance: 0
-  roomCount: 10
+  roomCount: 15
   walkerCount: 3
   baseDifficulty: 1
   difficultyPerDepth: 0.3
   rewardRoomCount: 0
   shopChance: 0.3
-  minGates: 0
-  maxGates: 0
-  gatUnlockRequirement: 0.6
+  weaponRewardProbability: 0
+  toolRewardProbability: 0
+  MajorRewardProbability: 0

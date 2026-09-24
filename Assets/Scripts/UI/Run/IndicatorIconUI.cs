@@ -3,12 +3,16 @@ using UnityEngine.UI;
 
 public class IndicatorIconUI : MonoBehaviour
 {
+    [SerializeField] private CanvasGroup cg;
+
     [SerializeField] private Image icon;
     [SerializeField] private RectTransform arrow;
 
     public RectTransform RectTransform => (RectTransform)transform;
 
     public void SetIcon(Sprite sprite) => icon.sprite = sprite;
+
+    public void SetAlpha(float alpha) => cg.alpha = alpha;
 
     public void SetPointing(bool offscreen, Vector2 direction)
     {

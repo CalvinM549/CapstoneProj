@@ -108,7 +108,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4797269985572297271}
-  - component: {fileID: 6159579153687160268}
+  - component: {fileID: 1741139589470097346}
   m_Layer: 7
   m_Name: Hitboxes
   m_TagString: Untagged
@@ -135,7 +135,7 @@ Transform:
   - {fileID: 7117610668548834559}
   m_Father: {fileID: 1134238879736744940}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6159579153687160268
+--- !u!114 &1741139589470097346
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -144,9 +144,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 782390538321942603}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5021383bb1d64394897e396ae6484764, type: 3}
+  m_Script: {fileID: 11500000, guid: fa2616990a4a36c409d6f40ab814dd96, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerHitboxController
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMeleeController
   lightHitboxes:
   - {fileID: 2889812633154269869}
   - {fileID: 7701818219895844849}
@@ -5454,9 +5454,10 @@ GameObject:
   - component: {fileID: 2293134186363299284}
   - component: {fileID: 5162585212254690672}
   - component: {fileID: 5505867269302946428}
-  - component: {fileID: 7163939493804504608}
-  - component: {fileID: 9170026453922936188}
   - component: {fileID: 3402911427675838683}
+  - component: {fileID: 2324552706156793920}
+  - component: {fileID: 9170026453922936188}
+  - component: {fileID: 7163939493804504608}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -5500,6 +5501,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   db: {fileID: 11400000, guid: 2e6ffc4f57ba51f428c00a9eb207ee3f, type: 2}
+  WallLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  GroundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  EnemyLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &4248763749788156101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5512,7 +5522,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c3c14a957548a84e8808cfdcc26a8cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
-  movementData: {fileID: 11400000, guid: d0ab072f194fbb249a53e68ec0076184, type: 2}
+  movementData: {fileID: 11400000, guid: 6b00d1d0dd4191543af72a7bde2d7f9c, type: 2}
   healthData: {fileID: 11400000, guid: 515cc199b072aca489e001a8e8d5dbc4, type: 2}
   weaponData: {fileID: 11400000, guid: 171630233c2c87c4793c847c2352d9ba, type: 2}
   momentumData: {fileID: 11400000, guid: c90d4e6819cee8342a9aa487067c8bd5, type: 2}
@@ -5528,7 +5538,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a6af682bb9ffd34aa18cae1506e8853, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  data: {fileID: 11400000, guid: d0ab072f194fbb249a53e68ec0076184, type: 2}
+  data: {fileID: 11400000, guid: 6b00d1d0dd4191543af72a7bde2d7f9c, type: 2}
+  dashIgnore:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &5147314475618716538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5542,11 +5555,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
   data: {fileID: 11400000, guid: 171630233c2c87c4793c847c2352d9ba, type: 2}
-  hitboxes: {fileID: 6159579153687160268}
-  wallLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  tempWeapon: {fileID: 11400000, guid: 44d8718efb40bf1438cd3e61ccceefd7, type: 2}
+  hitboxes: {fileID: 1741139589470097346}
 --- !u!114 &9131956114529859876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5600,10 +5609,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7125058985e84f4e8e4834d72db6122, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerUpgrades
-  FrameTemplate: {fileID: 11400000, guid: 4d1dfafeadf714346a95a80edc34e174, type: 2}
+  FrameTemplate: {fileID: 0}
   WeaponTemplate: {fileID: 0}
   PropulsionTemplate: {fileID: 0}
   BrainTemplate: {fileID: 0}
+  autoGrant: {fileID: 0}
 --- !u!114 &2293134186363299284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5650,33 +5660,31 @@ MonoBehaviour:
   afterImagePrefab: {fileID: 6739747942197820569, guid: 03f0d82f061ac3c46aae952e2b282303, type: 3}
   vfxContainer: {fileID: 0}
   steamParticles: {fileID: 773739409595469858}
---- !u!50 &7163939493804504608
-Rigidbody2D:
-  serializedVersion: 5
+--- !u!114 &3402911427675838683
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4900199711992567709}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bda3a0b9b26d52740b05571ee734c52d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGroundCheck
+  checkPosition: {fileID: 1097358342727749248}
+--- !u!114 &2324552706156793920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4900199711992567709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bf26c388f270a74f9bb356ce27bca96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectController
 --- !u!58 &9170026453922936188
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -5713,22 +5721,33 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &3402911427675838683
-MonoBehaviour:
+--- !u!50 &7163939493804504608
+Rigidbody2D:
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4900199711992567709}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bda3a0b9b26d52740b05571ee734c52d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerGroundCheck
-  groundLayer:
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 8
-  checkPosition: {fileID: 1097358342727749248}
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
 --- !u!1 &5783493803674329461
 GameObject:
   m_ObjectHideFlags: 0

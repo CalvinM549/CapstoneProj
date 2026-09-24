@@ -17,10 +17,9 @@ public class PostProcessingManager : MonoBehaviour
     public static PostProcessingManager Instance;
 
     [Serializable]
-    public class EffectVolume
+    public class VolumeEntry
     {
-        public string id;
-
+        public PPVolume type;
         public Volume volume;
 
         [Range(0f, 1f)]
@@ -37,31 +36,52 @@ public class PostProcessingManager : MonoBehaviour
     public Ease entryEase;
     public Ease releaseEase;
 
-    [SerializeField] private List<EffectVolume> effectVolumes = new();
+    [SerializeField] private VolumeEntry[] effectVolumes;
 
-    private readonly Dictionary<string, EffectVolume> volumeLookup = new();
+    private readonly Dictionary<PPVolume, VolumeEntry> volumes = new();
 
     private void Awake()
     {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+
+        SetupVolumes();
+    }
+
+    private void SetupVolumes()
+    {
+        volumes.Clear();
+
         foreach (var entry in effectVolumes)
         {
-            if(entry.volume == null) continue;
+            if (entry.volume == null)
+            {
+                Debug.LogWarning($"[PostProcessingManager] No volume assigned to {entry.type}");
+                continue;
+            }
 
-            volumeLookup[entry.id] = entry;
+            if (volumes.ContainsKey(entry.type))
+            {
+                Debug.LogWarning($"[PostProcessingManager] Duplicate entry for {entry.type}");
+                continue;
+            }
+
+            volumes[entry.type] = entry;
             entry.volume.weight = entry.defaultWeight;
         }
     }
 
     private void OnEnable()
     {
-        GameEvents.OnPlayerHit += HandlePlayerHit;
+        GameEvents.OnPlayerTookDamage += HandlePlayerHit;
         GameEvents.OnPlayerDeath += HandlePlayerDeath;
-
     }
 
     private void OnDisable()
     {
-        GameEvents.OnPlayerHit -= HandlePlayerHit;
+        GameEvents.OnPlayerTookDamage -= HandlePlayerHit;
 
         foreach (var entry in effectVolumes)
             entry.activeTween?.Kill();
@@ -69,51 +89,54 @@ public class PostProcessingManager : MonoBehaviour
 
     private void HandlePlayerHit(HitData hit)
     {
-        DoPulse("hitVolume", hit.hitstunTime * 3f, 1f);
+        PulseVolume(PPVolume.Hit, hit.hitstunTime * 3f, 1f);
     }
 
     private void HandlePlayerDeath()
     {
-        DoHold("deathVolume", 1.0f, 5f);
+        SetVolume(PPVolume.Death, 1.0f, 5f);
     }
 
-    private void DoPulse(string volume, float duration, float maxWeight)
+    private void PulseVolume(PPVolume type, float duration, float targetWeight)
     {
-        var volumeRef = volumeLookup[volume];
+        var volumeRef = volumes[type];
+
         volumeRef.activeTween?.Kill();
 
         volumeRef.activeTween = DOTween.Sequence()
-            .Append(TweenWeight(volumeRef, maxWeight, entryDuration, entryEase))
+            .Append(TweenWeight(volumeRef, targetWeight, entryDuration, entryEase))
             .Append(TweenWeight(volumeRef, volumeRef.defaultWeight, duration, releaseEase));
 
     }
 
-    private void DoHold(string volume, float targetWeight, float fadeDuration)
+    private void SetVolume(PPVolume type, float targetWeight, float fadeDuration)
     {
-        var volumeRef = volumeLookup[volume];
+        var volumeRef = volumes[type]
+            ;
         volumeRef.activeTween?.Kill();
 
         volumeRef.activeTween = TweenWeight(volumeRef, targetWeight, fadeDuration, entryEase);
     }
 
-    private void DoRelease(string volume)
+    private void ResetVolume(PPVolume type)
     {
+        var volumeRef = volumes[type];
 
-        var volumeRef = volumeLookup[volume];
         volumeRef.activeTween?.Kill();
 
         volumeRef.activeTween = TweenWeight(volumeRef, volumeRef.defaultWeight, releaseDuration, releaseEase);
     }
 
-    private void DoSnap(string volume)
+    private void ResetVolumeImmediate(PPVolume type)
     {
-        var volumeRef = volumeLookup[volume];
+        var volumeRef = volumes[type];
+
         volumeRef.activeTween?.Kill();
 
         volumeRef.volume.weight = volumeRef.defaultWeight;
     }
 
-    private static Tween TweenWeight(EffectVolume volume, float target, float duration, Ease ease)
+    private static Tween TweenWeight(VolumeEntry volume, float target, float duration, Ease ease)
     {
         return DOTween.To(
             () => volume.volume.weight,

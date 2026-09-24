@@ -15,7 +15,10 @@ MonoBehaviour:
   id: 883322da-d3cd-40c2-b0d2-4fd1686db834
   enemyName: Sentry
   prefab: {fileID: 0}
-  baseHealth: 6
-  baseDamage: 0
-  baseSpeed: 0
+  cost: 0
+  currencyValue: 0
+  baseHealth: 60
+  moveSpeed: 3
+  baseDamageMult: 1
+  baseResistanceMult: 1
   aiProfile: {fileID: 11400000, guid: 95aea7d8549a16a479308147e8771809, type: 2}

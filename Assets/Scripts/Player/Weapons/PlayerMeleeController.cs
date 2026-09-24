@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class PlayerMeleeHitboxController : MonoBehaviour
+public class PlayerMeleeController : MonoBehaviour
 {
     [Header("Light Attacks")]
     [SerializeField] private PlayerMeleeHitbox[] lightHitboxes;

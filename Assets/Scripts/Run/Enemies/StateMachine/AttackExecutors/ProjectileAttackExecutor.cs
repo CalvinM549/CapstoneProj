@@ -54,7 +54,7 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
             laserSight.SetPosition(0, firePos.localPosition);
         }
 
-        ai.GetComponentInChildren<Animator>().Play("FireReady");
+        animator.Play("FireReady");
         hasFired = false;
         // any other things
     }
@@ -73,8 +73,7 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
         Executing = false;
         hasFired = true;
 
-
-        ai.GetComponentInChildren<Animator>().Play("ReturnFromFire");
+        animator.Play("ReturnFromFire");
     }
 
     protected void FireSingle(ProjectileData projectile, Vector2 direction)
@@ -88,11 +87,4 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
         if(laserSight != null  && laserSight.enabled)
             laserSight.enabled = false;
     }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(transform.position, attackData.attackRange);
-    }
-#endif
 }

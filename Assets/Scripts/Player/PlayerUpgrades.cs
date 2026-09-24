@@ -16,6 +16,10 @@ public class PlayerUpgrades : MonoBehaviour
 
     private readonly Dictionary<AuxUpgrade, int> auxUpgrades = new();
 
+    [Header("Testing")]
+
+    public AuxUpgrade autoGrant;
+
     #region Monobehaviour Basics
 
     private void Awake()
@@ -30,6 +34,9 @@ public class PlayerUpgrades : MonoBehaviour
     public void Initialize()
     {
         ApplyTemplates();
+
+        if(autoGrant != null)
+            GrantAux(autoGrant);
     }
 
     public void RestoreFromSave(PlayerUpgradeSave save)
@@ -83,8 +90,11 @@ public class PlayerUpgrades : MonoBehaviour
 
         auxUpgrades[upgrade] = current + 1;
 
-        upgrade.Apply(p);
-        // Fire Event
+        if (current == 0)
+            upgrade.Apply(p);
+        else
+            upgrade.OnStack();
+
         return true;
     }
 
@@ -109,10 +119,7 @@ public class PlayerUpgrades : MonoBehaviour
     {
         if (!auxUpgrades.ContainsKey(upgrade)) return;
 
-        int stacks = auxUpgrades[upgrade];
-        for (int i = 0; i < stacks; i++)
-            upgrade.Remove(p);
-
+        upgrade.Remove(p);
         auxUpgrades.Remove(upgrade);
         // Fire event
     }
@@ -126,5 +133,21 @@ public class PlayerUpgrades : MonoBehaviour
         if (WeaponTemplate != null)     GrantMajor(WeaponTemplate);
         if (PropulsionTemplate != null) GrantMajor(PropulsionTemplate);
         if (BrainTemplate != null)      GrantMajor(BrainTemplate);
+    }
+
+    public void ModifyOutgoingHit(HitData hit)
+    {
+        foreach (var upgrade in AllActiveUpgrades)
+        {
+            upgrade.ModifyOutgoingHit(hit);
+        }
+    }
+
+    public void ModifyIncomingHit(HitData hit)
+    {
+        foreach (var upgrade in AllActiveUpgrades)
+        {
+            upgrade.ModifyIncomingHit(hit);
+        }
     }
 }
