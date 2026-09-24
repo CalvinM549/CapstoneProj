@@ -11,15 +11,18 @@ public class ParryTool : PlayerTool // Setup dash parry cancel
     private float parryTimer = 0f;
     private Vector2 parryDirection;
 
-    protected override bool OnUse(Vector2 direction)
+    public override void UseTool(Vector2 direction)
     {
-        if (parryActive) return false;
-
         parryActive = true;
         parryDirection = direction;
         parryTimer = parryDuration;
 
-        GameEvents.PlayerParryStart();
+        //fire player method
+    }
+
+    public override bool CanUse()
+    {
+        if(parryActive) return false;
         return true;
     }
 
@@ -27,7 +30,7 @@ public class ParryTool : PlayerTool // Setup dash parry cancel
     {
         if(!parryActive) return false;
 
-        Vector2 toIncoming = incoming.sourcePos - (Vector2)player.transform.position;
+        Vector2 toIncoming = incoming.sourcePos - (Vector2)p.transform.position;
         float angleToIncoming = Vector2.Angle(parryDirection, toIncoming);
 
         if (angleToIncoming > parryAngle / 2) return false;
@@ -36,19 +39,14 @@ public class ParryTool : PlayerTool // Setup dash parry cancel
         return true;
     }
 
-    private void OnParrySuccess()
+    public override void OnEquip(Player player)
     {
+        base.OnEquip(player);
         parryActive = false;
         parryTimer = 0f;
-
-        //Do Feedback stuff
-
-        // Ping Event
-        GameEvents.PlayerParryEnd();
-        ReduceCooldown(cooldown * 0.5f);
     }
 
-    protected override void OnUpdate()
+    public override void UpdateTool()
     {
         if (!parryActive) return;
 
@@ -62,9 +60,16 @@ public class ParryTool : PlayerTool // Setup dash parry cancel
         }
     }
 
-    protected override void OnReset()
+
+    private void OnParrySuccess()
     {
         parryActive = false;
         parryTimer = 0f;
+
+        //Do Feedback stuff
+
+        // fire player method for parry end
+
+        p.Tools.ReduceCurrentCooldown(0.5f);
     }
 }

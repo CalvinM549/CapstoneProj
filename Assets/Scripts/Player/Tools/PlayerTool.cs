@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class PlayerTool : DatabaseEntry, ILootEntry
 {
     [Header("Display")]
-    public string toolName;
+    public string toolName = "New Tool";
     [TextArea] public string flavourText;
     [TextArea] public string effectText;
     public Sprite icon;
@@ -31,57 +31,35 @@ public abstract class PlayerTool : DatabaseEntry, ILootEntry
     [Header("Effect")]
 
     public float cooldown;
-    private float cooldownTimer;
-
-    protected Player player;
-
-    public bool IsReady => cooldownTimer <= 0f;
-    public float CooldownPercent => Mathf.Clamp01(cooldownTimer / cooldown);
+    public int uses;
 
 
+    protected Player p;
+    // event on use?
 
-    public bool UseTool(Vector2 direction)
+
+    public abstract void UseTool(Vector2 direction);
+
+    public virtual bool CanUse()
     {
-        if (!IsReady) return false;
+        if (uses > 0)
+            return true;
 
-        bool used = OnUse(direction);
-
-        if (used)
-        {
-            OnUsed();
-            StartCooldown();
-        }
-
-        return used;
+        // fire fail event
+        return false;
     }
-
-    protected abstract bool OnUse(Vector2 direction);
 
     public virtual bool TryIntercept(HitData incoming) => false;
 
     public virtual void OnEquip(Player player)
     {
-        this.player = player;
+        this.p = player;
     }
 
     public virtual void OnUnequip()
     {
-        cooldownTimer = 0f;
-        OnReset();
+        p = null;
     }
 
-    public virtual void UpdateTool()
-    {
-        if(cooldownTimer > 0f)
-            cooldownTimer -= Time.deltaTime;
-
-        OnUpdate();
-    }
-
-    protected virtual void OnUpdate() { }
-    protected virtual void OnReset() { }
-    protected virtual void OnUsed() { }
-
-    protected void StartCooldown() => cooldownTimer = cooldown;
-    protected void ReduceCooldown(float amount) => cooldownTimer = Mathf.Max(0f, cooldownTimer - amount);
+    public virtual void UpdateTool() { }
 }

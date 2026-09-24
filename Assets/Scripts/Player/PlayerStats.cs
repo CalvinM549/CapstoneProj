@@ -44,6 +44,11 @@ public class PlayerStats : MonoBehaviour, IStatModifiable
         Register(StatRef.PlayerMomentumDrainMult, 1f);
 
         // Heat
+
+#if UNITY_EDITOR
+        if (DebugManager.GodMode)
+            ApplyStatModifier(StatRef.PlayerOutgoingDamageMult, new(99, StatModType.PercentMult));
+#endif
     }
 
     #region Helpers

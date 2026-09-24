@@ -10,18 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5064e4fb7b11be40af6ab109cffd00f, type: 3}
-  m_Name: BaseSpeed
+  m_Name: Aux_MeleeDamage
   m_EditorClassIdentifier: Assembly-CSharp::AuxUpgrade
-  id: d5fc505f-7c4d-4b6e-b8d4-2997d5a9b278
-  upgradeName: Jet Tuning
+  id: ada900af-806e-408c-b779-8db569cbfbe5
+  upgradeName: Honed Edge
   flavourText: 
-  effectText: Increase Speed by 5%
-  icon: {fileID: 4066830363745794116, guid: df393a1c4f8a5ac4ba2113d56c4718ee, type: 3}
+  effectText: Increase melee damage by 10%
+  icon: {fileID: -994475685264314214, guid: af35adfea2cc2684d9f035bab2acd226, type: 3}
   slot: 4
-  maxStacks: 1
   baseDropRate: 1
   synergyTags: []
+  spawnInShops: 1
+  shopPrice: 50
+  maxStacks: 1
   statModifiers:
-  - statID: player.movement.baseSpeed
-    value: 0.05
+  - statID: player.combat.meleeDamage
+    value: 0.1
     modifierType: 200

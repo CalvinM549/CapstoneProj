@@ -10,20 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5064e4fb7b11be40af6ab109cffd00f, type: 3}
-  m_Name: MeleeDamage
+  m_Name: Aux_DashRegen
   m_EditorClassIdentifier: Assembly-CSharp::AuxUpgrade
-  id: ada900af-806e-408c-b779-8db569cbfbe5
-  upgradeName: Honed Edge
-  flavourText: 
-  effectText: Increase melee damage by 10%
-  icon: {fileID: -994475685264314214, guid: af35adfea2cc2684d9f035bab2acd226, type: 3}
+  id: aux_dashRegen
+  upgradeName: Pulse Cooling
+  flavourText: ahwuidnawuidbwaui
+  effectText: Dash charges recharge 10% faster
+  icon: {fileID: 21300000, guid: 932a1e4a765865045b5c77534675cfac, type: 3}
   slot: 4
+  maxStacks: 3
   baseDropRate: 1
   synergyTags: []
-  spawnInShops: 1
-  shopPrice: 50
-  maxStacks: 1
   statModifiers:
-  - statID: player.combat.meleeDamage
+  - statID: player.movement.dashRechargeRate
     value: 0.1
     modifierType: 200

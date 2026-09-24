@@ -20,10 +20,15 @@ public class DoorwayPreviewUI : MonoBehaviour
 
     public void InitializeWithDestination(MapNode destination)
     {
-        typeName.text = $"[{destination.type.ToString()}]";
+        typeName.text = $"[{destination.type.GetRoomTypeName()}]";
 
-        string rewardText = destination.rewards.Equals(default) ? "" : $"<{destination.rewards.category.ToString()}>";
-        rewardName.text = rewardText;
+        if (destination.type != RoomType.Rest || destination.type != RoomType.End)
+        {
+            string rewardText = destination.rewards.Equals(default) ? "" : $"<{destination.rewards.category.ToString()}>";
+            rewardName.text = rewardText;
+        }
+        else
+            rewardName.text = "";
 
         flavourName.text = $"Sector {GenerateRandomCode(Random.Range(3, 7))}";
     }

@@ -10,18 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5064e4fb7b11be40af6ab109cffd00f, type: 3}
-  m_Name: DashRegen
+  m_Name: Aux_RangedDamage
   m_EditorClassIdentifier: Assembly-CSharp::AuxUpgrade
-  id: aux_dashRegen
-  upgradeName: Pulse Cooling
-  flavourText: ahwuidnawuidbwaui
-  effectText: Dash charges recharge 10% faster
-  icon: {fileID: 21300000, guid: 932a1e4a765865045b5c77534675cfac, type: 3}
+  id: cba4ee39-8d75-4624-b329-0b2943f515b4
+  upgradeName: Refurbished Capacitors
+  flavourText: 
+  effectText: Increase ranged damage by 10%
+  icon: {fileID: -377942992, guid: 883c59f3f0726ce47a73d4662aa837e5, type: 3}
   slot: 4
-  maxStacks: 3
   baseDropRate: 1
   synergyTags: []
+  spawnInShops: 1
+  shopPrice: 50
+  maxStacks: 1
   statModifiers:
-  - statID: player.movement.dashRechargeRate
+  - statID: player.combat.rangedDamage
     value: 0.1
     modifierType: 200

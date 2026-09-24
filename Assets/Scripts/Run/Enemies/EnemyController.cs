@@ -202,8 +202,6 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private IEnumerator HitFXRoutine(float duration)
     {
-        IsIFrame = true;
-
         if (rb.linearVelocity.x > 0 && isFacingRight)
         {
             FlipFacing();
@@ -215,15 +213,13 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         VFXManager.Instance.PlayVFX(VFXType.HitSpark, transform.position);
 
-        animator.Play("Hit");
+        animator.SetTrigger("RecieveHit");
 
         sr.material = damageMaterial;
 
         yield return new WaitForSeconds(duration);
 
         sr.material = baseMaterial;
-
-        IsIFrame = false;
     }
 
     #endregion

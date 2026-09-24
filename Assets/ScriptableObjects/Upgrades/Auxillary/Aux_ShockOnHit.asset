@@ -19,7 +19,7 @@ MonoBehaviour:
   effectText: Apply shock on melee attacks
   icon: {fileID: -244606152550997219, guid: 7d0efe94e9a483a4aab1df291185753a, type: 3}
   slot: 4
-  baseDropRate: 5
+  baseDropRate: 1
   synergyTags: []
   spawnInShops: 1
   shopPrice: 50

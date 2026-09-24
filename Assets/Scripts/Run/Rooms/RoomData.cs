@@ -1,18 +1,7 @@
 using System;
 using UnityEngine;
 
-public enum RoomType
-{
-    unset,
-    Start,
-    Combat,
-    Elite,
-    Story,
-    Vault,
-    Shop,
-    Rest,
-    End
-}
+
 
 [CreateAssetMenu(menuName = "Map/Room Def")]
 public class RoomData : DatabaseEntry, ICategorizedEntry<RoomType>

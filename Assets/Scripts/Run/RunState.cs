@@ -52,11 +52,10 @@ public class RunState
 
         this.player = player;
 
-        this.rewardContext = new();
+        this.rewardContext = new(player.Upgrades);
 
         runDurationTimer = 0f;
-        stabilityTimer = maxStability; // Change to variable start time??
-
+        
         // Run Stats reset
         currentDepth = 0;
 
@@ -104,12 +103,10 @@ public class RunState
         {
             case MajorUpgrade m:
                 player.Upgrades.GrantMajor(m);
-                rewardContext.FilledMajorSlots.Add(m.slot);
                 break;
 
             case AuxUpgrade a:
                 player.Upgrades.GrantAux(a);
-                rewardContext.OwnedUpgradeStacks[a.Id] = rewardContext.GetUpgradeStacks(a.Id) + 1;
                 break;
 
             case PlayerWeapon w:

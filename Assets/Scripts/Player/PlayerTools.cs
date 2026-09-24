@@ -9,13 +9,19 @@ public class PlayerTools : MonoBehaviour
 
     private StatValue toolRechargeRate;
 
-    public bool ToolEquipped => equippedTool != null;
-    public PlayerTool equippedTool;
+    public bool ToolEquipped => EquippedTool != null;
+    public PlayerTool EquippedTool;
+
+    private float toolCooldownTimer;
+
+    public float ToolCooldownPercent => ToolEquipped && EquippedTool.cooldown > 0f 
+        ? Mathf.Clamp01(toolCooldownTimer / EquippedTool.cooldown)
+        : 0f;
 
     public void Initialize(PlayerTool tool)
     {
-        if (equippedTool != null)
-            equippedTool.OnEquip(p);
+        if (EquippedTool != null)
+            EquippedTool.OnEquip(p);
     }
 
     public void RestoreFromSave()
@@ -44,7 +50,9 @@ public class PlayerTools : MonoBehaviour
     {
         // Update equipped tool
         if (ToolEquipped) 
-            equippedTool.UpdateTool();
+            EquippedTool.UpdateTool();
+
+        UpdateToolCooldown();
     }
 
     private void OnUseToolInput()
@@ -57,30 +65,47 @@ public class PlayerTools : MonoBehaviour
         if (tool == null) return;
 
         UnequipCurrentTool();
-        equippedTool = tool;
-        equippedTool.OnEquip(p);
+        EquippedTool = tool;
+        EquippedTool.OnEquip(p);
     }
 
     public void UnequipCurrentTool()
     {
-        if (equippedTool != null)
+        if (EquippedTool != null)
         {
-            equippedTool.OnUnequip();
-            equippedTool = null;
+            EquippedTool.OnUnequip();
+            EquippedTool = null;
         }
     }
 
     private void UseEquippedTool()
     {
         if (!ToolEquipped) return;
+        if (!EquippedTool.CanUse()) return;
 
-        if (equippedTool.UseTool(p.GetMouseDirection()))
-            Debug.Log($"[PlayerTools] {equippedTool.toolName} used!");
+        EquippedTool.UseTool(p.GetMouseDirection());
     }
 
     public bool TryInterceptWithTool(HitData hit)
     {
         if (!ToolEquipped) return false;
-        return equippedTool.TryIntercept(hit);
+        return EquippedTool.TryIntercept(hit);
+    }
+
+    public void ReduceCurrentCooldown(float percent)
+    {
+        toolCooldownTimer *= percent;
+    }
+
+    private void UpdateToolCooldown()
+    {
+        if (toolCooldownTimer > 0f)
+        {
+            toolCooldownTimer -= Time.deltaTime;
+            if (ToolEquipped)
+            {
+                // fire event for ui
+            }
+        }
     }
 }

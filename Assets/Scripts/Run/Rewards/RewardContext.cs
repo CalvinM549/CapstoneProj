@@ -11,14 +11,35 @@ public enum RewardCategory
 
 public class RewardContext
 {
-    public HashSet<UpgradeSlot> FilledMajorSlots = new();
-    public Dictionary<string, int> OwnedUpgradeStacks = new();
+    private readonly PlayerUpgrades upgrades;
+
     public HashSet<string> ownedWeaponIds = new();
     public HashSet<string> ownedToolIds = new();
+
     public HashSet<string> SeenItemIdsThisRun = new();
     public HashSet<string> ActiveSynergyTags = new();
 
     public Dictionary<RewardCategory, int> PityCounters = new();
+
+    public RewardContext(PlayerUpgrades upgrades)
+    {
+        this.upgrades = upgrades;
+    }
+
+    public bool IsMajorSlotFilled(UpgradeSlot slot) => upgrades.GetMajor(slot) != null;
+    public int GetAuxStacks(AuxUpgrade upgrade) => upgrades.GetAuxStacks(upgrade);
+
+    public bool IsOwnedAtMax(ILootEntry entry)
+    {
+        switch (entry)
+        {
+            case AuxUpgrade upgrade:
+                return upgrades.GetAuxStacks(upgrade) >= upgrade.maxStacks;
+
+            default:
+                return false;
+        }
+    }
 
     public int GetPity(RewardCategory category) => PityCounters.TryGetValue(category, out var pity) ? pity : 0;
 
@@ -33,12 +54,9 @@ public class RewardContext
         }
     }
 
-    public int GetUpgradeStacks(string upgradeId) => OwnedUpgradeStacks.TryGetValue(upgradeId, out var stacks) ? stacks : 0;
-
-    
-
     public void RegisterOffer(RewardCategory category, List<LootResult> result)
     {
-
+        ResetPity(category);
+        IncrementPityExcept(category);
     }
 }

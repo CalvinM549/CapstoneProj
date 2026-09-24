@@ -11,26 +11,17 @@ public class MapGenerationService
     
     private MapGenerationConfig config;
     
-    private Vector2Int bounds;
-    private int nodeCount;
 
-    private float baseDifficulty;
-    private float difficultyPerDepth;
 
     public MapGenerationService(RoomDatabase data, MapGenerationConfig config)
     {
         this.db = data;
 
         this.config = config;
-
-        this.bounds = config.zoneSize;
-        this.nodeCount = config.roomCount;
-        this.baseDifficulty = config.baseDifficulty;
-        this.difficultyPerDepth = config.difficultyPerDepth;
     }
 
 
-    private float DifficultyCurve(int depth) => baseDifficulty + depth * difficultyPerDepth;
+    private float DifficultyCurve(int depth) => config.baseDifficulty + depth * config.difficultyPerDepth;
 
 
     #region Web generation
@@ -74,8 +65,8 @@ public class MapGenerationService
 
     private int[] BuildWidthCurve()
     {
-        int rowCount = Mathf.Max(3, nodeCount);
-        int maxWidth = Mathf.Max(1, bounds.y);
+        int rowCount = Mathf.Max(3, config.roomCount);
+        int maxWidth = Mathf.Max(1, config.maxWidth);
 
         int[] curve = new int[rowCount];
         for (int i = 0; i < rowCount; i++)
@@ -190,21 +181,29 @@ public class MapGenerationService
         rows[0].ForEach(n => n.type = RoomType.Start);
         rows[^1].ForEach(n => n.type = RoomType.End);
 
-        PlaceGuaranteed(rows, RoomType.Rest, count: 1);
+        PlaceGuaranteed(rows, RoomType.Rest, count: 1, minProgress: config.restRampProgress);
         PlaceGuaranteed(rows, RoomType.Shop, count: 1);
 
         for (int depth = 0; depth < rows.Count; depth++)
         {
             foreach (var node in rows[depth].Where(n => n.type == default))
             {
-                node.type = RollWeightedType(depth, rows.Count);
+                node.type = RollWeightedType(depth);
             }
         }
+
+        EnforceEliteSpacing(rows);
     }
 
-    private void PlaceGuaranteed(List<List<MapNode>> rows, RoomType type, int count)
+    private void PlaceGuaranteed(List<List<MapNode>> rows, RoomType type, int count, float minProgress = 0f)
     {
-        var eligibleRows = Enumerable.Range(2, rows.Count - 2).ToList(); // exclude first / last
+
+        int minRowIndex = Mathf.Max(1, Mathf.CeilToInt(minProgress * (config.roomCount - 1)));
+        int maxRowIndex = config.roomCount - 2;
+
+        if (minRowIndex > maxRowIndex) return; // unplaceable
+
+        var eligibleRows = Enumerable.Range(minRowIndex, maxRowIndex - minRowIndex + 1).ToList();
 
         for (int i = 0; i < count && eligibleRows.Count > 0; i++)
         {
@@ -252,19 +251,36 @@ public class MapGenerationService
     }
 
 
-    private RoomType RollWeightedType(int depth, int totalRows)
+    private RoomType RollWeightedType(int depth)
     {
-        float progress = (float)depth / totalRows;
+        float progress = (float)depth / config.roomCount - 1;
 
-        var weights = new (RoomType type, float weight)[]// replace all with variables
+        var weights = new List<(RoomType type, float weights)>
         {
             (RoomType.Combat, 0.6f),
             (RoomType.Story, 0.15f),
-            (RoomType.Rest, 0.1f),
-            (RoomType.Vault, 0.1f + progress * 0.15f) 
         };
 
-        float total = weights.Sum(w => w.weight);
+        // Rest weights
+        float restWeight = 0.1f * Mathf.Clamp01(progress / config.restRampProgress);
+        if(restWeight > 0f)
+            weights.Add((RoomType.Rest, restWeight));
+
+        // Elite weights
+        if (progress >= config.eliteMinProgress)
+        {
+            float t = Mathf.InverseLerp(config.eliteMinProgress, 1f, progress);
+            weights.Add((RoomType.Elite, Mathf.Lerp(0.15f, 0.35f, t)));
+        }
+
+        // Vault weights
+        if (progress >= config.vaultMinProgress)
+        {
+            float t = Mathf.InverseLerp(config.vaultMinProgress, 1f, progress);
+            weights.Add((RoomType.Elite, Mathf.Lerp(0.1f, 0.3f, t)));
+        }
+
+        float total = weights.Sum(w => w.weights);
         float roll = (float)(RNGManager.Instance.rng.NextDouble() * total);
         float cumulative = 0f;
 
@@ -278,6 +294,30 @@ public class MapGenerationService
         return RoomType.Combat; // fallback
     }
 
+    private void EnforceEliteSpacing(List<List<MapNode>> rows)
+    {
+        int lastEliteDepth = -config.eliteMinGap;
+        int placed = 0;
+
+        foreach (var row in rows)
+        {
+            foreach (var node in row.Where(n => n.type == RoomType.Elite))
+            {
+                bool tooClose = node.depth - lastEliteDepth < config.eliteMinGap;
+                bool overCap = placed >= config.maxElites;
+
+                if (tooClose || overCap)
+                {
+                    node.type = RoomType.Combat;                   
+                }
+                else
+                {
+                    lastEliteDepth = node.depth;
+                    placed++;
+                }
+            }
+        }
+    }
     
     private void AssignRooms(List<List<MapNode>> rows, int chapter)
     {

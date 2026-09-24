@@ -10,20 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5064e4fb7b11be40af6ab109cffd00f, type: 3}
-  m_Name: RangedDamage
+  m_Name: Aux_BaseSpeed
   m_EditorClassIdentifier: Assembly-CSharp::AuxUpgrade
-  id: cba4ee39-8d75-4624-b329-0b2943f515b4
-  upgradeName: New Upgrade
+  id: d5fc505f-7c4d-4b6e-b8d4-2997d5a9b278
+  upgradeName: Jet Tuning
   flavourText: 
-  effectText: Increase ranged damage by 10%
-  icon: {fileID: -377942992, guid: 883c59f3f0726ce47a73d4662aa837e5, type: 3}
+  effectText: Increase Speed by 5%
+  icon: {fileID: 4066830363745794116, guid: df393a1c4f8a5ac4ba2113d56c4718ee, type: 3}
   slot: 4
+  maxStacks: 1
   baseDropRate: 1
   synergyTags: []
-  spawnInShops: 1
-  shopPrice: 50
-  maxStacks: 1
   statModifiers:
-  - statID: player.combat.rangedDamage
-    value: 0.1
+  - statID: player.movement.baseSpeed
+    value: 0.05
     modifierType: 200

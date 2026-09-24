@@ -5660,7 +5660,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &601913529
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6252,12 +6252,6 @@ MonoBehaviour:
   config: {fileID: 11400000, guid: 7ddd848d53847534eae05a37bb512472, type: 2}
   defaultWeapon: {fileID: 0}
   godModeWeapon: {fileID: 11400000, guid: 478cdb66db74d274b8be11ee5a56c5b6, type: 2}
-  defaultRooms:
-  - {fileID: 11400000, guid: 61b90bca84cd7a941870de9c451536ae, type: 2}
-  - {fileID: 11400000, guid: f42d973c574c6514888fe6d295865f7e, type: 2}
-  walkLength: 10
-  walkerCount: 3
-  mapBounds: {x: 4, y: 4}
   seedText: {fileID: 690470051}
 --- !u!4 &982274027
 Transform:
@@ -6900,7 +6894,7 @@ GameObject:
   - component: {fileID: 1521471019}
   - component: {fileID: 1521471018}
   m_Layer: 5
-  m_Name: Title (1)
+  m_Name: Inputs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6955,13 +6949,16 @@ MonoBehaviour:
     Q / MMB
     - Lock Target
 
+    // Melee attacks also apply lock
+
+
     F - Interact
 
 
-    Tap LMB - Light Melee
+    Tap
+    LMB - Light Melee
 
-    Hold LMB - Heavy
-    Melee
+    Hold LMB - Heavy Melee
 
     RMB - Ranged Attack'
   m_isRightToLeft: 0
@@ -7200,7 +7197,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1932507163
 RectTransform:
   m_ObjectHideFlags: 0

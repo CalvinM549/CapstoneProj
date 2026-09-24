@@ -87,7 +87,7 @@ public class LootService
             case RewardCategory.MajorUpgrade:
                 foreach (var u in db.upgrades.All)
                 {
-                    if (u.slot != UpgradeSlot.None && !ctx.FilledMajorSlots.Contains(u.slot))
+                    if (u.slot != UpgradeSlot.None && !ctx.IsMajorSlotFilled(u.slot))
                         TryAdd(u, request, ctx);
                 }
                 break;
@@ -113,7 +113,7 @@ public class LootService
     {
         if (request.isShop && !item.Buyable) return;
 
-        //if (ctx.IsOwnedAtMax(item)) return;
+        if (ctx.IsOwnedAtMax(item)) return;
         lootPool.Add(item);
         weights.Add(ComputeWeight(item, ctx, request.category));
     }

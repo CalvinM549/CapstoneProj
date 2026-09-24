@@ -4,18 +4,23 @@ using UnityEngine;
 public class MapGenerationConfig : ScriptableObject
 {
     [Header("Zone generation settings")]
-    public Vector2Int zoneSize;
-    [Range(0f, 1f)] public float extraRoomConnectionChance;
-
     public int roomCount;
-    public int walkerCount;
+    public int maxWidth;
+
+    public NodeTypeConfig[] avaliableTypes;
 
     public float baseDifficulty = 1.0f;
     public float difficultyPerDepth = 0.3f;
 
+    public int eliteMinGap = 2;
+    public int maxElites = 3;
+
     // Room Generation
-    public int rewardRoomCount;
     [Range(0f, 1f)] public float shopChance = 0.3f;
+
+    [Range(0f, 1f)] public float restRampProgress;
+    [Range(0f, 1f)] public float eliteMinProgress;
+    [Range(0f, 1f)] public float vaultMinProgress;
 
     // Loot
     public float weaponRewardProbability;

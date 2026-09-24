@@ -12,14 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d94221119f0d4545877991a75d232fc, type: 3}
   m_Name: GenerationConfig
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerationConfig
-  zoneSize: {x: 2, y: 3}
-  extraRoomConnectionChance: 0
   roomCount: 15
-  walkerCount: 3
+  maxWidth: 3
+  avaliableTypes: []
   baseDifficulty: 1
   difficultyPerDepth: 0.3
+  eliteMinGap: 2
+  maxElites: 3
   rewardRoomCount: 0
   shopChance: 0.3
+  restRampProgress: 0.2
+  eliteMinProgress: 0.3
+  vaultMinProgress: 0.6
   weaponRewardProbability: 0
   toolRewardProbability: 0
   MajorRewardProbability: 0
