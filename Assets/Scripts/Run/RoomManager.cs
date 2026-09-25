@@ -61,7 +61,6 @@ public class RoomManager : MonoBehaviour
             if (node.connections2.Count >= i + 1)
             {
                 var connectedRoom = node.connections2[i];
-                print($"Connected {currentDoor.name} to {connectedRoom.id}");
                 currentDoor.gameObject.SetActive(true);
                 currentDoor.SetDestination(connectedRoom);
             }
@@ -144,13 +143,6 @@ public class RoomManager : MonoBehaviour
         if (State == RoomState.Cleared) return;
         State = RoomState.Failed;
         OnFailure?.Invoke(this);
-    }
-
-    private void HandleRestActivated()
-    {
-        run.RestoreStability(100f, true);
-        run.RestoreAmmo(5);
-        run.RestoreStructure(3);
     }
 
     public void ResetForPool()

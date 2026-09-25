@@ -25,17 +25,7 @@ public class RunState
     // Draft things
 
     public float runDurationTimer;
-
-    // Stability
-    public float stabilityTimer;
-    public float maxStability = 120f;
-
-    public bool StabilityDepleted => stabilityTimer <= 0f;
-
-    public event Action<float> OnStabilityTick;
-    public event Action OnStabilityDepleted;
-
-    private bool stabilityDepletedFired;
+    public static event Action<float> onTimerUpdated;
 
     // Rooms
 
@@ -81,18 +71,7 @@ public class RunState
     public void Tick(float dt)
     {
         runDurationTimer += dt;
-
-        if (stabilityDepletedFired) return;
-
-        if (stabilityTimer <= 0)
-        {
-            stabilityTimer = 0f;
-            stabilityDepletedFired = true;
-            OnStabilityDepleted?.Invoke();
-            return;
-        }
-
-        OnStabilityTick?.Invoke(stabilityTimer / maxStability);
+        onTimerUpdated?.Invoke(runDurationTimer);
     }
 
     #region Loot
@@ -130,16 +109,6 @@ public class RunState
     #endregion
 
     #region Resource Adjustments
-
-    public void DepleteStability(float amount)
-    {
-        stabilityTimer = Mathf.Max(0f, stabilityTimer - amount);
-    }
-
-    public void RestoreStability(float amount, bool fullRestore)
-    {
-        stabilityTimer = fullRestore ? maxStability : Mathf.Min(maxStability, stabilityTimer + amount);
-    }
 
     public void RestoreAmmo(int amount)
     {

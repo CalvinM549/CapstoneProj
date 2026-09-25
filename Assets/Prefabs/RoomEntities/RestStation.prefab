@@ -115,6 +115,8 @@ MonoBehaviour:
   costPerStructure: 50
   ammoRestoreCost: 20
   fullRestoreCost: 200
+  structureRestored: 0
+  ammoRestored: 0
 --- !u!61 &5462704660729828280
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -265,7 +267,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9078672507216055436, guid: 3090eddfab49e38479d92386026c9d00, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1.9150671
+      value: 2.89
       objectReference: {fileID: 0}
     - target: {fileID: 9078672507216055436, guid: 3090eddfab49e38479d92386026c9d00, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

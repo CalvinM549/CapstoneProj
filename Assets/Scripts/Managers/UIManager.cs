@@ -55,6 +55,10 @@ public class UIManager : MonoBehaviour
         {
             Current.HandleCancel();
         }
+        else if (!ScreenOpen)
+        {
+            OpenScreen("pauseScreen");
+        }
     }
 
     public UIScreen OpenScreen(string id, object payload = null)
@@ -65,6 +69,7 @@ public class UIManager : MonoBehaviour
             screen.transform.SetAsLastSibling();
 
             if(screen.pausesGame) TimescaleManager.Instance.PauseGame(screen);
+            if (screen.showCursor) GameManager.Instance.SetCursorActive(true);
 
             screen.Open(payload);
             return screen;
@@ -85,6 +90,8 @@ public class UIManager : MonoBehaviour
         stack.RemoveAt(stack.Count - 1);
 
         if(top.pausesGame) TimescaleManager.Instance.UnpauseGame(top);
+        if(top.showCursor) GameManager.Instance.SetCursorActive(false);
+
         top.Close();
     }
 

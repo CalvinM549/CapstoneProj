@@ -451,8 +451,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Doorway
   triggerVolume: {fileID: 2271630991269795481}
   doorVisual: {fileID: 7916919902793324090}
-  wallFiller: {fileID: 0}
-  doorIndicator: {fileID: 0}
   animator: {fileID: 0}
   previewUI: {fileID: 0}
   entryPoint: {fileID: 8805080461067878991}
@@ -610,8 +608,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Doorway
   triggerVolume: {fileID: 6066514161126408997}
   doorVisual: {fileID: 6932567646712661582}
-  wallFiller: {fileID: 0}
-  doorIndicator: {fileID: 0}
   animator: {fileID: 0}
   previewUI: {fileID: 0}
   entryPoint: {fileID: 3617976182438262150}
@@ -15666,8 +15662,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Doorway
   triggerVolume: {fileID: 7904603886751996139}
   doorVisual: {fileID: 8472771630473674250}
-  wallFiller: {fileID: 0}
-  doorIndicator: {fileID: 0}
   animator: {fileID: 0}
   previewUI: {fileID: 0}
   entryPoint: {fileID: 4188502451230594614}
@@ -17997,7 +17991,7 @@ TilemapRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: -5
   m_MaskInteraction: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}

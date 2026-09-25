@@ -9,6 +9,7 @@ public class UIScreen : MonoBehaviour
     public bool pausesGame;
     public bool blockPlayerInput;
     public bool blockUIInput;
+    public bool showCursor;
 
     public bool isVisible {  get; protected set; }
 

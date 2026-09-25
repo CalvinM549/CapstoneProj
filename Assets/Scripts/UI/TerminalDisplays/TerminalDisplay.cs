@@ -201,33 +201,6 @@ public class TerminalDisplay : MonoBehaviour
     #endregion
     #region Text Helpers
 
-    //private void AppendLine(string text)
-    //{
-    //    if (string.IsNullOrEmpty(label.text))
-    //        label.text = text;
-    //    else
-    //        label.text += "\n" + text;
-    //}
-
-    //private void SetLine(int lineIndex, string newText)
-    //{
-    //    string[] lines = label.text.Split('\n');
-
-    //    if (lineIndex < 0 || lineIndex >= lines.Length)
-    //    {
-    //        return; // out of range
-    //    }
-
-    //    lines[lineIndex] = newText;
-    //    label.text = string.Join("\n", lines);
-    //}
-
-    //private int GetCurrentLineCount()
-    //{
-    //    if (string.IsNullOrEmpty(label.text)) return 0;
-    //    return label.text.Split('\n').Length;
-    //}
-
     private void CommitNewLine(string text)
     {
         commitedText = string.IsNullOrEmpty(commitedText) 

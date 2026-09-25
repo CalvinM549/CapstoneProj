@@ -110,7 +110,6 @@ MonoBehaviour:
   startEnabled: 0
   indicatorIcon: {fileID: 0}
   indicatorPos: {fileID: 0}
-  interactDisplay: {fileID: 0}
   interactPromptUI: {fileID: 7809824608136542503}
   interactPrompt: '[F]'
   visual: {fileID: 1969712302566649882}
@@ -266,7 +265,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9078672507216055436, guid: 3090eddfab49e38479d92386026c9d00, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1.8526871
+      value: 2.84
       objectReference: {fileID: 0}
     - target: {fileID: 9078672507216055436, guid: 3090eddfab49e38479d92386026c9d00, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

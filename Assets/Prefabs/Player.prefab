@@ -5596,7 +5596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b8e8cdfb5049e44bb3630631e68cab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTools
-  equippedTool: {fileID: 0}
+  EquippedTool: {fileID: 0}
 --- !u!114 &3313198601869632570
 MonoBehaviour:
   m_ObjectHideFlags: 0
