@@ -8,6 +8,8 @@ public abstract class AttackExecutorBase : MonoBehaviour, IAttackExecutor
     protected Animator animator;
 
     public bool Executing { get; protected set; }
+    public bool HasExecuted { get; protected set; }
+
     public EnemyAttackData AttackData => attackData;
 
     private void Awake()

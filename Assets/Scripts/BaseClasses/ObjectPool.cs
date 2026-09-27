@@ -6,6 +6,9 @@ public class ObjectPool<T> where T : Component
     private T prefab;
     private Transform parent;
     private Stack<T> pool = new();
+
+    private readonly List<T> allInstances = new();
+
     private int liveCount;
     private readonly int maxSize;
 
@@ -26,6 +29,7 @@ public class ObjectPool<T> where T : Component
         var obj = GameObject.Instantiate(prefab, parent);
         obj.gameObject.SetActive(false);
         pool.Push(obj);
+        allInstances.Add(obj);
         liveCount++;
     }
 
@@ -48,5 +52,19 @@ public class ObjectPool<T> where T : Component
     {
         obj.gameObject.SetActive(false);
         pool.Push(obj);
+    }
+
+    public void Clear()
+    {
+        foreach (var obj in allInstances)
+        {
+            if(obj != null)
+                GameObject.Destroy(obj.gameObject);
+        }
+
+        allInstances.Clear();
+        pool.Clear();
+
+        liveCount = 0;
     }
 }

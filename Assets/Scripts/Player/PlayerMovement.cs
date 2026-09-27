@@ -34,6 +34,8 @@ public class PlayerMovement : MonoBehaviour
     private StatValue dashCharges;
     private StatValue dashRechargeRate;
 
+    private float speedBonus;
+
     private GameplayInputReader input;
     private Rigidbody2D rb;
 
@@ -136,6 +138,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (speedBonus > 0f)
+            speedBonus = Mathf.MoveTowards(speedBonus, 0f, data.speedBonusDecayRate * Time.deltaTime);
+
         if(CanMove())  
             ApplyMovement();
         else if(!p.Health.IsAlive)
@@ -202,11 +207,11 @@ public class PlayerMovement : MonoBehaviour
         {
             case CombatState.Startup:
             case CombatState.Active:
-                DecelerateToZero(1f);
+                DecelerateToZero(data.attackDecelerationMult);
                 break;
 
             case CombatState.Recovery:
-                ApplyModifiedMovement(0.35f);
+                ApplyModifiedMovement(data.recoverySpeedMult);
                 break;
 
             default:
@@ -219,17 +224,18 @@ public class PlayerMovement : MonoBehaviour
     {
         if (inputDirection.magnitude > 0.1f)
         {
-
             lastMoveDirection = inputDirection.normalized;
             
             float accel = GetAcceleration() * multiplier;
-            Vector2 targetVelocity = baseSpeed.Value * multiplier * p.Momentum.GetMomentumSpeedMultiplier() * inputDirection.normalized;
+            float maxSpeed = (baseSpeed.Value + speedBonus) * multiplier * p.Momentum.GetMomentumSpeedMultiplier();
+
+            Vector2 targetVelocity = maxSpeed * inputDirection.normalized;
 
             rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, accel * Time.fixedDeltaTime);
         }
         else
         {
-            rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, Vector2.zero, data.deceleration * Time.fixedDeltaTime);
+            DecelerateToZero();
         }
     }
 
@@ -271,13 +277,15 @@ public class PlayerMovement : MonoBehaviour
 
         Vector2 dashDir = inputDirection.magnitude > 0.1f ? inputDirection.normalized : lastMoveDirection;
 
+        float retainedSpeed = rb.linearVelocity.magnitude;
+        float dashSpeed = data.dashSpeed + retainedSpeed * data.dashMomentumBonusSpeed;
+
         currentDashCharges--;
-        currentDashRoutine = StartCoroutine(DashRoutine(dashDir));
+        currentDashRoutine = StartCoroutine(DashRoutine(dashDir, dashSpeed));
     }
 
-    private IEnumerator DashRoutine(Vector2 direction)
+    private IEnumerator DashRoutine(Vector2 direction, float dashSpeed)
     {
-
         isDashing = true;
 
         // Start Events
@@ -290,7 +298,7 @@ public class PlayerMovement : MonoBehaviour
         
         //
 
-        rb.linearVelocity = direction * data.dashSpeed;
+        rb.linearVelocity = direction * dashSpeed;
 
         yield return new WaitForSeconds(data.dashDuration);
 
@@ -304,6 +312,9 @@ public class PlayerMovement : MonoBehaviour
             : CurrentMoveDirection.normalized;
         float exitSpeed = rb.linearVelocity.magnitude * data.dashExitMultiplier;
         rb.linearVelocity = exitDir * exitSpeed;
+
+        float overBase = Mathf.Max(0f, exitSpeed - baseSpeed.Value);
+        speedBonus = Mathf.Min(speedBonus + overBase * data.dashSpeedRetention, data.maxSpeedBonus);
 
         Physics2D.IgnoreLayerCollision(playerLayerIndex, enemyLayerIndex, false);
         Physics2D.IgnoreLayerCollision(playerLayerIndex, environmentLayerIndex, false);

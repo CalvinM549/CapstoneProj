@@ -13,9 +13,14 @@ public class EnemyAttackData : ScriptableObject
     [Header("Animations")]
     public string windupTrigger;
     public string activeTrigger;
+    [Tooltip("Typically only used for projectile executors")]
+    public string winddownTrigger;
 
     [Header("Ranged")]
-    public Projectile projectile;
+    public ProjectileData projectile;
+    [Min(1)] public int projectileCount = 1;
+    public float spreadAngle;
+    public float shotInterval;
 
     [Header("Melee")]
     public AttackType attackType = AttackType.Heavy;

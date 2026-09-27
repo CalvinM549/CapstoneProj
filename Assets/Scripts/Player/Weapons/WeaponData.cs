@@ -10,9 +10,6 @@ public class WeaponData : ScriptableObject
     [Header("Heavy Attack")]
     public AttackInfo heavyAttack;
 
-    [Header("Dash Attack")]
-    public AttackInfo dashAttack;
-
     [Header("Other")]
     public float comboWindow;
     [Tooltip("Time after full combo, before player can attack again")]

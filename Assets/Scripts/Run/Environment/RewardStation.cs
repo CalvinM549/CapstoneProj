@@ -30,7 +30,7 @@ public class RewardStation : StationBase, IInteractable
                 affectPity = true
             },
             run.rewardContext,
-            GameRng.NodeRng(run.seed, node.coordinates),
+            RNGManager.NodeRng(run.seed, node.coordinates),
             run.currentDepth);
         offer = node.cachedLoot;
             

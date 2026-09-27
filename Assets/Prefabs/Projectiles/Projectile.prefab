@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2586801366425630598}
-  - component: {fileID: 2606436330504258355}
   - component: {fileID: 7729453556227253415}
+  - component: {fileID: 2606436330504258355}
   - component: {fileID: 8508970832347473174}
   - component: {fileID: 6238392163408213406}
   m_Layer: 0
@@ -35,6 +35,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7729453556227253415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6884786921368845522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea47f747e9c9b4e45a09fe507a63c7a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Projectile
 --- !u!212 &2606436330504258355
 SpriteRenderer:
   serializedVersion: 2
@@ -94,19 +106,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &7729453556227253415
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6884786921368845522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea47f747e9c9b4e45a09fe507a63c7a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Projectile
-  data: {fileID: 0}
 --- !u!50 &8508970832347473174
 Rigidbody2D:
   serializedVersion: 5

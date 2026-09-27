@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -10,7 +11,7 @@ public class TimerUI : MonoBehaviour
 
     private void Start()
     {
-        cg.alpha = 0f;
+        cg.alpha = 0.5f;
     }
 
     private void OnEnable()
@@ -23,15 +24,11 @@ public class TimerUI : MonoBehaviour
         RunState.onTimerUpdated -= HandleTimerUpdated;
     }
 
-    private void HandleTimerUpdated(float time)
+    private void HandleTimerUpdated(float timeValue)
     {
+        TimeSpan time = TimeSpan.FromSeconds(timeValue);
 
-        if (time < 0) time = 0;
-
-        float minutes = Mathf.FloorToInt(time / 60);
-        float seconds = Mathf.FloorToInt(time % 60);
-
-        timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        timerText.text = time.ToString(@"mm\:ss\.ff");
     }
 
 }

@@ -14,9 +14,9 @@ public class HomingProjectile : Projectile
     private float distanceTravelled;
     private bool armed;
 
-    public override void Initalize(ProjectileData data, Vector2 direction, Vector2 sourcePos, Action<Projectile> returnToPool, bool playerProjectile)
+    public override void Initialize(ProjectileData data, HitData hitData, Vector2 direction, Vector2 sourcePos, Action<Projectile> returnToPool, bool playerProjectile)
     {
-        base.Initalize(data, direction, sourcePos, returnToPool, playerProjectile);
+        base.Initialize(data, hitData, direction, sourcePos, returnToPool, playerProjectile);
 
         currentVelocity = rb.linearVelocity;
         distanceTravelled = 0f;

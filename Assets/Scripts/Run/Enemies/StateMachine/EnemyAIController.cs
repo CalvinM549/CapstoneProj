@@ -8,7 +8,7 @@ public class EnemyAIController : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI stateDisplay;
 
-    public EnemyContext context;
+    [HideInInspector] public EnemyContext context;
     public EnemyStats stats {  get; private set; }
     public StatValue speedStat { get; private set; } // cached for performance
 

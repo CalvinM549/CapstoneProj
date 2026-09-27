@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public enum RoomState
@@ -7,6 +8,13 @@ public enum RoomState
     Active,
     Cleared,
     Failed
+}
+
+[Serializable]
+public class EnemySpawnPoint
+{
+    public string groupTag;
+    public Transform point;
 }
 
 public class RoomManager : MonoBehaviour
@@ -19,7 +27,7 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private Doorway[] doorways;
     public Vector2 fallbackEntryPoint;
 
-    [SerializeField] private Transform[] enemySpawnPoints;
+    [SerializeField] private EnemySpawnPoint[] enemySpawnPoints;
 
     private RunState run;
     private MapNode node;
@@ -121,6 +129,29 @@ public class RoomManager : MonoBehaviour
         return fallbackEntryPoint;
     }
 
+    private readonly System.Collections.Generic.List<Transform> _taggedMatchesBuffer = new();
+
+    public Transform GetEnemySpawnPoint(string groupTag)
+    {
+        if(enemySpawnPoints == null || enemySpawnPoints.Length == 0)
+            return null;
+
+
+        if (!string.IsNullOrEmpty(groupTag))
+        {
+            _taggedMatchesBuffer.Clear();
+            foreach (var sp in enemySpawnPoints)
+                if (sp.groupTag == groupTag)
+                    _taggedMatchesBuffer.Add(sp.point);
+
+            if (_taggedMatchesBuffer.Count > 0)
+                return _taggedMatchesBuffer[UnityEngine.Random.Range(0, _taggedMatchesBuffer.Count)];
+        }
+
+        return enemySpawnPoints[UnityEngine.Random.Range(0, enemySpawnPoints.Length)].point;
+
+    }
+
     private void HandleEncounterCleared()
     {
         if (State != RoomState.Active) return;
@@ -131,7 +162,7 @@ public class RoomManager : MonoBehaviour
 
         // get reward
 
-        foreach (var door in doorways)
+        foreach (var door in doorways.Where(d => d.gameObject.activeInHierarchy))
             door.Unlock();
 
         OnCleared?.Invoke(this);
@@ -143,16 +174,5 @@ public class RoomManager : MonoBehaviour
         if (State == RoomState.Cleared) return;
         State = RoomState.Failed;
         OnFailure?.Invoke(this);
-    }
-
-    public void ResetForPool()
-    {
-        OnCleared = null;
-        OnFailure = null;
-
-        if (objectiveTracker != null)
-            objectiveTracker.OnEncounterCleared -= HandleEncounterCleared;
-
-        State = RoomState.Idle;
     }
 }

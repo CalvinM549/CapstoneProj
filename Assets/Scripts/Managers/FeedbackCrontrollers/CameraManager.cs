@@ -28,7 +28,6 @@ public class CameraManager : MonoBehaviour
     [Space]
     [SerializeField] private float lightHitShakeMag = 0.05f;
     [SerializeField] private float heavyHitShakeMag = 0.2f;
-    [SerializeField] private float dashHitShakeMag = 0.1f;
 
     private void Awake()
     {

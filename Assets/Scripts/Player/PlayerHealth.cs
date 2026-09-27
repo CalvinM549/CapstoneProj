@@ -147,7 +147,16 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
     private void HandleStructureHealthChanged()
     {
+        foreach (var segment in healthSegments)
+        {
+            float newMax = structureHealth.Value;
 
+            if (segment.currentHealth == segment.maxHealth)
+            {
+                segment.currentHealth = newMax;
+            }
+            segment.maxHealth = newMax;
+        }
     }
 
     #region Recieving Damage

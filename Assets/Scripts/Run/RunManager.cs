@@ -15,6 +15,8 @@ public class RunManager : MonoBehaviour
     [SerializeField] private Player playerPrefab;
     [SerializeField] private PlayerUI playerUIPrefab;
 
+    [SerializeField] private DroneWeaponCarrier dronePrefab;
+
     [SerializeField] private Transform roomContainer;
     [SerializeField] private Transform enemyContainer;
     [SerializeField] private Transform playerContainer;
@@ -105,8 +107,11 @@ public class RunManager : MonoBehaviour
         activePlayer.SetupNew(config.loadout);
         activePlayer.SetPlayerCanAct(true);
 
+        var drone = Instantiate(dronePrefab, playerContainer);
+        drone.player = activePlayer;
+
         currentRun = new(config.seed, config.map, activePlayer);
-        roomService.BuildPool(config.map); // change out for new system
+        roomService.BuildStartRoom(config.map); // change out for new system
 
         EnterNode(currentRun.map.entryNode, null);
     }
@@ -165,7 +170,19 @@ public class RunManager : MonoBehaviour
         // do other stuff
     }
 
-    private void EnterNode(MapNode node, Direction? arrivingFrom)
+    private void CleanupCurrent()
+    {
+        currencyDropService.ForceCollectAll();
+        HUDIndicatorService.Instance.ClearAll();
+
+        if (activeRoom != null)
+        {
+            roomService.ReturnToPool(activeRoom);
+            activeRoom = null;
+        }
+    }
+
+    private void EnterNode(MapNode newNode, Direction? arrivingFrom)
     {
         // Remove Current Room
         currencyDropService.ForceCollectAll();
@@ -176,19 +193,12 @@ public class RunManager : MonoBehaviour
             activeRoom = null;
         }
 
-        currentRun.map.currentNode = node;
+        currentRun.map.currentNode = newNode;
+                
+        activeRoom = roomService.GetRoom(newNode);
+        activeRoom.Initialize(newNode, currentRun);
 
-        // Get active room from pool
-        if (roomService == null)
-        {
-            Debug.LogError("[RunManager] No RoomService existing :(");
-            return;
-        }
-        
-        activeRoom = roomService.GetRoom(node);
-        activeRoom.Initialize(node, currentRun);
-
-        roomService.BuildConnectedRooms(node);
+        roomService.BuildConnectedRooms(newNode);
 
         activeRoom.OnCleared += HandleRoomCleared;
         activeRoom.OnFailure += HandleRoomFailed;
@@ -212,7 +222,7 @@ public class RunManager : MonoBehaviour
 
         activePlayerUI.ToggleUI(true);
 
-        onPlayerRoomChanged?.Invoke(node.coordinates);
+        onPlayerRoomChanged?.Invoke(newNode.coordinates);
 
         activeRoom.Activate();
     }

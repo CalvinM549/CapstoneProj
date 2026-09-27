@@ -5522,7 +5522,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c3c14a957548a84e8808cfdcc26a8cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
-  movementData: {fileID: 11400000, guid: 6b00d1d0dd4191543af72a7bde2d7f9c, type: 2}
+  movementData: {fileID: 11400000, guid: 442b10bb06d43014cb6615260b193a8e, type: 2}
   healthData: {fileID: 11400000, guid: 515cc199b072aca489e001a8e8d5dbc4, type: 2}
   weaponData: {fileID: 11400000, guid: 171630233c2c87c4793c847c2352d9ba, type: 2}
   momentumData: {fileID: 11400000, guid: c90d4e6819cee8342a9aa487067c8bd5, type: 2}
@@ -5538,7 +5538,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a6af682bb9ffd34aa18cae1506e8853, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  data: {fileID: 11400000, guid: 6b00d1d0dd4191543af72a7bde2d7f9c, type: 2}
+  data: {fileID: 11400000, guid: 442b10bb06d43014cb6615260b193a8e, type: 2}
   dashIgnore:
     serializedVersion: 2
     m_Bits: 256
@@ -5556,6 +5556,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
   data: {fileID: 11400000, guid: 171630233c2c87c4793c847c2352d9ba, type: 2}
   hitboxes: {fileID: 1741139589470097346}
+  dronePrefab: {fileID: 3462640412617091057, guid: 63667794f3ab84e47b2e32f772a4beae, type: 3}
 --- !u!114 &9131956114529859876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5737,7 +5738,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: d015d87e6be2bd1449fd005bde238f29, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

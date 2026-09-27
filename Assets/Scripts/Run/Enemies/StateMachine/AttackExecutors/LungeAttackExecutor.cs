@@ -29,6 +29,8 @@ public class LungeAttackExecutor : AttackExecutorBase
 
     public override void BeginTelegraph(EnemyAIController ai)
     {
+        HasExecuted = false;
+
         if (!string.IsNullOrEmpty(attackData.windupTrigger))
             animator.SetTrigger(attackData.windupTrigger);
     }
@@ -58,6 +60,7 @@ public class LungeAttackExecutor : AttackExecutorBase
 
         yield return new WaitForSeconds(attackData.winddownDuration);
         Executing = false;
+        HasExecuted = true;
     }
 
     private void FinishLunge()
@@ -71,6 +74,7 @@ public class LungeAttackExecutor : AttackExecutorBase
         StopAllCoroutines();
         FinishLunge();
         Executing = false;
+        HasExecuted = false;
     }
 
     private void OnHitboxHit(Collider2D collision)

@@ -4,17 +4,18 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public ProjectileData data;
+    public ProjectileData data { get; private set; }
     private Vector2 sourcePosition;
 
     private Vector2 direction;
-    private bool isPlayerProjectile;
+    private bool playerProjectile;
     protected Rigidbody2D rb;
 
     private bool hitTarget;
 
+    private HitData hitData;
+
     private Action<Projectile> returnToPool;
-    private Coroutine lifetimeRoutine;
 
     private void Awake()
     {
@@ -22,13 +23,20 @@ public class Projectile : MonoBehaviour
         rb.gravityScale = 0f;
     }
 
-    public virtual void Initalize(ProjectileData data, Vector2 direction, Vector2 sourcePos, Action<Projectile> returnToPool, bool playerProjectile)
+    public virtual void Initialize(
+        ProjectileData data, 
+        HitData hitData,
+        Vector2 direction, 
+        Vector2 sourcePos,
+        Action<Projectile> returnToPool,
+        bool playerProjectile)
     {
         this.data = data;
         this.sourcePosition = sourcePos;
         this.direction = direction;
         this.returnToPool = returnToPool;
-        isPlayerProjectile = playerProjectile;
+        this.playerProjectile = playerProjectile;
+        this.hitData = hitData;
 
         hitTarget = false;
 
@@ -37,27 +45,14 @@ public class Projectile : MonoBehaviour
         float angle = Mathf.Atan2(this.direction.y, this.direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle - 90);
 
-        if(lifetimeRoutine != null)
-            StopCoroutine(lifetimeRoutine);
-
-        lifetimeRoutine = StartCoroutine(LifetimeRoutine());
-    }
-
-    private IEnumerator LifetimeRoutine()
-    {
-        yield return new WaitForSeconds(data.lifetime);
-        OnExpire();
+        Invoke(nameof(OnExpire), data.lifetime);
     }
 
     protected void ReturnToPool()
     {
-        if (lifetimeRoutine != null)
-        {
-            StopCoroutine(lifetimeRoutine);
-            lifetimeRoutine = null;
-        }
-
+        CancelInvoke();
         rb.linearVelocity = Vector2.zero;
+        hitData = null;
 
         returnToPool?.Invoke(this);
     }
@@ -69,10 +64,10 @@ public class Projectile : MonoBehaviour
         if (collision.CompareTag("Wall"))
             OnExpire();
 
-        if (isPlayerProjectile && (collision.CompareTag("Player") || collision.CompareTag("PlayerHurtbox")))
+        if (playerProjectile && (collision.CompareTag("Player") || collision.CompareTag("PlayerHurtbox")))
             return;
 
-        if (!isPlayerProjectile && (collision.CompareTag("Enemy") || collision.CompareTag("Hurtbox")))
+        if (!playerProjectile && (collision.CompareTag("Enemy") || collision.CompareTag("Hurtbox")))
             return;
 
         IDamageable target = collision.GetComponent<IDamageable>();
@@ -85,20 +80,9 @@ public class Projectile : MonoBehaviour
 
     protected virtual void HandleHit(IDamageable target)
     {
-        HitData hit = new HitData(data.damage, AttackType.Projectile, isPlayerProjectile)
-        {
-            sourcePos = sourcePosition,
-            knockbackDirection = direction,
-            knockbackForce = data.knockback,
-            hitstopTime = data.hitstopDuration,
-            hitstunTime = data.hitstunTime,
-
-            isParryable = data.isParryable
-        };
-
         // Fire Event
         
-        target.RecieveHit(hit);
+        target.RecieveHit(hitData);
 
         OnExpire();
     }

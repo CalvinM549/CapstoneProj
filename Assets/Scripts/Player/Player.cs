@@ -131,6 +131,12 @@ public class Player : MonoBehaviour
         return direction;
     }
 
+    public Vector2 GetMouseDirectionFrom(Vector3 pos)
+    {
+        Vector3 direction = (GetMouseWorldPos() - pos).normalized;
+        return direction;
+    }
+
     public Vector3 GetMouseWorldPos()
     {
         Vector3 mousePos = InputManager.Instance.GetMousePosition();

@@ -16,7 +16,7 @@ MonoBehaviour:
   enemyName: Kiter
   prefab: {fileID: 2621895607124036595, guid: cb36320a61df2534a98ee71adc7e0f2c, type: 3}
   cost: 0
-  currencyValue: 0
+  baseCurrencyDrop: 15
   baseHealth: 30
   moveSpeed: 10
   baseDamageMult: 1

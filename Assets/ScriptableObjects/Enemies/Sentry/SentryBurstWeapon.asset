@@ -10,15 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 91b487034a4745f43960c0feb63f441c, type: 3}
-  m_Name: WalkerAttackData
+  m_Name: SentryBurstWeapon
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackData
-  attackRange: 10
+  attackRange: 8
   telegraphDuration: 1.5
   winddownDuration: 1.5
-  hasHyperarmour: 1
+  hasHyperarmour: 0
   windupTrigger: 
   activeTrigger: 
-  projectile: {fileID: 0}
+  winddownTrigger: 
+  projectile: {fileID: 11400000, guid: 01066313aac4e63428ff95025550a777, type: 2}
+  projectileCount: 3
+  spreadAngle: 10
+  shotInterval: 0.2
   attackType: 1
   baseDamage: 0
   knockbackForce: 0

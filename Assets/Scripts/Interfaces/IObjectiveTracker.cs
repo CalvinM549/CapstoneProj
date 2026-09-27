@@ -8,5 +8,4 @@ public interface IObjectiveTracker
 
     void Setup(RoomData room, RunState run);
     void Tick(float dt);
-    void Reset();
 }

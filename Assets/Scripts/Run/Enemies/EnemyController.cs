@@ -39,7 +39,6 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private Material baseMaterial;
 
-
     private Coroutine hitFXRoutine;
 
     public bool IsAlive { get; set; }
@@ -47,6 +46,8 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private bool hyperArmourActive;
     protected virtual bool CanBeStaggered => !hyperArmourActive;
+
+    public event Action<EnemyController> OnDeath;
 
     protected virtual void Awake()
     {
@@ -196,6 +197,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         StopAllCoroutines();
 
+        OnDeath?.Invoke(this);
         GameEvents.EnemyKilled(this);
         gameObject.SetActive(false);
     }

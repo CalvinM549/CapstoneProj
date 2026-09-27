@@ -10,8 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 91b487034a4745f43960c0feb63f441c, type: 3}
-  m_Name: SentryAttackData
+  m_Name: SentryRifleWeapon
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackData
-  attackRange: 8
+  attackRange: 9
   telegraphDuration: 1.5
   winddownDuration: 1.5
+  hasHyperarmour: 0
+  windupTrigger: 
+  activeTrigger: 
+  winddownTrigger: 
+  projectile: {fileID: 11400000, guid: fac50c36672fe6a479235690055d0d00, type: 2}
+  projectileCount: 1
+  spreadAngle: 0
+  shotInterval: 0
+  attackType: 1
+  baseDamage: 0
+  knockbackForce: 0
+  hitstunTime: 0
+  hitstopTime: 0
+  isBlockable: 0
+  isParryable: 0

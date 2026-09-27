@@ -24,7 +24,7 @@ public class ShopStation : StationBase, IInteractable
                 affectPity = true
             },
             run.rewardContext,
-            GameRng.NodeRng(run.seed, node.coordinates),
+            RNGManager.NodeRng(run.seed, node.coordinates),
             run.currentDepth);
 
         purchased = new bool[stock.Count];

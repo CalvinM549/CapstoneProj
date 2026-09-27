@@ -23,7 +23,7 @@ public class HUDIndicatorService : MonoBehaviour
     [SerializeField] private float pingDuration;
     [SerializeField] private Color pingColour;
 
-    private readonly Dictionary<Transform, IndicatorIconUI> indicators = new();
+    private readonly Dictionary<Transform, IndicatorIconUI> activeIndicators = new();
     private readonly Dictionary<Transform, RingController> activePings = new();
 
     private void Awake()
@@ -38,7 +38,7 @@ public class HUDIndicatorService : MonoBehaviour
 
     private void LateUpdate()
     {
-        foreach (var kvp in indicators)
+        foreach (var kvp in activeIndicators)
             UpdateIndicator(kvp.Key, kvp.Value);
 
         foreach (var kvp in activePings)
@@ -48,26 +48,36 @@ public class HUDIndicatorService : MonoBehaviour
         }
     }
 
-    public void IndicateStation(Transform anchor, Sprite icon)
+    public void SpawnIndicator(Transform anchor, Sprite icon, bool doPing = true)
     {
-        if (indicators.ContainsKey(anchor)) return;
+        if (activeIndicators.ContainsKey(anchor)) return;
 
         var indicator = Instantiate(indicatorPrefab, root);
         indicator.SetIcon(icon);
-        indicators[anchor] = indicator;
+        activeIndicators[anchor] = indicator;
 
-        PlayPing(anchor);
-
-        print("Indicating Station");
+        if(doPing)
+            PlayPing(anchor);
     }
 
     public void RemoveIndicator(Transform anchor)
     {
-        if(!indicators.TryGetValue(anchor, out var indicator)) return;
-        Destroy(indicator.gameObject);
-        indicators.Remove(anchor);
+        if(!activeIndicators.TryGetValue(anchor, out var indicator)) return;
+        activeIndicators.Remove(anchor);
+        if(indicator != null)
+            Destroy(indicator.gameObject);
+    }
 
-        print("Removing Indicator");
+    public void ClearAll()
+    {
+        foreach (var indicator in activeIndicators)
+            Destroy(indicator.Value.gameObject);
+        
+        foreach (var ping in activePings)
+            Destroy(ping.Value.gameObject);
+
+        activeIndicators.Clear();
+        activePings.Clear();
     }
 
     private Vector2 GetClampedScreenPoint(Vector3 worldPos, out bool offscreen, out Vector2 direction)

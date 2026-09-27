@@ -16,6 +16,8 @@ public class RestUIScreen : UIScreen
         repairButton.Setup("Repair Structure", () => HandleActionSelected(RestAction.RepairStructure));
         ammoButton.Setup("Restore Ammo", () => HandleActionSelected(RestAction.RestoreAmmo));
         fullRestoreButton.Setup("Full Service", () => HandleActionSelected(RestAction.FullRestore));
+
+        UpdateActionCards();
     }
 
     private void HandleActionSelected(RestAction selected)

@@ -88,5 +88,35 @@ public abstract class PlayerWeapon : DatabaseEntry, ILootEntry, IProjectileEmitt
         }
 
     }
-    public abstract void Fire(Vector2 direction);
+    public abstract void Fire(Vector2 direction, Vector2 firePoint);
+
+    protected virtual void FireSingle(ProjectileData projectile, Vector2 direction, Vector2 firePoint, bool useAmmo = true)
+    {
+
+        var hitData = new HitData(projectile.damage, AttackType.Projectile, isPlayerAttack: true)
+        {
+            sourcePos = firePoint,
+            knockbackDirection = direction,
+            knockbackForce = projectile.knockback,
+
+            hitstopTime = projectile.hitstopDuration,
+            hitstunTime = projectile.hitstunTime,
+
+            isParryable = projectile.isParryable,
+            isBlockable = projectile.isBlockable
+        };
+
+        hitData.AddModifier(p.Stats.Get(StatRef.PlayerOutgoingDamageMult) - 1f, StatModType.PercentAdd, p.Combat);
+        hitData.AddModifier(p.Stats.Get(StatRef.PlayerRangedDamageMult) - 1f, StatModType.PercentAdd, p.Combat);
+
+        p.Upgrades.ModifyOutgoingHit(hitData);
+
+        ProjectilePools.FireProjectile(this, projectile, hitData, firePoint, direction);
+
+        if (useAmmo)
+        {
+            currentAmmo--;
+            ammoUsedEvent?.Invoke(currentAmmo);
+        }
+    }
 }

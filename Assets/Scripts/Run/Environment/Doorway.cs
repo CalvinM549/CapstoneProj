@@ -10,6 +10,10 @@ public class Doorway : MonoBehaviour
 
     [SerializeField] private DoorwayPreviewUI previewUI;
 
+    [SerializeField] private Sprite indicatorIcon;
+    [SerializeField] private Transform indicatorPos;
+
+
     private int isOpenHash = Animator.StringToHash("isOpen");
     
     public Transform entryPoint;
@@ -21,9 +25,9 @@ public class Doorway : MonoBehaviour
     public MapNode Destination {  get; private set; }
     public bool IsLocked { get; private set; } = true;
 
-    private void Awake()
+    private void OnDisable()
     {
-        //if(animator == null) animator = GetComponent<Animator>();
+        HUDIndicatorService.Instance.RemoveIndicator(transform);
     }
 
     public void SetDestination(MapNode node)
@@ -68,6 +72,8 @@ public class Doorway : MonoBehaviour
         if (animator != null)
             animator.SetBool(isOpenHash, true);
         // Trigger animation
+
+        HUDIndicatorService.Instance.SpawnIndicator(transform, indicatorIcon, doPing: false);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

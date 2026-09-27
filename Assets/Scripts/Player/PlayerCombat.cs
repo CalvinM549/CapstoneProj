@@ -42,6 +42,9 @@ public class PlayerCombat : MonoBehaviour
     private float comboCooldownTimer = 0f;
 
     // Ranged
+    [SerializeField] private DroneWeaponCarrier dronePrefab;
+    private DroneWeaponCarrier activeDrone;
+
     public PlayerWeapon EquippedWeapon { get; private set; }
     public bool RangedWeaponEquipped => EquippedWeapon != null;
 
@@ -81,6 +84,11 @@ public class PlayerCombat : MonoBehaviour
 
         meleeBuffer = new InputBuffer(0.1f);
         rangedBuffer = new InputBuffer(0.1f);
+
+        // move to equip
+
+        activeDrone = Instantiate(dronePrefab, transform.parent);
+        activeDrone.player = p;
     }
 
     private void Start()
@@ -408,7 +416,7 @@ public class PlayerCombat : MonoBehaviour
 
         if (EquippedWeapon.fireType == FireType.Independent)
         {
-            EquippedWeapon.Fire(GetAttackDirection(AttackType.Projectile));
+            EquippedWeapon.Fire(GetAttackDirection(AttackType.Projectile), activeDrone.FireOrigin);
             return;
         }
 
@@ -439,7 +447,7 @@ public class PlayerCombat : MonoBehaviour
         // ACTIVE
         currentState = CombatState.Active;
         Vector2 direction = GetAttackDirection(AttackType.Projectile);
-        weapon.Fire(direction);
+        weapon.Fire(direction, activeDrone.FireOrigin);
 
         yield return new WaitForSeconds(weapon.activeTime);
 
@@ -589,22 +597,9 @@ public class PlayerCombat : MonoBehaviour
 
     private void HandleDashStart()
     {
-        //dashAttackWindow = true;
-
         StartDashCancelWindow();
         InterruptRecovery();
     }
-
-    //private void HandleDashEnd()
-    //{
-    //    StartCoroutine(DashWindowRoutine());
-    //}
-
-    //private IEnumerator DashWindowRoutine()
-    //{
-    //    yield return new WaitForSeconds(data.dashExtraWindow);
-    //    dashAttackWindow = false;
-    //}
 
     private void StartDashCancelWindow()
     {

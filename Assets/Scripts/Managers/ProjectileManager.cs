@@ -8,7 +8,6 @@ public class ProjectileManager : MonoBehaviour
 {
     public static ProjectileManager Instance;
 
-
     private class PoolEntry
     {
         public ObjectPool<Projectile> pool;
@@ -54,6 +53,8 @@ public class ProjectileManager : MonoBehaviour
         poolEntry.userCount--;
         if (poolEntry.userCount <= 0)
         {
+            poolEntry.pool.Clear();
+
             activePools.Remove(projectile);
             //Debug.Log($"[ProjectileManager] {projectile.name} pool removed");
         }
@@ -61,6 +62,7 @@ public class ProjectileManager : MonoBehaviour
 
     public Projectile FireProjectile(
         ProjectileData projectile,
+        HitData hitData,
         Vector2 firePos, 
         Vector2 direction, 
         bool isPlayerProjectile = false)
@@ -70,7 +72,7 @@ public class ProjectileManager : MonoBehaviour
 
         Projectile currentProjectile = poolEntry.pool.Get();
         currentProjectile.transform.position = firePos;
-        currentProjectile.Initalize(projectile, direction, firePos, ReturnToPool, isPlayerProjectile);
+        currentProjectile.Initialize(projectile, hitData, direction, firePos, ReturnToPool, isPlayerProjectile);
 
         return currentProjectile;
     }
@@ -82,5 +84,13 @@ public class ProjectileManager : MonoBehaviour
 
         else
             projectile.gameObject.SetActive(false);
+    }
+
+    public void ClearAllPools()
+    {
+        foreach(var entry in activePools.Values)
+            entry.pool.Clear();
+
+        activePools.Clear();
     }
 }

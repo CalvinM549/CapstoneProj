@@ -4,15 +4,21 @@ using UnityEngine;
 
 public class KillAllEnemiesHandler : MonoBehaviour, IObjectiveTracker
 {
+    private EnemyService enemyService;
+    private RoomManager room;
+
     public event Action OnEncounterCleared;
     public event Action<float> OnProgressChanged;
 
     private int startEnemies;
     private int currentEnemies;
 
-    public void Reset()
+    private int totalEnemies;
+    private int enemiesKilled;
+
+    private void Awake()
     {
-        //
+        room = GetComponent<RoomManager>();
     }
 
     private void OnDisable()
@@ -22,6 +28,8 @@ public class KillAllEnemiesHandler : MonoBehaviour, IObjectiveTracker
 
     public void Setup(RoomData room, RunState run)
     {
+        enemyService = RunManager.Instance.enemyService;
+
         var enemies = FindObjectsByType<EnemyController>(FindObjectsSortMode.None);
         startEnemies = enemies.Length;
         currentEnemies = startEnemies;

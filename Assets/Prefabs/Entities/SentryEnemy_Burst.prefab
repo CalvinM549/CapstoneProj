@@ -283,13 +283,13 @@ GameObject:
   - component: {fileID: 8107065280727358240}
   - component: {fileID: 2621895607124036595}
   - component: {fileID: 3108158908165989089}
-  - component: {fileID: -411551462821502722}
   - component: {fileID: 1577401330717255328}
   - component: {fileID: 5875639385763828447}
   - component: {fileID: 1158100212670289406}
   - component: {fileID: 6567632816481895069}
   - component: {fileID: 5503192390672346386}
   - component: {fileID: 8818470859561995703}
+  - component: {fileID: 1692961694940743970}
   m_Layer: 8
   m_Name: SentryEnemy_Burst
   m_TagString: Enemy
@@ -360,27 +360,6 @@ MonoBehaviour:
   profile: {fileID: 11400000, guid: 95aea7d8549a16a479308147e8771809, type: 2}
   rb: {fileID: 6567632816481895069}
   self: {fileID: 8107065280727358240}
---- !u!114 &-411551462821502722
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3209857631965518025}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3766bec6b27d20f49a0b5dd4d04af946, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BurstAttackExecutor
-  attackData: {fileID: 11400000, guid: 74d360a8b45227048bc693fb017deb48, type: 2}
-  firePos: {fileID: 1641652615450869957}
-  spreadAngle: 15
-  shootFlashFX: 0
-  laserSight: {fileID: 2790749708199632404}
-  projectiles:
-  - {fileID: 11400000, guid: 01066313aac4e63428ff95025550a777, type: 2}
-  burstCount: 3
-  burstInterval: 0.12
 --- !u!114 &1577401330717255328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -404,7 +383,6 @@ MonoBehaviour:
   showDuration: 0.1
   delayFillDelay: 0.5
   delayFillDuration: 1
-  damageForMaxScale: 100
   hitPunchScale: 0.15
   hitPunchDuration: 0.3
 --- !u!114 &5875639385763828447
@@ -509,6 +487,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bf26c388f270a74f9bb356ce27bca96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatusEffectController
+--- !u!114 &1692961694940743970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3209857631965518025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52af78425c22c064699d4cecafdcdf97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileAttackExecutor
+  attackData: {fileID: 11400000, guid: 74d360a8b45227048bc693fb017deb48, type: 2}
+  shotCount: 3
+  shotInterval: 0
+  spreadAngle: 0
+  firePoint: {fileID: 1641652615450869957}
+  shootFlashFX: 5
+  laserSight: {fileID: 2790749708199632404}
 --- !u!1 &3468195659002386673
 GameObject:
   m_ObjectHideFlags: 0

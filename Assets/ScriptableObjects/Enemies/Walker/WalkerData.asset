@@ -16,7 +16,7 @@ MonoBehaviour:
   enemyName: Walker
   prefab: {fileID: 0}
   cost: 0
-  currencyValue: 0
+  baseCurrencyDrop: 25
   baseHealth: 80
   moveSpeed: 1
   baseDamageMult: 1

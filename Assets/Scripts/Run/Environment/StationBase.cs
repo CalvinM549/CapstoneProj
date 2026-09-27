@@ -77,7 +77,7 @@ public class StationBase : MonoBehaviour, IInteractable
     {
         if (indicatorActive) return;
         indicatorActive = true;
-        HUDIndicatorService.Instance.IndicateStation(indicatorPos, indicatorIcon);
+        HUDIndicatorService.Instance.SpawnIndicator(indicatorPos, indicatorIcon);
     }
 
     protected void RemoveIndicator()

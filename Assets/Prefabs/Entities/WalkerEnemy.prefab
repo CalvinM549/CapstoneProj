@@ -831,14 +831,15 @@ GameObject:
   m_Component:
   - component: {fileID: 3732140446805786319}
   - component: {fileID: 5348890688463699792}
+  - component: {fileID: 8795286921195186393}
   - component: {fileID: 6593309119047845034}
+  - component: {fileID: 3326548528107185677}
   - component: {fileID: 8344917708549136039}
   - component: {fileID: 2044002914489777766}
   - component: {fileID: 3977424246301497259}
   - component: {fileID: -7337528523074580318}
   - component: {fileID: 1821819326195256611}
-  - component: {fileID: 8795286921195186393}
-  - component: {fileID: 3326548528107185677}
+  - component: {fileID: 715829674793934083}
   m_Layer: 8
   m_Name: WalkerEnemy
   m_TagString: Enemy
@@ -880,6 +881,18 @@ MonoBehaviour:
   damageMaterial: {fileID: 2100000, guid: 59148e3b6fbfc0d4abc10ce34622bba0, type: 2}
   hasPlayerLock: 0
   IsIFrame: 0
+--- !u!114 &8795286921195186393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5450977226773447880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3aee36d0e7f4854ca7d46f5b4e3ec21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
 --- !u!114 &6593309119047845034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -907,6 +920,18 @@ MonoBehaviour:
   profile: {fileID: 0}
   rb: {fileID: -7337528523074580318}
   self: {fileID: 3732140446805786319}
+--- !u!114 &3326548528107185677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5450977226773447880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bf26c388f270a74f9bb356ce27bca96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectController
 --- !u!114 &8344917708549136039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -930,7 +955,6 @@ MonoBehaviour:
   showDuration: 0.1
   delayFillDelay: 0.5
   delayFillDuration: 1
-  damageForMaxScale: 100
   hitPunchScale: 0.15
   hitPunchDuration: 0.3
 --- !u!114 &2044002914489777766
@@ -1023,7 +1047,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b2a4c88a4bf47546a449e1b5273bca3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VLSAttackExecutor
-  attackData: {fileID: 11400000, guid: 74d360a8b45227048bc693fb017deb48, type: 2}
+  attackData: {fileID: 11400000, guid: 7d3bcb9f5cac0b3458564f0592a55807, type: 2}
   firePoints:
   - {fileID: 4917937133216604836}
   - {fileID: 245196786240200423}
@@ -1038,7 +1062,7 @@ MonoBehaviour:
     m_Bits: 8
   projectiles:
   - {fileID: 11400000, guid: 378de1946b275b34aba2e663469c276a, type: 2}
---- !u!114 &8795286921195186393
+--- !u!114 &715829674793934083
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1047,21 +1071,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 5450977226773447880}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3aee36d0e7f4854ca7d46f5b4e3ec21, type: 3}
+  m_Script: {fileID: 11500000, guid: ff271153e559709419b86a3b75dc42db, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
---- !u!114 &3326548528107185677
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5450977226773447880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bf26c388f270a74f9bb356ce27bca96, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StatusEffectController
+  m_EditorClassIdentifier: Assembly-CSharp::AOEAttackExecutor
+  attackData: {fileID: 11400000, guid: 7d89b4d960266bb40bb26c812be8d98c, type: 2}
+  radius: 3
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &6285572152154448900
 GameObject:
   m_ObjectHideFlags: 0

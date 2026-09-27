@@ -283,13 +283,13 @@ GameObject:
   - component: {fileID: 8107065280727358240}
   - component: {fileID: 2621895607124036595}
   - component: {fileID: 3108158908165989089}
-  - component: {fileID: 6511229668004776600}
   - component: {fileID: 1577401330717255328}
   - component: {fileID: 5875639385763828447}
   - component: {fileID: 1158100212670289406}
   - component: {fileID: 6567632816481895069}
   - component: {fileID: 5385570669770929141}
   - component: {fileID: 7028144923552595589}
+  - component: {fileID: 4222079588495253163}
   m_Layer: 8
   m_Name: SentryEnemy_Rifle
   m_TagString: Enemy
@@ -360,25 +360,6 @@ MonoBehaviour:
   profile: {fileID: 11400000, guid: 95aea7d8549a16a479308147e8771809, type: 2}
   rb: {fileID: 6567632816481895069}
   self: {fileID: 8107065280727358240}
---- !u!114 &6511229668004776600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3209857631965518025}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0089f77e94e8be4bbcde44f0a103e1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectileAttackExecutor
-  attackData: {fileID: 11400000, guid: 74d360a8b45227048bc693fb017deb48, type: 2}
-  firePos: {fileID: 1641652615450869957}
-  spreadAngle: 0
-  shootFlashFX: 5
-  laserSight: {fileID: 2790749708199632404}
-  projectiles:
-  - {fileID: 11400000, guid: fac50c36672fe6a479235690055d0d00, type: 2}
 --- !u!114 &1577401330717255328
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -506,6 +487,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3aee36d0e7f4854ca7d46f5b4e3ec21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
+--- !u!114 &4222079588495253163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3209857631965518025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52af78425c22c064699d4cecafdcdf97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileAttackExecutor
+  attackData: {fileID: 11400000, guid: a220790ed939fa440a1dc1b1416707e3, type: 2}
+  firePoint: {fileID: 1641652615450869957}
+  shootFlashFX: 5
+  laserSight: {fileID: 2790749708199632404}
 --- !u!1 &3468195659002386673
 GameObject:
   m_ObjectHideFlags: 0

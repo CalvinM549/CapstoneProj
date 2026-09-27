@@ -12,7 +12,7 @@ public class ProjectileData : ScriptableObject
     public float speed;
 
     [Header("Damage")]
-    public int damage;
+    public float damage;
     public DamageType damageType = DamageType.Default;
     public float knockback;
     public float hitstunTime = 0.1f;
@@ -20,6 +20,7 @@ public class ProjectileData : ScriptableObject
 
     [Space]
     public bool isParryable = true;
+    public bool isBlockable = true;
 
     [Header("VFX")]
     public GameObject impactVFXPrefab;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ public class EnemyService
 
     private Dictionary<string, Stack<EnemyController>> pooledEnemies = new();
     private Transform container;
+
+    public event Action OnAllEnemiesCleared;
 
     public EnemyService(EnemyDatabase data, Transform container)
     {
@@ -28,21 +31,35 @@ public class EnemyService
     // Wave Spawner
     // Enemy Spawner / Resetter
 
-    public EnemyController GetEnemy(EnemyData data, Vector2 position) // Add type selector
+    public EnemyController GetEnemy(EnemyData data, Vector2 position)
     {
         var stack = GetOrCreateStack(data.Id);
         EnemyController enemy = stack.Count > 0 ? stack.Pop() : CreateForPool(data);
 
         enemy.transform.position = position;
+        enemy.transform.SetPositionAndRotation(position, Quaternion.identity);
         enemy.gameObject.SetActive(true);
+
         enemy.OnSpawn();
+
+        enemy.OnDeath -= HandleEnemyDeath;
+        enemy.OnDeath += HandleEnemyDeath;
+
         return enemy;
+    }
+
+    private void HandleEnemyDeath(EnemyController enemy)
+    {
+        ReturnToPool(enemy);
     }
 
     public void ReturnToPool(EnemyController enemy)
     {
+        enemy.OnDeath -= HandleEnemyDeath;
+
         enemy.ResetForPool();
         enemy.gameObject.SetActive(false);
+        enemy.transform.SetParent(container, false);
 
         var stack = pooledEnemies[enemy.data.Id];
         stack.Push(enemy);
@@ -50,8 +67,7 @@ public class EnemyService
 
     private EnemyController CreateForPool(EnemyData data)
     {
-        var obj = GameObject.Instantiate(data.prefab);
-        return obj.GetComponent<EnemyController>();
+        return GameObject.Instantiate(data.prefab);
     }
 
     private Stack<EnemyController> GetOrCreateStack(string id)
@@ -64,19 +80,5 @@ public class EnemyService
 
         return stack;
     }
-    
-    // Enemy Wave data object
-    public void SpawnWave(SpawnWave wave)
-    {
-        foreach (WaveEntry entry in wave.entries)
-        {
-            // Get spawn point
-            for (int i = 0; i < entry.count; i++)
-            {
-                GetEnemy(entry.enemyType, Vector2.zero); // Replace with proper spawn pos
-            }
-        }
-    }
-
 }
 

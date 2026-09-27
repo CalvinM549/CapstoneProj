@@ -15,18 +15,12 @@ public static class ProjectilePools
     public static void RequestPool(IProjectileEmitter emitter)
     {
         if (emitter.PoolRequested) return;
-
-        if (ProjectileManager.Instance == null)
-        {
-            Debug.LogError("NO PROJECTILE MANAGER IN SCENE");
-            return;
-        }
+        if (ProjectileManager.Instance == null) return;
 
         foreach (var projectile in emitter.Projectiles)
             ProjectileManager.Instance.RequestPool(projectile);
 
         emitter.PoolRequested = true;
-
     }
 
     public static void ReleasePool(IProjectileEmitter emitter)
@@ -39,9 +33,14 @@ public static class ProjectilePools
         emitter.PoolRequested = false;
     }
 
-    // Firing
+    #region Firing
 
-    public static Projectile FireProjectile(IProjectileEmitter emitter, ProjectileData data, Vector2 firePos, Vector2 direction)
+    public static Projectile FireProjectile(
+        IProjectileEmitter emitter,
+        ProjectileData data, 
+        HitData hitData,
+        Vector2 firePos,
+        Vector2 direction)
     {
         if (!emitter.PoolRequested)
         {
@@ -49,8 +48,29 @@ public static class ProjectilePools
             return null;
         }
 
-        return ProjectileManager.Instance.FireProjectile(data, firePos, direction, emitter.IsPlayerProjectile);
+        return ProjectileManager.Instance.FireProjectile(data, hitData, firePos, direction, emitter.IsPlayerProjectile);
     }
 
-    //public static HomingProjectile FireHomingProjectile() 
+    public static HomingProjectile FireHomingProjectile(
+        IProjectileEmitter emitter,
+        ProjectileData data,
+        HitData hitData,
+        Vector2 firePos, 
+        Vector2 direction,
+        Transform homingTarget)
+    {
+        var projectile = FireProjectile(emitter, data, hitData, firePos, direction);
+
+        if (projectile is HomingProjectile homing)
+        {
+            homing.HomingTarget = homingTarget;
+            return homing;
+        }
+
+        Debug.LogWarning($"[ProjectilePools] FireHomingProjectile called with non-homing ProjectileData '{data.name}'");
+        return null;
+
+    }
+
+    #endregion
 }

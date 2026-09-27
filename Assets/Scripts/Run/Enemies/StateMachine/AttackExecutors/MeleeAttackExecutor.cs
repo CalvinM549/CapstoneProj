@@ -5,6 +5,8 @@ using static UnityEngine.Analytics.IAnalytic;
 public class MeleeAttackExecutor : AttackExecutorBase
 {
     [SerializeField] private EnemyMeleeHitbox hitbox;
+    [SerializeField] private float hitboxRestAngleOffset = 0f;
+
 
     private void OnEnable()
     {
@@ -18,6 +20,17 @@ public class MeleeAttackExecutor : AttackExecutorBase
 
     public override void BeginTelegraph(EnemyAIController ai)
     {
+        HasExecuted = false;
+
+
+        Vector2 dirToTarget = ai.context.target != null
+            ? ((Vector2)ai.context.target.position - (Vector2)transform.position).normalized
+            : (Vector2)transform.right;
+
+        float angle = Mathf.Atan2(dirToTarget.y, dirToTarget.x) * Mathf.Rad2Deg;
+        hitbox.transform.localRotation = Quaternion.Euler(0f, 0f, angle - hitboxRestAngleOffset);
+
+
         if (!string.IsNullOrEmpty(attackData.windupTrigger))
             animator.SetTrigger(attackData.windupTrigger);
     }
@@ -47,6 +60,7 @@ public class MeleeAttackExecutor : AttackExecutorBase
             controller.SetHyperArmour(false);
 
         Executing = false;
+        HasExecuted = true;
     }
 
     public override void Interrupt(EnemyAIController ai)
@@ -58,6 +72,7 @@ public class MeleeAttackExecutor : AttackExecutorBase
             controller.SetHyperArmour(false);
 
         Executing = false;
+        HasExecuted = false;
     }
 
     private void OnHitboxHit(Collider2D collision)

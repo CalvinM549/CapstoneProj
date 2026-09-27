@@ -10,21 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3af60bba6c7078e448a3050d677c41dc, type: 3}
-  m_Name: MovementData
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerData
+  m_Name: V3_MovementData
+  m_EditorClassIdentifier: Assembly-CSharp::MovementData
   inputBufferWindow: 0.1
-  baseSpeed: 14
+  baseSpeed: 12
   maxSpeed: 0
-  acceleration: 80
+  acceleration: 60
   deceleration: 35
-  turnMultiplier: 4
-  dashSpeed: 40
+  turnMultiplier: 3
+  maxSpeedBonus: 6
+  speedBonusDecayRate: 13
+  dashSpeedRetention: 0.7
+  dashSpeed: 35
   dashDuration: 0.15
-  dashExitMultiplier: 0.4
+  dashExitMultiplier: 0.5
+  dashMomentumRetention: 0.6
+  dashMomentumBonusSpeed: 0.15
   maxDashCharges: 2
   dashRechargeTime: 1.5
   dashIFrameDuration: 0.1
-  attackDecelerationMult: 1
+  attackDecelerationMult: 0.25
   recoverySpeedMult: 0.35
   knockbackMultiplier: 1
   pushExitMultiplier: 0.4

@@ -104,14 +104,16 @@ public class AttackState : IEnemyState
         var executor = ai.GetExecutor(ctx.activeExecutorIndex);
         ctx.timeSinceAttack += dt;
 
-        if (ctx.timeSinceAttack >= executor.AttackData.telegraphDuration && !executor.Executing)
-        {
-            executor.Execute(ai);
-        }
-
         if (ctx.timeSinceAttack >= executor.AttackData.winddownDuration + executor.AttackData.telegraphDuration && !executor.Executing)
         {
             ai.ChangeState(ai.PostAttackState);
+            return;
+        }
+
+        if (ctx.timeSinceAttack >= executor.AttackData.telegraphDuration && !executor.Executing && !executor.HasExecuted)
+        {
+            executor.Execute(ai);
+            return;
         }
     }
 

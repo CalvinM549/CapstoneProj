@@ -13,13 +13,12 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
     [SerializeField] private LayerMask groundLayer;
 
     [SerializeField] protected ProjectileData[] projectiles;
-    public ProjectileData[] Projectiles => projectiles;
+    public ProjectileData[] Projectiles => new[] { attackData.projectile };
+
 
     public bool IsPlayerProjectile => false;
 
     public bool PoolRequested { get; set; }
-
-    protected bool hasFired;
 
     private Coroutine barrageRoutine;
 
@@ -35,15 +34,14 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
 
     public override void BeginTelegraph(EnemyAIController ai)
     {
-        ai.GetComponentInChildren<Animator>().Play("FireReady");
-        ai.GetComponentInChildren<Animator>().SetBool("IsFiring", true);
-        hasFired = false;
+        animator.Play("FireReady");
+        animator.SetBool("IsFiring", true);
+
+        HasExecuted = false;
     }
 
     public override void Execute(EnemyAIController ai)
     {
-        if (hasFired) return;
-
         Executing = true;
 
         if (attackData.hasHyperarmour)
@@ -56,7 +54,6 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
         }
 
         barrageRoutine = ai.StartCoroutine(BarrageRoutine(ai));
-        hasFired = true;
     }
 
     private IEnumerator BarrageRoutine(EnemyAIController ai)
@@ -96,11 +93,12 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
             controller.SetHyperArmour(false);
 
         Executing = false;
+        HasExecuted = true;
     }
 
     protected void FireSingle(ProjectileData projectile, Vector2 firePos, Vector2 targetPos)
     {
-        var missile = ProjectileManager.Instance.FireProjectile(projectile, firePos, Vector2.up);
+        var missile = ProjectileManager.Instance.FireProjectile(projectile, null, firePos, Vector2.up);
 
         if (missile is MissileProjectile mp)
         {
@@ -110,6 +108,9 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
 
     public override void Interrupt(EnemyAIController ai)
     {
+        if (attackData.hasHyperarmour)
+            controller.SetHyperArmour(false);
+
         if (barrageRoutine != null)
         {
             ai.GetComponentInChildren<Animator>().SetBool("IsFiring", false);

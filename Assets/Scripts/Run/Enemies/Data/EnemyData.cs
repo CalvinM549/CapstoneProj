@@ -34,6 +34,7 @@ public class WaveEntry
     public string spawnGroupTag; // name of object that unit spawns at
 }
 
+[Serializable]
 public class SpawnWave
 {
     public WaveEntry[] entries;
