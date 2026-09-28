@@ -142,7 +142,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         if (healthSegments.Count > 0)
             ActiveSegment.IsActive = true;
         else
-            PlayerDeath();
+            Die();
     }
 
     private void HandleStructureHealthChanged()
@@ -166,23 +166,21 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         if (DebugManager.GodMode) return;
 
         if (!IsAlive) return;
-        if (IsIframe) return;
         if (p.Tools.TryInterceptWithTool(hit)) return; // For parry tools etc
-        // Do event trigger for upgrades? make event return true maybe
 
-        ApplyKnockback(hit);
-        ApplyHitStun(hit);
+        p.Upgrades.ModifyIncomingHit(hit);
+        GameEvents.PlayerRecievedHit(hit);
+
         ApplyDamage(hit);
         ApplyStatuses(hit);
+        ApplyKnockback(hit);
+        ApplyHitStun(hit);
     }
 
     private void ApplyDamage(HitData hit)
     {
         float defenceMult = p.Stats.Get(StatRef.PlayerIncomingDamageMult);
         hit.AddModifier(defenceMult - 1, StatModType.PercentAdd, this);
-
-        p.Upgrades.ModifyIncomingHit(hit);
-        GameEvents.PlayerRecievedHit(hit);
 
         HealthSegment segment = ActiveSegment;
 
@@ -197,7 +195,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
             
             if (activeHealthIndex < 0)
             {
-                PlayerDeath();
+                Die();
                 return;
             }
             else
@@ -208,8 +206,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
         GameEvents.PlayerHealthChanged(healthSegments);
 
-        if(UseIFrames)
-            GrantIFrames(data.hitIFrameDuration);
+        //GrantIFrames(data.hitIFrameDuration);
     }
 
     private void ApplyStatuses(HitData hit)
@@ -278,24 +275,22 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
     public void RestoreSegments(int count)
     {
-        print($"restoring {count} segments");
-
         if (count <= 0) return;
 
         int healed = 0;
 
-        for (int index = 0; index < healthSegments.Count && healed < count; index++)
+        for (int index = healthSegments.Count - 1; index >= 0 && healed < count; index--)
         {
             HealthSegment currentSegment = healthSegments[index];
             if (!currentSegment.IsDestroyed) continue;
 
             currentSegment.RestoreSegment();
-            healthSegments.Remove(currentSegment);
+
+            healthSegments.RemoveAt(index);
             healthSegments.Insert(0, currentSegment);
 
             activeHealthIndex++;
             healed++;
-            print($"Restoring segment at index : {index}, healed = {healed}");
         }
 
         if(healed < count)
@@ -309,7 +304,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
     #endregion
 
-    private void PlayerDeath()
+    private void Die()
     {
         GameEvents.PlayerHealthChanged(healthSegments);
         IsAlive = false;

@@ -481,7 +481,7 @@ public class PlayerCombat : MonoBehaviour
         {
             currentAmmo = weapon.baseAmmo;
 
-            Debug.Log($"[PlayerCombat] new weapon {weapon.name} equipped");
+            //Debug.Log($"[PlayerCombat] new weapon {weapon.name} equipped");
             ProjectilePools.RequestPool(weapon);
             weapon.OnEquip(p, OnAmmoChanged);
         }

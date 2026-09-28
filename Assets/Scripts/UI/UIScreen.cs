@@ -31,7 +31,7 @@ public class UIScreen : MonoBehaviour
         cg.blocksRaycasts = false;
     }
 
-    public void Initialize() { }
+    public virtual void Initialize() { }
 
     public void Open(object payload)
     {

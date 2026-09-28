@@ -11,12 +11,16 @@ public class GameManager : MonoBehaviour
     {
         Menu,
         Hub,
-        Gameplay
+        Run
     }
 
     public static GameManager Instance;
 
     [SerializeField] private GameDatabase db;
+    public static GameDatabase Database => Instance.db;
+
+    [SerializeField] private MaterialDatabase materials;
+    public static MaterialDatabase Materials => Instance.materials;
 
     public GameState CurrentState => currentState;
     private GameState currentState;
@@ -25,9 +29,9 @@ public class GameManager : MonoBehaviour
     private MetaProgressionService metaProgression;
 
     [SerializeField] private LayerMask groundLayer;
-    public LayerMask GroundLayer => groundLayer;
+    public static LayerMask GroundLayer => Instance.groundLayer;
     [SerializeField] private LayerMask wallLayer;
-    public LayerMask WallLayer => wallLayer;
+    public static LayerMask WallLayer => Instance.wallLayer;
 
 
     [SerializeField] private Texture2D combatCursor;
@@ -77,7 +81,7 @@ public class GameManager : MonoBehaviour
                 break;
 
             case SceneLoader.RUN:
-                currentState = GameState.Gameplay;
+                currentState = GameState.Run;
                 SetCursorActive(false);
                 RunManager.Instance.InitializeRun();
                 break;

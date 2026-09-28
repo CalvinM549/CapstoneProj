@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bf1781972c34fb439257155e9334df9, type: 3}
-  m_Name: HealthData
-  m_EditorClassIdentifier: Assembly-CSharp::HealthData
-  hitIFrameDuration: 0.2
-  segmentBaseCount: 5
-  segmentMaxHealth: 100
+  m_Script: {fileID: 11500000, guid: 1361504ee5eaa4d488304a5114677d85, type: 3}
+  m_Name: MaterialDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::MaterialDatabase
+  HitMaterial: {fileID: 2100000, guid: 59148e3b6fbfc0d4abc10ce34622bba0, type: 2}

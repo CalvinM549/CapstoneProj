@@ -33,6 +33,8 @@ public class RoomDatabase : CategorizedContentDatabase<RoomData, RoomType>
         }
     }
 
+#if UNITY_EDITOR
+
     [ContextMenu("Auto-Populate All Items")]
     private void AutoFill()
     {
@@ -45,4 +47,6 @@ public class RoomDatabase : CategorizedContentDatabase<RoomData, RoomType>
         EditorUtility.SetDirty(this);
         Debug.Log($"[{name}] populated {entries.Length} entries");
     }
+
+#endif
 }

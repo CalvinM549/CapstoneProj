@@ -812,7 +812,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9e8a43dd066c574089b771b304e21b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  db: {fileID: 0}
+  db: {fileID: 11400000, guid: 2e6ffc4f57ba51f428c00a9eb207ee3f, type: 2}
+  materials: {fileID: 11400000, guid: 78a15f286955b9a469efc83630271e9a, type: 2}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8

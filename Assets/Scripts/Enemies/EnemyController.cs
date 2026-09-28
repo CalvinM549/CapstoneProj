@@ -125,7 +125,10 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     #endregion
 
-    public void SetHyperArmour(bool active) => hyperArmourActive = active;
+    public void SetHyperArmour(bool active)
+    {
+        hyperArmourActive = active;
+    }
 
     #region Taking Damage
 
@@ -143,18 +146,18 @@ public class EnemyController : MonoBehaviour, IDamageable
         {
             if (CanBeStaggered)
             {
+
                 ai.ChangeState(EnemyStates.Staggered);
                 ai.context.staggerTimer = hit.hitstunTime;
-            }
 
-            ApplyKnockback(hit.knockbackDirection, hit.knockbackForce);
-
-            if (IsAlive)
-            {
                 if (hitFXRoutine != null)
                     StopCoroutine(hitFXRoutine);
                 hitFXRoutine = StartCoroutine(HitFXRoutine(hit.hitstunTime));
+
+                ApplyKnockback(hit.knockbackDirection, hit.knockbackForce);
             }
+
+
         }
 
         OnHit?.Invoke(currentHealth, data.baseHealth, hit);

@@ -58,6 +58,9 @@ public class AIManager : MonoBehaviour
             return false;
         }
 
+        if (!ai.profile.requireLineOfSight)
+            return true;
+
         Vector2 dir = (target.position - ai.Self.position).normalized;
         int hits = Physics2D.RaycastNonAlloc(ai.Self.position, dir, losHitBuffer, dist, ai.profile.obstacleLayer);
         return hits == 0;

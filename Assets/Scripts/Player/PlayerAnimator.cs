@@ -22,7 +22,6 @@ public class PlayerAnimator : MonoBehaviour
     [Header("Config")]
 
     private Material baseMaterial;
-    [SerializeField] private Material hitMaterial;
 
     private void Awake()
     {
@@ -219,7 +218,7 @@ public class PlayerAnimator : MonoBehaviour
 
     private IEnumerator HitFeedbackRoutine(float duration)
     {
-        sr.material = hitMaterial;
+        sr.material = GameManager.Materials.HitMaterial;
 
         yield return new WaitForSeconds(duration);
 

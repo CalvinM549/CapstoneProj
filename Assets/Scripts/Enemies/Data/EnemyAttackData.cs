@@ -1,8 +1,18 @@
 using UnityEngine;
 
+public enum AttackRole
+{
+    Primary,
+    Punish
+}
+
 [CreateAssetMenu(menuName = "Enemy/EnemyWeaponData")]
 public class EnemyAttackData : ScriptableObject
 {
+    [Header("Selection")]
+    public int priority;
+    public AttackRole role = AttackRole.Primary;
+
     [Header("Config")]
     public float attackRange;
     public float telegraphDuration;

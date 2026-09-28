@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b487034a4745f43960c0feb63f441c, type: 3}
   m_Name: KiterWeaponData
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackData
+  priority: 0
+  role: 0
   attackRange: 7
   telegraphDuration: 0.7
   winddownDuration: 0.3
@@ -19,7 +21,7 @@ MonoBehaviour:
   windupTrigger: 
   activeTrigger: 
   winddownTrigger: 
-  projectile: {fileID: 11400000, guid: 01066313aac4e63428ff95025550a777, type: 2}
+  projectile: {fileID: 11400000, guid: b27227462d064504fb686097a5a40093, type: 2}
   projectileCount: 10
   spreadAngle: 10
   shotInterval: 0.1

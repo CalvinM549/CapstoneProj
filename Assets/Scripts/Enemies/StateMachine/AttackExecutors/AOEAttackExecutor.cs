@@ -4,30 +4,39 @@ using UnityEngine;
 
 public class AOEAttackExecutor : AttackExecutorBase
 {
-    [SerializeField] private float radius;
     [SerializeField] private LayerMask targetLayer;
+
+    [SerializeField] private Transform attackOrigin;
+    [SerializeField] private GameObject telegraphPrefab;
+
+    private GameObject activeTelegraph;
 
     public override void BeginTelegraph(EnemyAIController ai)
     {
         if (!string.IsNullOrEmpty(attackData.windupTrigger))
             animator.SetTrigger(attackData.windupTrigger);
 
+        if (attackData.hasHyperarmour)
+            controller.SetHyperArmour(true);
+
         // Do vfx telegraph
+        activeTelegraph = Instantiate(telegraphPrefab, attackOrigin);
     }
 
     public override void Execute(EnemyAIController ai)
     {
         Executing = true;
 
-        if (attackData.hasHyperarmour)
-            controller.SetHyperArmour(true);
-
-
         if (!string.IsNullOrEmpty(attackData.activeTrigger))
+        {
             animator.SetTrigger(attackData.activeTrigger);
+
+        }
 
         DealAreaDamage();
         StartCoroutine(FinishAfterWinddown());
+
+        Destroy(activeTelegraph);
     }
 
     private IEnumerator FinishAfterWinddown()
@@ -47,18 +56,19 @@ public class AOEAttackExecutor : AttackExecutorBase
         if(attackData.hasHyperarmour)
             controller.SetHyperArmour(false);
 
+        Destroy(activeTelegraph);
         Executing = false;
     }
 
     private void DealAreaDamage()
     {
-        var hits = Physics2D.OverlapCircleAll(transform.position, radius, targetLayer);
+        var hits = Physics2D.OverlapCircleAll(transform.position, attackData.attackRange, targetLayer);
         var alreadyHit = new HashSet<IDamageable>();
 
         foreach (var col in hits)
         {
-            if (col.TryGetComponent<IDamageable>(out var target)) return;
-            if(!alreadyHit.Add(target)) continue;
+            if (!col.TryGetComponent<IDamageable>(out var target)) continue;
+            if (!alreadyHit.Add(target)) continue;
 
 
             Vector2 dir = ((Vector2)col.transform.position - (Vector2)transform.position).normalized;
@@ -78,8 +88,19 @@ public class AOEAttackExecutor : AttackExecutorBase
 
             hit.AddModifier(controller.Stats.Get(StatRef.EnemyOutgoingDamageMult) - 1f, StatModType.PercentAdd, this);
 
+            print($"hit {col.gameObject.name}");
             target.RecieveHit(hit);
 
         }
     }
+
+
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, attackData.attackRange);
+    }
+#endif
 }

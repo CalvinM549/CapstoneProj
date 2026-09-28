@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b487034a4745f43960c0feb63f441c, type: 3}
   m_Name: WalkerMeleeAttack
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackData
-  attackRange: 3
-  telegraphDuration: 2
+  priority: 1
+  role: 1
+  attackRange: 4
+  telegraphDuration: 1.3
   winddownDuration: 1
   hasHyperarmour: 1
   windupTrigger: SlamWindup
@@ -24,9 +26,9 @@ MonoBehaviour:
   spreadAngle: 0
   shotInterval: 0
   attackType: 1
-  baseDamage: 20
-  knockbackForce: 5
-  hitstunTime: 0.8
+  baseDamage: 100
+  knockbackForce: 20
+  hitstunTime: 0.2
   hitstopTime: 0.8
   isBlockable: 0
   isParryable: 0

@@ -7383,6 +7383,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2141913219}
+  - component: {fileID: 2141913220}
+  - component: {fileID: 2141913221}
   m_Layer: 0
   m_Name: CoreScreen
   m_TagString: Untagged
@@ -7409,6 +7411,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2141913220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2141913218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6da05b6519df0514380075d5f187287f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HubBaseScreen
+  screenName: hubDefaultScreen
+  pausesGame: 0
+  blockPlayerInput: 0
+  blockUIInput: 0
+  showCursor: 0
+  cg: {fileID: 2141913221}
+  db: {fileID: 0}
+--- !u!225 &2141913221
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2141913218}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

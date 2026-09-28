@@ -9,7 +9,10 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
     [SerializeField] protected LineRenderer laserSight;
 
     private Transform targetPos;
+    private EnemyAIController aiController;
     protected Vector2 laserAdjustment;
+
+    private readonly RaycastHit2D[] laserHitBuffer = new RaycastHit2D[1];
 
     // Interface
     public ProjectileData[] Projectiles => new[] { attackData.projectile };
@@ -32,25 +35,46 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
 
     private void Update()
     {
-        if (laserSight != null && laserSight.enabled && targetPos != null)
+        if (laserSight != null && laserSight.enabled)
+            UpdateLaserSight();
+    }
+
+    private void UpdateLaserSight()
+    {
+        if(targetPos == null || aiController == null) return;
+
+        Vector2 origin = firePoint.position;
+        Vector2 targetPoint = (Vector2)targetPos.position + laserAdjustment;
+        Vector2 toTarget = targetPoint - origin;
+        float distance = toTarget.magnitude;
+
+        Vector2 endPoint = targetPoint;
+
+        if (distance > 0.0001f)
         {
-            laserSight.SetPosition(1, (Vector2)targetPos.position + laserAdjustment);
-            laserSight.SetPosition(0, firePoint.position);
+            Vector2 direction = toTarget / distance;
+            int hits = Physics2D.RaycastNonAlloc(origin, direction, laserHitBuffer, distance, aiController.profile.obstacleLayer);
+
+            if (hits > 0)
+                endPoint = laserHitBuffer[0].point;
         }
+
+        laserSight.SetPosition(0, origin);
+        laserSight.SetPosition(1, endPoint);
     }
 
     public override void BeginTelegraph(EnemyAIController ai)
     {
         targetPos = ai.context.target;
+        aiController = ai;
         HasExecuted = false;
 
-        if (laserSight != null)
+        if (laserSight != null && targetPos != null)
         {
             laserAdjustment = Random.insideUnitCircle * 0.5f;
 
             laserSight.enabled = true;
-            laserSight.SetPosition(1, (Vector2)targetPos.position + laserAdjustment);
-            laserSight.SetPosition(0, firePoint.localPosition);
+            UpdateLaserSight();
         }
 
         if(!string.IsNullOrEmpty(attackData.windupTrigger))

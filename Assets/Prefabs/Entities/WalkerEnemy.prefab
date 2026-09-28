@@ -481,7 +481,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4046511264064531383
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1079,6 +1079,8 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 128
+  attackOrigin: {fileID: 3732140446805786319}
+  telegraphPrefab: {fileID: 218590311699264157, guid: 5d196bc5d7140714bbdedb4febf859c8, type: 3}
 --- !u!1 &6285572152154448900
 GameObject:
   m_ObjectHideFlags: 0

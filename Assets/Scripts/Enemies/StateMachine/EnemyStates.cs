@@ -43,11 +43,11 @@ public class MoveIntoRangeState : IEnemyState
     public void Enter(EnemyAIController ai)
     {
         var ctx = ai.context;
-        var executor = ai.GetValidExecutor();
+        var executor = ai.GetPrimaryExecutor();
 
         if (executor != null)
         {
-            ctx.currentAttackRange = ai.GetValidExecutor().AttackData.attackRange;
+            ctx.currentAttackRange = ai.GetPrimaryExecutor().AttackData.attackRange;
         }
     }
 
@@ -61,8 +61,11 @@ public class MoveIntoRangeState : IEnemyState
             return;
         }
 
-        Vector2 toTarget = (Vector2)ctx.target.position - ai.Body.position;
-        ctx.distanceToTarget = toTarget.magnitude;
+        if (ai.GetPunishExecutor() != null)
+        {
+            ai.ChangeState(EnemyStates.Attack);
+            return;
+        }
 
         if (ctx.distanceToTarget < ctx.currentAttackRange && AIManager.Instance.TryFindTarget(ai, out var target))
         {
@@ -70,7 +73,7 @@ public class MoveIntoRangeState : IEnemyState
             return;
         }
 
-        Vector2 dir = toTarget.normalized;
+        Vector2 dir = ((Vector2)ctx.target.position - ai.Body.position).normalized;
         ai.Body.linearVelocity = dir * ai.speedStat.Value;
     }
 
@@ -145,6 +148,12 @@ public class RepositionState : IEnemyState
             return;
         }
 
+        if (ai.GetPunishExecutor() != null)
+        {
+            ai.ChangeState(EnemyStates.Attack);
+            return;
+        }
+
         ctx.stateTimer -= dt;
 
         if (ai.speedStat.Value > 0f)
@@ -163,8 +172,6 @@ public class RepositionState : IEnemyState
 
         if (ctx.stateTimer <= 0f)
             ai.ChangeState(EnemyStates.MoveIntoRange);
-
-
     }
 
     public void Exit(EnemyAIController ai)
@@ -178,7 +185,6 @@ public class StaggeredState : IEnemyState
 {
     public void Enter(EnemyAIController ai)
     {
-        // Do animation change
     }
 
     public void Tick(EnemyAIController ai, float dt)

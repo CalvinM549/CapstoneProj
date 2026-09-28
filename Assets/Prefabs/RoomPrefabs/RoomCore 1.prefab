@@ -22013,6 +22013,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SentryEnemy 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3209857631965518025, guid: 81495c7e28177f244a0f84f6a871be7f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8107065280727358240, guid: 81495c7e28177f244a0f84f6a871be7f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 17.915554
@@ -22147,6 +22151,10 @@ PrefabInstance:
     - target: {fileID: 3209857631965518025, guid: cb36320a61df2534a98ee71adc7e0f2c, type: 3}
       propertyPath: m_Name
       value: KiterEnemyTest_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3209857631965518025, guid: cb36320a61df2534a98ee71adc7e0f2c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8107065280727358240, guid: cb36320a61df2534a98ee71adc7e0f2c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -22345,6 +22353,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SentryEnemy 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3209857631965518025, guid: 81495c7e28177f244a0f84f6a871be7f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8107065280727358240, guid: 81495c7e28177f244a0f84f6a871be7f, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14.4732685
@@ -22479,6 +22491,10 @@ PrefabInstance:
     - target: {fileID: 3209857631965518025, guid: 81495c7e28177f244a0f84f6a871be7f, type: 3}
       propertyPath: m_Name
       value: SentryEnemy 1 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3209857631965518025, guid: 81495c7e28177f244a0f84f6a871be7f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8107065280727358240, guid: 81495c7e28177f244a0f84f6a871be7f, type: 3}
       propertyPath: m_LocalPosition.x

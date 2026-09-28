@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 218590311699264157}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.11554, y: -6.66243, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -49,7 +49,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MissileRainTelegraph
   indicatorSprite: {fileID: 1020148512365808473}
   missileVisual: {fileID: 8561038822201620657}
-  explosionVFXPrefab: {fileID: 2440599528421495951, guid: 0e6512685a4c1ec4494d9de4be3ea57a, type: 3}
   radius: 5
   timeToDetonate: 0.5
 --- !u!1 &832709621910388066

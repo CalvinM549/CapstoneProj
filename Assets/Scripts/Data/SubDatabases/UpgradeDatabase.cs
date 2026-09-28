@@ -6,6 +6,8 @@ using UnityEngine;
 public class UpgradeDatabase : CategorizedContentDatabase<UpgradeBase, UpgradeSlot>
 {
 
+#if UNITY_EDITOR
+
     [ContextMenu("Auto-Populate All Items")]
     private void AutoFill()
     {
@@ -19,4 +21,5 @@ public class UpgradeDatabase : CategorizedContentDatabase<UpgradeBase, UpgradeSl
         Debug.Log($"[{name}] populated {entries.Length} entries");
     }
 
+#endif
 }

@@ -2,7 +2,12 @@ using UnityEngine;
 
 public class HubBaseScreen : UIScreen
 {
-    [SerializeField] private GameDatabase db;
+    private GameDatabase db;
+
+    public override void Initialize()
+    {
+        db = GameManager.Database;
+    }
 
     public void OnArchiveClicked()
     {
