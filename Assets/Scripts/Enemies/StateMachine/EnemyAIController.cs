@@ -8,7 +8,7 @@ public class EnemyAIController : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI stateDisplay;
 
-    [HideInInspector] public EnemyContext context;
+    [HideInInspector] public EnemyContext context = new();
     public EnemyStats stats {  get; private set; }
     public StatValue speedStat { get; private set; } // cached for performance
 
@@ -74,6 +74,20 @@ public class EnemyAIController : MonoBehaviour
     {
         RefreshTargetInfo();
         currentState?.Tick(this, dt);
+    }
+
+    public Vector2 GetChaseDirection()
+    {
+        Vector2 from = rb.position;
+        Vector2 to = context.target.position;
+
+        Vector2 direct = (to - from).normalized;
+
+        INavigation nav = AIManager.Instance.Nav;
+        if (nav == null || nav.HasClearPath(from, to, profile.agentRadius, profile.obstacleLayer))
+            return direct;
+
+        return nav.TryGetMoveDirection(context.target, from, out Vector2 dir) ? dir : direct;
     }
 
     private void RefreshTargetInfo()
@@ -177,6 +191,8 @@ public class EnemyContext
     public float staggerTimer;
     public bool hasLineOfSight;
 
+    public int repositionSign = 1;
+
     public void Reset()
     {
         target = null;
@@ -192,5 +208,7 @@ public class EnemyContext
 
         staggerTimer = 0f;
         hasLineOfSight = false;
+
+        repositionSign = 1;
     }
 }

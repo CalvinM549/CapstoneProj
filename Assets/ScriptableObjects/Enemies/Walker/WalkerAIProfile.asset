@@ -13,12 +13,16 @@ MonoBehaviour:
   m_Name: WalkerAIProfile
   m_EditorClassIdentifier: Assembly-CSharp::AIProfile
   aggroRange: 20
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  requireLineOfSight: 1
+  agentRadius: 0.3
   repositionDuration: 3
-  moveSpeed: 0.5
-  tickInterval: 0.1
+  repositionSpeedMult: 0
+  repositionAwayFromTarget: 0
+  attackPattern: 
   targetLayer:
     serializedVersion: 2
     m_Bits: 128
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 0
+  tickInterval: 0.1

@@ -9,6 +9,8 @@ public class AOEAttackExecutor : AttackExecutorBase
     [SerializeField] private Transform attackOrigin;
     [SerializeField] private GameObject telegraphPrefab;
 
+    [SerializeField] private ParticleSystem[] executeParticles;
+
     private GameObject activeTelegraph;
 
     public override void BeginTelegraph(EnemyAIController ai)
@@ -21,6 +23,8 @@ public class AOEAttackExecutor : AttackExecutorBase
 
         // Do vfx telegraph
         activeTelegraph = Instantiate(telegraphPrefab, attackOrigin);
+        float diameter = attackData.attackRange * 2;
+        activeTelegraph.transform.localScale = new Vector3(diameter, diameter);
     }
 
     public override void Execute(EnemyAIController ai)
@@ -37,6 +41,9 @@ public class AOEAttackExecutor : AttackExecutorBase
         StartCoroutine(FinishAfterWinddown());
 
         Destroy(activeTelegraph);
+
+        foreach (var particle in executeParticles)
+            particle.Play();
     }
 
     private IEnumerator FinishAfterWinddown()
@@ -91,7 +98,11 @@ public class AOEAttackExecutor : AttackExecutorBase
             print($"hit {col.gameObject.name}");
             target.RecieveHit(hit);
 
+            CameraManager.Instance.CameraShake(2f);
         }
+
+        if(alreadyHit.Count == 0)
+            CameraManager.Instance.CameraShake(0.7f);
     }
 
 
@@ -100,7 +111,7 @@ public class AOEAttackExecutor : AttackExecutorBase
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackData.attackRange);
+        Gizmos.DrawWireSphere(attackOrigin.position, attackData.attackRange);
     }
 #endif
 }

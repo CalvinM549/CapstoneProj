@@ -7429,7 +7429,6 @@ MonoBehaviour:
   blockUIInput: 0
   showCursor: 0
   cg: {fileID: 2141913221}
-  db: {fileID: 0}
 --- !u!225 &2141913221
 CanvasGroup:
   m_ObjectHideFlags: 0

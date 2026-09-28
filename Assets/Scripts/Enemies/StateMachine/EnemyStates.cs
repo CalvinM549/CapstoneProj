@@ -73,7 +73,7 @@ public class MoveIntoRangeState : IEnemyState
             return;
         }
 
-        Vector2 dir = ((Vector2)ctx.target.position - ai.Body.position).normalized;
+        Vector2 dir = ai.GetChaseDirection();
         ai.Body.linearVelocity = dir * ai.speedStat.Value;
     }
 
@@ -130,12 +130,15 @@ public class AttackState : IEnemyState
 public class RepositionState : IEnemyState
 {
     private const float defaultRepositionDuration = 0.3f;
+    private const float wallLookahead = 0.75f;
 
     public void Enter(EnemyAIController ai)
     {
         ai.context.stateTimer = ai.profile.repositionDuration > 0
             ? ai.profile.repositionDuration
             : defaultRepositionDuration;
+
+        ai.context.repositionSign = Random.value < 0.5f ? -1 : 1;
     }
 
     public void Tick(EnemyAIController ai, float dt)
@@ -158,16 +161,24 @@ public class RepositionState : IEnemyState
 
         if (ai.speedStat.Value > 0f)
         {
-            Vector2 toTarget = (Vector2)ctx.target.position - ai.Body.position;
-            Vector2 lateralDir = Vector2.Perpendicular(toTarget.normalized);
+            Vector2 pos = ai.Body.position;
+            Vector2 toTarget = ((Vector2)ctx.target.position - pos).normalized;
+            Vector2 dir = RepositionDirection(ai, toTarget, ctx.repositionSign);
 
-            Vector2 dir = ai.profile.repositionAwayFromTarget
-                ? (lateralDir - toTarget.normalized).normalized
-                : lateralDir;
+            INavigation nav = AIManager.Instance.Nav;
+
+            if (nav != null && !nav.HasClearPath(pos, pos + dir * wallLookahead, ai.profile.agentRadius, ai.profile.obstacleLayer))
+            {
+                ctx.repositionSign = -ctx.repositionSign;
+
+                dir = RepositionDirection(ai, toTarget, ctx.repositionSign);
+
+                if (!nav.HasClearPath(pos, pos + dir * wallLookahead, ai.profile.agentRadius, ai.profile.obstacleLayer))
+                    dir = Vector2.zero;
+            }
 
             float speed = ai.speedStat.Value * (ai.profile.repositionSpeedMult > 0f ? ai.profile.repositionSpeedMult : 1f);
-
-            ai.Body.linearVelocity = lateralDir * speed;
+            ai.Body.linearVelocity = dir * speed;
         }
 
         if (ctx.stateTimer <= 0f)
@@ -179,6 +190,14 @@ public class RepositionState : IEnemyState
         ai.Body.linearVelocity = Vector2.zero;
     }
 
+    private static Vector2 RepositionDirection(EnemyAIController ai, Vector2 toTargetDir, int sign)
+    {
+        Vector2 lateral = Vector2.Perpendicular(toTargetDir) * sign;
+
+        return ai.profile.repositionAwayFromTarget
+            ? (lateral - toTargetDir).normalized
+            : lateral;
+    }
 }
 
 public class StaggeredState : IEnemyState

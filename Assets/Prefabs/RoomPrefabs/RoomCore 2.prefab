@@ -8582,6 +8582,7 @@ GameObject:
   - component: {fileID: 622026299895219854}
   - component: {fileID: 6074118564554837086}
   - component: {fileID: 310529178051923541}
+  - component: {fileID: 320759745312143890}
   m_Layer: 0
   m_Name: RoomCore 2
   m_TagString: Untagged
@@ -8651,6 +8652,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 183d006dfc567534cb5db4a24b87d91d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KillAllEnemiesHandler
+--- !u!114 &320759745312143890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4334108840461421973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11b6176dee59f7d4a98945edf8a7919c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NavGrid
+  floorTilemaps:
+  - {fileID: 7405843413277622633}
+  blockingTilemaps:
+  - {fileID: 653400015625362630}
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  bakeOnStart: 1
+  inflationCells: 1
+  minRebuildInterval: 0.15
+  idleFieldTimeout: 1
 --- !u!1 &4913753357434968116
 GameObject:
   m_ObjectHideFlags: 0

@@ -723,7 +723,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34672b8547ca7bb4e97354ae19b53515, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DebugManager
-  enableGodMode: 0
+  enableGodMode: 1
 --- !u!4 &1361355222
 Transform:
   m_ObjectHideFlags: 0

@@ -11,6 +11,7 @@ public class AIProfile : ScriptableObject
     public bool requireLineOfSight = true;
 
     [Header("Movement")]
+    public float agentRadius = 0.3f;
     public float repositionDuration;
     public float repositionSpeedMult;
 

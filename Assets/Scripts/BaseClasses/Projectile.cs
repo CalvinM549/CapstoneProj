@@ -36,8 +36,6 @@ public class Projectile : MonoBehaviour
         this.direction = direction;
         this.returnToPool = returnToPool;
         this.playerProjectile = playerProjectile;
-
-        if (hitData == null) print("NO HITDATA");
         this.hitData = hitData;
 
         hitTarget = false;

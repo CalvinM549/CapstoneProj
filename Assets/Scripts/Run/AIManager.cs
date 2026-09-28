@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AIManager : MonoBehaviour
@@ -10,6 +11,13 @@ public class AIManager : MonoBehaviour
 
     private Player playerRef;
     private bool initialized = false;
+
+    public INavigation Nav { get; private set; }
+    public void SetNav (INavigation nav) => Nav = nav;
+    public void ClearNav(INavigation nav)
+    {
+        if (Nav == nav) Nav = null;
+    }
 
     private void Awake()
     {
@@ -34,6 +42,8 @@ public class AIManager : MonoBehaviour
     private void Update()
     {
         float now = Time.time;
+        Nav?.Tick(now);
+
         for (int i = 0; i < activeEnemies.Count; i++)
         {
             var ai = activeEnemies[i];

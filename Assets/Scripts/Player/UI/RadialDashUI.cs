@@ -36,9 +36,6 @@ public class RadialDashUI : MonoBehaviour
 
         public void UpdateCharge(float newValue)
         {
-            //tween?.Kill();
-            //tween = fillImage.DOFillAmount(newValue, 0.3f).SetEase(Ease.OutQuart);
-
             fillImage.fillAmount = newValue;
 
             if (newValue >= 0.99f && !charged)
@@ -54,6 +51,8 @@ public class RadialDashUI : MonoBehaviour
             if (newValue < lastValue && charged)
             {
                 charged = false;
+                fillImage.DOKill();
+                fillImage.DOFade(baseColour.a / 2, 0.1f);
             }
 
             lastValue = newValue;
