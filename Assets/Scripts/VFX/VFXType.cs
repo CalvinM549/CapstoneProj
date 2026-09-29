@@ -8,5 +8,6 @@ public enum VFXType
     ExplosionComplex = 3,
     DustPuff = 4,
     ShootIntense = 5,
-    LightningStrike = 6
+    LightningStrike = 6,
+    ShootLight = 7
 }

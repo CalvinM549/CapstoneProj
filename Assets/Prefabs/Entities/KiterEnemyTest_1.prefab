@@ -357,6 +357,7 @@ MonoBehaviour:
     currentAttackRange: 0
     staggerTimer: 0
     hasLineOfSight: 0
+    repositionSign: 1
   profile: {fileID: 11400000, guid: 95aea7d8549a16a479308147e8771809, type: 2}
   rb: {fileID: 6567632816481895069}
   self: {fileID: 8107065280727358240}
@@ -500,11 +501,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileAttackExecutor1
   attackData: {fileID: 11400000, guid: 643b712e4d4aeb446ade6c0de4fbf0d5, type: 2}
-  shotCount: 8
-  shotInterval: 0.1
-  spreadAngle: 10
   firePoint: {fileID: 1641652615450869957}
-  shootFlashFX: 5
+  shootFlashFX: 7
   laserSight: {fileID: 2790749708199632404}
 --- !u!1 &3468195659002386673
 GameObject:

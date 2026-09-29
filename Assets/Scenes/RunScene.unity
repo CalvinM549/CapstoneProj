@@ -16452,6 +16452,10 @@ MonoBehaviour:
     prefab: {fileID: 2852648609306941965, guid: 5d590be88eae6894289a21392f7155df, type: 3}
     initialPoolSize: 2
     maxPoolSize: 4
+  - type: 7
+    prefab: {fileID: 2525816426480259238, guid: c5bde0b51ded7cb4091fd3ad6c8c5dfc, type: 3}
+    initialPoolSize: 2
+    maxPoolSize: 10
   vfxContainer: {fileID: 0}
 --- !u!1 &3690020257475930333
 GameObject:
