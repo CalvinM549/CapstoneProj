@@ -2,13 +2,12 @@
 using DG.Tweening;
 using UnityEngine;
 
-public class TargetReticleUI : MonoBehaviour
+public class EnemyTargetedUI : MonoBehaviour
 {
     private EnemyController owner;
 
     [SerializeField] private CanvasGroup cg;
     [SerializeField] private float rotationSpeed;
-
 
     [SerializeField] private RectTransform rotationAnchor;
 
@@ -21,14 +20,12 @@ public class TargetReticleUI : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEvents.OnLockAcquired += HandleLockAcquired;
-        GameEvents.OnLockDropped += HandleLockDropped;
+        owner.onLockChange += HandleLockChange;
     }
 
     private void OnDisable()
     {
-        GameEvents.OnLockAcquired -= HandleLockAcquired;
-        GameEvents.OnLockDropped -= HandleLockDropped;
+        owner.onLockChange -= HandleLockChange;
 
         cg.DOKill();
     }
@@ -40,24 +37,12 @@ public class TargetReticleUI : MonoBehaviour
         rotationAnchor.Rotate(0f, 0f, rotationSpeed * Time.deltaTime);
     }
 
-    private void HandleLockAcquired(EnemyController enemy)
+    private void HandleLockChange(bool locked)
     {
-        if (enemy != owner) return;
-
-        owner.hasPlayerLock = true;
-
         cg.DOKill();
-        cg.DOFade(0.6f, 0.3f).SetEase(Ease.OutBack);
+
+        float targetValue = locked ? 0.6f : 0f;
+
+        cg.DOFade(targetValue, 0.25f).SetEase(Ease.OutBack);
     }
-
-    private void HandleLockDropped()
-    {
-        if (!owner.hasPlayerLock) return;
-
-        owner.hasPlayerLock = false;
-
-        cg.DOKill();
-        cg.DOFade(0f, 0.1f);
-    }
-
 }

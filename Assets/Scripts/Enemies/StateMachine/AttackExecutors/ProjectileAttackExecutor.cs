@@ -7,6 +7,9 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
 
     [SerializeField] protected VFXType shootFlashFX;
     [SerializeField] protected LineRenderer laserSight;
+    [SerializeField] private float sightStartOffset;
+
+    [SerializeField] private LaserTelegraph laser;
 
     private Transform targetPos;
     private EnemyAIController aiController;
@@ -76,6 +79,9 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
             laserSight.enabled = true;
             UpdateLaserSight();
         }
+
+        if (laser != null)
+            laser.DoTarget(targetPos, 3f, attackData.telegraphDuration);
 
         if(!string.IsNullOrEmpty(attackData.windupTrigger))
             animator.SetTrigger(attackData.windupTrigger);
@@ -155,6 +161,9 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
 
         if(laserSight != null  && laserSight.enabled)
             laserSight.enabled = false;
+
+        if (laser != null)
+            laser.CancelTarget();
 
         Executing = false;
         HasExecuted = false;

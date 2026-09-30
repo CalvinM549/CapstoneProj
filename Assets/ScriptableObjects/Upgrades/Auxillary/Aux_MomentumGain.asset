@@ -22,7 +22,7 @@ MonoBehaviour:
   synergyTags: []
   spawnInShops: 1
   shopPrice: 50
-  maxStacks: 1
+  maxStacks: 5
   statModifiers:
   - statID: player.momentum.gainMult
     value: 0.25

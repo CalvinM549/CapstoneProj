@@ -5,7 +5,6 @@ public interface IProjectileEmitter
     ProjectileData[] Projectiles {  get; }
     bool IsPlayerProjectile { get; }
     bool PoolRequested { get; set; }
-
 }
 
 public static class ProjectilePools
@@ -59,7 +58,7 @@ public static class ProjectilePools
         Vector2 direction,
         Transform homingTarget)
     {
-        var projectile = FireProjectile(emitter, data, hitData, firePos, direction);
+        Projectile projectile = FireProjectile(emitter, data, hitData, firePos, direction);
 
         if (projectile is HomingProjectile homing)
         {
@@ -67,9 +66,11 @@ public static class ProjectilePools
             return homing;
         }
 
+        if (projectile == null)
+            Debug.LogError("Null Projectile found");
+
         Debug.LogWarning($"[ProjectilePools] FireHomingProjectile called with non-homing ProjectileData '{data.name}'");
         return null;
-
     }
 
     #endregion

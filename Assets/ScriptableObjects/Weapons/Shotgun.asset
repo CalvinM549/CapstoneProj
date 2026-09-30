@@ -30,6 +30,6 @@ MonoBehaviour:
   synergyTags: []
   spawnInShops: 1
   shopPrice: 50
-  currentAmmo: 0
+  currentAmmo: 9
   pelletCount: 10
-  spreadAngle: 60
+  spreadAngle: 50

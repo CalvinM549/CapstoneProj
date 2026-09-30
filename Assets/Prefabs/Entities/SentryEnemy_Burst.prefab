@@ -103,7 +103,8 @@ Transform:
   m_LocalPosition: {x: 0.19, y: 1.054, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5651207159303342858}
   m_Father: {fileID: 6904775094899813571}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1396518405988712402
@@ -331,7 +332,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   data: {fileID: 11400000, guid: 7d3de8bc9675fbd4c99dbe75663d82dd, type: 2}
   damageMaterial: {fileID: 2100000, guid: 59148e3b6fbfc0d4abc10ce34622bba0, type: 2}
-  hasPlayerLock: 0
   IsIFrame: 0
 --- !u!114 &3108158908165989089
 MonoBehaviour:
@@ -357,6 +357,7 @@ MonoBehaviour:
     currentAttackRange: 0
     staggerTimer: 0
     hasLineOfSight: 0
+    repositionSign: 1
   profile: {fileID: 11400000, guid: 95aea7d8549a16a479308147e8771809, type: 2}
   rb: {fileID: 6567632816481895069}
   self: {fileID: 8107065280727358240}
@@ -500,12 +501,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileAttackExecutor
   attackData: {fileID: 11400000, guid: 74d360a8b45227048bc693fb017deb48, type: 2}
-  shotCount: 3
-  shotInterval: 0
-  spreadAngle: 0
   firePoint: {fileID: 1641652615450869957}
   shootFlashFX: 5
-  laserSight: {fileID: 2790749708199632404}
+  laserSight: {fileID: 0}
+  sightStartOffset: 0
+  laser: {fileID: 6782208966874941408}
 --- !u!1 &3468195659002386673
 GameObject:
   m_ObjectHideFlags: 0
@@ -712,7 +712,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6055368951698142747
 Transform:
   m_ObjectHideFlags: 0
@@ -1246,3 +1246,76 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!1001 &4261400351891562203
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1641652615450869957}
+    m_Modifications:
+    - target: {fileID: 2744512187851302021, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+      propertyPath: m_Name
+      value: LaserTelegraph
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.08667001
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.72774005
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+--- !u!4 &5651207159303342858 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+  m_PrefabInstance: {fileID: 4261400351891562203}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6782208966874941408 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7294905701690005819, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
+  m_PrefabInstance: {fileID: 4261400351891562203}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74d806776f2c56b41bb85ed68dda6b45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LaserTelegraph

@@ -28,7 +28,8 @@ public class EnemyController : MonoBehaviour, IDamageable
     protected Animator animator;
     protected Rigidbody2D rb;
     
-    public bool hasPlayerLock;
+    public bool hasPlayerLock { get; private set;  }
+    public event Action<bool> onLockChange;
 
     protected float currentHealth;
     public float PercentHealth => currentHealth / data.baseHealth;
@@ -69,6 +70,20 @@ public class EnemyController : MonoBehaviour, IDamageable
         OnSpawn();
     }
 
+    private void OnEnable()
+    {
+        GameEvents.OnLockAcquired += HandleLockAcquired;
+        GameEvents.OnLockDropped += HandleLockDropped;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnLockAcquired -= HandleLockAcquired;
+        GameEvents.OnLockDropped -= HandleLockDropped;
+
+        AIManager.Instance.UnregisterEnemy(ai);
+    }
+
     private void Update()
     {
         if (!IsIFrame)
@@ -82,10 +97,6 @@ public class EnemyController : MonoBehaviour, IDamageable
         }
     }
 
-    private void OnDisable()
-    {
-        AIManager.Instance.UnregisterEnemy(ai);
-    }
 
     #region Spawning / Despawning
 
@@ -124,6 +135,22 @@ public class EnemyController : MonoBehaviour, IDamageable
     }
 
     #endregion
+
+    private void HandleLockAcquired(EnemyController enemy)
+    {
+        if (enemy != this) return;
+
+        hasPlayerLock = true;
+        onLockChange?.Invoke(true);
+    }
+
+    private void HandleLockDropped()
+    {
+        if (!hasPlayerLock) return;
+
+        hasPlayerLock = false;
+        onLockChange?.Invoke(false);
+    }
 
     public void SetHyperArmour(bool active)
     {

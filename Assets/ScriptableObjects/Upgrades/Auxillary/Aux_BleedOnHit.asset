@@ -22,7 +22,7 @@ MonoBehaviour:
   synergyTags: []
   spawnInShops: 1
   shopPrice: 50
-  maxStacks: 1
+  maxStacks: 3
   statModifiers: []
   statusData: {fileID: 11400000, guid: 8fedeb4ba8d97014f9a77c1e71d82e90, type: 2}
   bleedStacksPerHit: 1

@@ -16,11 +16,12 @@ MonoBehaviour:
   poolSize: 10
   lifetime: 0.4
   speed: 25
-  damage: 5
+  damage: 7
   damageType: 0
   knockback: 3
   hitstunTime: 0.2
   hitstopDuration: 0.2
   isParryable: 1
+  isBlockable: 1
   impactVFXPrefab: {fileID: 0}
   expireVFXPrefab: {fileID: 322882815777838680, guid: 55e175f5de6bcec488c252716af9914e, type: 3}

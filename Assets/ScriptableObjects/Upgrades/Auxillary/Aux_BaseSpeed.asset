@@ -18,9 +18,11 @@ MonoBehaviour:
   effectText: Increase Speed by 5%
   icon: {fileID: 4066830363745794116, guid: df393a1c4f8a5ac4ba2113d56c4718ee, type: 3}
   slot: 4
-  maxStacks: 1
   baseDropRate: 1
   synergyTags: []
+  spawnInShops: 1
+  shopPrice: 50
+  maxStacks: 5
   statModifiers:
   - statID: player.movement.baseSpeed
     value: 0.05
