@@ -6,16 +6,12 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
     [SerializeField] protected Transform firePoint;
 
     [SerializeField] protected VFXType shootFlashFX;
-    [SerializeField] protected LineRenderer laserSight;
     [SerializeField] private float sightStartOffset;
 
     [SerializeField] private LaserTelegraph laser;
 
     private Transform targetPos;
     private EnemyAIController aiController;
-    protected Vector2 laserAdjustment;
-
-    private readonly RaycastHit2D[] laserHitBuffer = new RaycastHit2D[1];
 
     // Interface
     public ProjectileData[] Projectiles => new[] { attackData.projectile };
@@ -23,48 +19,9 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
     public bool IsPlayerProjectile => false;
     public bool PoolRequested {  get; set; }
 
-    private void OnEnable()
-    {
-        if(laserSight != null)
-            laserSight.enabled = false;
+    private void OnEnable() => ProjectilePools.RequestPool(this);
 
-        ProjectilePools.RequestPool(this);
-    }
-
-    private void OnDisable()
-    {
-        ProjectilePools.ReleasePool(this);
-    }
-
-    private void Update()
-    {
-        if (laserSight != null && laserSight.enabled)
-            UpdateLaserSight();
-    }
-
-    private void UpdateLaserSight()
-    {
-        if(targetPos == null || aiController == null) return;
-
-        Vector2 origin = firePoint.position;
-        Vector2 targetPoint = (Vector2)targetPos.position + laserAdjustment;
-        Vector2 toTarget = targetPoint - origin;
-        float distance = toTarget.magnitude;
-
-        Vector2 endPoint = targetPoint;
-
-        if (distance > 0.0001f)
-        {
-            Vector2 direction = toTarget / distance;
-            int hits = Physics2D.RaycastNonAlloc(origin, direction, laserHitBuffer, distance, aiController.profile.obstacleLayer);
-
-            if (hits > 0)
-                endPoint = laserHitBuffer[0].point;
-        }
-
-        laserSight.SetPosition(0, origin);
-        laserSight.SetPosition(1, endPoint);
-    }
+    private void OnDisable() => ProjectilePools.ReleasePool(this);
 
     public override void BeginTelegraph(EnemyAIController ai)
     {
@@ -72,38 +29,22 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
         aiController = ai;
         HasExecuted = false;
 
-        if (laserSight != null && targetPos != null)
-        {
-            laserAdjustment = Random.insideUnitCircle * 0.5f;
-
-            laserSight.enabled = true;
-            UpdateLaserSight();
-        }
-
         if (laser != null)
             laser.DoTarget(targetPos, 3f, attackData.telegraphDuration);
 
         if(!string.IsNullOrEmpty(attackData.windupTrigger))
             animator.SetTrigger(attackData.windupTrigger);
-
-        //animator.Play("FireReady");
-        // any other things
     }
 
 
     public override void Execute(EnemyAIController ai)
     {
-        if (laserSight != null && laserSight.enabled)
-            laserSight.enabled = false;
-
         Executing = true;
         
         if(attackData.hasHyperarmour)
             controller.SetHyperArmour(true);
 
         StartCoroutine(FireRoutine(ai));
-
-        //animator.Play("ReturnFromFire");
     }
 
     protected IEnumerator FireRoutine(EnemyAIController ai)
@@ -158,9 +99,6 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
 
         if (attackData.hasHyperarmour)
             controller.SetHyperArmour(false);
-
-        if(laserSight != null  && laserSight.enabled)
-            laserSight.enabled = false;
 
         if (laser != null)
             laser.CancelTarget();

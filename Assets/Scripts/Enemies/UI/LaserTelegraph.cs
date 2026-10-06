@@ -14,6 +14,8 @@ public class LaserTelegraph : MonoBehaviour
 
     [SerializeField] private LineRenderer line;
 
+    private Coroutine targetRoutine;
+
     private void Awake()
     {
         aiController = GetComponentInParent<EnemyAIController>();
@@ -23,17 +25,18 @@ public class LaserTelegraph : MonoBehaviour
 
     public void DoTarget(Transform target, float startWidth, float duration)
     {
-        Debug.Log("Doing Laser Lines");
         targetPos = target;
 
         adjustment = Random.insideUnitCircle * 0.5f;
 
-        StartCoroutine(TargetRoutine(startWidth, duration));
+        if (!aiController.isActiveAndEnabled) return;
+        targetRoutine = aiController.StartCoroutine(TargetRoutine(startWidth, duration));
     }
 
     public void CancelTarget()
     {
-        StopAllCoroutines();
+        if(targetRoutine != null)
+            aiController.StopCoroutine(targetRoutine);
         line.enabled = false;
     }
 

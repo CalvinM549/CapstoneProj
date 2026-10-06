@@ -4,10 +4,12 @@ using UnityEngine;
 public class LungeAttackExecutor : AttackExecutorBase
 {
     [SerializeField] private EnemyMeleeHitbox hitbox;
+    [SerializeField] private float hitboxRestAngleOffset = 0f;
 
     [SerializeField] private float lungeSpeed;
     [SerializeField] private float lungeDuration;
 
+    private Vector2 cachedDirection;
     private Rigidbody2D rb;
 
     private void Awake()
@@ -31,12 +33,22 @@ public class LungeAttackExecutor : AttackExecutorBase
     {
         HasExecuted = false;
 
+        Vector2 dirToTarget = ai.context.target != null
+            ? ((Vector2)ai.context.target.position - (Vector2)transform.position).normalized
+            : (Vector2)transform.right;
+
+        cachedDirection = dirToTarget;
+        float angle = Mathf.Atan2(dirToTarget.y, dirToTarget.x) * Mathf.Rad2Deg;
+        hitbox.transform.localRotation = Quaternion.Euler(0f, 0f, angle - hitboxRestAngleOffset);
+
         if (!string.IsNullOrEmpty(attackData.windupTrigger))
             animator.SetTrigger(attackData.windupTrigger);
     }
 
     public override void Execute(EnemyAIController ai)
     {
+        if (HasExecuted) return;
+
         Executing = true;
 
         if (!string.IsNullOrEmpty(attackData.activeTrigger))
@@ -48,11 +60,7 @@ public class LungeAttackExecutor : AttackExecutorBase
 
     private IEnumerator LungeRoutine(EnemyAIController ai)
     {
-        Vector2 dir = ai.context.target != null
-            ? ((Vector2)ai.context.target.position - rb.position).normalized
-            : (Vector2)transform.right;
-
-        rb.linearVelocity = dir * lungeSpeed;
+        rb.linearVelocity = cachedDirection * lungeSpeed;
 
         yield return new WaitForSeconds(lungeDuration);
 
@@ -67,6 +75,9 @@ public class LungeAttackExecutor : AttackExecutorBase
     {
         rb.linearVelocity = Vector2.zero;
         hitbox.Deactivate();
+
+        Executing = false;
+        HasExecuted = true;
     }
 
     public override void Interrupt(EnemyAIController ai)

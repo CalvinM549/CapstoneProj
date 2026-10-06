@@ -8,7 +8,7 @@ public class EnemyAIController : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI stateDisplay;
 
-    [HideInInspector] public EnemyContext context = new();
+    public EnemyContext context = new();
     public EnemyStats stats {  get; private set; }
     public StatValue speedStat { get; private set; } // cached for performance
 
@@ -106,13 +106,36 @@ public class EnemyAIController : MonoBehaviour
     }
 
     public int GetIndex(IAttackExecutor executor) => attackExecutors.IndexOf(executor);
-    public IAttackExecutor GetExecutor(int index) => attackExecutors[index] ?? null;
+    public IAttackExecutor GetExecutor(int index) => (index >= 0 && index < attackExecutors.Count) ? attackExecutors[index] : null;
 
-
-    public IAttackExecutor GetValidExecutor()
+    public bool SelectAttack(bool giveUpOnCurrent = false)
     {
-        return GetPatternExecutor() ?? GetBestExecutor(AttackRole.Primary);
+        int excludeIndex = -1;
+
+        if (giveUpOnCurrent)
+        {
+            excludeIndex = context.activeExecutorIndex;
+
+            if (profile.attackPattern != null && profile.attackPattern.Length > 0)
+                context.attackPatternIndex++;
+        }
+
+        IAttackExecutor chosen = GetPatternExecutor() ?? GetBestExecutor(AttackRole.Primary, excludeIndex);
+
+        if(chosen == null && giveUpOnCurrent)
+            chosen = GetBestExecutor(AttackRole.Primary);
+
+        if (chosen == null) return false;
+
+        context.currentAttackRange = chosen.AttackData.attackRange;
+        context.patienceTimer = chosen.AttackData.patienceDuration > 0f
+            ? chosen.AttackData.patienceDuration
+            : float.PositiveInfinity;
+
+        return true;
+
     }
+    
     public IAttackExecutor GetPrimaryExecutor() => GetBestExecutor(AttackRole.Primary);
     public IAttackExecutor GetPunishExecutor() => GetBestExecutor(AttackRole.Punish);
 
@@ -133,7 +156,7 @@ public class EnemyAIController : MonoBehaviour
         }
 
         var desired = primaryExecutors[patternSlot];
-        if (!desired.CanExecute(this)) return null;
+        if (!desired.IsReady(this)) return null;
 
         context.activeExecutorIndex = primaryExecutorIndexes[patternSlot];
         context.attackPatternIndex++;
@@ -141,19 +164,21 @@ public class EnemyAIController : MonoBehaviour
     }
 
 
-    public IAttackExecutor GetBestExecutor(AttackRole role)
+    public IAttackExecutor GetBestExecutor(AttackRole role, int excludeIndex = -1)
     {
         IAttackExecutor best = null;
         int bestIndex = -1;
-
         int bestPriority = int.MinValue;
 
         for (int i = 0; i < attackExecutors.Count; i++)
         {
+            if(i == excludeIndex) continue;
+
             var executor = attackExecutors[i];
 
             if(executor.AttackData.role != role) continue;
-            if (!executor.CanExecute(this)) continue;
+            if(!executor.IsReady(this)) continue;
+            if (role == AttackRole.Punish && !executor.CanExecute(this)) continue;
 
             if (executor.AttackData.priority > bestPriority)
             {
@@ -187,6 +212,7 @@ public class EnemyContext
     public int attackPatternIndex;
     public int activeExecutorIndex;
     public float currentAttackRange;
+    public float patienceTimer;
 
     public float staggerTimer;
     public bool hasLineOfSight;
@@ -205,6 +231,7 @@ public class EnemyContext
         attackPatternIndex = 0;
         activeExecutorIndex = 0;
         currentAttackRange = 0f;
+        patienceTimer = 0f;
 
         staggerTimer = 0f;
         hasLineOfSight = false;

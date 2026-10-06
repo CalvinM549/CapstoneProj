@@ -100,7 +100,7 @@ Transform:
   m_GameObject: {fileID: 905776224806006245}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.19, y: 1.054, z: 0}
+  m_LocalPosition: {x: 0.229, y: 1.069, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -331,7 +331,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   data: {fileID: 11400000, guid: 7d3de8bc9675fbd4c99dbe75663d82dd, type: 2}
-  damageMaterial: {fileID: 2100000, guid: 59148e3b6fbfc0d4abc10ce34622bba0, type: 2}
   IsIFrame: 0
 --- !u!114 &3108158908165989089
 MonoBehaviour:
@@ -355,6 +354,7 @@ MonoBehaviour:
     attackPatternIndex: 0
     activeExecutorIndex: 0
     currentAttackRange: 0
+    patienceTimer: 0
     staggerTimer: 0
     hasLineOfSight: 0
     repositionSign: 1
@@ -503,7 +503,6 @@ MonoBehaviour:
   attackData: {fileID: 11400000, guid: 74d360a8b45227048bc693fb017deb48, type: 2}
   firePoint: {fileID: 1641652615450869957}
   shootFlashFX: 5
-  laserSight: {fileID: 0}
   sightStartOffset: 0
   laser: {fileID: 6782208966874941408}
 --- !u!1 &3468195659002386673
@@ -1260,11 +1259,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.08667001
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.72774005
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8452860618915124689, guid: e562b80c17a77ab46bd8f9ad0c622edc, type: 3}
       propertyPath: m_LocalPosition.z

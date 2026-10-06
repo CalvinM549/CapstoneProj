@@ -7,7 +7,7 @@ public class MapGenerationConfig : ScriptableObject
     public int roomCount;
     public int maxWidth;
 
-    public NodeTypeConfig[] avaliableTypes;
+    public NodeTypeData[] avaliableTypes;
 
     public float baseDifficulty = 1.0f;
     public float difficultyPerDepth = 0.3f;
@@ -26,5 +26,4 @@ public class MapGenerationConfig : ScriptableObject
     public float weaponRewardProbability;
     public float toolRewardProbability;
     public float MajorRewardProbability;
-
 }

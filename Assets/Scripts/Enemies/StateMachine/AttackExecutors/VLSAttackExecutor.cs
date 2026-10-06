@@ -20,8 +20,6 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
 
     public bool PoolRequested { get; set; }
 
-    private Coroutine barrageRoutine;
-
     private void OnEnable()
     {
         ProjectilePools.RequestPool(this);
@@ -47,13 +45,7 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
         if (attackData.hasHyperarmour)
             controller.SetHyperArmour(true);
 
-        if (barrageRoutine != null)
-        {
-            ai.StopCoroutine(barrageRoutine);
-            barrageRoutine = null;
-        }
-
-        barrageRoutine = ai.StartCoroutine(BarrageRoutine(ai));
+        StartCoroutine(BarrageRoutine(ai));
     }
 
     private IEnumerator BarrageRoutine(EnemyAIController ai)
@@ -86,7 +78,7 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
             yield return new WaitForSeconds(missileInterval);
         }
 
-        ai.GetComponentInChildren<Animator>().SetBool("IsFiring", false);
+        animator.SetBool("IsFiring", false);
 
 
         if (attackData.hasHyperarmour)
@@ -111,12 +103,7 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
         if (attackData.hasHyperarmour)
             controller.SetHyperArmour(false);
 
-        if (barrageRoutine != null)
-        {
-            ai.GetComponentInChildren<Animator>().SetBool("IsFiring", false);
-
-            ai.StopCoroutine(barrageRoutine);
-            barrageRoutine = null;
-        }
+        animator.SetBool("IsFiring", false);
+        StopAllCoroutines();
     }
 }

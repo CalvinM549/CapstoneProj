@@ -477,7 +477,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   sfxLibrary: []
-  musicLibrary: []
+  musicLibrary:
+  - soundName: MenuMusic01
+    clip: {fileID: 8300000, guid: d7414263b309ae04eaed4b4cc3dff0b0, type: 3}
+    volume: 0
+    loop: 1
+    doPitchVariation: 0
+    pitchVariationAmount: 0
   sfxMixer: {fileID: 24300002, guid: 4f22b990cf87dc14e85c4bc706938738, type: 2}
   musicMixer: {fileID: 24300002, guid: 02ee9c528d621b4439b3f299866934b6, type: 2}
   sfxVolume: 0

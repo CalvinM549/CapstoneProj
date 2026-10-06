@@ -3,13 +3,6 @@ using UnityEngine;
 
 public class RewardStation : StationBase, IInteractable
 {
-
-    [SerializeField] private SpriteRenderer visual;
-
-    [SerializeField] private Vector2 standPos;
-
-    [SerializeField] private bool isMajorUpgrade;
-
     private List<LootResult> offer;
 
     private void Start()
@@ -20,8 +13,6 @@ public class RewardStation : StationBase, IInteractable
 
     protected override void OnSetup(MapNode node, RunState run)
     {
-        // determine major type
-
         node.cachedLoot ??= RunManager.Instance.lootService.Roll(
             new LootRequest
             {
@@ -33,7 +24,6 @@ public class RewardStation : StationBase, IInteractable
             RNGManager.NodeRng(run.seed, node.coordinates),
             run.currentDepth);
         offer = node.cachedLoot;
-            
     }
 
     protected override void OnInteract()
@@ -41,7 +31,8 @@ public class RewardStation : StationBase, IInteractable
         if (!isEnabled) return;
         if (used) return;
 
-        ChoiceRequest request = new("Select Upgrade", offer, OnSelected);
+        string requestPrompt = $"Select {node.rewards.category.GetRewardCategoryName()}";
+        ChoiceRequest request = new(requestPrompt, offer, OnSelected);
 
         UIManager.Instance.OpenScreen("rewardScreen", request);
     }
@@ -54,7 +45,6 @@ public class RewardStation : StationBase, IInteractable
 
         used = true;
         RemoveIndicator();
-        // reset anim trigger
     }
 
 }

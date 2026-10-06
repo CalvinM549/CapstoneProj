@@ -1,21 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 public class MapGenerationService
 {   
     private RoomDatabase db;
+    private RoomTypeDatabase typeDb;
     
     private MapGenerationConfig config;
     
 
 
-    public MapGenerationService(RoomDatabase data, MapGenerationConfig config)
+    public MapGenerationService(RoomDatabase roomData, RoomTypeDatabase typeData, MapGenerationConfig config)
     {
-        this.db = data;
+        this.db = roomData;
+        this.typeDb = typeData;
 
         this.config = config;
     }
@@ -253,7 +253,7 @@ public class MapGenerationService
 
     private RoomType RollWeightedType(int depth)
     {
-        float progress = (float)depth / config.roomCount - 1;
+        float progress = (float)depth / (config.roomCount - 1);
 
         var weights = new List<(RoomType type, float weights)>
         {
@@ -267,17 +267,17 @@ public class MapGenerationService
             weights.Add((RoomType.Rest, restWeight));
 
         // Elite weights
-        if (progress >= config.eliteMinProgress)
+        if (progress >= config.eliteMinProgress && 1 == 0)
         {
             float t = Mathf.InverseLerp(config.eliteMinProgress, 1f, progress);
             weights.Add((RoomType.Elite, Mathf.Lerp(0.15f, 0.35f, t)));
         }
 
         // Vault weights
-        if (progress >= config.vaultMinProgress)
+        if (progress >= config.vaultMinProgress && 1 == 0)
         {
             float t = Mathf.InverseLerp(config.vaultMinProgress, 1f, progress);
-            weights.Add((RoomType.Elite, Mathf.Lerp(0.1f, 0.3f, t)));
+            weights.Add((RoomType.Vault, Mathf.Lerp(0.1f, 0.3f, t)));
         }
 
         float total = weights.Sum(w => w.weights);
@@ -442,12 +442,5 @@ public class MapGenerationService
         return map;
     }
 
-    private void PrintDebugMap(List<List<MapNode>> rows)
-    {
-        Debug.Log(rows);
-    }
-
     #endregion
-
-    // Connect rooms
 }

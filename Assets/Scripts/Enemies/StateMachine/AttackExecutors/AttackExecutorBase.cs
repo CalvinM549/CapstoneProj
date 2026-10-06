@@ -18,6 +18,7 @@ public abstract class AttackExecutorBase : MonoBehaviour, IAttackExecutor
         animator = GetComponentInChildren<Animator>();
     }
 
+    public virtual bool IsReady(EnemyAIController ai) => true;
     public virtual bool CanExecute(EnemyAIController ai) => ai.context.distanceToTarget <= attackData.attackRange;
     public abstract void BeginTelegraph(EnemyAIController ai);
     public abstract void Execute(EnemyAIController ai);

@@ -156,7 +156,7 @@ public class GameplayInputReader
 
         if (ui.ScreenOpen) return;
 
-        UIManager.Instance.OpenScreen("mapScreen");
+        //UIManager.Instance.OpenScreen("mapScreen");
     }
 
     private void OnMapCanceled(InputAction.CallbackContext context)

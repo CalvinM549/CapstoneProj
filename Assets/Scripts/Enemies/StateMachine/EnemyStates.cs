@@ -42,13 +42,8 @@ public class MoveIntoRangeState : IEnemyState
 {
     public void Enter(EnemyAIController ai)
     {
-        var ctx = ai.context;
-        var executor = ai.GetPrimaryExecutor();
-
-        if (executor != null)
-        {
-            ctx.currentAttackRange = ai.GetPrimaryExecutor().AttackData.attackRange;
-        }
+        if (!ai.SelectAttack())
+            ai.ChangeState(ai.PostAttackState);
     }
 
     public void Tick(EnemyAIController ai, float dt)
@@ -73,8 +68,18 @@ public class MoveIntoRangeState : IEnemyState
             return;
         }
 
+        ctx.patienceTimer -= dt;
+        if (ctx.patienceTimer <= 0f && !ai.SelectAttack(giveUpOnCurrent: true))
+        {
+            ai.ChangeState(ai.PostAttackState);
+            return;
+        }
+
+        var executor = ai.GetExecutor(ctx.activeExecutorIndex);
+        float speedMult = executor != null ? executor.AttackData.approachSpeedMult : 1f;
+
         Vector2 dir = ai.GetChaseDirection();
-        ai.Body.linearVelocity = dir * ai.speedStat.Value;
+        ai.Body.linearVelocity = dir * ai.speedStat.Value * speedMult;
     }
 
     public void Exit(EnemyAIController ai)

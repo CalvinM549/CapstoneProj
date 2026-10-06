@@ -15,6 +15,9 @@ public class EnemyAttackData : ScriptableObject
 
     [Header("Config")]
     public float attackRange;
+    public float approachSpeedMult = 1f;
+    public float patienceDuration = -1f;
+
     public float telegraphDuration;
     public float winddownDuration;
 

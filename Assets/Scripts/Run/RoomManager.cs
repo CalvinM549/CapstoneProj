@@ -1,6 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public enum RoomState
 {
@@ -10,24 +15,18 @@ public enum RoomState
     Failed
 }
 
-[Serializable]
-public class EnemySpawnPoint
-{
-    public string groupTag;
-    public Transform point;
-}
-
 public class RoomManager : MonoBehaviour
 {
     public RoomData Data {  get; private set; }
     public RoomState State { get; private set; }
 
     private IObjectiveTracker objectiveTracker;
+    private StationBase[] roomStations;
 
     [SerializeField] private Doorway[] doorways;
     public Vector2 fallbackEntryPoint;
 
-    [SerializeField] private EnemySpawnPoint[] enemySpawnPoints;
+    [SerializeField] private SpawnPoint[] spawnPoints;
 
     private RunState run;
     private MapNode node;
@@ -35,9 +34,13 @@ public class RoomManager : MonoBehaviour
     public event Action<RoomManager> OnCleared;
     public event Action<RoomManager> OnFailure;
 
+    public event Action<RoomManager> OnStationUsed;
+
     private void Awake()
     {
         objectiveTracker = GetComponent<IObjectiveTracker>();
+        
+        roomStations = GetComponentsInChildren<StationBase>();         
     }
 
     private void Update()
@@ -59,7 +62,7 @@ public class RoomManager : MonoBehaviour
         this.node = node;
         this.run = run;
 
-        foreach (var roomObj in GetComponentsInChildren<StationBase>())
+        foreach (var roomObj in roomStations)
             roomObj.Setup(node, run, OnCleared);
 
         for (int i = 0; i < doorways.Length; i++)
@@ -129,27 +132,14 @@ public class RoomManager : MonoBehaviour
         return fallbackEntryPoint;
     }
 
-    private readonly System.Collections.Generic.List<Transform> _taggedMatchesBuffer = new();
-
-    public Transform GetEnemySpawnPoint(string groupTag)
+    public Transform GetEnemySpawnPoint(SpawnTag tag)
     {
-        if(enemySpawnPoints == null || enemySpawnPoints.Length == 0)
+        if(spawnPoints == null || spawnPoints.Length == 0)
             return null;
 
+        List<SpawnPoint> validPoints = spawnPoints.Where(s => s.Accepts(tag)).ToList();
 
-        if (!string.IsNullOrEmpty(groupTag))
-        {
-            _taggedMatchesBuffer.Clear();
-            foreach (var sp in enemySpawnPoints)
-                if (sp.groupTag == groupTag)
-                    _taggedMatchesBuffer.Add(sp.point);
-
-            if (_taggedMatchesBuffer.Count > 0)
-                return _taggedMatchesBuffer[UnityEngine.Random.Range(0, _taggedMatchesBuffer.Count)];
-        }
-
-        return enemySpawnPoints[UnityEngine.Random.Range(0, enemySpawnPoints.Length)].point;
-
+        return validPoints[UnityEngine.Random.Range(0, validPoints.Count)].transform;
     }
 
     private void HandleEncounterCleared()
@@ -175,4 +165,22 @@ public class RoomManager : MonoBehaviour
         State = RoomState.Failed;
         OnFailure?.Invoke(this);
     }
+
+
+    #region editor util
+
+#if UNITY_EDITOR
+
+    [ContextMenu("Populate SpawnPoints")]
+    private void PopulateSpawnPoints()
+    {
+        spawnPoints = Array.Empty<SpawnPoint>();
+        spawnPoints = GetComponentsInChildren<SpawnPoint>();
+
+        Debug.Log($"{name} populated {spawnPoints.Length} spawn points");
+    }
+
+#endif
+
+#endregion
 }

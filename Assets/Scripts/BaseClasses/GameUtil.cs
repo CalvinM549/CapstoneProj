@@ -17,4 +17,16 @@ public static class GameUtil
             _ => ""
         };
     }
+
+    public static string GetRewardCategoryName(this RewardCategory category)
+    {
+        return category switch
+        {
+            RewardCategory.MajorUpgrade => "Major Upgrade",
+            RewardCategory.AuxUpgrade => "Auxillary Upgrade",
+            RewardCategory.Weapon => "Weapon",
+            RewardCategory.Tool => "Tool",
+            _ => ""
+        };
+    }
 }

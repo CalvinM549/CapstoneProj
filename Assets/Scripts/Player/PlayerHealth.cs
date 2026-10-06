@@ -8,6 +8,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
     [Header("Config")]
     [SerializeField] private HealthData data;
     [SerializeField] private bool UseIFrames;
+    [SerializeField] private bool structurePierce;
 
     private StatValue structureCount;
     private StatValue structureHealth;
@@ -184,9 +185,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
         HealthSegment segment = ActiveSegment;
 
-        segment.ReduceHealth(hit.FinalDamage); // overflow value unused atm
-
-        GameEvents.PlayerTookDamage(hit);
+        float overflow = segment.ReduceHealth(hit.FinalDamage); // overflow value unused atm
 
         if (segment.IsDestroyed)
         {
@@ -203,6 +202,8 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
                 healthSegments[activeHealthIndex].IsActive = true;
             }
         }
+        
+        GameEvents.PlayerTookDamage(hit);
 
         GameEvents.PlayerHealthChanged(healthSegments);
 

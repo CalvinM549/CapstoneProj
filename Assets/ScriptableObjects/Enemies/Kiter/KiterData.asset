@@ -15,10 +15,14 @@ MonoBehaviour:
   id: kiter
   enemyName: Kiter
   prefab: {fileID: 2621895607124036595, guid: cb36320a61df2534a98ee71adc7e0f2c, type: 3}
-  cost: 10
-  baseCurrencyDrop: 15
+  aiProfile: {fileID: 11400000, guid: 435e0e804e571c249b0907ce5f4f72f1, type: 2}
   baseHealth: 30
   moveSpeed: 10
   baseDamageMult: 1
   baseResistanceMult: 1
-  aiProfile: {fileID: 11400000, guid: 435e0e804e571c249b0907ce5f4f72f1, type: 2}
+  cost: 5
+  weight: 0
+  minChapter: 0
+  maxChapter: 0
+  baseCurrencyDrop: 15
+  spawnTag: 0

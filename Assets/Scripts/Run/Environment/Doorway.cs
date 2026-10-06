@@ -27,7 +27,7 @@ public class Doorway : MonoBehaviour
 
     private void OnDisable()
     {
-        HUDIndicatorService.Instance.RemoveIndicator(transform);
+        HUDIndicatorService.Instance?.RemoveIndicator(transform);
     }
 
     public void SetDestination(MapNode node)

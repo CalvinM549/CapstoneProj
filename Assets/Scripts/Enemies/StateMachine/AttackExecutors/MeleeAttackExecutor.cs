@@ -37,6 +37,8 @@ public class MeleeAttackExecutor : AttackExecutorBase
 
     public override void Execute(EnemyAIController ai)
     {
+        if (HasExecuted) return;
+
         Executing = true;
 
         if (attackData.hasHyperarmour)
@@ -47,8 +49,6 @@ public class MeleeAttackExecutor : AttackExecutorBase
 
         hitbox.Activate();
         StartCoroutine(FinishAfterWinddown());
-
-        Executing = false;
     }
 
     private IEnumerator FinishAfterWinddown()

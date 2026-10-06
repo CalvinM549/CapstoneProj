@@ -14,11 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   id: enemy_walker
   enemyName: Walker
-  prefab: {fileID: 0}
-  cost: 8
-  baseCurrencyDrop: 25
+  prefab: {fileID: 5348890688463699792, guid: 38532c09655c5cf4e8f2839fa15ccbd2, type: 3}
+  aiProfile: {fileID: 11400000, guid: 259d0df511099744b8912ab074c80294, type: 2}
   baseHealth: 80
   moveSpeed: 1
   baseDamageMult: 1
   baseResistanceMult: 1
-  aiProfile: {fileID: 11400000, guid: 259d0df511099744b8912ab074c80294, type: 2}
+  cost: 5
+  weight: 0
+  minChapter: 0
+  maxChapter: 0
+  baseCurrencyDrop: 25
+  spawnTag: 0

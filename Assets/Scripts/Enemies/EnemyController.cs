@@ -15,8 +15,6 @@ public class EnemyController : MonoBehaviour, IDamageable
     [Header("Stats")]
     public EnemyData data;
 
-    [SerializeField] private Material damageMaterial;
-
     // References
     protected EnemyAIController ai;
     protected EnemyStats stats;
@@ -64,11 +62,10 @@ public class EnemyController : MonoBehaviour, IDamageable
         baseMaterial = sr.material;
     }
 
-    private void Start()
-    {
-        AIManager.Instance.RegisterEnemy(ai);
-        OnSpawn();
-    }
+    //private void Start()
+    //{
+    //    OnSpawn();
+    //}
 
     private void OnEnable()
     {
@@ -80,8 +77,6 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         GameEvents.OnLockAcquired -= HandleLockAcquired;
         GameEvents.OnLockDropped -= HandleLockDropped;
-
-        AIManager.Instance.UnregisterEnemy(ai);
     }
 
     private void Update()
@@ -102,6 +97,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     public virtual void OnSpawn()
     {
+        AIManager.Instance.RegisterEnemy(ai);
         stats.Initialize(data, data.aiProfile);
 
         currentHealth = stats.Get(StatRef.EnemyMaxHealth);
@@ -114,19 +110,17 @@ public class EnemyController : MonoBehaviour, IDamageable
         animator.Rebind();
         animator.Update(0f);
 
+        sr.material = baseMaterial;
+
         ai.ResetController(data.aiProfile);
         ai.enabled = true;
     }
 
     public virtual void OnDespawn()
     {
+        AIManager.Instance.UnregisterEnemy(ai);
         ai.enabled = false;
         StopAllCoroutines();
-    }
-
-    private void HandleDeath()
-    {
-
     }
 
     public virtual void ResetForPool()
@@ -229,7 +223,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         OnDeath?.Invoke(this);
         GameEvents.EnemyKilled(this);
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
     }
 
     private IEnumerator HitFXRoutine(float duration)
@@ -247,7 +241,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         animator.SetTrigger("RecieveHit");
 
-        sr.material = damageMaterial;
+        sr.material = GameManager.Materials.HitMaterial;
 
         yield return new WaitForSeconds(duration);
 

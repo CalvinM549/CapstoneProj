@@ -21,7 +21,7 @@ public class StationBase : MonoBehaviour, IInteractable
     public string InteractPrompt => interactPrompt;
     public bool CanInteract {  get { return isEnabled; } }
 
-    private void Awake()
+    protected virtual void Awake()
     {
         anim = GetComponent<Animator>();
 

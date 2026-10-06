@@ -1,51 +1,44 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "EnemyData", menuName = "Enemy/NewEnemyData", order = 1)]
 public class EnemyData : DatabaseEntry
 {
-    [Header("Name")]
+    [Header("Config")]
     public string enemyName;
 
     public EnemyController prefab;
-
-    public float cost;
-
-    public int baseCurrencyDrop;
+    public AIProfile aiProfile;
 
     [Space]
+
     public float baseHealth;
     public float moveSpeed;
 
     public float baseDamageMult = 1f;
     public float baseResistanceMult = 1f;
 
-    [Header("AI")]
-    public AIProfile aiProfile;
+    [Space]
+
+    [Min(1)] public float cost;
+    [Min(0f)] public float weight;
+
+    public int minChapter;
+    public int maxChapter;
+
+    public int baseCurrencyDrop;
+    public SpawnTag spawnTag;
+
+    public bool AvaliableAt(int depth) => depth >= minChapter && depth <= maxChapter;
+
 }
 
 [Serializable]
-public class WaveEntry
+public class EnemyWave
 {
-    public EnemyData enemyType;
-    public int count;
-
-    public string spawnGroupTag; // name of object that unit spawns at
-}
-
-[Serializable]
-public class SpawnWave
-{
-    public WaveEntry[] entries;
+    public readonly List<EnemyData> enemies = new();
 
     public float startDelay;
-
-    public int TotalEnemiesInWave()
-    {
-        int total = 0;
-        foreach(var e in entries) 
-            total += e.count;
-        return total;
-    }
 }

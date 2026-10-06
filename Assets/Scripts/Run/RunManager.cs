@@ -9,13 +9,14 @@ public class RunManager : MonoBehaviour
     public static RunManager Instance { get; private set; }
 
     public GameDatabase db;
+    [SerializeField] private EncounterGenerationConfig encounterConfig;
 
     [Header("Refs")]
 
     [SerializeField] private Player playerPrefab;
     [SerializeField] private PlayerUI playerUIPrefab;
 
-    [SerializeField] private DroneWeaponCarrier dronePrefab;
+    //[SerializeField] private DroneWeaponCarrier dronePrefab;
 
     [SerializeField] private Transform roomContainer;
     [SerializeField] private Transform enemyContainer;
@@ -33,9 +34,12 @@ public class RunManager : MonoBehaviour
     [Header("Run Config")]
 
     public RoomPoolService roomService; // Pools rooms, holds useful values etc
+
     public EnemyService enemyService; // Pools enemies, allows for spawning and handling etc
+    public EncounterService encounterService;
+
     public CurrencyDropService currencyDropService; // Allows for dropping pooled currency
-    public LootService lootService;
+    public LootService lootService; // Generates random loot rolls
 
     public RunState currentRun;
 
@@ -50,10 +54,16 @@ public class RunManager : MonoBehaviour
         if (Instance == null)
             Instance = this;
         else
+        {
             Destroy(gameObject);
+            return;
+        }
 
         roomService = new RoomPoolService(db.rooms, roomContainer);
+
         enemyService = new EnemyService(db.enemies, enemyContainer);
+        encounterService = new EncounterService(db.enemies, encounterConfig);
+
         currencyDropService = new CurrencyDropService(currencyPickupPrefab, currencyContainer);
         lootService = new LootService(db);
     }
@@ -106,9 +116,6 @@ public class RunManager : MonoBehaviour
 
         activePlayer.SetupNew(config.loadout);
         activePlayer.SetPlayerCanAct(true);
-
-        var drone = Instantiate(dronePrefab, playerContainer);
-        drone.player = activePlayer;
 
         currentRun = new(config.seed, config.map, activePlayer);
         roomService.BuildStartRoom(config.map); // change out for new system
@@ -314,23 +321,16 @@ public class RunManager : MonoBehaviour
             default: 
                 break;
         }
-
-        //switch (state)
-        //{
-        //    case ActiveRunState.RoomActive:
-        //        currentRun.Tick(Time.deltaTime);
-        //        break;
-
-        //    case ActiveRunState.RoomTransition:
-        //        currentRun.Tick(Time.deltaTime / 2);
-        //        break;
-
-        //    case ActiveRunState.Draft:
-        //    case ActiveRunState.RunComplete:
-        //    case ActiveRunState.RunFailure:
-        //        break;
-        //}
     }
+
+    #region Run Counters
+
+    private void HandleEnemyDeath()
+    {
+
+    }
+
+    #endregion
 
     #region Save System
 

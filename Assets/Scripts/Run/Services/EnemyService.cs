@@ -34,6 +34,7 @@ public class EnemyService
     public EnemyController GetEnemy(EnemyData data, Vector2 position)
     {
         var stack = GetOrCreateStack(data.Id);
+
         EnemyController enemy = stack.Count > 0 ? stack.Pop() : CreateForPool(data);
 
         enemy.transform.position = position;
@@ -61,13 +62,13 @@ public class EnemyService
         enemy.gameObject.SetActive(false);
         enemy.transform.SetParent(container, false);
 
-        var stack = pooledEnemies[enemy.data.Id];
+        var stack = GetOrCreateStack(enemy.data.Id);
         stack.Push(enemy);
     }
 
     private EnemyController CreateForPool(EnemyData data)
     {
-        return GameObject.Instantiate(data.prefab);
+         return GameObject.Instantiate(data.prefab, container);
     }
 
     private Stack<EnemyController> GetOrCreateStack(string id)

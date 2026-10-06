@@ -17,6 +17,8 @@ public class RewardSelectionScreen : UIScreen
         var data = (ChoiceRequest)payload;
         onSelected = data.onSelected;
 
+        promptText.text = $"[{data.prompt}]";
+
         foreach(var button in activeCards)
             Destroy(button.gameObject);
         
@@ -28,7 +30,6 @@ public class RewardSelectionScreen : UIScreen
             button.Setup(option, () => HandleSelected(option));
             activeCards.Add(button);
         }
-
     }
 
     private void HandleSelected(LootResult selected)

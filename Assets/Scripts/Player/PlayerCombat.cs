@@ -71,6 +71,12 @@ public class PlayerCombat : MonoBehaviour
 
         if(weapon != null)
             EquipRangedWeapon(weapon);
+
+
+        // move to equip
+
+        activeDrone = Instantiate(dronePrefab, transform.parent);
+        activeDrone.player = p;
     }
 
     public void RestoreFromSave()
@@ -84,11 +90,6 @@ public class PlayerCombat : MonoBehaviour
 
         meleeBuffer = new InputBuffer(0.1f);
         rangedBuffer = new InputBuffer(0.1f);
-
-        // move to equip
-
-        activeDrone = Instantiate(dronePrefab, transform.parent);
-        activeDrone.player = p;
     }
 
     private void Start()
@@ -428,8 +429,6 @@ public class PlayerCombat : MonoBehaviour
 
     private IEnumerator RangedAttackRoutine(PlayerWeapon weapon)
     {
-        //Vector2 direction = GetAttackDirection(AttackType.Secondary);
-
         // STARTUP
         currentState = CombatState.Startup;
 
@@ -467,7 +466,7 @@ public class PlayerCombat : MonoBehaviour
     {
         if (weapon == EquippedWeapon) return;
 
-        if (RangedWeaponEquipped)
+        if (RangedWeaponEquipped) // Clean up old weapon
         {
             EquippedWeapon.OnUnequip();
             ProjectilePools.ReleasePool(weapon);
@@ -477,19 +476,16 @@ public class PlayerCombat : MonoBehaviour
         currentAmmo = 0;
         rangedCooldownTimer = 0f;
 
-        if (weapon != null)
+        if (weapon != null) // Setup new weapon
         {
             currentAmmo = weapon.baseAmmo;
 
-            //Debug.Log($"[PlayerCombat] new weapon {weapon.name} equipped");
             ProjectilePools.RequestPool(weapon);
             weapon.OnEquip(p, OnAmmoChanged);
         }
 
         OnWeaponChanged?.Invoke(currentAmmo);
         OnAmmoChanged?.Invoke(currentAmmo);
-
-        // Fire Event
     }
 
     public void UnequipRangedWeapon() => EquipRangedWeapon(null);
@@ -502,11 +498,6 @@ public class PlayerCombat : MonoBehaviour
 
         weapon.currentAmmo = Mathf.Min(weapon.currentAmmo + amount, weapon.baseAmmo);
         OnAmmoChanged.Invoke(weapon.currentAmmo);
-    }
-
-    public void RestoreAmmo(float percent)
-    {
-
     }
 
     #endregion

@@ -5,6 +5,7 @@ public interface IAttackExecutor
     EnemyAttackData AttackData { get; }
     bool Executing { get; }
     bool HasExecuted { get; }
+    bool IsReady(EnemyAIController ai); // off cooldown, has ammo, etc
     bool CanExecute(EnemyAIController ai); // Attack checks, i.e. range/los/ammo
     void BeginTelegraph(EnemyAIController ai); // windup animation
     void Execute(EnemyAIController ai); // firing projecitles / do melee / wind down

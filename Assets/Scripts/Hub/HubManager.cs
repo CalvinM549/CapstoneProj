@@ -65,9 +65,11 @@ public class HubManager : MonoBehaviour
 
     public void InitializeHub()
     {
-        mapGeneration = new(db.rooms, config);
+        mapGeneration = new(db.rooms, db.roomTypes, config);
 
         pendingLoadout = BuildDefaultLoadout();
+
+        AudioManager.Instance.PlayMusicTrack("MenuMusic01", true);
 
         GenerateNewMap();
     }

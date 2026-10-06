@@ -32,7 +32,6 @@ public class ProjectileManager : MonoBehaviour
         if (activePools.TryGetValue(projectile, out var poolEntry))
         {
             poolEntry.userCount++;
-            //Debug.Log($"[ProjectileManager] {projectile.name} user added");
             return;
         }
 
@@ -42,7 +41,6 @@ public class ProjectileManager : MonoBehaviour
             userCount = 1
         };
 
-        //Debug.Log($"[ProjectileManager] {projectile.name} pool created");
     }
 
     public void ReleasePool(ProjectileData projectile)
@@ -56,7 +54,6 @@ public class ProjectileManager : MonoBehaviour
             poolEntry.pool.Clear();
 
             activePools.Remove(projectile);
-            //Debug.Log($"[ProjectileManager] {projectile.name} pool removed");
         }
     }
 
@@ -68,7 +65,10 @@ public class ProjectileManager : MonoBehaviour
         bool isPlayerProjectile = false)
     {
         if (!activePools.TryGetValue(projectile, out var poolEntry))
+        {
+            Debug.LogError($"[ProjectileManager] No Pool found for projectile type {projectile.name}");
             return null;
+        }
 
         Projectile currentProjectile = poolEntry.pool.Get();
         currentProjectile.transform.position = firePos;

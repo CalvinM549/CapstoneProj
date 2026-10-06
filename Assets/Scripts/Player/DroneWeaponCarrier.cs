@@ -54,9 +54,10 @@ public class DroneWeaponCarrier : MonoBehaviour
     private void LateUpdate()
     {
         if (player == null) return;
+        if(TimescaleManager.IsPaused) return;
 
         // --- Exact math, no lag: this is the line shots travel along ---
-        currentAimDir = -player.GetMouseDirection();
+        currentAimDir = -player.GetTargetDirection();
         if (currentAimDir.sqrMagnitude < 0.0001f) currentAimDir = Vector2.right;
 
         bool isMoving = player.Movement != null && player.Movement.IsMoving;
@@ -98,9 +99,7 @@ public class DroneWeaponCarrier : MonoBehaviour
         }
     }
 
-    /// <summary>Exact current aim direction - matches player.GetMouseDirection(), no lag.</summary>
     public Vector2 AimDirection => currentAimDir;
 
-    /// <summary>World-space point projectiles should spawn from. Always exactly on the aim ray.</summary>
     public Vector2 FireOrigin => firePoint != null ? (Vector2)firePoint.position : (Vector2)transform.position;
 }

@@ -111,8 +111,8 @@ public class PostProcessingManager : MonoBehaviour
 
     private void SetVolume(PPVolume type, float targetWeight, float fadeDuration)
     {
-        var volumeRef = volumes[type]
-            ;
+        var volumeRef = volumes[type];
+
         volumeRef.activeTween?.Kill();
 
         volumeRef.activeTween = TweenWeight(volumeRef, targetWeight, fadeDuration, entryEase);

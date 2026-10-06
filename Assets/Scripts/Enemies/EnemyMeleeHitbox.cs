@@ -21,7 +21,7 @@ public class EnemyMeleeHitbox : MonoBehaviour
     }
 
     public void Activate()
-    {
+    {        
         hitTargets.Clear();
         active = true;
         col.enabled = true;

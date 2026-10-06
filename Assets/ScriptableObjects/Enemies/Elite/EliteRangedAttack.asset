@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91b487034a4745f43960c0feb63f441c, type: 3}
+  m_Name: EliteRangedAttack
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackData
+  priority: -1
+  role: 0
+  attackRange: 10
+  approachSpeedMult: 1
+  patienceDuration: 6
+  telegraphDuration: 1
+  winddownDuration: 1
+  hasHyperarmour: 0
+  windupTrigger: 
+  activeTrigger: 
+  winddownTrigger: 
+  projectile: {fileID: 11400000, guid: 6fe67ef6f404ff243b7d7bd3efaa01b8, type: 2}
+  projectileCount: 3
+  spreadAngle: 10
+  shotInterval: 0.3
+  attackType: 1
+  baseDamage: 0
+  knockbackForce: 0
+  hitstunTime: 0
+  hitstopTime: 0
+  isBlockable: 0
+  isParryable: 0

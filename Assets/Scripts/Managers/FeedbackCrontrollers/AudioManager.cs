@@ -86,6 +86,9 @@ public class AudioManager : MonoBehaviour
         {
             // Do stuff
         }
+
+        musicSourceA.clip = track.clip;
+        musicSourceA.Play();
     }
 
     public void PlaySFX(string name, Vector3 position)

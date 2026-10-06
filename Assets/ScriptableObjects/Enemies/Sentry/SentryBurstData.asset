@@ -10,15 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1dae9cbbaadc1ca4182d6312aebded5a, type: 3}
-  m_Name: SentryData
+  m_Name: SentryBurstData
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
-  id: enemy_sentry
-  enemyName: Sentry
-  prefab: {fileID: 0}
-  cost: 5
-  baseCurrencyDrop: 15
+  id: enemy_sentryBurst
+  enemyName: SentryBurst
+  prefab: {fileID: 2621895607124036595, guid: a23f784613e622847a4dce7e2da2bdb4, type: 3}
+  aiProfile: {fileID: 11400000, guid: 95aea7d8549a16a479308147e8771809, type: 2}
   baseHealth: 60
   moveSpeed: 3
   baseDamageMult: 1
   baseResistanceMult: 1
-  aiProfile: {fileID: 11400000, guid: 95aea7d8549a16a479308147e8771809, type: 2}
+  cost: 2
+  weight: 0
+  minChapter: 0
+  maxChapter: 0
+  baseCurrencyDrop: 15
+  spawnTag: 0

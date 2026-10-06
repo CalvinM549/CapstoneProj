@@ -8,7 +8,7 @@ public class WaveObjectiveHandler : MonoBehaviour, IObjectiveTracker
     private EnemyService enemyService;
     private RoomManager room;
 
-    private SpawnWave[] waves;
+    private EnemyWave[] waves;
     private int waveIndex;
 
     private bool waitingForNextWave;
@@ -33,6 +33,10 @@ public class WaveObjectiveHandler : MonoBehaviour, IObjectiveTracker
     {
         enemyService = RunManager.Instance.enemyService;
 
+        waves = (room.encounterWaves != null && room.encounterWaves.Length > 0)
+            ? room.encounterWaves
+            : RunManager.Instance.encounterService.GenerateWaves(room, run);
+
         waveIndex = -1;
         waitingForNextWave = false;
         activeEnemies.Clear();
@@ -43,7 +47,7 @@ public class WaveObjectiveHandler : MonoBehaviour, IObjectiveTracker
         if (waves != null)
         {
             foreach (var wave in waves)
-                totalEnemies += wave.TotalEnemiesInWave();
+                totalEnemies += wave.enemies.Count;
         }
 
         if (waves == null || waves.Length == 0)
@@ -72,22 +76,23 @@ public class WaveObjectiveHandler : MonoBehaviour, IObjectiveTracker
 
     private void SpawnWave(int index)
     {
+        print($"Spawning Wave : {index}");
+
         waveIndex = index;
         var wave = waves[waveIndex];
 
         OnWaveStart?.Invoke(index, waves.Length);
 
-        foreach (WaveEntry entry in wave.entries)
+        foreach (EnemyData entry in wave.enemies)
         {
-            Transform spawnPoint = room.GetEnemySpawnPoint(entry.spawnGroupTag);
+            Transform spawnPoint = room.GetEnemySpawnPoint(entry.spawnTag);
             Vector2 spawnPos = spawnPoint != null ? spawnPoint.position : transform.position;
 
-            for (int i = 0; i < entry.count; i++)
-            {
-                EnemyController enemy = enemyService.GetEnemy(entry.enemyType, spawnPos);
-                enemy.OnDeath += HandleEnemyDeath;
-                activeEnemies.Add(enemy);
-            }
+            EnemyController enemy = enemyService.GetEnemy(entry, spawnPos);
+            enemy.OnDeath += HandleEnemyDeath;
+            activeEnemies.Add(enemy);
+
+
         }
     }
 
@@ -97,7 +102,7 @@ public class WaveObjectiveHandler : MonoBehaviour, IObjectiveTracker
         activeEnemies.Remove(enemy);
 
         enemiesKilled++;
-        if(totalEnemies > 0)
+        if (totalEnemies > 0)
             OnProgressChanged?.Invoke(enemiesKilled / totalEnemies);
 
         if (activeEnemies.Count > 0) return;
