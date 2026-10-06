@@ -36,6 +36,31 @@ public class LootService
         this.db = db;
     }
 
+    public List<LootResult> RollSlot(MapNode node, RunState run, int slot)
+    {
+        if(slot < 0 || slot >= node.offers.Length) return new List<LootResult>();
+
+        var offer = node.offers[slot];
+        var rng = RNGManager.NodeRng(run.map.seed, node.coordinates, salt: slot + 1);
+
+        return Roll(new LootRequest
+        {
+            category = offer.category,
+            count = offer.count,
+            isShop = node.type.isShop
+        }, run.rewardContext, rng, node.depth);
+    }
+
+    public List<LootResult> RollAll(MapNode node, RunState run)
+    {
+        var all = new List<LootResult>();
+        for (int i = 0; i < node.offers.Length; i++)
+        {
+            all.AddRange(RollSlot(node, run, i));
+        }
+        return all;
+    }
+
     public List<LootResult> Roll(LootRequest request, RewardContext ctx, System.Random rng, int depth)
     {
         BuildPool(request, ctx);

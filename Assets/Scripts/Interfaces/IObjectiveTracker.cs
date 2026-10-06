@@ -6,6 +6,6 @@ public interface IObjectiveTracker
     event Action OnEncounterCleared;
     event Action<float> OnProgressChanged;
 
-    void Setup(RoomData room, RunState run);
+    void Setup(MapNode node, RunState run, RunServices services);
     void Tick(float dt);
 }

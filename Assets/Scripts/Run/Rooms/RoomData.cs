@@ -2,13 +2,10 @@ using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Map/Room Def")]
-public class RoomData : DatabaseEntry, ICategorizedEntry<RoomType>
+public class RoomData : DatabaseEntry, ICategorizedEntry<RoomTypeData>
 {
-    public RoomType type;
-    public NodeTypeData typeConfig;
-    public RoomType Category => type;
-
-    public DirectionMask allowedConnections = DirectionMask.All;
+    public RoomTypeData type;
+    public RoomTypeData Category => type;
 
     public int difficultyCost;
 
@@ -23,5 +20,4 @@ public class RoomData : DatabaseEntry, ICategorizedEntry<RoomType>
     [Tooltip("Optional for hand-crafted rooms")]
     public EnemyWave[] encounterWaves;
 
-    public bool SupportsMask(DirectionMask required) => (allowedConnections & required) == required;
 }

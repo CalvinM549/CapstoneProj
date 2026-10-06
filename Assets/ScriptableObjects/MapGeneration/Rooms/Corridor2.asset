@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 950ba027e6d6ada4a9c44e2a52e76001, type: 3}
-  m_Name: Room2
+  m_Name: Corridor2
   m_EditorClassIdentifier: Assembly-CSharp::RoomData
-  id: random_01
-  type: 2
-  allowedConnections: -1
+  id: corridor2
+  type: {fileID: 11400000, guid: bf240c2093e89744cb51240a50a23a6e, type: 2}
   difficultyCost: 0
-  timerCost: 0
-  roomPrefab: {fileID: 6074118564554837086, guid: ee44d11f9bceef04daa6f13f08b15c14, type: 3}
+  roomPrefab: {fileID: 4043302354256458430, guid: 424448e8b78d81048bfa37ac4fb7f31d, type: 3}
   minChapter: 0
   maxChapter: 99
+  encounterWaves: []

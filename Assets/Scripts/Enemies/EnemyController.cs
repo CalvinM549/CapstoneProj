@@ -217,7 +217,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         IsAlive = false;
 
         VFXManager.Instance.PlayVFX(VFXType.ExplosionComplex, transform.position);
-        RunManager.Instance.currencyDropService.DropBurst(transform.position, data.baseCurrencyDrop, 4);
+        //RunManager.Instance.currencyDropService.DropBurst(transform.position, data.baseCurrencyDrop, 4);
 
         StopAllCoroutines();
 

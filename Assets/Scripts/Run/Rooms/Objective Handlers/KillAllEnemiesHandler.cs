@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class KillAllEnemiesHandler : MonoBehaviour, IObjectiveTracker
 {
-    private EnemyService enemyService;
     private RoomManager room;
 
     public event Action OnEncounterCleared;
@@ -26,10 +25,8 @@ public class KillAllEnemiesHandler : MonoBehaviour, IObjectiveTracker
         GameEvents.OnEnemyKilled -= HandleEnemyDeath;
     }
 
-    public void Setup(RoomData room, RunState run)
+    public void Setup(MapNode node, RunState run, RunServices services)
     {
-        enemyService = RunManager.Instance.enemyService;
-
         var enemies = FindObjectsByType<EnemyController>(FindObjectsSortMode.None);
         startEnemies = enemies.Length;
         currentEnemies = startEnemies;

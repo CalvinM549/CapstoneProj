@@ -20,7 +20,7 @@ public class CaptureZoneHandler : MonoBehaviour, IObjectiveTracker
 
     }
 
-    public void Setup(RoomData room, RunState run)
+    public void Setup(MapNode node, RunState run, RunServices services)
     {
         zone = GetComponent<Collider2D>();
         zone.isTrigger = true;

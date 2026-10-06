@@ -15,6 +15,8 @@ public class EnemyService
     {
         enemyDatabase = data;
         this.container = container;
+
+        Debug.Log("enemy service built");
     }
 
     public void BuildPool(EnemyData data, int count)

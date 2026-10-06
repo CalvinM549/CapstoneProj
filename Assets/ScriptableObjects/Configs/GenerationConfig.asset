@@ -14,16 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerationConfig
   roomCount: 15
   maxWidth: 3
-  avaliableTypes: []
+  maxExitsPerNode: 3
   baseDifficulty: 1
   difficultyPerDepth: 0.3
-  eliteMinGap: 2
-  maxElites: 3
-  rewardRoomCount: 0
-  shopChance: 0.3
-  restRampProgress: 0.2
-  eliteMinProgress: 0.3
-  vaultMinProgress: 0.6
-  weaponRewardProbability: 0
-  toolRewardProbability: 0
-  MajorRewardProbability: 0

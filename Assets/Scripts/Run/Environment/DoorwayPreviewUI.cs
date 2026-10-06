@@ -4,6 +4,8 @@ using UnityEngine;
 public class DoorwayPreviewUI : MonoBehaviour
 {
     private Doorway door;
+    private Transform playerTransform;
+
     [SerializeField] private CanvasGroup cg;
     [SerializeField] private TextMeshProUGUI typeName;
     [SerializeField] private TextMeshProUGUI rewardName;
@@ -16,24 +18,20 @@ public class DoorwayPreviewUI : MonoBehaviour
     private void Awake()
     {
         door = GetComponentInParent<Doorway>();
+        playerTransform = RunManager.Instance.activePlayer.transform;
     }
 
     public void InitializeWithDestination(MapNode destination)
     {
-        typeName.text = $"[{destination.type.GetRoomTypeName()}]";
+        typeName.text = $"[{destination.type.displayName}]";
 
-        if (destination.type != RoomType.Rest || destination.type != RoomType.End)
-        {
-            string rewardText = destination.rewards.Equals(default) ? "" : $"<{destination.rewards.category.ToString()}>";
-            rewardName.text = rewardText;
-        }
-        else
-            rewardName.text = "";
+        bool showReward = destination.type.displayRewardType && destination.offers.Length > 0;
+        rewardName.text = showReward ? $"<{destination.offers[0].category}>" : "";
 
         flavourName.text = $"Sector {GenerateRandomCode(Random.Range(3, 7))}";
     }
 
-    private const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01233456789";
+    private const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private string GenerateRandomCode(int length)
     {
         char[] stringChars = new char[length];
@@ -48,13 +46,7 @@ public class DoorwayPreviewUI : MonoBehaviour
 
     private void Update()
     {
-        if (door.IsLocked)
-        {
-            cg.alpha = 0f;
-            return;
-        }
-
-        float distance = Vector2.Distance(door.transform.position, RunManager.Instance.activePlayer.transform.position);
+        float distance = Vector2.Distance(door.transform.position, playerTransform.position);
         float alpha = Mathf.InverseLerp(maxDistance, minDistance, distance);
 
         cg.alpha = alpha;

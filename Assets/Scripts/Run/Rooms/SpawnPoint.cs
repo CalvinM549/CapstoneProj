@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
 {
-    public SpawnTag tag = SpawnTag.Any;
+    public SpawnTag allowedTag = SpawnTag.Any;
     [SerializeField] private ParticleSystem telegraphParticles;
 
-    public bool Accepts(SpawnTag required) => required == SpawnTag.Any || tag == SpawnTag.Any || tag == required;
+    public bool Accepts(SpawnTag required) => required == SpawnTag.Any || allowedTag == SpawnTag.Any || allowedTag == required;
 
     public void PlayTelegraph()
     {

@@ -36,6 +36,12 @@ public class RewardContext
             case AuxUpgrade upgrade:
                 return upgrades.GetAuxStacks(upgrade) >= upgrade.maxStacks;
 
+            case PlayerWeapon weapon:
+                return ownedWeaponIds.Contains(weapon.Id);
+
+            case PlayerTool tool:
+                return ownedToolIds.Contains(tool.Id);
+
             default:
                 return false;
         }

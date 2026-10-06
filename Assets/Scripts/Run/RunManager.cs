@@ -4,6 +4,15 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
+public class RunServices
+{
+    public EnemyService enemies;
+    public EncounterService encounters;
+
+    public LootService loot;
+    public CurrencyDropService currency;
+}
+
 public class RunManager : MonoBehaviour
 {
     public static RunManager Instance { get; private set; }
@@ -33,13 +42,9 @@ public class RunManager : MonoBehaviour
 
     [Header("Run Config")]
 
+    private RunServices runServices;
+
     public RoomPoolService roomService; // Pools rooms, holds useful values etc
-
-    public EnemyService enemyService; // Pools enemies, allows for spawning and handling etc
-    public EncounterService encounterService;
-
-    public CurrencyDropService currencyDropService; // Allows for dropping pooled currency
-    public LootService lootService; // Generates random loot rolls
 
     public RunState currentRun;
 
@@ -59,13 +64,16 @@ public class RunManager : MonoBehaviour
             return;
         }
 
-        roomService = new RoomPoolService(db.rooms, roomContainer);
+        roomService = new RoomPoolService(roomContainer);
 
-        enemyService = new EnemyService(db.enemies, enemyContainer);
-        encounterService = new EncounterService(db.enemies, encounterConfig);
+        runServices = new RunServices()
+        {
+            enemies = new EnemyService(db.enemies, enemyContainer),
+            encounters = new EncounterService(db.enemies, encounterConfig),
 
-        currencyDropService = new CurrencyDropService(currencyPickupPrefab, currencyContainer);
-        lootService = new LootService(db);
+            loot = new LootService(db),
+            currency = new CurrencyDropService(currencyPickupPrefab, currencyContainer)
+        };
     }
 
     private void OnEnable()
@@ -118,9 +126,8 @@ public class RunManager : MonoBehaviour
         activePlayer.SetPlayerCanAct(true);
 
         currentRun = new(config.seed, config.map, activePlayer);
-        roomService.BuildStartRoom(config.map); // change out for new system
 
-        EnterNode(currentRun.map.entryNode, null);
+        EnterNode(currentRun.map.entryNode);
     }
 
     public void ResumeSavedRun()
@@ -161,69 +168,31 @@ public class RunManager : MonoBehaviour
 
     #region Room Transitions
 
-    private void EnterFirstNode(MapNode node)
-    {
-        if (roomService == null)
-        {
-            Debug.LogError("[RunManager] No RoomService existing :(");
-            return;
-        }
-
-        activeRoom = roomService.GetRoom(node);
-        currentRun.map.currentNode = node;
-
-        activeRoom.Initialize(node, currentRun);
-
-        // do other stuff
-    }
-
-    private void CleanupCurrent()
-    {
-        currencyDropService.ForceCollectAll();
-        HUDIndicatorService.Instance.ClearAll();
-
-        if (activeRoom != null)
-        {
-            roomService.ReturnToPool(activeRoom);
-            activeRoom = null;
-        }
-    }
-
-    private void EnterNode(MapNode newNode, Direction? arrivingFrom)
+    private void EnterNode(MapNode newNode)
     {
         // Remove Current Room
-        currencyDropService.ForceCollectAll();
+        runServices.currency.ForceCollectAll();
 
         if (activeRoom != null)
         {
-            roomService.ReturnToPool(activeRoom);
-            activeRoom = null;
+            //roomService.ReturnToPool(activeRoom);
+            //activeRoom = null;
+
+            activeRoom.OnCleared -= HandleRoomCleared;
+            roomService.Release(activeRoom);
         }
 
-        currentRun.map.currentNode = newNode;
+        // Setup room
+        currentRun.EnterNode(newNode);
                 
-        activeRoom = roomService.GetRoom(newNode);
-        activeRoom.Initialize(newNode, currentRun);
-
-        roomService.BuildConnectedRooms(newNode);
-
+        activeRoom = roomService.Spawn(newNode.room);
+        activeRoom.Initialize(newNode, currentRun, runServices);
         activeRoom.OnCleared += HandleRoomCleared;
         activeRoom.OnFailure += HandleRoomFailed;
 
         // Setup Player
-        Doorway entryDoor = null;
-        if (arrivingFrom.HasValue)
-        {
-            entryDoor = activeRoom.GetDoorwayFor(arrivingFrom.Value.Opposite());
-            entryDoor?.DisableUntilPlayerExit();
-        }
-
-        Vector2 spawnPos = arrivingFrom.HasValue && entryDoor != null
-            ? entryDoor.entryPoint.position
-            : activeRoom.fallbackEntryPoint;
-
-        GameEvents.PlayerTransitionTeleport(spawnPos);
-        activePlayer.transform.position = spawnPos;
+        GameEvents.PlayerTransitionTeleport(activeRoom.EntryPoint);
+        activePlayer.transform.position = activeRoom.EntryPoint;
 
         activePlayer.PrepareForRoomChange();
 
@@ -238,12 +207,6 @@ public class RunManager : MonoBehaviour
     {
         room.OnCleared -= HandleRoomCleared;
         room.OnFailure -= HandleRoomFailed;
-
-        if (!currentRun.map.currentNode.cleared)
-        {
-            currentRun.currentDepth++;
-            currentRun.map.currentNode.cleared = true;
-        }
 
         activePlayerUI.ToggleUI(false);
         CheckSectorVictory();
@@ -284,7 +247,7 @@ public class RunManager : MonoBehaviour
         TimescaleManager.Instance.PauseGame(this);
 
         activePlayer.Movement.EndDoorwayMovement();
-        EnterNode(nextNode, dir);
+        EnterNode(nextNode);
 
         TimescaleManager.Instance.UnpauseGame(this);
         DoTransitionFade(false);

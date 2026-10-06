@@ -16,7 +16,7 @@ public class SurviveTimeHandler : MonoBehaviour, IObjectiveTracker
 
     }
 
-    public void Setup(RoomData room, RunState run)
+    public void Setup(MapNode node, RunState run, RunServices services)
     {
         timer = 0f;
         timerComplete = false;

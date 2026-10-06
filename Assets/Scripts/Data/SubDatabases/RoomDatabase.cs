@@ -3,25 +3,10 @@ using UnityEditor;
 using UnityEngine;
 using System.Linq;
 
-
 [CreateAssetMenu(menuName = "Databases/RoomDatabase")]
-public class RoomDatabase : CategorizedContentDatabase<RoomData, RoomType>
+public class RoomDatabase : CategorizedContentDatabase<RoomData, RoomTypeData>
 {
-    public IEnumerable<RoomData> GetCandidates(RoomType type, DirectionMask requiredConnections, int chapter)
-    {
-        foreach (var room in GetByCategory(type))
-        {
-            if (room == null) continue;
-
-            if (!room.SupportsMask(requiredConnections)) continue;
-
-            if (chapter < room.minChapter || chapter > room.maxChapter) continue;
-
-            yield return room;
-        }
-    }
-
-    public IEnumerable<RoomData> GetCandidates(RoomType type, int chapter)
+    public IEnumerable<RoomData> GetCandidates(RoomTypeData type, int chapter)
     {
         foreach (var room in GetByCategory(type))
         {

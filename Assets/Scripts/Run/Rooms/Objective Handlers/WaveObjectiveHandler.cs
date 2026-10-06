@@ -5,11 +5,13 @@ using UnityEngine;
 
 public class WaveObjectiveHandler : MonoBehaviour, IObjectiveTracker
 {
-    private EnemyService enemyService;
+    private RunServices services;
     private RoomManager room;
 
     private EnemyWave[] waves;
     private int waveIndex;
+
+    private bool completed;
 
     private bool waitingForNextWave;
     private float waveTimer;
@@ -29,16 +31,17 @@ public class WaveObjectiveHandler : MonoBehaviour, IObjectiveTracker
         room = GetComponent<RoomManager>();
     }
 
-    public void Setup(RoomData room, RunState run)
+    public void Setup(MapNode node, RunState run, RunServices services)
     {
-        enemyService = RunManager.Instance.enemyService;
+        this.services = services;
 
-        waves = (room.encounterWaves != null && room.encounterWaves.Length > 0)
-            ? room.encounterWaves
-            : RunManager.Instance.encounterService.GenerateWaves(room, run);
+        waves = (node.room.encounterWaves != null && node.room.encounterWaves.Length > 0)
+            ? node.room.encounterWaves
+            : services.encounters.GenerateWaves(node, run);
 
         waveIndex = -1;
         waitingForNextWave = false;
+        completed = false;
         activeEnemies.Clear();
 
         enemiesKilled = 0;
@@ -64,6 +67,13 @@ public class WaveObjectiveHandler : MonoBehaviour, IObjectiveTracker
 
     public void Tick(float dt)
     {
+        if (completed) return;
+        if (waves == null || waves.Length == 0)
+        {
+            Complete();
+            return;
+        }
+
         if (!waitingForNextWave) return;
 
         waveTimer -= dt;
@@ -88,12 +98,12 @@ public class WaveObjectiveHandler : MonoBehaviour, IObjectiveTracker
             Transform spawnPoint = room.GetEnemySpawnPoint(entry.spawnTag);
             Vector2 spawnPos = spawnPoint != null ? spawnPoint.position : transform.position;
 
-            EnemyController enemy = enemyService.GetEnemy(entry, spawnPos);
+            EnemyController enemy = services.enemies.GetEnemy(entry, spawnPos);
             enemy.OnDeath += HandleEnemyDeath;
             activeEnemies.Add(enemy);
-
-
         }
+
+        if (activeEnemies.Count <= 0) AdvanceOrComplete();
     }
 
     private void HandleEnemyDeath(EnemyController enemy)
@@ -103,20 +113,26 @@ public class WaveObjectiveHandler : MonoBehaviour, IObjectiveTracker
 
         enemiesKilled++;
         if (totalEnemies > 0)
-            OnProgressChanged?.Invoke(enemiesKilled / totalEnemies);
+            OnProgressChanged?.Invoke((float)enemiesKilled / totalEnemies);
 
-        if (activeEnemies.Count > 0) return;
+        if (activeEnemies.Count <= 0) AdvanceOrComplete();
+    }
 
-        bool hasNextWave = waveIndex + 1 < waves.Length;
-
-        if (hasNextWave)
+    private void AdvanceOrComplete()
+    {
+        if (waveIndex + 1 < waves.Length)
         {
             waitingForNextWave = true;
             waveTimer = Mathf.Max(0f, waves[waveIndex + 1].startDelay);
         }
         else
-        {
-            OnEncounterCleared?.Invoke();
-        }
+            Complete();
+    }
+
+    private void Complete()
+    {
+        if (completed) return;
+        completed = true;
+        OnEncounterCleared?.Invoke();
     }
 }

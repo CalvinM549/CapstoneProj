@@ -16,16 +16,7 @@ public class ShopStation : StationBase, IInteractable
 
     protected override void OnSetup(MapNode node, RunState run)
     {
-        stock = RunManager.Instance.lootService.Roll(new LootRequest
-            {
-                category = node.rewards.category,
-                count = 6,
-                isShop = true,
-                affectPity = true
-            },
-            run.rewardContext,
-            RNGManager.NodeRng(run.seed, node.coordinates),
-            run.currentDepth);
+        stock = services.loot.RollAll(node, run);
 
         purchased = new bool[stock.Count];
     }

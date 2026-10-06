@@ -4,13 +4,21 @@ using System.Linq;
 using UnityEngine;
 
 public class MapGenerationService
-{   
-    private RoomDatabase db;
-    private RoomTypeDatabase typeDb;
-    
-    private MapGenerationConfig config;
-    
+{
+    private const int SaltLayout = 0x1A70;
+    private const int SaltTypes = 0x7E57;
+    private const int SaltRooms = 0x2007;
+    private const int SaltRewards = 0x5EED;
+    private const int SaltCode = 0xC0DE;
 
+    private const string CodeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+
+    private readonly RoomDatabase db;
+    private readonly RoomTypeDatabase typeDb;
+    private readonly MapGenerationConfig config;
+
+    private int MaxExits => Mathf.Max(1, config.maxExitsPerNode);
 
     public MapGenerationService(RoomDatabase roomData, RoomTypeDatabase typeData, MapGenerationConfig config)
     {
@@ -20,11 +28,14 @@ public class MapGenerationService
         this.config = config;
     }
 
-
     private float DifficultyCurve(int depth) => config.baseDifficulty + depth * config.difficultyPerDepth;
 
+    public static System.Random RNGStream(int seed, int salt)
+    {
+        unchecked { return new System.Random(seed * 397 ^ salt); }
+    }
 
-    #region Web generation
+    #region Generation
 
     public SectorMap GenerateWithSeed(int seed, int chapter = 0)
     {
@@ -47,62 +58,67 @@ public class MapGenerationService
 
     private SectorMap TryGenerate(int seed, int chapter)
     {
-        RNGManager.Instance.InitRNG(seed);
 
-        int[] widthCurve = BuildWidthCurve();
+        var layoutRng = RNGStream(seed, SaltLayout);
+
+        int[] widthCurve = BuildWidthCurve(layoutRng);
         var rows = BuildRows(widthCurve);
 
-        ConnectRows(rows);
-        ValidateConnectivity(rows);
+        ConnectRows(rows, layoutRng);
 
-        AssignRoomTypes(rows);
-        AssignRooms(rows, chapter);
-        AssignRewards(rows, seed);
+        AssignTypes(rows, RNGStream(seed, SaltTypes));
+        AssignRooms(rows, chapter, RNGStream(seed, SaltRooms));
+        //AssignRewards(rows, seed);
+        AssignOffers(rows, seed);
 
-
-        return BuildSectorMap(rows, seed);
+        var map = BuildSectorMap(rows, seed, chapter);
+        Validate(map);
+        return map;
     }
 
-    private int[] BuildWidthCurve()
+    private int[] BuildWidthCurve(System.Random rng)
     {
         int rowCount = Mathf.Max(3, config.roomCount);
         int maxWidth = Mathf.Max(1, config.maxWidth);
+
 
         int[] curve = new int[rowCount];
         for (int i = 0; i < rowCount; i++)
         {
             float t = (float)i / (rowCount - 1);
+            float peak = Mathf.Lerp(0.2f, 0.6f, (float)rng.NextDouble());
+            float spread = Mathf.Lerp(0.4f, 0.8f, (float)rng.NextDouble());
 
-            float val1 = Mathf.Lerp(0.2f, 0.6f, (float)RNGManager.Instance.rng.NextDouble());
-            float val2 = Mathf.Lerp(0.4f, 0.8f, (float)RNGManager.Instance.rng.NextDouble());
-
-            float widthT = 1f - Mathf.Abs(t - val1) / val2;
+            float widthT = 1f - Mathf.Abs(t - peak) / spread;
             curve[i] = Mathf.RoundToInt(Mathf.Lerp(1, maxWidth, Mathf.Clamp01(widthT)));
         }
 
         curve[0] = 1;
         curve[^1] = 1;
+
+        for (int i = 1; i < rowCount; i++)
+            curve[i] = Mathf.Min(curve[i], curve[i - 1] * MaxExits);
+
         return curve;
     }
 
     private List<List<MapNode>> BuildRows(int[] widthCurve)
     {
-        List<List<MapNode>> rows = new();
+        var rows = new List<List<MapNode>>(widthCurve.Length);
 
         for (int depth = 0; depth < widthCurve.Length; depth++)
         {
-            var row = new List<MapNode>();
+            var row = new List<MapNode>(widthCurve[depth]);
 
             for (int i = 0; i < widthCurve[depth]; i++)
             {
-                MapNode node = new()
+                row.Add( new MapNode
                 {
                     id = $"{depth}_{i}",
                     depth = depth,
                     rowIndex = i,
                     coordinates = new Vector2Int(depth, i)
-                };
-                row.Add(node);
+                });
             }
             rows.Add(row);
         }
@@ -110,8 +126,12 @@ public class MapGenerationService
         return rows;
     }
 
+    #endregion
+
+    #region Connection
+
     //Connections
-    private void ConnectRows(List<List<MapNode>> rows)
+    private void ConnectRows(List<List<MapNode>> rows, System.Random rng)
     {
         for (int depth = 0; depth < rows.Count - 1; depth++)
         {
@@ -121,7 +141,7 @@ public class MapGenerationService
             foreach (var node in current)
             {
                 int connectionCount = RNGManager.Instance.rng.Next(1,3);
-                node.connections2 = PickNearbyTargets(node, current.Count, next, connectionCount);
+                node.exits = PickNearbyTargets(node, current.Count, next, connectionCount);
             }
 
             CheckRowCoverage(current, next);
@@ -147,12 +167,12 @@ public class MapGenerationService
 
     private void CheckRowCoverage(List<MapNode> current, List<MapNode> next)
     {
-        var covered = new HashSet<string>(current.SelectMany(n => n.connections2.Select(c => c.id)));
+        var covered = new HashSet<string>(current.SelectMany(n => n.exits.Select(c => c.id)));
 
         foreach (var orphan in next.Where(n => !covered.Contains(n.id)))
         {
             var closest = current.OrderBy(n => Mathf.Abs(n.rowIndex - orphan.rowIndex)).First();
-            closest.connections2.Add(orphan);
+            closest.exits.Add(orphan);
         }
     }
 
@@ -166,7 +186,7 @@ public class MapGenerationService
         {
             var current = queue.Dequeue();
             if (!visited.Add(current.id)) continue;
-            foreach (var connection in current.connections2)
+            foreach (var connection in current.exits)
                 queue.Enqueue(connection);
         }
 
@@ -174,255 +194,175 @@ public class MapGenerationService
             throw new InvalidOperationException("[MapGenerationService] Boss row unreachable, regenerating...");
     }
 
-    // Room assignment
+    #endregion
 
-    private void AssignRoomTypes(List<List<MapNode>> rows)
+    #region Room Types
+
+    private void AssignTypes(List<List<MapNode>> rows, System.Random rng)
     {
-        rows[0].ForEach(n => n.type = RoomType.Start);
-        rows[^1].ForEach(n => n.type = RoomType.End);
+        int last = rows.Count - 1;
+        var counts = new Dictionary<RoomTypeData, int>();
 
-        PlaceGuaranteed(rows, RoomType.Rest, count: 1, minProgress: config.restRampProgress);
-        PlaceGuaranteed(rows, RoomType.Shop, count: 1);
+        foreach (var n in rows[0]) Assign(n, typeDb.GetStart());
+        foreach (var n in rows[last]) Assign(n, typeDb.GetEnd());
 
-        for (int depth = 0; depth < rows.Count; depth++)
+        foreach (var t in typeDb.All.Where(t => t.guaranteedCount > 0))
         {
-            foreach (var node in rows[depth].Where(n => n.type == default))
+            for (int i = 0; i < t.guaranteedCount; i++)
             {
-                node.type = RollWeightedType(depth);
-            }
-        }
-
-        EnforceEliteSpacing(rows);
-    }
-
-    private void PlaceGuaranteed(List<List<MapNode>> rows, RoomType type, int count, float minProgress = 0f)
-    {
-
-        int minRowIndex = Mathf.Max(1, Mathf.CeilToInt(minProgress * (config.roomCount - 1)));
-        int maxRowIndex = config.roomCount - 2;
-
-        if (minRowIndex > maxRowIndex) return; // unplaceable
-
-        var eligibleRows = Enumerable.Range(minRowIndex, maxRowIndex - minRowIndex + 1).ToList();
-
-        for (int i = 0; i < count && eligibleRows.Count > 0; i++)
-        {
-            int rowIndex = eligibleRows[RNGManager.Instance.rng.Next(eligibleRows.Count)];
-            var unassigned = rows[rowIndex]
-                .Where(n => n.type == default)
-                .ToList();
-
-            if (unassigned.Count == 0)
-            {
-                eligibleRows.Remove(rowIndex);
-                i--;
-                continue;
-            }
-
-            unassigned[RNGManager.Instance.rng.Next(unassigned.Count)].type = type;
-            eligibleRows.Remove(rowIndex);
-        }
-    }
-
-    private RoomData WeightedPick(List<RoomData> candidates, float targetDifficulty)
-    {
-        if (candidates.Count == 1) return candidates[0];
-
-        var weights = new float[candidates.Count];
-        float totalWeight = 0f;
-
-        for (int i = 0; i < candidates.Count; i++)
-        {
-            float distance = Mathf.Abs(candidates[i].difficultyCost - targetDifficulty);
-            weights[i] = 1f / (1f + distance);
-            totalWeight += weights[i];
-        }
-
-        float roll = (float)(RNGManager.Instance.rng.NextDouble() * totalWeight);
-        float cumulative = 0f;
-
-        for (int i = 0; i < candidates.Count; i++)
-        {
-            cumulative += weights[i];
-            if (roll <= cumulative) return candidates[i];
-        }
-
-        return candidates[^1];
-    }
-
-
-    private RoomType RollWeightedType(int depth)
-    {
-        float progress = (float)depth / (config.roomCount - 1);
-
-        var weights = new List<(RoomType type, float weights)>
-        {
-            (RoomType.Combat, 0.6f),
-            (RoomType.Story, 0.15f),
-        };
-
-        // Rest weights
-        float restWeight = 0.1f * Mathf.Clamp01(progress / config.restRampProgress);
-        if(restWeight > 0f)
-            weights.Add((RoomType.Rest, restWeight));
-
-        // Elite weights
-        if (progress >= config.eliteMinProgress && 1 == 0)
-        {
-            float t = Mathf.InverseLerp(config.eliteMinProgress, 1f, progress);
-            weights.Add((RoomType.Elite, Mathf.Lerp(0.15f, 0.35f, t)));
-        }
-
-        // Vault weights
-        if (progress >= config.vaultMinProgress && 1 == 0)
-        {
-            float t = Mathf.InverseLerp(config.vaultMinProgress, 1f, progress);
-            weights.Add((RoomType.Vault, Mathf.Lerp(0.1f, 0.3f, t)));
-        }
-
-        float total = weights.Sum(w => w.weights);
-        float roll = (float)(RNGManager.Instance.rng.NextDouble() * total);
-        float cumulative = 0f;
-
-        foreach (var (type, weight) in weights)
-        {
-            cumulative += weight;
-            if (roll <= cumulative) 
-                return type;
-        }
-
-        return RoomType.Combat; // fallback
-    }
-
-    private void EnforceEliteSpacing(List<List<MapNode>> rows)
-    {
-        int lastEliteDepth = -config.eliteMinGap;
-        int placed = 0;
-
-        foreach (var row in rows)
-        {
-            foreach (var node in row.Where(n => n.type == RoomType.Elite))
-            {
-                bool tooClose = node.depth - lastEliteDepth < config.eliteMinGap;
-                bool overCap = placed >= config.maxElites;
-
-                if (tooClose || overCap)
+                var spot = PickGuaranteedSpot(t);
+                if (spot == null)
                 {
-                    node.type = RoomType.Combat;                   
+                    Debug.LogWarning($"[MapGenerationService] Could not place guaranteed '{t.displayName}' ({i + 1}/{t.guaranteedCount})");
+                    break;
                 }
-                else
-                {
-                    lastEliteDepth = node.depth;
-                    placed++;
-                }
+                Assign(spot, t);
             }
         }
+
+        for (int depth = 1; depth < last; depth++)
+        {
+            float progress = (float)depth / last;
+            foreach (var node in rows[depth])
+            {
+                if (node.type != null) continue;
+
+                var pool = typeDb.All
+                    .Where(t => t.canRandomSpawn && Allowed(t, depth))
+                    .Select(t => (type: t, weight: t.GetWeight(progress)))
+                    .Where(x => x.weight > 0f)
+                    .ToList();
+
+                Assign(node, pool.Count > 0 ? WeightedPick(pool, rng) : typeDb.FallbackType);
+            }
+        }
+
+        void Assign(MapNode node, RoomTypeData type)
+        {
+            node.type = type;
+            counts[type] = counts.GetValueOrDefault(type) + 1;
+        }
+
+        bool Allowed(RoomTypeData type, int depth)
+        {
+            if (type.maxPerMap >= 0 && counts.GetValueOrDefault(type) >= type.maxPerMap) return false;
+            int from = Mathf.Max(0, depth - type.minRowGap + 1);
+            int to = Mathf.Min(last, depth + type.minRowGap - 1);
+
+            for (int i = from; i <= to; i++)
+                if (rows[i].Any(n => n.type == type)) return false;
+            return true;
+        }
+
+        MapNode PickGuaranteedSpot(RoomTypeData type)
+        {
+            var eligible = new List<int>();
+            for (int depth = 1; depth < last; depth++)
+            {
+                if ((float)depth / last < type.guarenteedMinProgress) continue;
+                if (!Allowed(type, depth)) continue;
+                if (rows[depth].Any(n => n.type == null)) eligible.Add(depth);
+            }
+
+            if(eligible.Count == 0) return null;
+
+            var chokePoints = eligible.Where(d => rows[d].Count == 1).ToList();
+            var pool = chokePoints.Count > 0 ? chokePoints : eligible;
+
+            int row = pool[rng.Next(pool.Count)];
+            var free = rows[row].Where(n => n.type == null).ToList();
+            return free[rng.Next(free.Count)];
+        }
     }
-    
-    private void AssignRooms(List<List<MapNode>> rows, int chapter)
+
+    #endregion
+
+    #region Room Data
+    private void AssignRooms(List<List<MapNode>> rows, int chapter, System.Random rng)
     {
         foreach (var row in rows)
         {
             foreach (var node in row)
             {
-                node.room = SelectRoom(node.type, node.depth, chapter);
+                node.room = SelectRoom(node, chapter, rng);
             }
         }
     }
 
-    private RoomData SelectRoom(RoomType type, int depth, int chapter)
+    private RoomData SelectRoom(MapNode node, int chapter, System.Random rng)
     {
-        var candidates = db.GetCandidates(type, chapter).ToList();
+        int requiredExits = node.exits.Count;
+        float target = DifficultyCurve(node.depth);
+
+        var candidates = new List<(RoomData room, float weight)>();
+        foreach (var r in db.GetCandidates(node.type, chapter))
+        {
+            if(r.roomPrefab == null) continue;
+            if (r.roomPrefab.ExitCount < requiredExits) continue;
+
+            candidates.Add((r, 1f / (1f + Mathf.Abs(r.difficultyCost - target))));
+        }
 
         if(candidates.Count == 0)
         {
-            Debug.LogError($"[MapGenerationService] No maps of type: {type}");
-            return db.GetByCategory(type).FirstOrDefault();
+            Debug.LogError($"[MapGenerationService] No rooms of type: {node.type.displayName}");
         }
 
-        float targetDifficulty = DifficultyCurve(depth);
-        return WeightedPick(candidates, targetDifficulty);
+        return WeightedPick(candidates, rng);
     }
+
+    #endregion
+
+    #region Assign Rewards
 
     private void AssignRewards(List<List<MapNode>> rows, int seed)
     {
-        var rng = new System.Random(seed ^ 0x5EED);
 
         foreach (var row in rows)
             foreach (var node in row)
-                node.rewards = AssignRewardType(node.type, node.depth);
+            {
+                var rng = new System.Random(seed ^ 0x5EED);
+                node.offers = node.type.rewards.Resolve(node.depth, rng);
+            }
     }
 
-
-
-    private NodeRewards AssignRewardType(RoomType room, int depth)
+    private void AssignOffers(List<List<MapNode>> rows, int seed)
     {
-        var rewards = new NodeRewards();
-        rewards.isShop = false;
+        foreach(var row in rows)
+            foreach (var node in row)
+            {
+                var rewardRng = RNGManager.NodeRng(seed, node.coordinates, SaltRewards);
+                node.offers = node.type.rewards != null
+                    ? node.type.rewards.Resolve(node.depth, rewardRng)
+                    : Array.Empty<ResolvedOffer>();
 
-        switch (room)
+                var codeRng = RNGManager.NodeRng(seed, node.coordinates, SaltCode);
+                node.sectorCode = MakeCode(codeRng, codeRng.Next(3, 7));
+            }
+    }
+
+    private static string MakeCode(System.Random rng, int length)
+    {
+        var chars = new char[length];
+        for (int i = 0; i < length; i++)
         {
-            case RoomType.Start:
-                rewards.category = RewardCategory.Weapon;
-                rewards.baseOfferCount = 3;
-                break;
-
-            case RoomType.Elite:
-                rewards.category = RewardCategory.MajorUpgrade;
-                rewards.baseOfferCount = 3;
-                break;
-
-            case RoomType.Story:
-            case RoomType.Combat:
-                rewards.category = RollWeightedReward(room, depth);
-                rewards.baseOfferCount = 3;
-                break;
-
-            case RoomType.Shop:
-                rewards.category = RollWeightedReward(room, depth);
-                rewards.baseOfferCount = 6;
-                rewards.isShop = true;
-                break;
-
-            case RoomType.Rest:
-            case RoomType.End:
-            default:
-                break;
+            chars[i] = CodeChars[rng.Next(CodeChars.Length)];
         }
 
-        return rewards;
+        return new string(chars);
     }
 
-    private RewardCategory RollWeightedReward(RoomType type, int depth)
-    {
-        var weights = new (RewardCategory type, float weight)[]
-        {
-            (RewardCategory.AuxUpgrade, type == RoomType.Shop ? 0.5f : 2f),
-            (RewardCategory.MajorUpgrade, 0.15f + (0.01f * depth)),
-            (RewardCategory.Weapon, 0.1f),
-            (RewardCategory.Tool, 0.1f)
-        };
+    #endregion
 
-        float total = weights.Sum(w => w.weight);
-        float roll = (float)(RNGManager.Instance.rng.NextDouble() * total);
-        float cumulative = 0f;
-
-        foreach (var (category, weight) in weights)
-        {
-            cumulative += weight;
-            if (roll <= cumulative)
-                return category;
-        }
-
-        return RewardCategory.AuxUpgrade; // fallback
-    }
+    #region Build Map
 
     // sector map
-    private SectorMap BuildSectorMap(List<List<MapNode>> rows, int seed)
+    private static SectorMap BuildSectorMap(List<List<MapNode>> rows, int seed, int chapter)
     {
         SectorMap map = new()
         {
             seed = seed,
+            chapter = chapter,
             rowCount = rows.Count
         };
 
@@ -436,10 +376,56 @@ public class MapGenerationService
         }
 
         map.entryNode = rows[0][0];
-        map.currentNode = map.entryNode;
         map.totalNodes = map.nodes.Count;
 
         return map;
+    }
+
+    private static void Validate(SectorMap map)
+    {
+        int lastDepth = map.rowCount - 1;
+
+        foreach (var node in map.nodes)
+        {
+            if (node.depth < lastDepth && node.exits.Count == 0)
+                throw new InvalidOperationException($"[MapGen] Node {node.id} is a dead end (seed {map.seed})");
+
+            if (node.type == null || node.room == null)
+                throw new InvalidOperationException($"[MapGen] Node {node.id} missing type or room (seed {map.seed})");
+        }
+
+        var visited = new HashSet<string>();
+        var stack = new Stack<MapNode>();
+        stack.Push(map.entryNode);
+
+        while (stack.Count > 0)
+        {
+            var node = stack.Pop();
+            if (!visited.Add(node.id)) continue;
+            foreach(var e in  node.exits) stack.Push(e);
+        }
+
+        if(visited.Count != map.nodes.Count)
+            throw new InvalidOperationException($"[MapGen] Unreachable nodes (seed {map.seed})");
+    }
+
+    private static T WeightedPick<T>(IReadOnlyList<(T item, float weight)> entries, System.Random rng)
+    {
+        if (entries.Count == 1) return entries[0].item;
+
+        float total = 0f;
+        for (int i = 0; i < entries.Count; i++)
+            total += entries[i].weight;
+
+        float roll = (float)(rng.NextDouble() * total);
+        for (int i = 0; i < entries.Count; i++)
+        {
+            roll -= entries[i].weight;
+            if(roll <= 0f) 
+                return entries[i].item;
+        }
+
+        return entries[^1].item;
     }
 
     #endregion

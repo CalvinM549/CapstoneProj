@@ -15,6 +15,8 @@ public class StationBase : MonoBehaviour, IInteractable
 
     protected MapNode node;
     protected RunState run;
+    protected RunServices services;
+
     [SerializeField] private InteractPromptUI interactPromptUI;
 
     [SerializeField] private string interactPrompt;
@@ -49,12 +51,13 @@ public class StationBase : MonoBehaviour, IInteractable
         RemoveIndicator();
     }
 
-    public void Setup(MapNode node, RunState run, Action<RoomManager> onRoomComplete)
+    public void Setup(MapNode node, RunState run, RunServices services)
     {
         Debug.Log($"Setting up: {gameObject.name}");
 
         this.node = node;
         this.run = run;
+        this.services = services;
 
         OnSetup(node, run);
     }

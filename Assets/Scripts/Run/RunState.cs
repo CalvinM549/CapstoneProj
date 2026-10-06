@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -17,10 +19,10 @@ public class RunState
     public int chapterIndex;
     public SectorMap map;
     public int currentDepth;
-    public Doorway lastDoorway; // used to re-load spawn pos
+
+    public List<MapNode> pathTaken = new();
 
     public int runDirection;
-    
     
     // Draft things
 
@@ -63,7 +65,13 @@ public class RunState
         //return run;
 
         return null; // TEMP
+    }
 
+    public void EnterNode(MapNode node)
+    {
+        map.currentNode = node;
+        currentDepth = node.depth;
+        pathTaken.Add(node);
     }
 
     #endregion

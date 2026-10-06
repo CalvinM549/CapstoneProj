@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: Start012
   m_EditorClassIdentifier: Assembly-CSharp::RoomData
   id: start_01
-  type: 1
-  allowedConnections: -1
+  type: {fileID: 11400000, guid: e997dce0037479d4c98b3d88b86d6425, type: 2}
   difficultyCost: 0
-  roomPrefab: {fileID: 6074118564554837086, guid: 9b97fd0f6af8c6045b74d77fa63275dd, type: 3}
+  roomPrefab: {fileID: 3310053853735739365, guid: f1fb2de7d569a774b9f954081e77caa2, type: 3}
   minChapter: 0
   maxChapter: 99
   encounterWaves: []

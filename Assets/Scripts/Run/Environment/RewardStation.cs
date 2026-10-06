@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class RewardStation : StationBase, IInteractable
 {
+    [SerializeField] private int slotIndex = 0;
+
     private List<LootResult> offer;
 
     private void Start()
@@ -13,17 +15,7 @@ public class RewardStation : StationBase, IInteractable
 
     protected override void OnSetup(MapNode node, RunState run)
     {
-        node.cachedLoot ??= RunManager.Instance.lootService.Roll(
-            new LootRequest
-            {
-                category = node.rewards.category,
-                count = node.rewards.baseOfferCount,
-                affectPity = true
-            },
-            run.rewardContext,
-            RNGManager.NodeRng(run.seed, node.coordinates),
-            run.currentDepth);
-        offer = node.cachedLoot;
+        offer = services.loot.RollSlot(node, run, slotIndex);
     }
 
     protected override void OnInteract()
@@ -31,7 +23,7 @@ public class RewardStation : StationBase, IInteractable
         if (!isEnabled) return;
         if (used) return;
 
-        string requestPrompt = $"Select {node.rewards.category.GetRewardCategoryName()}";
+        string requestPrompt = $"Select Reward";
         ChoiceRequest request = new(requestPrompt, offer, OnSelected);
 
         UIManager.Instance.OpenScreen("rewardScreen", request);

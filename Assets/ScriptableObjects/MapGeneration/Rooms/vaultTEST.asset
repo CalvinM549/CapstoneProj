@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 950ba027e6d6ada4a9c44e2a52e76001, type: 3}
-  m_Name: Corridor1
+  m_Name: vaultTEST
   m_EditorClassIdentifier: Assembly-CSharp::RoomData
-  id: corridor01
-  type: 2
-  allowedConnections: 10
+  id: vault_01
+  type: {fileID: 11400000, guid: fb80a8089295cdb45b5389d256a94ebe, type: 2}
   difficultyCost: 0
-  timerCost: 0
-  roomPrefab: {fileID: 4043302354256458430, guid: fefe4fca15b94dc47bf248cc8480b350, type: 3}
+  roomPrefab: {fileID: 3310053853735739365, guid: f1fb2de7d569a774b9f954081e77caa2, type: 3}
   minChapter: 0
   maxChapter: 99
+  encounterWaves: []

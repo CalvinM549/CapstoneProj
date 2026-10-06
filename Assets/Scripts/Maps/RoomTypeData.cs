@@ -14,40 +14,41 @@ public enum RoomType
 }
 
 [CreateAssetMenu(menuName = "Map/NewNodeTypeData")]
-public class NodeTypeData : DatabaseEntry
+public class RoomTypeData : DatabaseEntry
 {
     [Header("Display")]
     public string displayName;
+    public Sprite displayIcon;
+    public bool displayRewardType = true;
+
+    [Header("Behaviour")]
     public bool isStart;
     public bool isEnd;
     public bool isCombat;
     public bool isShop;
 
-    public RoomType type;
-    public bool canRandomSpawn = true;
-
-
     [Header("Placement")]
+    public bool canRandomSpawn = true;
     public float baseWeight = 1f;
     public AnimationCurve weightOverProgress = AnimationCurve.Constant(0f, 1f, 1f);
 
-    public float minProgress = 0f;
-    public float maxProgress = 0f;
-    [Space]
+    [Range(0, 1)] public float minProgress = 0f;
+    [Range(0, 1)] public float maxProgress = 0f;
 
-    public int guarenteedCount;
-    public float guarenteedMinProgress;
+    public int maxPerMap = -1; // unlimited at base
+    public int minRowGap = 0;
 
+    public int guaranteedCount;
+    [Range(0, 1)] public float guarenteedMinProgress;
 
     [Header("Encounter")]
-    public float encounterBudgetModifier = 0f;
+    public float encounterBudgetModifier = 1f;
     public int minWaves;
     public int maxWaves;
 
 
     [Header("Rewards")]
-    public RewardCategory[] validRewards;
-    public int baseOfferCount;
+    public RewardTable rewards;
 
     public float GetWeight(float progress)
     {

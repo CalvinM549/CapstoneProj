@@ -13,18 +13,8 @@ public class SectorMap
     public MapNode currentNode;
 
     public int seed;
+    public int chapter;
     public int totalNodes;
     public int rowCount;
-
-    public List<MapNode> GetConnections(MapNode node) => node.connections2;
-
-    public List<MapNode> GetNodesAtDepth(int depth)
-    {
-        return nodes
-            .Where(n => n.depth == depth)
-            .ToList();
-    }
-
-    public MapNode GetNode(string id) => nodesByID.GetValueOrDefault(id);
 
 }

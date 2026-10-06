@@ -4,10 +4,12 @@ using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Databases/NodeTypeDatabase")]
-public class RoomTypeDatabase : ContentDatabase<NodeTypeData>
+public class RoomTypeDatabase : ContentDatabase<RoomTypeData>
 {
-    public NodeTypeData GetStart() => All.First(t => t.isStart);
-    public NodeTypeData GetEnd() => All.First(t => t.isEnd);
+    [SerializeField] private RoomTypeData fallbackType;
+    public RoomTypeData FallbackType => fallbackType;
+    public RoomTypeData GetStart() => All.First(t => t.isStart);
+    public RoomTypeData GetEnd() => All.First(t => t.isEnd);
 
-    public IEnumerable<NodeTypeData> GetFillable() => All.Where(t => !t.isStart && !t.isEnd);
+    public IEnumerable<RoomTypeData> GetFillable() => All.Where(t => !t.isStart && !t.isEnd);
 }

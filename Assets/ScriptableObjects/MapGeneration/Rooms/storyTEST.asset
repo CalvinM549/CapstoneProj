@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 950ba027e6d6ada4a9c44e2a52e76001, type: 3}
-  m_Name: restTEST
+  m_Name: storyTEST
   m_EditorClassIdentifier: Assembly-CSharp::RoomData
-  id: rest_01
-  type: 7
-  allowedConnections: -1
+  id: storyTEST
+  type: {fileID: 11400000, guid: afceff8065a2c394c97baf0024cf5403, type: 2}
   difficultyCost: 0
-  timerCost: 0
-  roomPrefab: {fileID: 6074118564554837086, guid: 9b97fd0f6af8c6045b74d77fa63275dd, type: 3}
+  roomPrefab: {fileID: 3310053853735739365, guid: f1fb2de7d569a774b9f954081e77caa2, type: 3}
   minChapter: 0
   maxChapter: 99
+  encounterWaves: []

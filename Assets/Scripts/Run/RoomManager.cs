@@ -24,7 +24,10 @@ public class RoomManager : MonoBehaviour
     private StationBase[] roomStations;
 
     [SerializeField] private Doorway[] doorways;
-    public Vector2 fallbackEntryPoint;
+    public int ExitCount => doorways.Length;
+    public Vector2 EntryPoint => fallbackEntryPoint;
+
+    [SerializeField] private Vector2 fallbackEntryPoint;
 
     [SerializeField] private SpawnPoint[] spawnPoints;
 
@@ -56,22 +59,22 @@ public class RoomManager : MonoBehaviour
 #endif
     }
 
-    public void Initialize(MapNode node, RunState run)
+    public void Initialize(MapNode node, RunState run, RunServices services)
     {
         Data = node.room;
         this.node = node;
         this.run = run;
 
         foreach (var roomObj in roomStations)
-            roomObj.Setup(node, run, OnCleared);
+            roomObj.Setup(node, run, services);
 
         for (int i = 0; i < doorways.Length; i++)
         {
             var currentDoor = doorways[i];
 
-            if (node.connections2.Count >= i + 1)
+            if (node.exits.Count >= i + 1)
             {
-                var connectedRoom = node.connections2[i];
+                var connectedRoom = node.exits[i];
                 currentDoor.gameObject.SetActive(true);
                 currentDoor.SetDestination(connectedRoom);
             }
@@ -84,14 +87,14 @@ public class RoomManager : MonoBehaviour
 
         State = RoomState.Idle;
 
-        if (node.cleared || objectiveTracker == null)
+        if (objectiveTracker == null)
         {
             // Keep door in open state
         }
         else
         {
             // Enemy Spawns
-            objectiveTracker.Setup(node.room, run);
+            objectiveTracker.Setup(node, run, services);
 
             foreach (var door in doorways)
                 if(door.gameObject.activeSelf) door.Lock();
@@ -106,30 +109,6 @@ public class RoomManager : MonoBehaviour
             objectiveTracker.OnEncounterCleared += HandleEncounterCleared;
         else
             HandleEncounterCleared();
-    }
-
-    public Doorway GetDoorwayFor(Direction fromDirection)
-    {
-        foreach (var door in doorways)
-        {
-            if (door.direction == fromDirection && door.gameObject.activeSelf)
-                return door;
-        }
-
-        print($"[RoomManager] No doorway matching direction {fromDirection}, using default instead");
-        return null;
-    }
-
-    public Vector2 GetEntryPointFor(Direction fromDirection)
-    {
-        foreach (var door in doorways)
-        {
-            if (door.direction == fromDirection && door.gameObject.activeSelf)
-                return door.entryPoint.position;
-        }
-
-        print($"[RoomManager] No doorway matching direction {fromDirection}, using default instead");
-        return fallbackEntryPoint;
     }
 
     public Transform GetEnemySpawnPoint(SpawnTag tag)

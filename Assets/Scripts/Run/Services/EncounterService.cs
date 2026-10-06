@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class EncounterService
@@ -16,7 +17,7 @@ public class EncounterService
         this.db = db;
     }
 
-    public EnemyWave[] GenerateWaves(RoomData room, RunState run)
+    public EnemyWave[] GenerateWaves(MapNode node, RunState run)
     {
         List<EnemyData> pool = GetEligibleEnemies(run.chapterIndex);
         if (pool.Count <= 0)
@@ -27,7 +28,13 @@ public class EncounterService
 
         float totalBudget = Mathf.Max(config.baseBudget + (config.budgetPerDepth * run.currentDepth), 0);
 
-        int waveCount = Mathf.Clamp(Mathf.RoundToInt(totalBudget / config.budgetPerWave), config.minWaves, config.maxWaves);
+        float budget = (config.baseBudget + config.budgetPerDepth * node.depth + node.room.difficultyCost)
+            * node.type.encounterBudgetModifier;
+
+        int minWaves = node.type.minWaves > 0 ? node.type.minWaves : config.minWaves;
+        int maxWaves = node.type.maxWaves > 0 ? node.type.maxWaves : config.maxWaves;
+
+        int waveCount = Mathf.Clamp(Mathf.RoundToInt(totalBudget / config.budgetPerWave), minWaves, maxWaves);
         float perWaveBudget = totalBudget / waveCount;
 
         // Get rng instance
@@ -62,17 +69,18 @@ public class EncounterService
 
             candidates.Clear();
             foreach (var e in pool)
-            {
-                if (e.cost > budget) continue;
-                candidates.Add(e);
-            }
+                if(e.cost <= remaining) candidates.Add(e);
 
             if (candidates.Count == 0) break;
 
             var pick = WeightedPick(candidates, rng);
             wave.enemies.Add(pick);
-            budget -= pick.cost;
+
+            remaining -= Mathf.Max(pick.cost, 0.01f);
         }
+
+        if (wave.enemies.Count == 0)
+            wave.enemies.Add(pool.OrderBy(e => e.cost).First());
 
         return wave;
     }

@@ -25,8 +25,8 @@ public class MapOverlayScreen : UIScreen
 
     protected override void OnBeforeOpen(object payload)
     {
-        var map = RunManager.Instance.currentRun.map;
-        InitializeMapView(map);
+        var run = RunManager.Instance.currentRun;
+        InitializeMapView(run);
     }
     
     private void HandlePlayerRoomChanged(Vector2Int newTile)
@@ -38,19 +38,19 @@ public class MapOverlayScreen : UIScreen
         currentTile = newTile;
     }
 
-    public void InitializeMapView(SectorMap activeMap)
+    public void InitializeMapView(RunState run)
     {
         foreach (Transform child in mapContainer)
             Destroy(child.gameObject);
 
         tileDict = new();
 
-        var tiles = activeMap.nodes;
-        currentTile = activeMap.currentNode.coordinates;
+        var tiles = run.map.nodes;
+        currentTile = run.map.currentNode.coordinates;
         
         foreach (var tile in tiles)
         {
-            var colour = tile.cleared ? Color.gray6 : Color.gray3;
+            var colour = run.pathTaken.Contains(tile) ? Color.gray6 : Color.gray3;
             if(tile.coordinates == currentTile) colour = Color.white;
             SpawnTile(tile.coordinates, colour);
         }

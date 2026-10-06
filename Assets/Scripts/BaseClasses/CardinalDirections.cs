@@ -65,10 +65,4 @@ public static class DirectionExtensions
             _ => DirectionMask.None
         };
     }
-
-    public static void ConnectTo(this MapNode a, MapNode b, Direction fromA)
-    {
-        a.connections[fromA] = b;
-        b.connections[fromA.Opposite()] = a;
-    }
 }
