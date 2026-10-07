@@ -13,6 +13,12 @@ public class AOEAttackExecutor : AttackExecutorBase
 
     private GameObject activeTelegraph;
 
+    private void OnDisable()
+    {
+        if (activeTelegraph != null)
+            Destroy(activeTelegraph);
+    }
+
     public override void BeginTelegraph(EnemyAIController ai)
     {
         if (!string.IsNullOrEmpty(attackData.windupTrigger))
@@ -63,7 +69,9 @@ public class AOEAttackExecutor : AttackExecutorBase
         if(attackData.hasHyperarmour)
             controller.SetHyperArmour(false);
 
-        Destroy(activeTelegraph);
+        if(activeTelegraph != null)
+            Destroy(activeTelegraph);
+
         Executing = false;
     }
 

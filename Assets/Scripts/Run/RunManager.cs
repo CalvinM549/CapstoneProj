@@ -161,9 +161,13 @@ public class RunManager : MonoBehaviour
         activePlayer.SetPlayerCanAct(false);
         activePlayer.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
 
-        GameManager.Instance.SetCursorActive(true);
+        string screenTag = victory
+            ? "victoryScreen"
+            : "failureScreen";
 
-        runEndOverlay.Display(victory, currentRun);
+        UIManager.Instance.OpenScreen(screenTag, currentRun);
+
+        //runEndOverlay.Display(victory, currentRun);
     }
 
     #region Room Transitions

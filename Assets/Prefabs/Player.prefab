@@ -5571,6 +5571,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   data: {fileID: 11400000, guid: 515cc199b072aca489e001a8e8d5dbc4, type: 2}
   UseIFrames: 0
+  structurePierce: 0
   healthSegments: []
 --- !u!114 &4967987187956845733
 MonoBehaviour:
@@ -5614,7 +5615,7 @@ MonoBehaviour:
   WeaponTemplate: {fileID: 0}
   PropulsionTemplate: {fileID: 0}
   BrainTemplate: {fileID: 0}
-  autoGrant: {fileID: 0}
+  autoGrant: []
 --- !u!114 &2293134186363299284
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5645,7 +5646,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimator
   sr: {fileID: 5127703636011768403}
-  hitMaterial: {fileID: 2100000, guid: 59148e3b6fbfc0d4abc10ce34622bba0, type: 2}
 --- !u!114 &5505867269302946428
 MonoBehaviour:
   m_ObjectHideFlags: 0

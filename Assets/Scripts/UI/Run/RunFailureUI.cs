@@ -1,16 +1,30 @@
 using UnityEngine;
 
-public class RunFailureUI : MonoBehaviour
+public class RunFailureUI : UIScreen
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private TerminalDisplay terminal;
+
+    private RunState run;
+
+    protected override void OnBeforeOpen(object payload)
     {
-        
+        run = (RunState)payload;
+
+
+    }
+    protected override void OnOpened()
+    {
+        terminal.Play();
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ReturnToHub()
     {
-        
+        SceneLoader.Instance.LoadHub();
+    }
+
+    public override void HandleCancel()
+    {
+        //
     }
 }

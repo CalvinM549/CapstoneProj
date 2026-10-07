@@ -9,6 +9,7 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
     [SerializeField] private float sightStartOffset;
 
     [SerializeField] private LaserTelegraph laser;
+    [SerializeField] private StatusEffectData applyStatusOnHit;
 
     private Transform targetPos;
     private EnemyAIController aiController;
@@ -89,6 +90,7 @@ public class ProjectileAttackExecutor : AttackExecutorBase, IProjectileEmitter
         };
 
         hitData.AddModifier(controller.Stats.Get(StatRef.EnemyOutgoingDamageMult) - 1f, StatModType.PercentAdd, controller);
+        hitData.AddStatus(applyStatusOnHit, controller, false);
 
         ProjectilePools.FireProjectile(this, projectile, hitData, firePoint.position, direction);
     }

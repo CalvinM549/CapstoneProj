@@ -14,15 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   id: enemy_sentryRifle
   enemyName: SentryBurst
+  basePoolSize: 4
   prefab: {fileID: 2621895607124036595, guid: 81495c7e28177f244a0f84f6a871be7f, type: 3}
   aiProfile: {fileID: 11400000, guid: 95aea7d8549a16a479308147e8771809, type: 2}
   baseHealth: 60
   moveSpeed: 3
   baseDamageMult: 1
   baseResistanceMult: 1
+  baseCurrencyDrop: 15
   cost: 2
   weight: 0
   minChapter: 0
   maxChapter: 0
-  baseCurrencyDrop: 15
   spawnTag: 0

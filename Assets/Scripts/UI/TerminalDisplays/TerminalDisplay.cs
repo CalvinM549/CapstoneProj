@@ -43,8 +43,6 @@ public class TerminalDisplay : MonoBehaviour
             Play();
     }
 
-    // ----
-
     public void Play()
     {
         if (sequenceData == null)

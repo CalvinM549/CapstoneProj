@@ -68,7 +68,6 @@ public class MapGenerationService
 
         AssignTypes(rows, RNGStream(seed, SaltTypes));
         AssignRooms(rows, chapter, RNGStream(seed, SaltRooms));
-        //AssignRewards(rows, seed);
         AssignOffers(rows, seed);
 
         var map = BuildSectorMap(rows, seed, chapter);
@@ -174,24 +173,6 @@ public class MapGenerationService
             var closest = current.OrderBy(n => Mathf.Abs(n.rowIndex - orphan.rowIndex)).First();
             closest.exits.Add(orphan);
         }
-    }
-
-    private void ValidateConnectivity(List<List<MapNode>> rows)
-    {
-        var visited = new HashSet<string>();
-        var queue = new Queue<MapNode>();
-        queue.Enqueue(rows[0][0]);
-
-        while (queue.Count > 0)
-        {
-            var current = queue.Dequeue();
-            if (!visited.Add(current.id)) continue;
-            foreach (var connection in current.exits)
-                queue.Enqueue(connection);
-        }
-
-        if (!rows[^1].All(n => visited.Contains(n.id)))
-            throw new InvalidOperationException("[MapGenerationService] Boss row unreachable, regenerating...");
     }
 
     #endregion

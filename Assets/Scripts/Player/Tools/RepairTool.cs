@@ -8,6 +8,7 @@ public class RepairTool : PlayerTool
     public override void UseTool(Vector2 direction)
     {
         p.Health.RestoreSegments(structureRestored);
+        p.Momentum.AddMomentum(-100f);
     }
 
     public override bool CanUse()

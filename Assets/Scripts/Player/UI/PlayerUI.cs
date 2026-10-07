@@ -70,7 +70,7 @@ public class PlayerUI : MonoBehaviour
     {
         if (Visible == show) return;
 
-        float target = show ? 1f : 0.2f;
+        float target = show ? 1f : 1f;
 
         Visible = show;
 

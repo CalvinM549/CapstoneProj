@@ -87,11 +87,7 @@ public class RoomManager : MonoBehaviour
 
         State = RoomState.Idle;
 
-        if (objectiveTracker == null)
-        {
-            // Keep door in open state
-        }
-        else
+        if (objectiveTracker != null)
         {
             // Enemy Spawns
             objectiveTracker.Setup(node, run, services);

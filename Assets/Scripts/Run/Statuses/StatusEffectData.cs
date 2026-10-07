@@ -35,6 +35,8 @@ public class ActiveStatusEffect
         remainingDuration = data.duration;
         tickTimer = data.tickInterval;
     }
+
+    public float GetPercentDuration() => Mathf.Clamp01(data.duration / remainingDuration);
 }
 
 public abstract class StatusEffectData : ScriptableObject

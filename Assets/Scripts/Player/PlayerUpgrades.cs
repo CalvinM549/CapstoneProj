@@ -18,7 +18,7 @@ public class PlayerUpgrades : MonoBehaviour
 
     [Header("Testing")]
 
-    public AuxUpgrade autoGrant;
+    public AuxUpgrade[] autoGrant;
 
     #region Monobehaviour Basics
 
@@ -35,8 +35,13 @@ public class PlayerUpgrades : MonoBehaviour
     {
         ApplyTemplates();
 
-        if(autoGrant != null)
-            GrantAux(autoGrant);
+        if (autoGrant != null && autoGrant.Length > 0)
+        {
+            foreach (var upgrade in autoGrant)
+            {
+                GrantAux(upgrade);
+            }
+        }
     }
 
     public void RestoreFromSave(PlayerUpgradeSave save)

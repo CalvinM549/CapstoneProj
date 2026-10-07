@@ -30,6 +30,12 @@ public class EnemyTargetedUI : MonoBehaviour
         cg.DOKill();
     }
 
+    public void Initialize()
+    {
+        cg.alpha = 0f;
+        cg.DOKill();
+    }
+
     private void Update()
     {
         if (!owner.hasPlayerLock) return;

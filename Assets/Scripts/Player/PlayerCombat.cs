@@ -137,6 +137,12 @@ public class PlayerCombat : MonoBehaviour
         UpdateRangedCooldown();
 
         meleeBuffer.TryConsume(CanMeleeAttack, () => HandleMeleeInput(true));
+
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.P))
+            RestoreAmmo(4);
+
+#endif
     }
 
     #region Input Setup

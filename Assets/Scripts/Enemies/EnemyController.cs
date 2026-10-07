@@ -19,6 +19,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     protected EnemyAIController ai;
     protected EnemyStats stats;
     protected StatusEffectController statusController;
+    protected EnemyUI ui;
 
     public EnemyStats Stats => stats;
 
@@ -55,6 +56,8 @@ public class EnemyController : MonoBehaviour, IDamageable
         statusController = GetComponent<StatusEffectController>();
 
         animator = GetComponentInChildren<Animator>();
+        ui = GetComponentInChildren<EnemyUI>();
+
         sr = animator.GetComponent<SpriteRenderer>();
 
         rb = GetComponent<Rigidbody2D>();
@@ -99,6 +102,8 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         AIManager.Instance.RegisterEnemy(ai);
         stats.Initialize(data, data.aiProfile);
+
+        ui.Initialize();
 
         currentHealth = stats.Get(StatRef.EnemyMaxHealth);
         IsAlive = true;
@@ -152,7 +157,6 @@ public class EnemyController : MonoBehaviour, IDamageable
     }
 
     #region Taking Damage
-
 
     public void RecieveHit(HitData hit)
     {

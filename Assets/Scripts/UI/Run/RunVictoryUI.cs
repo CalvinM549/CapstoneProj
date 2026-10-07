@@ -1,16 +1,25 @@
 using UnityEngine;
 
-public class RunVictoryUI : MonoBehaviour
+public class RunVictoryUI : UIScreen
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] TypewriterBox statsBox;
+
+    private RunState run;
+
+    protected override void OnBeforeOpen(object payload)
     {
-        
+        run = (RunState)payload;
+
+
+    }
+    protected override void OnOpened()
+    {
+
+        statsBox.DisplayText();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ReturnToHub()
     {
-        
+        SceneLoader.Instance.LoadHub();
     }
 }

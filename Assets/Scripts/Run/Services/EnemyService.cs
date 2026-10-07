@@ -16,7 +16,10 @@ public class EnemyService
         enemyDatabase = data;
         this.container = container;
 
-        Debug.Log("enemy service built");
+        foreach (var enemy in enemyDatabase.All)
+        {
+            BuildPool(enemy, enemy.basePoolSize);
+        }
     }
 
     public void BuildPool(EnemyData data, int count)
@@ -29,9 +32,6 @@ public class EnemyService
             stack.Push(obj);
         }
     }
-
-    // Wave Spawner
-    // Enemy Spawner / Resetter
 
     public EnemyController GetEnemy(EnemyData data, Vector2 position)
     {

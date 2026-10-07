@@ -96,7 +96,11 @@ public class WaveObjectiveHandler : MonoBehaviour, IObjectiveTracker
         foreach (EnemyData entry in wave.enemies)
         {
             Transform spawnPoint = room.GetEnemySpawnPoint(entry.spawnTag);
-            Vector2 spawnPos = spawnPoint != null ? spawnPoint.position : transform.position;
+            Vector2 spawnPos = spawnPoint != null 
+                ? spawnPoint.position
+                : transform.position;
+
+            spawnPos += UnityEngine.Random.insideUnitCircle * 2f;
 
             EnemyController enemy = services.enemies.GetEnemy(entry, spawnPos);
             enemy.OnDeath += HandleEnemyDeath;

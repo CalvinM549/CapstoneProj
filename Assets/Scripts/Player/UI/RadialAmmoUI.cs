@@ -20,7 +20,7 @@ public class RadialAmmoUI : MonoBehaviour
     private PlayerUI playerUI;
     private Player player;
 
-    private readonly List<Image> pips = new();
+    private readonly List<(Image visual, bool loaded)> pips = new();
 
     private void Awake()
     {
@@ -43,7 +43,7 @@ public class RadialAmmoUI : MonoBehaviour
     {
         player = p;
         player.Combat.OnAmmoChanged += HandleAmmoChanged;
-        player.Combat.OnWeaponChanged += HandleMaxAmmoChanged;
+        //player.Combat.OnWeaponChanged += HandleMaxAmmoChanged;
         GameEvents.OnAmmoUsedEmpty += HandleAmmoUseFailed;
     }
 
@@ -53,20 +53,22 @@ public class RadialAmmoUI : MonoBehaviour
 
     private void HandleAmmoUseFailed()
     {
-        for (int i = 0; i < pips.Count; i++)
+        foreach (var p in pips)
         {
-            pips[i].DOKill();
-            pips[i].color = Color.red;
-            pips[i].DOColor(spentColour, 0.5f);
+            p.visual.DOKill();
+            p.visual.color = Color.red;
+            p.visual.DOColor(spentColour, 0.5f);
         }
     }
 
     private void BuildPips(int count)
     {
-        foreach (var pip in pips)
+        Debug.Log("building pips");
+
+        foreach (var p in pips)
         {
-            pip?.DOKill();
-            Destroy(pip.transform.parent.gameObject);
+            p.visual.DOKill();
+            Destroy(p.visual.transform.parent.gameObject);
         }
         pips.Clear();
 
@@ -82,7 +84,8 @@ public class RadialAmmoUI : MonoBehaviour
             instance.transform.localScale = Vector3.one * pipSizeMult;
             var image = instance.GetComponent<Image>() ?? instance.GetComponentInChildren<Image>();
             image.color = loadedColour;
-            pips.Add(image);
+
+            pips.Add((image, true));
         }
     }
 
@@ -93,11 +96,33 @@ public class RadialAmmoUI : MonoBehaviour
 
         for (int i = 0; i < pips.Count; i++)
         {
-            bool loaded = i < currentAmmo;
-            Color target = loaded ? loadedColour : spentColour;
 
-            pips[i]?.DOKill();
-            pips[i].DOColor(target, 0.15f).SetEase(Ease.OutBack);
+            bool slotLoaded = i < currentAmmo;
+            Color targetColour = slotLoaded ? loadedColour : spentColour;
+
+            var p = pips[i];
+
+            Debug.Log($"updating pip {i}, currently {p.loaded} => {slotLoaded}");
+
+            p.visual.DOKill();
+            p.visual.transform.DOKill();
+            if (slotLoaded && !p.loaded)
+            {
+                p.visual.color = Color.green;
+                p.visual.DOColor(targetColour, 0.4f);
+
+                p.visual.transform.localScale = Vector2.one * pipSizeMult * 2f;
+                p.visual.transform.DOScale(Vector2.one * pipSizeMult, 0.4f);
+            }
+            else
+            {
+                p.visual.DOColor(targetColour, 0.2f);
+            }
+
+            pips[i] = (pips[i].visual, slotLoaded);
+
+            //pips[i]?.DOKill();
+            //pips[i].DOColor(targetColour, 0.15f).SetEase(Ease.OutBack);
         }
     }
 }

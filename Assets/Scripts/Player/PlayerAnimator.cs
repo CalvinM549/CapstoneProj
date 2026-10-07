@@ -66,6 +66,7 @@ public class PlayerAnimator : MonoBehaviour
     private void UpdateMovementAnimation()
     {
         if (TimescaleManager.IsPaused) return;
+        if (!p.CanAct) return;
         if (p.Movement.IsDashing) return;
 
         animator.SetBool("IsMoving", p.Movement.IsMoving);
@@ -88,6 +89,7 @@ public class PlayerAnimator : MonoBehaviour
     private void UpdateAutoFlip()
     {
         if (TimescaleManager.IsPaused) return;
+        if (!p.CanAct) return;
         if (p.Health.IsHitstunned) return;
         if (p.Combat.CurrentState == CombatState.Startup
             || p.Combat.CurrentState == CombatState.Active) return;
