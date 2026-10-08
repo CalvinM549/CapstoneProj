@@ -4,7 +4,7 @@ using UnityEngine;
 public struct ArchiveScreenPayload
 {
     public IReadOnlyList<ArchiveData> AllEntries;
-    public HashSet<string> UnlockedIDs;
+    public List<string> UnlockedIDs;
 }
 
 public class ArchiveScreen : UIScreen

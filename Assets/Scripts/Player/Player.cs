@@ -67,7 +67,7 @@ public class Player : MonoBehaviour
         Combat.Initialize(loadout.weapon);
     }
 
-    public void SetupFromSave(PlayerStateSave save)
+    public void SetupFromSave(PlayerSaveData save)
     {
         if (save == null)
         {
@@ -83,6 +83,9 @@ public class Player : MonoBehaviour
         // Restore from save
         Stats.Initialize();
 
+        Movement.Initialize();
+        Health.Initialize();
+        Momentum.Initialize();
         Tools.Initialize(equippedTool);
         Combat.Initialize(equippedWeapon);
         Upgrades.RestoreFromSave(save.upgradeSave);
@@ -91,7 +94,7 @@ public class Player : MonoBehaviour
 
     #endregion
 
-    public PlayerStateSave PackPlayerState()
+    public PlayerSaveData PackPlayerState()
     {
         return null;
     }

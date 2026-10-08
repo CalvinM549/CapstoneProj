@@ -62,6 +62,10 @@ public class RadialEnemyHealthBar : MonoBehaviour
 
     public void Initialize()
     {
+        fillTween?.Kill();
+        delayFillTween?.Kill();
+        punchTween?.Kill();
+
         canvasGroup.alpha = 1f;
         barRoot.localScale = Vector3.one * 0.8f;
 

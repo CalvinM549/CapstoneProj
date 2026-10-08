@@ -6,30 +6,26 @@ using UnityEngine;
 [Serializable]
 public class RunState
 {
-    // Run
-    public int seed;
-
-    public float difficultyScore;
-    public int currency;
-
+    public SectorMap map;
     private Player player;
     public RewardContext rewardContext;
 
-    // Map
-    public int chapterIndex;
-    public SectorMap map;
-    public int currentDepth;
 
-    public List<MapNode> pathTaken = new();
+    // Progress
+    public string currentNodeId;
+    public readonly List<string> pathTaken = new();
 
-    public int runDirection;
-    
-    // Draft things
+    public MapNode CurrentNode => currentNodeId != null ? map.GetNode(currentNodeId) : null;
+    public int Seed => map.seed;
+    public int chapterIndex => map.chapter;
+    public int currentDepth => CurrentNode?.depth ?? 0;
+
+    // Run
+    public float difficultyScore;
+    public int currency;
 
     public float runDurationTimer;
     public static event Action<float> onTimerUpdated;
-
-    // Rooms
 
     // Stats
     public int EnemiesKilled;
@@ -37,44 +33,60 @@ public class RunState
 
     #region Creation / Loading
 
-    public RunState(int seed, SectorMap map, Player player)
+    public RunState(SectorMap map, Player player)
     {
-        this.seed = seed;
         this.map = map;
-
         this.player = player;
-
-        this.rewardContext = new(player.Upgrades);
-
-        runDurationTimer = 0f;
-        
-        // Run Stats reset
-        currentDepth = 0;
-
-        EnemiesKilled = 0;
-        DamageTaken = 0;
+        rewardContext = new(player.Upgrades);
     }
 
-    public static RunState BuildFromSave(RunSaveData save)
+    public static RunState FromSave(RunSaveData save, SectorMap map, Player player)
     {
-        // Rebuild map using seed
-        // clear already cleared rooms
+        var run = new RunState(map, player)
+        {
+            currentNodeId = save.currentNodeId,
+            currency = save.currency,
+            runDurationTimer = save.runDuration,
 
-        //var run = new RunState(save.seed, map);
+            EnemiesKilled = save.enemiesKilled,
+            DamageTaken = save.damageTaken
+        };
 
-        //return run;
+        run.pathTaken.AddRange(save.pathTaken);
+        run.rewardContext.FromSave(save.rewards);
 
-        return null; // TEMP
+        return run;
     }
+
+    public RunSaveData ToSave()
+    {
+        return new RunSaveData()
+        {
+            seed = map.seed,
+            chapter = map.chapter,
+            map = MapSaveData.ToSave(map),
+            currentNodeId = currentNodeId,
+            pathTaken = new List<string>(pathTaken),
+
+            currency = currency,
+            runDuration = runDurationTimer,
+            enemiesKilled = EnemiesKilled,
+            damageTaken = DamageTaken,
+
+            rewards = rewardContext.ToSave(),
+            player = player.PackPlayerState()
+        };
+    }
+
+
+    #endregion
 
     public void EnterNode(MapNode node)
     {
+        currentNodeId = node.id;
         map.currentNode = node;
-        currentDepth = node.depth;
-        pathTaken.Add(node);
+        pathTaken.Add(node.id);
     }
-
-    #endregion
 
     public void Tick(float dt)
     {
@@ -126,11 +138,6 @@ public class RunState
     public void RestoreStructure(int amount)
     {
         player.Health.RestoreSegments(Mathf.Max(0, amount));
-    }
-
-    public void GrantPlayerUpgrade()
-    {
-        
     }
 
     public void GrantCurrency(int amount)

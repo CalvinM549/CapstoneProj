@@ -24,8 +24,6 @@ public class UIManager : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
-
-        SetupScreenRefs();
     }
 
     private void OnEnable()
@@ -36,6 +34,11 @@ public class UIManager : MonoBehaviour
     private void OnDisable()
     {
         InputManager.Instance.ExitPressed -= HandleExit;
+    }
+
+    public void Initialize()
+    {
+        SetupScreenRefs();
     }
 
     private void SetupScreenRefs()

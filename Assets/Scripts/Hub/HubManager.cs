@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum HubState
 {
@@ -27,6 +28,9 @@ public class HubManager : MonoBehaviour
     // Services
     private MapGenerationService mapGeneration;
 
+    private RunSaveData pendingSave;
+    public bool HasSavedRun => pendingSave != null;
+
     private RunLoadout pendingLoadout;
     private SectorMap pendingMap;
     private int pendingSeed;
@@ -38,9 +42,9 @@ public class HubManager : MonoBehaviour
     [Header("Testing Values")]
 
     [SerializeField] private PlayerWeapon defaultWeapon;
-    [SerializeField] private PlayerWeapon godModeWeapon;
 
     [SerializeField] private TextMeshProUGUI seedText;
+    [SerializeField] private Button resumeButton;
 
     private void Awake()
     {
@@ -49,29 +53,38 @@ public class HubManager : MonoBehaviour
         else
             Destroy(gameObject);
 
-        // Gather screens
-        foreach (var screen in GetComponentsInChildren<HubScreen>(includeInactive: true))
-        {
-            screen.Initialize();
-            screens[screen.ScreenType] = screen;
-        }
-
         if (DebugManager.GodMode)
-            defaultWeapon = godModeWeapon;
-
+            defaultWeapon = DebugManager.GodWeapon;
 
         loadingToRun = false;
     }
 
+    private void Start()
+    {
+        GenerateNewMap();
+    }
+
     public void InitializeHub()
     {
+        RefreshSavedRun();
+
         mapGeneration = new(db.rooms, db.roomTypes, config);
 
         pendingLoadout = BuildDefaultLoadout();
 
         AudioManager.Instance.PlayMusicTrack("MenuMusic01", true);
+    }
 
-        GenerateNewMap();
+    public void RefreshSavedRun()
+    {
+        var profile = GameManager.Instance.ActiveProfile;
+        if (profile == null || !RunSaveSystem.TryLoad(profile, out pendingSave))
+        {
+            pendingSave = null;
+            Debug.Log("No pending save found");
+        }
+
+        resumeButton.gameObject.SetActive(HasSavedRun);
     }
 
     private RunLoadout BuildDefaultLoadout()
@@ -83,17 +96,6 @@ public class HubManager : MonoBehaviour
         };
 
         return loadout;
-    }
-
-    public void ShowScreen(HubState type)
-    {
-        if (activeScreen != null)
-            activeScreen.Close();
-
-        activeScreen = screens[type];
-        activeScreen.Open(this);
-
-        // Run Event?
     }
 
     #region Run Generation
@@ -150,11 +152,16 @@ public class HubManager : MonoBehaviour
 
     public void BeginSavedRunFromHub()
     {
+        Debug.Log("Attempting to load saved run");
+
         if (loadingToRun) return;
+        Debug.Log(1);
+        if (!HasSavedRun) return;
+        Debug.Log(2);
 
         GameManager.Instance.SaveActiveProfile();
-
         loadingToRun = true;
+        RunDataCarrier.BuildSavedRun(pendingSave);
         SceneLoader.Instance.LoadRun();
     }
 

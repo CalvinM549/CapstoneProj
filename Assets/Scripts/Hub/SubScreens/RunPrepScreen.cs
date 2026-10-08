@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class RunPrepScreen : HubScreen
+public class RunPrepScreen : UIScreen
 {
-    public override HubState ScreenType => HubState.RunPrep;
     private int tempSeed; // Generated seed (can be overriden)
 
     [SerializeField] private Transform mapOrigin;
@@ -28,18 +27,6 @@ public class RunPrepScreen : HubScreen
     {
         if (HubManager.Instance != null)
             HubManager.Instance.OnPendingMapChanged -= HandleMapGenerated;
-    }
-
-    public override void OnClose()
-    {
-
-    }
-
-    public override void OnOpen(HubManager hub)
-    {
-        manager = hub;
-
-        //display etc
     }
 
     public void RegenMap()

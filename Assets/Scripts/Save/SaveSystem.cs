@@ -5,76 +5,103 @@ using UnityEngine;
 
 public static class JsonFileHelper
 {
-    public static void Save<T>(T data, string path, bool obfuscate = false, string key = null)
+    private static readonly UTF8Encoding Utf8 = new UTF8Encoding(false);
+
+    public static bool Save<T>(T data, string path)
     {
+        string tmp = path + ".tmp";
+        string bak = path + ".bak";
+
         try
         {
-            string json = JsonUtility.ToJson(data, true);
-            string output = obfuscate ? Obfuscation.Encode(json, key) : json;
-
-            string backupPath = path + ".bak";
-            if (File.Exists(path))
-                File.Copy(path, backupPath, overwrite: true);
-
             Directory.CreateDirectory(Path.GetDirectoryName(path));
-            File.WriteAllText(path, output, Encoding.UTF8);
 
-            Debug.Log($"[JsonFileHelper] File saved to {path}");
+            File.WriteAllText(tmp, JsonUtility.ToJson(data, true), Utf8);
+
+            if(File.Exists(path))
+                File.Replace(tmp, path, bak);
+            else
+                File.Move(tmp, path);
+
+            return true;
         }
 
         catch (Exception ex)
         {
             Debug.LogError($"[JsonFileHelper] Save failed for {path}: {ex.Message}");
+            TryDelete(tmp);
+            return false;
+
         }
     }
 
     public static bool TryLoad<T>(string path, out T data, bool obfuscate = false, string key = null) where T : class
     {
-        data = null;
+        if (TryRead(path, out data)) return true;
 
-        if (!File.Exists(path))
-            return false;
+        string bak = path + ".bak";
+        if (TryRead(bak, out data))
+        {
+            Debug.LogWarning($"[JsonFileHelper] {path} unreadable, restored from backup");
+
+            try { File.Copy(bak, path, overwrite: true); }
+            catch (Exception ex) { Debug.LogWarning($"[JsonFileHelper] Could not heal {path}: {ex.Message}"); }
+
+            return true;
+        }
+
+        if (File.Exists(path))
+        {
+            Debug.LogError($"[JsonFileHelper] {path} and its backup are both unreadable");
+            try { File.Copy(path, path + ".corrupt", overwrite: true); } catch { /* best effort */ }
+        }
+
+        data = null;
+        return false;
+
+    }
+
+    public static bool TryRead<T>(string path, out T data) where T : class
+    {
+        data = null;
+        if(!File.Exists(path)) return false;
 
         try
         {
-            data = LoadFromPath<T>(path, obfuscate, key);
+            string json = File.ReadAllText(path, Utf8);
+            if (string.IsNullOrEmpty(json)) return false;
+
+            data = JsonUtility.FromJson<T>(json);
             return data != null;
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
-            Debug.LogWarning($"[JsonFileStore] {path} corrupt ({ex.Message}), trying backup");
-            string backupPath = path + ".bak";
-            if (!File.Exists(backupPath))
-                return false;
-
-            try 
-            { 
-                data = LoadFromPath<T>(backupPath, obfuscate, key); 
-                return data != null; 
-            }
-            catch (Exception ex2)
-            {
-                Debug.LogError($"[JsonFileStore] Backup also corrupt: {ex2.Message}");
-                return false;
-            }
+            Debug.LogWarning($"[JsonFileHelper] Failed reading {path}: {ex.Message}");
+            data = null;
+            return false;
         }
     }
 
-    private static T LoadFromPath<T>(string path, bool obfuscate, string key) where T : class
-    {
-        string raw = File.ReadAllText(path, Encoding.UTF8);
-        string json = obfuscate ? Obfuscation.Decode(raw, key) : raw;
-        var data = JsonUtility.FromJson<T>(json);
-        if (data == null)
-            throw new Exception("JsonUtil returned null, corrupted file");
-
-        return data;
-    }
+    public static bool Exists(string path) => File.Exists(path) || File.Exists(path + ".bak");
 
     public static void Delete(string path)
     {
-        if(File.Exists(path)) File.Delete(path);
-        if (File.Exists(path + ".bak")) File.Delete(path + ".bak");
+        TryDelete(path);
+        TryDelete(path + ".bak");
+        TryDelete(path + ".tmp");
+        TryDelete(path + ".corrupt");
+    }
+
+    private static void TryDelete(string path)
+    {
+        try
+        {
+            if (File.Exists(path)) File.Delete(path);
+        }
+        catch (Exception ex) 
+        { 
+            Debug.LogWarning($"[JsonFileHelper] Could not delete {path}: {ex.Message}"); 
+        }
     }
 }
 
@@ -105,29 +132,44 @@ public static class RunSaveSystem
 {
     private static string PathForSlot(int slot) => Path.Combine(Application.persistentDataPath, "Profiles", $"run_slot{slot}.json");
 
-    public static void Save(RunSaveData data, PlayerProfile owner)
+    public static bool Save(RunSaveData data, PlayerProfile owner)
     {
+        data.version = RunSaveData.CurrentVersion;
         data.ownerProfileId = owner.profileID;
         data.saveTimestamp = DateTime.UtcNow.ToString("o");
-        JsonFileHelper.Save(data, PathForSlot(owner.slotIndex));
+        return JsonFileHelper.Save(data, PathForSlot(owner.slotIndex));
     }
 
     public static bool TryLoad(PlayerProfile owner, out RunSaveData data)
     {
-        data = null;
         if (!JsonFileHelper.TryLoad(PathForSlot(owner.slotIndex), out data))
             return false;
-
+ 
         if (data.ownerProfileId != owner.profileID)
         {
-            Debug.LogWarning("[RunSaveSystem] Run save belongs to different owner, discarding");
+            Debug.LogWarning("[RunSaveSystem] Run save belongs to a different profile, ignoring");
             data = null;
             return false;
         }
-
+ 
+        if (data.version > RunSaveData.CurrentVersion)
+        {
+            Debug.LogWarning($"[RunSaveSystem] Run save is from a newer build (v{data.version}), ignoring");
+            data = null;
+            return false;
+        }
+ 
+        if (data.map == null || string.IsNullOrEmpty(data.currentNodeId))
+        {
+            Debug.LogWarning("[RunSaveSystem] Run save is missing map data, ignoring");
+            data = null;
+            return false;
+        }
+ 
         return true;
+
     }
-    public static bool HasValidRun(PlayerProfile profile) => TryLoad(profile, out _);
+    public static bool HasValidRun(PlayerProfile profile) => JsonFileHelper.Exists(PathForSlot(profile.slotIndex));
     public static void DeleteForSlot(int slot) => JsonFileHelper.Delete(PathForSlot(slot));
 }
 
@@ -135,13 +177,22 @@ public static class ProfileSaveSystem
 {
     private const int MaxSlots = 4;
 
-    private static string FolderPath => System.IO.Path.Combine(Application.persistentDataPath, "Profiles");
-    private static string PathForSlot(int slot) => System.IO.Path.Combine(FolderPath, $"profile_{slot}.json");
+    private static string FolderPath => Path.Combine(Application.persistentDataPath, "Profiles");
+    private static string PathForSlot(int slot) => Path.Combine(FolderPath, $"profile_{slot}.json");
 
-    public static void Save(PlayerProfile profile) => JsonFileHelper.Save(profile, PathForSlot(profile.slotIndex));
-    public static bool TryLoad(int slot, out PlayerProfile profile) => JsonFileHelper.TryLoad(PathForSlot(slot), out profile);
+    public static bool Save(PlayerProfile profile) => JsonFileHelper.Save(profile, PathForSlot(profile.slotIndex));
+    public static bool TryLoad(int slot, out PlayerProfile profile)
+    {
+        if (!JsonFileHelper.TryLoad(PathForSlot(slot), out profile))
+            return false;
 
-    public static bool SlotHasProfile(int slot) => File.Exists(PathForSlot(slot));
+        profile.slotIndex = slot;
+        profile.EnsureValid();
+        return true;
+    }
+
+
+    public static bool SlotHasProfile(int slot) => JsonFileHelper.Exists(PathForSlot(slot));
     public static void DeleteSlot(int slot)
     {
         JsonFileHelper.Delete(PathForSlot(slot));
@@ -161,15 +212,15 @@ public static class ProfileSaveSystem
 
 public static class SettingsSaveSystem
 {
-    private static string Path => System.IO.Path.Combine(Application.persistentDataPath, "settings.json");
+    private static string FilePath => Path.Combine(Application.persistentDataPath, "settings.json");
 
-    public static void Save(GameSettings save) => JsonFileHelper.Save(save, Path);
-    public static GameSettings LoadOrDefault() => JsonFileHelper.TryLoad(Path, out GameSettings data) ? data : new GameSettings();
+    public static void Save(GameSettings save) => JsonFileHelper.Save(save, FilePath);
+    public static GameSettings LoadOrDefault() => JsonFileHelper.TryLoad(FilePath, out GameSettings data) ? data : new GameSettings();
 }
 
 public static class MetaStateSaveSystem
 {
-    private static string Path => System.IO.Path.Combine(Application.persistentDataPath, "meta_state.json");
-    public static void Save(MetaState state) => JsonFileHelper.Save(state, Path);
-    public static bool TryLoad(out MetaState state) => JsonFileHelper.TryLoad(Path, out state);
+    private static string FilePath => Path.Combine(Application.persistentDataPath, "meta_state.json");
+    public static void Save(MetaState state) => JsonFileHelper.Save(state, FilePath);
+    public static bool TryLoad(out MetaState state) => JsonFileHelper.TryLoad(FilePath, out state);
 }

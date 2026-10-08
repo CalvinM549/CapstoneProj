@@ -50,7 +50,7 @@ public class MapOverlayScreen : UIScreen
         
         foreach (var tile in tiles)
         {
-            var colour = run.pathTaken.Contains(tile) ? Color.gray6 : Color.gray3;
+            var colour = run.pathTaken.Contains(tile.id) ? Color.gray6 : Color.gray3;
             if(tile.coordinates == currentTile) colour = Color.white;
             SpawnTile(tile.coordinates, colour);
         }

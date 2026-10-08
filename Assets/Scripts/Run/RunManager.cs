@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class RunServices
 {
@@ -51,6 +52,10 @@ public class RunManager : MonoBehaviour
     public Player activePlayer;
     public PlayerUI activePlayerUI;
     public RoomManager activeRoom;
+
+    private bool runEnded;
+
+    private bool transitioning;
 
     public event Action<Vector2Int> onPlayerRoomChanged;
 
@@ -116,47 +121,76 @@ public class RunManager : MonoBehaviour
             return;
         }
 
+        SetupPlayer();
+
+        activePlayer.SetupNew(config.loadout);
+        activePlayer.SetPlayerCanAct(true);
+
+        currentRun = new(config.map, activePlayer);
+
+        EnterNode(currentRun.map.entryNode);
+    }
+
+    private void SetupPlayer()
+    {
         activePlayer = Instantiate(playerPrefab, playerContainer);
         AIManager.Instance.Initialize(activePlayer);
 
         activePlayerUI = Instantiate(playerUIPrefab, playerUIContainer);
         activePlayerUI.Initialize(activePlayer);
-
-        activePlayer.SetupNew(config.loadout);
-        activePlayer.SetPlayerCanAct(true);
-
-        currentRun = new(config.seed, config.map, activePlayer);
-
-        EnterNode(currentRun.map.entryNode);
     }
 
     public void ResumeSavedRun()
     {
-        //RunSaveData save = RunDataCarrier.ConsumeSavedRunData();
-        //if (save == null)
-        //{
-        //    Debug.LogError("[RunManager] No RunSaveData exists");
-        //    return;
-        //}
+        RunSaveData save = RunDataCarrier.ConsumeSavedRunData();
+        if (save == null)
+        {
+            Debug.LogError("[RunManager] No RunSaveData exists");
+            return;
+        }
 
-        //currentRun = RunState.BuildFromSave(save);
-        //roomService.BuildPool(currentRun.map);
+        SectorMap map = save?.map.ToMap(db.rooms, db.roomTypes, save.seed, save.chapter);
+        MapNode node = (map != null && !string.IsNullOrEmpty(save.currentNodeId))
+            ? map.GetNode(save.currentNodeId)
+            : null;
 
-        //activePlayer = Instantiate(playerPrefab, playerContainer);
-        //activePlayer.SetupFromSave();
+        if (node == null)
+        {
 
-        //EnterNode(config.map.startNode, null);
+            Debug.LogError("[RunManager] Saved run is missing or incompatible with current content");
+            var p = GameManager.Instance.ActiveProfile;
+            if (p != null) RunSaveSystem.DeleteForSlot(p.slotIndex);
+            SceneLoader.Instance.LoadHub();
+            return;
+        }
+
+        SetupPlayer();
+        activePlayer.SetupFromSave(save.player);
+        activePlayer.SetPlayerCanAct(true);
+
+        currentRun = RunState.FromSave(save, map, activePlayer);
+
+        EnterNode(node, resuming: true);
     }
 
     #endregion
 
     private void HandleRunEnd(bool victory)
     {
+        if (runEnded) return;
+        runEnded = true;
+        transitioning = true;
+
         // Update profile based on run results
 
         var profile = GameManager.Instance.ActiveProfile;
         if (profile != null)
+        {
+
             RunSaveSystem.DeleteForSlot(profile.slotIndex);
+            profile.RegisterRunResult(victory, currentRun.runDurationTimer);
+            GameManager.Instance.SaveActiveProfile();
+        }
 
         activePlayer.SetPlayerCanAct(false);
         activePlayer.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
@@ -172,27 +206,32 @@ public class RunManager : MonoBehaviour
 
     #region Room Transitions
 
-    private void EnterNode(MapNode newNode)
+    private void ReleaseActiveRoom()
+    {
+        if(activePlayer == null) return;
+
+        activeRoom.OnCleared -= HandleRoomCleared;
+        activeRoom.OnFailure -= HandleRoomFailed;
+
+        activeRoom.OnExitChosen -= HandleExitChosen;
+
+        roomService.Release(activeRoom);
+        activeRoom = null;
+    }
+
+    private void EnterNode(MapNode newNode, bool resuming = false)
     {
         // Remove Current Room
         runServices.currency.ForceCollectAll();
+        ReleaseActiveRoom();
 
-        if (activeRoom != null)
-        {
-            //roomService.ReturnToPool(activeRoom);
-            //activeRoom = null;
+        if (!resuming) currentRun.EnterNode(newNode);
 
-            activeRoom.OnCleared -= HandleRoomCleared;
-            roomService.Release(activeRoom);
-        }
-
-        // Setup room
-        currentRun.EnterNode(newNode);
-                
         activeRoom = roomService.Spawn(newNode.room);
         activeRoom.Initialize(newNode, currentRun, runServices);
         activeRoom.OnCleared += HandleRoomCleared;
         activeRoom.OnFailure += HandleRoomFailed;
+        activeRoom.OnExitChosen += HandleExitChosen;
 
         // Setup Player
         GameEvents.PlayerTransitionTeleport(activeRoom.EntryPoint);
@@ -204,17 +243,15 @@ public class RunManager : MonoBehaviour
 
         onPlayerRoomChanged?.Invoke(newNode.coordinates);
 
+        SaveCurrentRun();
         activeRoom.Activate();
     }
 
     private void HandleRoomCleared(RoomManager room)
     {
-        room.OnCleared -= HandleRoomCleared;
-        room.OnFailure -= HandleRoomFailed;
-
         activePlayerUI.ToggleUI(false);
-        CheckSectorVictory();
-        SaveCurrentRun();
+
+        if (currentRun.CurrentNode.type.isEnd) HandleRunEnd(true);
     }
 
     private void HandleRoomFailed(RoomManager room)
@@ -222,39 +259,36 @@ public class RunManager : MonoBehaviour
         // Fire Run End Event
     }
 
-    private void CheckSectorVictory()
+    private void HandleExitChosen(Doorway door)
     {
-        if (currentRun.currentDepth == currentRun.map.rowCount)
-        {
-            HandleRunEnd(true); // temp for demo
-        }
-        else
-        {
-            return;
-        }
-    }
+        if (transitioning) return;
 
-    // Called by doorways when walked through to progress
-    public void TransitionTo(MapNode nextNode, Direction exitDirection)
-    {
-        StartCoroutine(TransitionRoutine(nextNode, exitDirection));
+        StartCoroutine(TransitionRoutine(door.Destination, door.exitDirection));
     }
 
     private IEnumerator TransitionRoutine(MapNode nextNode, Direction dir)
     {
-        DoTransitionFade(true);
-        activePlayer.Movement.StartDoorwayMovement(dir);
+        transitioning = true;
 
+        try
+        {
+            DoTransitionFade(true);
+            activePlayer.Movement.StartDoorwayMovement(dir);
 
-        yield return new WaitForSecondsRealtime(fadeTime);
+            yield return new WaitForSeconds(fadeTime);
 
-        TimescaleManager.Instance.PauseGame(this);
+            TimescaleManager.Instance.PauseGame(this);
 
-        activePlayer.Movement.EndDoorwayMovement();
-        EnterNode(nextNode);
+            activePlayer.Movement.EndDoorwayMovement();
+            EnterNode(nextNode);
 
-        TimescaleManager.Instance.UnpauseGame(this);
-        DoTransitionFade(false);
+            TimescaleManager.Instance.UnpauseGame(this);
+            DoTransitionFade(false);
+        }
+        finally
+        {
+            transitioning = false;
+        }
     }
 
     private void DoTransitionFade(bool enable)
@@ -285,7 +319,7 @@ public class RunManager : MonoBehaviour
                 currentRun.Tick(Time.deltaTime / 2);
                 break;
 
-            default: 
+            default:
                 break;
         }
     }
@@ -303,18 +337,17 @@ public class RunManager : MonoBehaviour
 
     private void SaveCurrentRun()
     {
-        return; // TODO 
-
         var profile = GameManager.Instance.ActiveProfile;
-        if(profile == null) return;
-
-        var save = new RunSaveData()
+        if (profile == null || currentRun == null || runEnded)
         {
-            seed = currentRun.seed,
-            player = activePlayer.PackPlayerState()
-        };
+            Debug.Log("[RunManager] No Profile or No Run found");
+            return;
+        }
 
-        RunSaveSystem.Save(save, profile);
+        if (!RunSaveSystem.Save(currentRun.ToSave(), profile))
+            Debug.LogWarning("[RunManager] Run Save Failed");
+        else
+            Debug.Log("[RunManager] saved run");
     }
 
     #endregion

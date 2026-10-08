@@ -38,7 +38,7 @@ public class EncounterService
         float perWaveBudget = totalBudget / waveCount;
 
         // Get rng instance
-        var rng = RNGManager.NodeRng(run.seed, run.map.currentNode.coordinates);
+        var rng = RNGManager.NodeRng(run.Seed, run.CurrentNode.coordinates);
 
         var waves = new EnemyWave[waveCount];
         for (int i = 0; i < waveCount; i++)

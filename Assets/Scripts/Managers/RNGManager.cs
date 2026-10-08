@@ -11,7 +11,10 @@ public class RNGManager : MonoBehaviour
         if (Instance == null)
             Instance = this;
         else
+        {
             Destroy(gameObject);
+            return;
+        }
 
         DontDestroyOnLoad(gameObject);
     }

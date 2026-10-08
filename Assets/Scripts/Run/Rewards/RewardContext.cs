@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public enum RewardCategory
@@ -21,10 +22,33 @@ public class RewardContext
 
     public Dictionary<RewardCategory, int> PityCounters = new();
 
+    #region Creation / Loading
+
     public RewardContext(PlayerUpgrades upgrades)
     {
         this.upgrades = upgrades;
     }
+
+    public RewardSaveData ToSave()
+    {
+        return new RewardSaveData()
+        {
+            ownedWeaponIds = ownedWeaponIds.ToList(),
+            ownedToolIds = ownedToolIds.ToList(),
+            seenItemIds = SeenItemIdsThisRun.ToList(),
+        };
+    }
+
+    public void FromSave(RewardSaveData save)
+    {
+        ownedWeaponIds = new HashSet<string>(save.ownedWeaponIds);
+        ownedToolIds = new HashSet<string>(save.ownedToolIds);
+
+        SeenItemIdsThisRun = new HashSet<string>(save.seenItemIds);
+    }
+
+    #endregion
+
 
     public bool IsMajorSlotFilled(UpgradeSlot slot) => upgrades.GetMajor(slot) != null;
     public int GetAuxStacks(AuxUpgrade upgrade) => upgrades.GetAuxStacks(upgrade);

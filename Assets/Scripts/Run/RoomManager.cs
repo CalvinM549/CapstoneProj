@@ -38,12 +38,22 @@ public class RoomManager : MonoBehaviour
     public event Action<RoomManager> OnFailure;
 
     public event Action<RoomManager> OnStationUsed;
+    public event Action<Doorway> OnExitChosen;
 
     private void Awake()
     {
         objectiveTracker = GetComponent<IObjectiveTracker>();
         
-        roomStations = GetComponentsInChildren<StationBase>();         
+        roomStations = GetComponentsInChildren<StationBase>();
+
+        foreach (var door in doorways)
+            door.OnChosen += HandleDoorChosen;
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var door in doorways)
+            door.OnChosen -= HandleDoorChosen;
     }
 
     private void Update()
@@ -116,6 +126,8 @@ public class RoomManager : MonoBehaviour
 
         return validPoints[UnityEngine.Random.Range(0, validPoints.Count)].transform;
     }
+
+    private void HandleDoorChosen(Doorway door) => OnExitChosen?.Invoke(door); 
 
     private void HandleEncounterCleared()
     {

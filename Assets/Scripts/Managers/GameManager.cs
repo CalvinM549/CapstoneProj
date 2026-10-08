@@ -51,6 +51,10 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
+        SetActiveProfile(new PlayerProfile(0, "TESTPROFILE"));
+
+        ActiveProfile.profileID = "TEST01";
     }
 
     private void OnEnable()
@@ -72,18 +76,21 @@ public class GameManager : MonoBehaviour
                 currentState = GameState.Menu;
                 SetCursorActive(true);
                 MainMenuManager.Instance.InitializeMenu();
+                UIManager.Instance.Initialize();
                 break;
 
             case SceneLoader.HUB:
                 currentState = GameState.Hub;
                 SetCursorActive(true);
                 HubManager.Instance.InitializeHub();
+                UIManager.Instance.Initialize();
                 break;
 
             case SceneLoader.RUN:
                 currentState = GameState.Run;
                 SetCursorActive(false);
                 RunManager.Instance.InitializeRun();
+                UIManager.Instance.Initialize();
                 break;
         }
     }

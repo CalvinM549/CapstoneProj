@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -16,15 +17,17 @@ public class Doorway : MonoBehaviour
 
     private int isOpenHash = Animator.StringToHash("isOpen");
     
-    public Transform entryPoint;
-    public Direction direction; // Direction the player must enter from
+
+    public Direction exitDirection; // Direction the player must enter from
+    public event Action<Doorway> OnChosen; 
 
     public MapNode Destination {  get; private set; }
     public bool IsLocked { get; private set; } = true;
 
     private void OnDisable()
     {
-        HUDIndicatorService.Instance?.RemoveIndicator(transform);
+        if(HUDIndicatorService.Instance != null)
+            HUDIndicatorService.Instance.RemoveIndicator(transform);
     }
 
     public void SetDestination(MapNode node)
@@ -45,11 +48,8 @@ public class Doorway : MonoBehaviour
         if (previewUI != null)
             previewUI.gameObject.SetActive(false);
 
-        //doorVisual.color = Color.red;
-
         if (animator != null)
             animator.SetBool(isOpenHash, false);
-        // Trigger door animation
     }
 
     public void Unlock()
@@ -57,18 +57,11 @@ public class Doorway : MonoBehaviour
         IsLocked = false;
         triggerVolume.enabled = true;
 
-
-        //doorIndicator.SetActive(true);
-
         if (previewUI != null)
             previewUI.gameObject.SetActive(true);
 
-
-        //doorVisual.color = Color.white;
-
         if (animator != null)
             animator.SetBool(isOpenHash, true);
-        // Trigger animation
 
         HUDIndicatorService.Instance.SpawnIndicator(transform, indicatorIcon, doPing: false);
     }
@@ -77,7 +70,6 @@ public class Doorway : MonoBehaviour
     {
         if (IsLocked) return;
         if(!collision.CompareTag("Player")) return;
-
-        RunManager.Instance.TransitionTo(Destination, direction);
+        OnChosen?.Invoke(this);
     }
 }

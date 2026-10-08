@@ -52,8 +52,6 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
-
-
     private void ContinueGame(PlayerProfile profile)
     {
         GameManager.Instance.SetActiveProfile(profile);

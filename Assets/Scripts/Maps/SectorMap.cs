@@ -17,4 +17,14 @@ public class SectorMap
     public int totalNodes;
     public int rowCount;
 
+    public MapNode GetNode(string id)
+    {
+        if (!nodesByID.TryGetValue(id, out var found))
+        {
+            Debug.Log($"[SectorMap] no node with ID: {id} was found");
+            return null;
+        }
+
+        return found;
+    }
 }

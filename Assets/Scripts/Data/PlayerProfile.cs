@@ -5,6 +5,9 @@ using UnityEngine;
 [Serializable]
 public class PlayerProfile
 {
+    public const int CurrentVersion = 1;
+    public int version = CurrentVersion;
+
     public int slotIndex;
     public string profileID;
     public string profileName;
@@ -22,32 +25,56 @@ public class PlayerProfile
     public float BaseTimer;
     
     // Unlocks
-    public HashSet<string> unlockedArchives;
+    public List<string> unlockedArchives = new();
 
-    public HashSet<string> unlockedTools;
-    public HashSet<string> unlockedWeapons;
+    public List<string> unlockedTools = new();
+    public List<string> unlockedWeapons = new();
 
-    public List<SavedLoadoutPreset> savedPresets;
+    public List<SavedLoadoutPreset> savedPresets = new();
 
     // Story Flags
     public bool tutorialSeen;
     public bool skipCutscene;
 
-    // New profile Builder
+    #region Creation
+
+    public PlayerProfile() { }
+
     public PlayerProfile(int slot, string name)
     {
         slotIndex = slot;
         profileID = Guid.NewGuid().ToString();
         profileName = name;
+    }
 
-        runsAttempted = 0;
+    #endregion
 
-        unlockedArchives = new();
-        unlockedTools = new();
-        unlockedWeapons = new();
+    public void EnsureValid()
+    {
+        unlockedArchives ??= new List<string>();
+        unlockedTools ??= new List<string>();
+        unlockedWeapons ??= new List<string>();
 
-        tutorialSeen = false;
-        skipCutscene = false;
+        if(string.IsNullOrEmpty(profileID))
+            profileID = Guid.NewGuid().ToString();
+
+        version = CurrentVersion;
+    }
+
+    public void RegisterRunResult(bool victory, float runTime)
+    {
+        runsAttempted++;
+
+        if (victory)
+        {
+            runVictoryCount++;
+            if(bestRunTime <= 0f ||  runTime < bestRunTime)
+                bestRunTime = runTime;
+        }
+        else
+        {
+            runFailureCount++;
+        }
     }
 }
 

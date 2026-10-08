@@ -102,8 +102,6 @@ public class RadialAmmoUI : MonoBehaviour
 
             var p = pips[i];
 
-            Debug.Log($"updating pip {i}, currently {p.loaded} => {slotLoaded}");
-
             p.visual.DOKill();
             p.visual.transform.DOKill();
             if (slotLoaded && !p.loaded)
