@@ -23,7 +23,7 @@ public class EnemyAIController : MonoBehaviour
     private readonly List<int> primaryExecutorIndexes = new();
 
 
-    private IEnemyState currentState;
+    public IEnemyState currentState {  get; private set; }
 
     public IEnemyState PostAggroState => EnemyStates.MoveIntoRange;
     public IEnemyState PostAttackState => EnemyStates.Reposition;

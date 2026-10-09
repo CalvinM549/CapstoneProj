@@ -45,7 +45,10 @@ public class PostProcessingManager : MonoBehaviour
         if (Instance == null)
             Instance = this;
         else
+        {
             Destroy(gameObject);
+            return;
+        }
 
         SetupVolumes();
     }
@@ -68,9 +71,22 @@ public class PostProcessingManager : MonoBehaviour
                 continue;
             }
 
-            volumes[entry.type] = entry;
+            Debug.Log($"[PPM] setting up volume of type: {entry.type}");
+
+            volumes.Add(entry.type, entry);
             entry.volume.weight = entry.defaultWeight;
         }
+    }
+
+    private VolumeEntry GetVolume(PPVolume type)
+    {
+        if (!volumes.TryGetValue(type, out var found))
+        {
+            Debug.LogError($"[PostProcessingManager] No Volume of type {type}");
+            return null;
+        }
+
+        return found;
     }
 
     private void OnEnable()
@@ -82,6 +98,7 @@ public class PostProcessingManager : MonoBehaviour
     private void OnDisable()
     {
         GameEvents.OnPlayerTookDamage -= HandlePlayerHit;
+        GameEvents.OnPlayerDeath -= HandlePlayerDeath;
 
         foreach (var entry in effectVolumes)
             entry.activeTween?.Kill();
@@ -99,7 +116,7 @@ public class PostProcessingManager : MonoBehaviour
 
     private void PulseVolume(PPVolume type, float duration, float targetWeight)
     {
-        var volumeRef = volumes[type];
+        var volumeRef = GetVolume(type);
 
         volumeRef.activeTween?.Kill();
 
@@ -111,7 +128,7 @@ public class PostProcessingManager : MonoBehaviour
 
     private void SetVolume(PPVolume type, float targetWeight, float fadeDuration)
     {
-        var volumeRef = volumes[type];
+        var volumeRef = GetVolume(type);
 
         volumeRef.activeTween?.Kill();
 
@@ -120,7 +137,7 @@ public class PostProcessingManager : MonoBehaviour
 
     private void ResetVolume(PPVolume type)
     {
-        var volumeRef = volumes[type];
+        var volumeRef = GetVolume(type);
 
         volumeRef.activeTween?.Kill();
 
@@ -129,7 +146,7 @@ public class PostProcessingManager : MonoBehaviour
 
     private void ResetVolumeImmediate(PPVolume type)
     {
-        var volumeRef = volumes[type];
+        var volumeRef = GetVolume(type);
 
         volumeRef.activeTween?.Kill();
 
@@ -144,7 +161,4 @@ public class PostProcessingManager : MonoBehaviour
             target, duration
             ).SetEase(ease);
     }
-
-
-
 }

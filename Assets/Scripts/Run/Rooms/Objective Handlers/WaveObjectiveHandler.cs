@@ -86,8 +86,6 @@ public class WaveObjectiveHandler : MonoBehaviour, IObjectiveTracker
 
     private void SpawnWave(int index)
     {
-        print($"Spawning Wave : {index}");
-
         waveIndex = index;
         var wave = waves[waveIndex];
 

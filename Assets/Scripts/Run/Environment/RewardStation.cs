@@ -16,8 +16,6 @@ public class RewardStation : StationBase, IInteractable
     protected override void OnSetup(MapNode node, RunState run)
     {
         offer = services.loot.RollSlot(node, run, slotIndex);
-
-        print($"setting up rewards : {node.offers[slotIndex].category} {offer.Count}");
     }
 
     protected override void OnInteract()

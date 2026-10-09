@@ -70,8 +70,12 @@ public class CurrencyUI : MonoBehaviour
 
         visible = true;
         hideTimer = 0f;
-        cg?.DOKill();
+        cg.DOKill();
         cg.alpha = 1.0f;
+
+        currencyCounter.DOKill();
+        currencyCounter.color = Color.green;
+        currencyCounter.DOColor(Color.white, 1f);
 
         tickRoutine = StartCoroutine(TickRoutine(currentCounter, newValue, timeToAdjust));
     }

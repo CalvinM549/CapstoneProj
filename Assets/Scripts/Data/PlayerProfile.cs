@@ -19,10 +19,6 @@ public class PlayerProfile
     public int runsAttempted;
     public int runVictoryCount;
     public int runFailureCount;
-
-    // Meta buffs??
-    public int BaseSegments;
-    public float BaseTimer;
     
     // Unlocks
     public List<string> unlockedArchives = new();

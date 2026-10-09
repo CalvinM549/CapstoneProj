@@ -65,11 +65,6 @@ public class EnemyController : MonoBehaviour, IDamageable
         baseMaterial = sr.material;
     }
 
-    //private void Start()
-    //{
-    //    OnSpawn();
-    //}
-
     private void OnEnable()
     {
         GameEvents.OnLockAcquired += HandleLockAcquired;
@@ -93,6 +88,15 @@ public class EnemyController : MonoBehaviour, IDamageable
             else if (rb.linearVelocityX < 0 && isFacingRight)
                 FlipFacing();
         }
+    }
+
+    public void FaceDirection(Vector2 faceDir)
+    {
+        if (faceDir.x > 0 && !isFacingRight)
+            FlipFacing();
+        else if (faceDir.x < 0 && isFacingRight)
+            FlipFacing();
+
     }
 
 

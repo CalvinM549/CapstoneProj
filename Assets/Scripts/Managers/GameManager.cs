@@ -110,7 +110,16 @@ public class GameManager : MonoBehaviour
 
     public void SaveActiveProfile()
     {
-        print("[GameManager] IMPLEMENT PROFILE SAVING");
+        if (ActiveProfile == null)
+        {
+            Debug.Log("[RunManager] No Active Profile found");
+            return;
+        }
+
+        if (!ProfileSaveSystem.Save(ActiveProfile))
+            Debug.LogWarning("[GameManager] Profile Save Failed");
+        else
+            Debug.Log("[GameManager] saved profile");
     }
 
     #endregion

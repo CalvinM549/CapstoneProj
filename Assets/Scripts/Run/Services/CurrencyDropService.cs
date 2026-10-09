@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class CurrencyDropService
 {
-    private readonly CurrencyPickup prefab;
-    private readonly Transform container;
     private readonly ObjectPool<CurrencyPickup> pool;
 
     private readonly List<CurrencyPickup> active = new();
@@ -13,10 +11,17 @@ public class CurrencyDropService
 
     public CurrencyDropService(CurrencyPickup prefab, Transform container)
     {
-        this.prefab = prefab;
-        this.container = container;
+        pool = new ObjectPool<CurrencyPickup>(prefab, initialPoolSize, container);
+        GameEvents.OnEnemyKilled += HandleEnemyKilled;
 
-        pool = new(prefab, initialPoolSize, container);
+        Debug.Log("creating currency service");
+    }
+
+    private void HandleEnemyKilled(EnemyController enemy)
+    {
+        if (enemy.data.baseCurrencyDrop <= 0) return;
+
+        DropBurst(enemy.transform.position, enemy.data.baseCurrencyDrop, Random.Range(2, 6));
     }
 
     public void DropBurst(Vector2 pos, int totalValue, int count)
@@ -25,14 +30,15 @@ public class CurrencyDropService
         {
             var pickup = pool.Get();
             active.Add(pickup);
-            pickup.Spawn(pos, piece, () => 
-            { 
-                active.Remove(pickup);
-                pool.ReturnToPool(pickup); 
-            });
+            pickup.Spawn(pos, piece, HandleCurrencyCollected);
         }
     }
 
+    private void HandleCurrencyCollected(CurrencyPickup pickup)
+    {
+        active.Remove(pickup);
+        pool.ReturnToPool(pickup);
+    }
     public void ForceCollectAll()
     {
         foreach (var pickup in new List<CurrencyPickup>(active))

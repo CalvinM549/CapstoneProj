@@ -67,17 +67,13 @@ public class RadialEnemyHealthBar : MonoBehaviour
         punchTween?.Kill();
 
         canvasGroup.alpha = 1f;
-        barRoot.localScale = Vector3.one * 0.8f;
-
-        fillImage.rectTransform.localScale *= circleScale;
-        delayFillImage.rectTransform.localScale *= circleScale;
+        barRoot.localScale = Vector3.one * circleScale;
     }
 
     private void HandleHit(float currentHealth, float maxHealth, HitData hit)
     {
         float previousFill = fillImage.fillAmount;
         targetFill = Mathf.Clamp01(currentHealth / maxHealth);
-        float damageFill = previousFill - targetFill;
 
         delayFillTimer = delayFillDelay;
         delayDrainPending = true;

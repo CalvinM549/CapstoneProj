@@ -47,6 +47,8 @@ public class RunManager : MonoBehaviour
 
     public RoomPoolService roomService; // Pools rooms, holds useful values etc
 
+
+    public static RunState CurrentRun => Instance.currentRun;
     public RunState currentRun;
 
     public Player activePlayer;
@@ -57,7 +59,7 @@ public class RunManager : MonoBehaviour
 
     private bool transitioning;
 
-    public event Action<Vector2Int> onPlayerRoomChanged;
+    public event Action<Vector2Int> OnPlayerRoomChanged;
 
     private void Awake()
     {
@@ -181,19 +183,20 @@ public class RunManager : MonoBehaviour
         runEnded = true;
         transitioning = true;
 
+        activePlayerUI.SetUIAlpha(0f);
+        activePlayer.SetPlayerCanAct(false);
+        activePlayer.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+
+
         // Update profile based on run results
 
         var profile = GameManager.Instance.ActiveProfile;
         if (profile != null)
         {
-
             RunSaveSystem.DeleteForSlot(profile.slotIndex);
             profile.RegisterRunResult(victory, currentRun.runDurationTimer);
             GameManager.Instance.SaveActiveProfile();
         }
-
-        activePlayer.SetPlayerCanAct(false);
-        activePlayer.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
 
         string screenTag = victory
             ? "victoryScreen"
@@ -208,7 +211,7 @@ public class RunManager : MonoBehaviour
 
     private void ReleaseActiveRoom()
     {
-        if(activePlayer == null) return;
+        if(activeRoom == null) return;
 
         activeRoom.OnCleared -= HandleRoomCleared;
         activeRoom.OnFailure -= HandleRoomFailed;
@@ -241,7 +244,7 @@ public class RunManager : MonoBehaviour
 
         activePlayerUI.ToggleUI(true);
 
-        onPlayerRoomChanged?.Invoke(newNode.coordinates);
+        OnPlayerRoomChanged?.Invoke(newNode.coordinates);
 
         SaveCurrentRun();
         activeRoom.Activate();
@@ -308,6 +311,7 @@ public class RunManager : MonoBehaviour
         if (currentRun == null) return;
         if (TimescaleManager.IsPaused) return;
 
+        if(runEnded) return;
         if (activeRoom == null) return;
 
         switch (activeRoom.State)

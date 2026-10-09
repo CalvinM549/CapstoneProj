@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class ObjectPool<T> where T : Component
 {
-    private T prefab;
-    private Transform parent;
-    private Stack<T> pool = new();
+    private readonly T prefab;
+    private readonly Transform parent;
+    private readonly Stack<T> pool = new();
 
     private readonly List<T> allInstances = new();
 

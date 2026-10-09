@@ -78,6 +78,12 @@ public class PlayerUI : MonoBehaviour
         cg.DOFade(target, 1f);
     }
 
+    public void SetUIAlpha(float alpha)
+    {
+        cg?.DOKill();
+        cg.DOFade(alpha, 1f);
+    }
+
     private void FixedUpdate()
     {
         if (playerPos == null) return;

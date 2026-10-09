@@ -376,6 +376,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfad0c1aed01f694b85c3d1b3532ccbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TextStatusUI
+  isPlayerUI: 0
   textBox: {fileID: 1149242032993319709}
   statusContainer: {fileID: 2946005130069566195}
   typewriterCharDelay: 0.03

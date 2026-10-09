@@ -15,12 +15,12 @@ public class MapOverlayScreen : UIScreen
 
     private void OnEnable()
     {
-        RunManager.Instance.onPlayerRoomChanged += HandlePlayerRoomChanged;
+        RunManager.Instance.OnPlayerRoomChanged += HandlePlayerRoomChanged;
     }
 
     private void OnDisable()
     {
-        RunManager.Instance.onPlayerRoomChanged -= HandlePlayerRoomChanged;
+        RunManager.Instance.OnPlayerRoomChanged -= HandlePlayerRoomChanged;
     }
 
     protected override void OnBeforeOpen(object payload)

@@ -20,18 +20,27 @@ public class CurrencyPickup : MonoBehaviour
     [SerializeField] private float homingMaxSpeed = 16f;
     [SerializeField] private float collectDistance = 0.3f;
 
+    [SerializeField] private Sprite[] sprites;
+
     private enum State { Bursting, Anticipating, Homing, Collected }
     private State state;
 
+    [SerializeField] private SpriteRenderer sr;
+    
     private Vector2 velocity;
     private float stateTimer;
     private Transform target;
-    private Action returnToPool;
+    private Action<CurrencyPickup> returnToPool;
 
-    public void Spawn(Vector2 position, int value, Action returnToPool)
+    public void Spawn(Vector2 position, int value, Action<CurrencyPickup> returnToPool)
     {
         transform.position = position;
         transform.localScale = Vector3.one;
+        transform.Rotate(0f, 0f, UnityEngine.Random.Range(0f, 360f));
+        transform.localScale = Vector2.one * UnityEngine.Random.Range(0.8f, 1.2f);
+
+        sr.sprite = sprites[Mathf.RoundToInt(UnityEngine.Random.Range(0, sprites.Length - 1))];
+
         Value = value;
         this.returnToPool = returnToPool;
 
@@ -40,7 +49,6 @@ public class CurrencyPickup : MonoBehaviour
         velocity = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * force;
 
         state = State.Bursting;
-        gameObject.SetActive(true);
     }
 
     private void Update()
@@ -83,14 +91,18 @@ public class CurrencyPickup : MonoBehaviour
         if (target == null) { Collect(); return; }
 
         Vector2 toTarget = (Vector2)target.position - (Vector2)transform.position;
-        if (toTarget.magnitude <= collectDistance) { Collect(); return; }
+        if (toTarget.magnitude <= collectDistance) 
+        { 
+            Collect(); 
+            return;
+        }
 
-        velocity += toTarget.normalized * homingAccel * (stateTimer) * Time.deltaTime;
+        velocity += (stateTimer) * homingAccel * Time.deltaTime * toTarget.normalized;
         velocity = Vector2.ClampMagnitude(velocity, homingMaxSpeed);
         transform.position += (Vector3)(velocity * Time.deltaTime);
     }
 
-    public void ForceCollect() => Collect(); // used for the room-transition sweep below
+    public void ForceCollect() => Collect();
 
     private void Collect()
     {
@@ -99,6 +111,6 @@ public class CurrencyPickup : MonoBehaviour
         transform.DOKill();
 
         RunManager.Instance.currentRun.GrantCurrency(Value);
-        returnToPool?.Invoke();
+        returnToPool?.Invoke(this);
     }
 }

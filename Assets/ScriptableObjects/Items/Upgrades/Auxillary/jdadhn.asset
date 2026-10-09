@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5064e4fb7b11be40af6ab109cffd00f, type: 3}
+  m_Name: jdadhn
+  m_EditorClassIdentifier: Assembly-CSharp::AuxUpgrade
+  id: abad3759-9a0a-4208-93e3-d35cbed3a046
+  upgradeName: New Upgrade
+  flavourText: 
+  effectText: 
+  icon: {fileID: 0}
+  slot: 4
+  baseDropRate: 1
+  synergyTags: []
+  spawnInShops: 1
+  shopPrice: 50
+  maxStacks: 1
+  statModifiers:
+  - statID: player.combat.reloadSpeed
+    value: 0.1
+    modifierType: 200
+  - statID: player.combat.meleeDamage
+    value: -0.2
+    modifierType: 200
