@@ -128,6 +128,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     public virtual void OnDespawn()
     {
         AIManager.Instance.UnregisterEnemy(ai);
+        ai.ExitStates();
         ai.enabled = false;
         StopAllCoroutines();
     }

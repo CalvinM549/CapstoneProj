@@ -5,31 +5,58 @@ public class PlayerAnimator : MonoBehaviour
 {
     private Player p;
 
-    [SerializeField] 
-    private SpriteRenderer sr;
+    [SerializeField] private SpriteRenderer sr;
+    private SpriteRenderer[] allRenderers;
+
     private Animator animator;
-    private Rigidbody2D rb;
 
     private Coroutine hitRoutine = null;
 
+    private Material baseMaterial;
 
     private bool heavySwingStarted = false;
+    private bool deathRecieved = false;
 
-    public Vector2 spritePos => sr.transform.position;
-    public Sprite currentSprite => sr.sprite;
+    public Vector2 SpritePos => sr.transform.position;
+    public Sprite CurrentSprite => sr.sprite;
     public bool IsFacingRight { get; private set; }
 
-    [Header("Config")]
+    // Movement
 
-    private Material baseMaterial;
+    private readonly int IsMovingHash = Animator.StringToHash("IsMoving");
+    private readonly int MovingForwardsHash = Animator.StringToHash("MovingForwards");
+
+    private readonly int IsDashingHash = Animator.StringToHash("IsDashing");
+    private readonly int DashingAnimHash = Animator.StringToHash("Dashing");
+
+    private readonly int DeathIdleHash = Animator.StringToHash("DeathIdle");
+
+    //Attacks
+
+    private readonly int AttackSideLightHash_One = Animator.StringToHash("AttackSideLight1");
+    private readonly int AttackSideLightHash_Two = Animator.StringToHash("AttackSideLight2");
+    private readonly int AttackSideLightHash_Three = Animator.StringToHash("AttackSideLight3");
+
+    private readonly int AttackUpLightHash_One = Animator.StringToHash("AttackUpLight1");
+    private readonly int AttackUpLightHash_Two = Animator.StringToHash("AttackUpLight2");
+    private readonly int AttackUpLightHash_Three = Animator.StringToHash("AttackUpLight3");
+
+    private readonly int AttackHeavyTriggerHash = Animator.StringToHash("DoHeavySwing");
+    private readonly int AttackSideHeavyWindupHash = Animator.StringToHash("AttackSideHeavyWindup");
+    private readonly int AttackUpHeavyWindupHash = Animator.StringToHash("AttackUpHeavyWindup");
+
 
     private void Awake()
     {
-        animator = GetComponentInChildren<Animator>();
-        rb = GetComponent<Rigidbody2D>();
         p = GetComponent<Player>();
+     
+        animator = GetComponentInChildren<Animator>();
+        allRenderers = GetComponentsInChildren<SpriteRenderer>();
+
 
         baseMaterial = sr.material;
+
+        deathRecieved = false;
     }
 
     private void OnEnable()
@@ -63,33 +90,11 @@ public class PlayerAnimator : MonoBehaviour
         UpdateAutoFlip();
     }
 
-    private void UpdateMovementAnimation()
-    {
-        if (TimescaleManager.IsPaused) return;
-        if (!p.CanAct) return;
-        if (p.Movement.IsDashing) return;
-
-        animator.SetBool("IsMoving", p.Movement.IsMoving);
-
-        // Facing dir
-        bool movingForwards = false;
-
-        Vector2 mouseDir = p.GetMouseDirection();
-
-        if (mouseDir.x > 0 && p.Movement.CurrentMoveDirection.x > 0)
-            movingForwards = true;
-        else if (mouseDir.x < 0 && p.Movement.CurrentMoveDirection.x < 0)
-            movingForwards = true;
-        else
-            movingForwards = false;
-
-        animator.SetBool("MovingForwards", movingForwards);
-    }
-
+    #region Flip
     private void UpdateAutoFlip()
     {
         if (TimescaleManager.IsPaused) return;
-        if (!p.CanAct) return;
+        if (!p.CanAct || deathRecieved) return;
         if (p.Health.IsHitstunned) return;
         if (p.Combat.CurrentState == CombatState.Startup
             || p.Combat.CurrentState == CombatState.Active) return;
@@ -98,7 +103,7 @@ public class PlayerAnimator : MonoBehaviour
         {
             if (p.Movement.CurrentMoveDirection.x > 0 && IsFacingRight)
                 FlipFacing();
-            else if(p.Movement.CurrentMoveDirection.x < 0 && !IsFacingRight)
+            else if (p.Movement.CurrentMoveDirection.x < 0 && !IsFacingRight)
                 FlipFacing();
         }
         else
@@ -112,8 +117,46 @@ public class PlayerAnimator : MonoBehaviour
         }
     }
 
+    private void FlipFacing()
+    {
+        IsFacingRight = !IsFacingRight;
+
+        Vector3 scaler = sr.transform.localScale;
+        scaler.x *= -1;
+        sr.transform.localScale = scaler;
+    }
+
+    #endregion
+
+    #region Animations
+    private void UpdateMovementAnimation()
+    {
+        if (TimescaleManager.IsPaused) return;
+        if (!p.CanAct || deathRecieved) return;
+        if (p.Movement.IsDashing) return;
+
+        animator.SetBool(IsMovingHash, p.Movement.IsMoving);
+
+        // Facing dir
+        bool movingForwards = false;
+
+        Vector2 mouseDir = p.GetMouseDirection();
+
+        if (mouseDir.x > 0 && p.Movement.CurrentMoveDirection.x > 0)
+            movingForwards = true;
+        else if (mouseDir.x < 0 && p.Movement.CurrentMoveDirection.x < 0)
+            movingForwards = true;
+        else
+            movingForwards = false;
+
+        animator.SetBool(MovingForwardsHash, movingForwards);
+    }
+
     private void HandleAttackStart(AttackType type, Vector2 direction)
     {
+        if(TimescaleManager.IsPaused) return;
+        if (deathRecieved) return;
+
         if (direction.x > 0 && IsFacingRight)
             FlipFacing();
         else if (direction.x < 0 && !IsFacingRight)
@@ -138,20 +181,20 @@ public class PlayerAnimator : MonoBehaviour
                     case AttackDirection.Side:
                     case AttackDirection.Down:
                         if (combo <= 1)
-                            animator.Play("AttackSideLight1");
+                            animator.Play(AttackSideLightHash_One);
                         else if (combo == 2)
-                            animator.Play("AttackSideLight2");
+                            animator.Play(AttackSideLightHash_Two);
                         else if (combo == 3)
-                            animator.Play("AttackSideLight3");
+                            animator.Play(AttackSideLightHash_Three);
                         break;
 
                     case AttackDirection.Up:
                         if (combo <= 1)
-                            animator.Play("AttackUpLight1");
+                            animator.Play(AttackUpLightHash_One);
                         else if (combo == 2)
-                            animator.Play("AttackUpLight2");
+                            animator.Play(AttackUpLightHash_Two);
                         else if (combo == 3)
-                            animator.Play("AttackUpLight3");
+                            animator.Play(AttackUpLightHash_Three);
                         break;
                 }
                 break;
@@ -159,17 +202,17 @@ public class PlayerAnimator : MonoBehaviour
             case AttackType.Heavy:
 
                 heavySwingStarted = false;
-                animator.ResetTrigger("DoHeavySwing");
+                animator.ResetTrigger(AttackHeavyTriggerHash);
 
                 switch (animationDir)
                 {
                     case AttackDirection.Side:
                     case AttackDirection.Down:
-                        animator.Play("AttackSideHeavyWindup");
+                        animator.Play(AttackSideHeavyWindupHash);
                         break;
 
                     case AttackDirection.Up:
-                        animator.Play("AttackUpHeavyWindup");
+                        animator.Play(AttackUpHeavyWindupHash);
                         break;
                 }
 
@@ -183,7 +226,7 @@ public class PlayerAnimator : MonoBehaviour
         {
             if (p.Combat.CurrentState == CombatState.Active && !heavySwingStarted)
             {
-                animator.SetTrigger("DoHeavySwing");
+                animator.SetTrigger(AttackHeavyTriggerHash);
                 heavySwingStarted = true;
                 return;
             }
@@ -192,22 +235,33 @@ public class PlayerAnimator : MonoBehaviour
 
     private void HandleDashStart()
     {
-        //StartCoroutine(DashAnimationRoutine());
-
-        animator.SetBool("IsDashing", true);
-        animator.Play("Dashing");
+        animator.SetBool(IsDashingHash, true);
+        animator.Play(DashingAnimHash);
     }
     
     private void HandleDashEnd()
     {
-        animator.SetBool("IsDashing", false);
+        animator.SetBool(IsDashingHash, false);
     }
+
+    #endregion
+
+    #region Masks
+
+    public void SetMaskInteraction(SpriteMaskInteraction mode)
+    {
+        foreach(var renderer in allRenderers)
+            renderer.maskInteraction = mode;
+    }
+
+    #endregion
+
 
     private void HandleDeath()
     {
-        VFXManager.Instance.PlayVFX(VFXType.ExplosionComplex, transform.position);
         StartCoroutine(HitFeedbackRoutine(1f));
-        animator.Play("DeathIdle");
+        animator.Play(DeathIdleHash);
+        deathRecieved = true;
     }
 
     private void HandleHit(HitData hit)
@@ -227,12 +281,4 @@ public class PlayerAnimator : MonoBehaviour
         sr.material = baseMaterial;
     }
 
-    private void FlipFacing()
-    {
-        IsFacingRight = !IsFacingRight;
-
-        Vector3 scaler = sr.transform.localScale;
-        scaler.x *= -1;
-        sr.transform.localScale = scaler;
-    }
 }

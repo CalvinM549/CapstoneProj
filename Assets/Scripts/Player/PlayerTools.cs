@@ -9,12 +9,12 @@ public class PlayerTools : MonoBehaviour
 
     private StatValue toolRechargeRate;
 
-    public bool ToolEquipped => EquippedTool != null;
-    public PlayerTool EquippedTool;
+    public bool HasToolEquipped => EquippedTool != null;
+    public PlayerTool EquippedTool { get; private set; }
 
     private float toolCooldownTimer;
 
-    public float ToolCooldownPercent => ToolEquipped && EquippedTool.cooldown > 0f 
+    public float ToolCooldownPercent => HasToolEquipped && EquippedTool.cooldown > 0f 
         ? Mathf.Clamp01(toolCooldownTimer / EquippedTool.cooldown)
         : 0f;
 
@@ -24,9 +24,11 @@ public class PlayerTools : MonoBehaviour
             EquippedTool.OnEquip(p);
     }
 
-    public void RestoreFromSave()
+    public void RestoreFromSave(PlayerEquipmentSave save, GameDatabase db)
     {
+        if (string.IsNullOrEmpty(save.equippedTool)) return;
 
+        EquipTool(db.tools.Get(save.equippedTool));
     }
 
     private void Awake()
@@ -49,7 +51,7 @@ public class PlayerTools : MonoBehaviour
     private void Update()
     {
         // Update equipped tool
-        if (ToolEquipped) 
+        if (HasToolEquipped) 
             EquippedTool.UpdateTool();
 
         UpdateToolCooldown();
@@ -80,7 +82,7 @@ public class PlayerTools : MonoBehaviour
 
     private void UseEquippedTool()
     {
-        if (!ToolEquipped) return;
+        if (!HasToolEquipped) return;
         if (!EquippedTool.CanUse()) return;
 
         EquippedTool.UseTool(p.GetMouseDirection());
@@ -88,7 +90,7 @@ public class PlayerTools : MonoBehaviour
 
     public bool TryInterceptWithTool(HitData hit)
     {
-        if (!ToolEquipped) return false;
+        if (!HasToolEquipped) return false;
         return EquippedTool.TryIntercept(hit);
     }
 
@@ -102,7 +104,7 @@ public class PlayerTools : MonoBehaviour
         if (toolCooldownTimer > 0f)
         {
             toolCooldownTimer -= Time.deltaTime;
-            if (ToolEquipped)
+            if (HasToolEquipped)
             {
                 // fire event for ui
             }

@@ -151,7 +151,7 @@ public class RunState
     {
         if (currency < cost) return false;
 
-        currency = currency -= cost;
+        currency -= cost;
         GameEvents.CurrencyChanged(currency);
 
         // fire event for ui

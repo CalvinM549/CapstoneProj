@@ -729,7 +729,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34672b8547ca7bb4e97354ae19b53515, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DebugManager
-  enableGodMode: 1
+  enableGodMode: 0
   godModeWeapon: {fileID: 11400000, guid: 478cdb66db74d274b8be11ee5a56c5b6, type: 2}
 --- !u!4 &1361355222
 Transform:
@@ -800,6 +800,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1876220063}
   - component: {fileID: 1876220062}
+  - component: {fileID: 1876220064}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -827,7 +828,12 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 64
-  combatCursor: {fileID: 2800000, guid: 4cd2a66737606e8439ca384d09112d8a, type: 3}
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!4 &1876220063
 Transform:
   m_ObjectHideFlags: 0
@@ -843,6 +849,42 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1876220064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1876220060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6db2ed1cf40249041a7d72d98f6a9646, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScreenGlitch
+  pulseCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

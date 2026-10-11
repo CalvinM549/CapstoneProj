@@ -61,10 +61,10 @@ public abstract class PlayerWeapon : DatabaseEntry, ILootEntry, IProjectileEmitt
     protected Action<int> ammoUsedEvent;
     [HideInInspector] public int currentAmmo;
 
-    public virtual void OnEquip(Player p, Action<int> ammoUseEvent)
+    public virtual void OnEquip(Player p, Action<int> ammoUseEvent, int ammoOverride)
     {
         this.p = p;
-        currentAmmo = baseAmmo;
+        currentAmmo = ammoOverride > 0 ? ammoOverride : baseAmmo;
         ammoUsedEvent = ammoUseEvent;
 
         ammoUsedEvent?.Invoke(currentAmmo);
@@ -90,9 +90,8 @@ public abstract class PlayerWeapon : DatabaseEntry, ILootEntry, IProjectileEmitt
     }
     public abstract void Fire(Vector2 direction, Vector2 firePoint);
 
-    protected virtual void FireSingle(ProjectileData projectile, Vector2 direction, Vector2 firePoint, bool useAmmo = true)
+    protected virtual HitData BuildOutgoingHit(ProjectileData projectile, Vector2 direction, Vector2 firePoint)
     {
-
         var hitData = new HitData(projectile.damage, AttackType.Projectile, isPlayerAttack: true)
         {
             sourcePos = firePoint,
@@ -110,6 +109,14 @@ public abstract class PlayerWeapon : DatabaseEntry, ILootEntry, IProjectileEmitt
         hitData.AddModifier(p.Stats.Get(StatRef.PlayerRangedDamageMult) - 1f, StatModType.PercentAdd, p.Combat);
 
         p.Upgrades.ModifyOutgoingHit(hitData);
+
+        return hitData;
+    }
+
+    protected virtual void FireSingle(ProjectileData projectile, Vector2 direction, Vector2 firePoint, bool useAmmo = true)
+    {
+
+        var hitData = BuildOutgoingHit(projectile, direction, firePoint);
 
         ProjectilePools.FireProjectile(this, projectile, hitData, firePoint, direction);
 

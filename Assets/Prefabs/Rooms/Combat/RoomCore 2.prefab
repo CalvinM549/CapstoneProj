@@ -8632,7 +8632,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7124e38a97a015c4b83c71edd0fd05fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomManager
-  doorways:
+  entryDoor: {fileID: 0}
+  exitDoors:
   - {fileID: 4867424336246379051}
   - {fileID: 8807149722280630125}
   - {fileID: 3723019519912615542}

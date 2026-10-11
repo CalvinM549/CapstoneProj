@@ -34,6 +34,12 @@ public class PlayerMomentum : MonoBehaviour
         drainMult = p.Stats.GetStatValue(StatRef.PlayerMomentumDrainMult);
     }
 
+    public void Initialize(float saved)
+    {
+        Initialize();
+        currentMomentum = saved;
+    }
+
     private void Awake()
     {
         p = GetComponent<Player>();

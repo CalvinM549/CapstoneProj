@@ -7,11 +7,11 @@ public class AOEAttackExecutor : AttackExecutorBase
     [SerializeField] private LayerMask targetLayer;
 
     [SerializeField] private Transform attackOrigin;
-    [SerializeField] private GameObject telegraphPrefab;
+    [SerializeField] private SimpleTelegraph telegraphPrefab;
 
     [SerializeField] private ParticleSystem[] executeParticles;
 
-    private GameObject activeTelegraph;
+    private SimpleTelegraph activeTelegraph;
 
     private void OnDisable()
     {
@@ -28,9 +28,8 @@ public class AOEAttackExecutor : AttackExecutorBase
             controller.SetHyperArmour(true);
 
         // Do vfx telegraph
-        activeTelegraph = Instantiate(telegraphPrefab, attackOrigin);
-        float diameter = attackData.attackRange * 2;
-        activeTelegraph.transform.localScale = new Vector3(diameter, diameter);
+        activeTelegraph = Instantiate(telegraphPrefab);
+        activeTelegraph.Play(attackOrigin.position, AttackData.attackRange, AttackData.telegraphDuration);
     }
 
     public override void Execute(EnemyAIController ai)
@@ -45,8 +44,6 @@ public class AOEAttackExecutor : AttackExecutorBase
 
         DealAreaDamage();
         StartCoroutine(FinishAfterWinddown());
-
-        Destroy(activeTelegraph);
 
         foreach (var particle in executeParticles)
             particle.Play();
@@ -70,7 +67,7 @@ public class AOEAttackExecutor : AttackExecutorBase
             controller.SetHyperArmour(false);
 
         if(activeTelegraph != null)
-            Destroy(activeTelegraph);
+            activeTelegraph.Cancel();
 
         Executing = false;
     }

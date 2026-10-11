@@ -12,12 +12,9 @@ public class CurrencyDropService
     public CurrencyDropService(CurrencyPickup prefab, Transform container)
     {
         pool = new ObjectPool<CurrencyPickup>(prefab, initialPoolSize, container);
-        GameEvents.OnEnemyKilled += HandleEnemyKilled;
-
-        Debug.Log("creating currency service");
     }
 
-    private void HandleEnemyKilled(EnemyController enemy)
+    public void HandleEnemyKilled(EnemyController enemy)
     {
         if (enemy.data.baseCurrencyDrop <= 0) return;
 

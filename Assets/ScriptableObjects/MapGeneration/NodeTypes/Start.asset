@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomTypeData
   id: b3f968f0-d682-4a5f-93ac-2517c155e245
   displayName: Start
-  displayIcon: {fileID: 0}
+  displayIcon: {fileID: 21300000, guid: dbf25e2653c45834f82cea088331c75e, type: 3}
   displayRewardType: 1
   isStart: 1
   isEnd: 0

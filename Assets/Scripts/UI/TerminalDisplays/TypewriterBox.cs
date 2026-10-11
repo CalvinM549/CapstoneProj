@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(TextMeshProUGUI))]
 public class TypewriterBox : MonoBehaviour
 {
+    [SerializeField] private bool playOnStart;
+
     [SerializeField] private float typewriterCharDelay = 0.03f;
 
     [SerializeField] private float lineDelay = 0.2f;
@@ -15,6 +17,12 @@ public class TypewriterBox : MonoBehaviour
     private void Awake()
     {
         textBox = GetComponent<TextMeshProUGUI>();   
+    }
+
+    private void Start()
+    {
+        if (playOnStart)
+            DisplayText();
     }
 
     public void DisplayText(string text = null)
@@ -41,7 +49,7 @@ public class TypewriterBox : MonoBehaviour
         int totalVisibleCharacters = textBox.textInfo.characterCount;
         int counter = 0;
 
-        while (counter <= totalVisibleCharacters)
+        while (counter < totalVisibleCharacters)
         {
             var charInfo = textBox.textInfo.characterInfo[counter];
 

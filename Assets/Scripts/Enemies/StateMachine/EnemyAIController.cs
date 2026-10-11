@@ -70,6 +70,11 @@ public class EnemyAIController : MonoBehaviour
             stateDisplay.text = newState.ToString();
     }
 
+    public void ExitStates()
+    {
+        currentState?.Exit(this);
+        currentState = null;
+    }
     public void Tick(float dt)
     {
         RefreshTargetInfo();

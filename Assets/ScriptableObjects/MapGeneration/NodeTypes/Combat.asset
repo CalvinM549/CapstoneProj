@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomTypeData
   id: 53196459-c569-4884-9b96-037ff04ef9e1
   displayName: Combat
-  displayIcon: {fileID: 0}
+  displayIcon: {fileID: 21300000, guid: dbf25e2653c45834f82cea088331c75e, type: 3}
   displayRewardType: 1
   isStart: 0
   isEnd: 0

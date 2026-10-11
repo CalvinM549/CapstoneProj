@@ -7,42 +7,28 @@ public class HealthSegment
     public float maxHealth;
     public float currentHealth;
 
-    public bool IsDestroyed = false;
     public bool IsActive = false;
 
+    public bool IsDestroyed => currentHealth <= 0f;
     public float PercentHealth => maxHealth > 0 ? (currentHealth / maxHealth) : 0f;
 
-    public HealthSegment(float maxHealth, bool isActive)
+    public HealthSegment(float maxHealth)
     {
         this.maxHealth = maxHealth;
         currentHealth = maxHealth;
-        IsDestroyed = false;
-        IsActive = isActive;
-    }
-
-    public void RestoreFromSave(SegmentSave save)
-    {
-        currentHealth = save.currentHealth;
-        maxHealth = save.maxHealth;
-        IsActive = save.isActive;
-        IsDestroyed = save.isActive;
     }
 
     public float ReduceHealth(float amount)
-    {
-        float overflow = 0f;
-        
+    {        
         if (amount >= currentHealth)
         {
-            overflow = amount - currentHealth;
-            Destroy();
-        }
-        else
-        {
-            currentHealth -= amount;
+            float overflow = amount - currentHealth;
+            currentHealth = 0f;
+            return overflow;
         }
 
-        return overflow;
+        currentHealth -= amount;
+        return 0f;
     }
 
     public void RestoreHealth(float amount)
@@ -52,13 +38,11 @@ public class HealthSegment
 
     public void RestoreSegment()
     {
-        IsDestroyed = false;
         currentHealth = maxHealth;
     }
 
     public void Destroy()
     {
         currentHealth = 0f;
-        IsDestroyed = true;
     }
 }

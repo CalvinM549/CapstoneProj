@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private GameDatabase db;
-
     // References
     public PlayerMovement Movement { get; private set; }
     public PlayerHealth Health { get; private set; }
@@ -75,28 +73,45 @@ public class Player : MonoBehaviour
             return;
         }
 
+        var db = GameManager.Database;
+
         ResetPlayerState();
 
-        var equippedTool = db.tools.Get(save.equippedTool);
-        var equippedWeapon = db.weapons.Get(save.equippedWeapon);
+        // Unchanged
+        Stats.Initialize();
+        Health.Initialize();
+        Movement.Initialize();
+
+        Momentum.Initialize(save.currentMomentum);
 
         // Restore from save
-        Stats.Initialize();
 
-        Movement.Initialize();
-        Health.Initialize();
-        Momentum.Initialize();
-        Tools.Initialize(equippedTool);
-        Combat.Initialize(equippedWeapon);
-        Upgrades.RestoreFromSave(save.upgradeSave);
-        //Health.Restore();
+        Upgrades.RestoreFromSave(save.upgradeSave, db);
+        Health.RestoreFromSave(save.healthSave);
+        Tools.RestoreFromSave(save.equipmentSave, db);
+        Combat.RestoreFromSave(save.equipmentSave, db);
     }
 
     #endregion
 
     public PlayerSaveData PackPlayerState()
     {
-        return null;
+        PlayerSaveData save = new()
+        {
+            healthSave = Health.ToSave(),
+            upgradeSave = Upgrades.ToSave(),
+
+            equipmentSave = new PlayerEquipmentSave()
+            {
+                equippedTool = Tools.HasToolEquipped ? Tools.EquippedTool.Id : null,
+                equippedWeapon = Combat.HasWeaponEquipped ? Combat.EquippedWeapon.Id : null,
+                currentAmmo = Combat.CurrentAmmo
+            },
+
+            currentMomentum = Momentum.CurrentMomentum
+        };
+
+        return save;
     }
 
     public void ResetPlayerState()

@@ -16,5 +16,9 @@ public class DebugManager : MonoBehaviour
             Instance = this;
         else
             Destroy(gameObject);
+
+#if !UNITY_EDITOR
+        enableGodMode = false;
+#endif
     }
 }

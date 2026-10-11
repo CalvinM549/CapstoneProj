@@ -34,7 +34,7 @@ public class TimescaleManager : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.OnHitConfirmed += HandleHitstop;
-        GameEvents.OnPlayerDeath += DeathStop;
+        GameEvents.OnPlayerDeath += HandlePlayerDeath;
         //Pause game event?
     }
 
@@ -43,7 +43,7 @@ public class TimescaleManager : MonoBehaviour
         StopAllCoroutines();
 
         GameEvents.OnHitConfirmed -= HandleHitstop;
-        GameEvents.OnPlayerDeath -= DeathStop;
+        GameEvents.OnPlayerDeath -= HandlePlayerDeath;
     }
 
     public void PauseGame(object source)
@@ -84,10 +84,9 @@ public class TimescaleManager : MonoBehaviour
         RequestTimeSlow(hit.hitstopTime);
     }
 
-    private void DeathStop()
+    private void HandlePlayerDeath()
     {
         RequestTimeSlow(2.5f);
-        Invoke(nameof(PauseGame), 2.5f);
     }
 
     public void RequestTimeSlow(float duration)

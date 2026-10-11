@@ -14685,6 +14685,7 @@ GameObject:
   - component: {fileID: 4043302354256458430}
   - component: {fileID: 1332188178444586089}
   - component: {fileID: 138663007724258994}
+  - component: {fileID: 2481322541917370619}
   m_Layer: 0
   m_Name: CorridorRoom2
   m_TagString: Untagged
@@ -14728,7 +14729,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7124e38a97a015c4b83c71edd0fd05fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomManager
-  doorways:
+  entryDoor: {fileID: 0}
+  exitDoors:
   - {fileID: 2099882059332295194}
   - {fileID: 4695663284513485434}
   - {fileID: 654897349886968692}
@@ -14776,6 +14778,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7afa820ae687bed47bf6bff44e8ac2b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveObjectiveHandler
+--- !u!114 &2481322541917370619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4619049924524044187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7e062fafd6800f4188328fd1a9c9d75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomVariation
+  theme: {fileID: 11400000, guid: f30031fcfcab6f24fab4042d738debaa, type: 2}
+  floor: {fileID: 5065346209794589476}
+  walls: {fileID: 8856824137741404375}
+  edgeSource: {fileID: 0}
+  accentLights:
+  - {fileID: 8822407203331398200}
+  - {fileID: 5478682683375287424}
+  - {fileID: 7507940247345123555}
+  - {fileID: 4893757201853007975}
+  ambient:
+    target: {fileID: 0}
+    chance: 0
 --- !u!1 &5202513543540658302
 GameObject:
   m_ObjectHideFlags: 0

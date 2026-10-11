@@ -4,12 +4,10 @@ using UnityEngine;
 
 public class EnemyService
 {
-    public EnemyDatabase enemyDatabase;
+    private readonly EnemyDatabase enemyDatabase;
 
-    private Dictionary<string, Stack<EnemyController>> pooledEnemies = new();
-    private Transform container;
-
-    public event Action OnAllEnemiesCleared;
+    private readonly Dictionary<string, Stack<EnemyController>> pooledEnemies = new();
+    private readonly Transform container;
 
     public EnemyService(EnemyDatabase data, Transform container)
     {

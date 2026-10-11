@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -43,7 +44,8 @@ public class RadialMomentumUI : MonoBehaviour
     {
         controller.SetFill(normalized, gainLerpSpeed);
 
-        if (Mathf.Abs(normalized - lastValue) >= 0.1f)
+
+        if (Mathf.Abs(normalized - lastValue) >= 0f)
         {
             controller.FlashColour(Color.Lerp(Color.red, Color.green, normalized), 0.2f);
         }
@@ -54,6 +56,4 @@ public class RadialMomentumUI : MonoBehaviour
 
         lastValue = normalized;
     }
-
-
 }

@@ -17,14 +17,19 @@ public enum RoomState
 
 public class RoomManager : MonoBehaviour
 {
-    public RoomData Data {  get; private set; }
+    public RoomData Data => node.room;
     public RoomState State { get; private set; }
 
     private IObjectiveTracker objectiveTracker;
+    private RoomVariation variation;
+
     private StationBase[] roomStations;
 
-    [SerializeField] private Doorway[] doorways;
-    public int ExitCount => doorways.Length;
+    [SerializeField] private Doorway entryDoor;
+    [SerializeField] private Doorway[] exitDoors;
+
+    public Doorway EntryDoor => entryDoor;
+    public int ExitCount => exitDoors.Length;
     public Vector2 EntryPoint => fallbackEntryPoint;
 
     [SerializeField] private Vector2 fallbackEntryPoint;
@@ -43,16 +48,20 @@ public class RoomManager : MonoBehaviour
     private void Awake()
     {
         objectiveTracker = GetComponent<IObjectiveTracker>();
-        
-        roomStations = GetComponentsInChildren<StationBase>();
+        variation = GetComponent<RoomVariation>();
 
-        foreach (var door in doorways)
+        roomStations = GetComponentsInChildren<StationBase>();
+    }
+
+    private void OnEnable()
+    {
+        foreach (var door in exitDoors)
             door.OnChosen += HandleDoorChosen;
     }
 
     private void OnDestroy()
     {
-        foreach (var door in doorways)
+        foreach (var door in exitDoors)
             door.OnChosen -= HandleDoorChosen;
     }
 
@@ -60,37 +69,30 @@ public class RoomManager : MonoBehaviour
     {
         if (State == RoomState.Active && objectiveTracker != null)
             objectiveTracker.Tick(Time.deltaTime);
-
-#if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            HandleEncounterCleared();
-        }
-#endif
     }
 
     public void Initialize(MapNode node, RunState run, RunServices services)
     {
-        Data = node.room;
         this.node = node;
         this.run = run;
+
+        variation?.Apply(run.Seed + node.depth);
 
         foreach (var roomObj in roomStations)
             roomObj.Setup(node, run, services);
 
-        for (int i = 0; i < doorways.Length; i++)
+        for (int i = 0; i < exitDoors.Length; i++)
         {
-            var currentDoor = doorways[i];
+            var currentDoor = exitDoors[i];
 
             if (node.exits.Count >= i + 1)
             {
                 var connectedRoom = node.exits[i];
-                currentDoor.gameObject.SetActive(true);
                 currentDoor.SetDestination(connectedRoom);
             }
             else
             {
-                currentDoor.gameObject.SetActive(false);
+                currentDoor.HideDoor();
             }
         }
 
@@ -102,8 +104,8 @@ public class RoomManager : MonoBehaviour
             // Enemy Spawns
             objectiveTracker.Setup(node, run, services);
 
-            foreach (var door in doorways)
-                if(door.gameObject.activeSelf) door.Lock();
+            foreach (var door in exitDoors)
+                if(door.InUse) door.Lock();
         }
     }
 
@@ -115,16 +117,6 @@ public class RoomManager : MonoBehaviour
             objectiveTracker.OnEncounterCleared += HandleEncounterCleared;
         else
             HandleEncounterCleared();
-    }
-
-    public Transform GetEnemySpawnPoint(SpawnTag tag)
-    {
-        if(spawnPoints == null || spawnPoints.Length == 0)
-            return null;
-
-        List<SpawnPoint> validPoints = spawnPoints.Where(s => s.Accepts(tag)).ToList();
-
-        return validPoints[UnityEngine.Random.Range(0, validPoints.Count)].transform;
     }
 
     private void HandleDoorChosen(Doorway door) => OnExitChosen?.Invoke(door); 
@@ -139,7 +131,7 @@ public class RoomManager : MonoBehaviour
 
         // get reward
 
-        foreach (var door in doorways.Where(d => d.gameObject.activeInHierarchy))
+        foreach (var door in exitDoors.Where(d => d.InUse))
             door.Unlock();
 
         OnCleared?.Invoke(this);
@@ -151,6 +143,18 @@ public class RoomManager : MonoBehaviour
         if (State == RoomState.Cleared) return;
         State = RoomState.Failed;
         OnFailure?.Invoke(this);
+    }
+
+
+
+    public Transform GetEnemySpawnPoint(SpawnTag tag)
+    {
+        if (spawnPoints == null || spawnPoints.Length == 0)
+            return null;
+
+        List<SpawnPoint> validPoints = spawnPoints.Where(s => s.Accepts(tag)).ToList();
+
+        return validPoints[UnityEngine.Random.Range(0, validPoints.Count)].transform;
     }
 
 
@@ -169,5 +173,5 @@ public class RoomManager : MonoBehaviour
 
 #endif
 
-#endregion
+    #endregion
 }

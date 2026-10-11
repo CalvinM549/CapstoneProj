@@ -30,21 +30,21 @@ public class ShopStation : StationBase, IInteractable
     {
         if (purchased[index]) return false;
 
-        if (run.TryUseCurrency(GetPrice(stock[index].Item)))
+        var chosen = stock[index];
+
+        if (run.TryUseCurrency(GetPrice(chosen.Item)))
         {
-            // Grant item
+            run.GrantLoot(chosen);
             purchased[index] = true;
 
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     private int GetPrice(ILootEntry loot)
     {
+        // apply any run modifiers for price here
         return loot.ShopPrice;
     }
 }

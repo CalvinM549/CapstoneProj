@@ -43,8 +43,8 @@ public class PlayerVFX : MonoBehaviour
         while (p.Movement.IsDashing)
         {
             var afterImage = afterImagePool.Get();
-            afterImage.transform.position = p.Animator.spritePos;
-            afterImage.Initialize(p.Animator.currentSprite, afterImagePool, p.Animator.IsFacingRight);
+            afterImage.transform.position = p.Animator.SpritePos;
+            afterImage.Initialize(p.Animator.CurrentSprite, afterImagePool, p.Animator.IsFacingRight);
 
             yield return new WaitForSeconds(0.05f);
         }

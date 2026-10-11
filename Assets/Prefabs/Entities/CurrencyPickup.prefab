@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dead40ab47c0404ea8de0f4145f9bcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CurrencyPickup
-  burstForceMin: 1
-  burstForceMax: 5
+  burstForceMin: 3
+  burstForceMax: 10
   burstDrag: 4
   anticipationDuration: 0.35
   popScale: 1.25

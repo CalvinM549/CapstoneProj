@@ -21,7 +21,7 @@ public class StationBase : MonoBehaviour, IInteractable
 
     [SerializeField] private string interactPrompt;
     public string InteractPrompt => interactPrompt;
-    public bool CanInteract {  get { return isEnabled; } }
+    public bool CanInteract => isEnabled;
 
     protected virtual void Awake()
     {
@@ -92,6 +92,8 @@ public class StationBase : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+        if (!isEnabled) return;
+
         OnInteract();
     }
 

@@ -77,6 +77,7 @@ public class SceneLoader : MonoBehaviour
             fadeOverlay?.DOKill();
             fadeOverlay.DOFade(1f, fadeTime).SetUpdate(true);
         }
+        ScreenGlitch.Instance.Pulse(fadeTime);
 
         StartCoroutine(LoadSceneRoutine(sceneName, onLoad));
     }
@@ -103,6 +104,8 @@ public class SceneLoader : MonoBehaviour
             fadeOverlay?.DOKill();
             fadeOverlay.DOFade(0f, fadeTime).SetUpdate(true); ;
         }
+
+        ScreenGlitch.Instance.Pulse(fadeTime);
     }
 
     #endregion

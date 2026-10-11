@@ -33,8 +33,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private LayerMask wallLayer;
     public static LayerMask WallLayer => Instance.wallLayer;
 
+    [SerializeField] private LayerMask enemyLayer;
+    public static LayerMask EnemyLayer => Instance.enemyLayer;
 
-    [SerializeField] private Texture2D combatCursor;
+    [SerializeField] private LayerMask playerLayer;
+    public static LayerMask PlayerLayer => Instance.playerLayer;
 
     private bool tutorialActive;
 
@@ -75,22 +78,22 @@ public class GameManager : MonoBehaviour
             case SceneLoader.MAINMENU:
                 currentState = GameState.Menu;
                 SetCursorActive(true);
-                MainMenuManager.Instance.InitializeMenu();
                 UIManager.Instance.Initialize();
+                MainMenuManager.Instance.InitializeMenu();
                 break;
 
             case SceneLoader.HUB:
                 currentState = GameState.Hub;
                 SetCursorActive(true);
-                HubManager.Instance.InitializeHub();
                 UIManager.Instance.Initialize();
+                HubManager.Instance.InitializeHub();
                 break;
 
             case SceneLoader.RUN:
                 currentState = GameState.Run;
                 SetCursorActive(false);
-                RunManager.Instance.InitializeRun();
                 UIManager.Instance.Initialize();
+                RunManager.Instance.InitializeRun();
                 break;
         }
     }

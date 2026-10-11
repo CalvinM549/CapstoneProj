@@ -1,28 +1,39 @@
 using System;
 using System.Collections;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class Doorway : MonoBehaviour
+public class Doorway : MonoBehaviour, IInteractable
 {
-    [SerializeField] private Collider2D triggerVolume;
-    [SerializeField] private SpriteRenderer doorVisual; // Temp
+    [SerializeField] private Collider2D triggerZone;
+    [SerializeField] private Collider2D blockingCollider;
+
+    [SerializeField] private SpriteRenderer mainVisual;
+    [SerializeField] private SpriteMask entryMask;
 
     [SerializeField] private Animator animator;
 
     [SerializeField] private DoorwayPreviewUI previewUI;
 
-    [SerializeField] private Sprite indicatorIcon;
-    [SerializeField] private Transform indicatorPos;
+    [SerializeField] private Transform entryPoint;
+    [SerializeField] private Transform exitPoint;
 
+    public Vector2 EntryPos => entryPoint.position;
+    public Vector2 ExitPos => exitPoint.position;
 
-    private int isOpenHash = Animator.StringToHash("isOpen");
+    private readonly int isOpenHash = Animator.StringToHash("isOpen");
     
 
-    public Direction exitDirection; // Direction the player must enter from
-    public event Action<Doorway> OnChosen; 
+    public Direction exitDirection; // Direction of force applied to player when walked through
+    public event Action<Doorway> OnChosen;
 
+    public bool InUse { get; private set; } = true;
     public MapNode Destination {  get; private set; }
     public bool IsLocked { get; private set; } = true;
+
+    public string InteractPrompt => throw new NotImplementedException();
+
+    public bool CanInteract => false;
 
     private void OnDisable()
     {
@@ -33,29 +44,45 @@ public class Doorway : MonoBehaviour
     public void SetDestination(MapNode node)
     {
         Destination = node;
-        if(previewUI != null ) 
-            previewUI.InitializeWithDestination(Destination);
+        InUse = true;
+
+        if (mainVisual != null) mainVisual.enabled = true;
+        if (previewUI != null ) previewUI.InitializeWithDestination(Destination);
+    }
+
+    public void SetMask(bool enable) => entryMask.gameObject.SetActive(enable);
+
+    public void SetTint(Color colour) => mainVisual.color = colour;
+
+    public void HideDoor()
+    {
+        InUse = false;
+        IsLocked = true;
+        triggerZone.enabled = false;
+        blockingCollider.enabled = true;
+
+        if (mainVisual != null) mainVisual.enabled = false;
+        if (previewUI != null) previewUI.gameObject.SetActive(false);
     }
 
     public void Lock()
     {
         IsLocked = true;
-        triggerVolume.enabled = false;
+        triggerZone.enabled = false;
+        blockingCollider.enabled = true;
 
-        if (doorVisual != null)
-            doorVisual.gameObject.SetActive(true);
 
-        if (previewUI != null)
-            previewUI.gameObject.SetActive(false);
+        if (previewUI != null) previewUI.gameObject.SetActive(false);
 
-        if (animator != null)
-            animator.SetBool(isOpenHash, false);
+
+        if (animator != null) animator.SetBool(isOpenHash, false);
     }
 
     public void Unlock()
     {
         IsLocked = false;
-        triggerVolume.enabled = true;
+        triggerZone.enabled = true;
+        blockingCollider.enabled = false;
 
         if (previewUI != null)
             previewUI.gameObject.SetActive(true);
@@ -63,13 +90,30 @@ public class Doorway : MonoBehaviour
         if (animator != null)
             animator.SetBool(isOpenHash, true);
 
-        HUDIndicatorService.Instance.SpawnIndicator(transform, indicatorIcon, doPing: false);
+        if(HUDIndicatorService.Instance != null)
+            HUDIndicatorService.Instance.SpawnIndicator(transform, Destination.type.displayIcon, doPing: false);
     }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (IsLocked) return;
         if(!collision.CompareTag("Player")) return;
         OnChosen?.Invoke(this);
+    }
+
+    public void Interact()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ShowPrompt()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void HidePrompt()
+    {
+        throw new NotImplementedException();
     }
 }

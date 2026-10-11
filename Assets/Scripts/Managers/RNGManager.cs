@@ -29,4 +29,10 @@ public class RNGManager : MonoBehaviour
     {
         unchecked { return new System.Random(((seed * 397 ^ coords.x) * 397 ^ coords.y) * 397 ^ salt); }
     }
+
+    public static System.Random SaltRng(int seed, int salt)
+    {
+        unchecked { return new System.Random(unchecked(seed * 486187739 + salt * 16777619)); }
+    }
+
 }

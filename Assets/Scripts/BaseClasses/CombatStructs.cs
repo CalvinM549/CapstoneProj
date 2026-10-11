@@ -48,12 +48,10 @@ public class HitData
 
     public Vector2 sourcePos;
     public Vector2 knockbackDirection;
-
     public float knockbackForce;
+
     public float hitstopTime;
     public float hitstunTime;
-
-    public int momentumCost;
 
     public bool isPlayerAttack;
     public bool isParryable;
@@ -77,9 +75,8 @@ public class HitData
 
     private readonly List<StatModifier> modifiers = new();
 
-    private List<PendingStatus> statusQueue = new();
-
-    public IReadOnlyList<PendingStatus> PendingStatusEffects => (IReadOnlyList<PendingStatus>)statusQueue ?? Array.Empty<PendingStatus>();
+    private List<PendingStatus> pendingStatusEffects = new();
+    public IReadOnlyList<PendingStatus> PendingStatusEffects => (IReadOnlyList<PendingStatus>)pendingStatusEffects ?? Array.Empty<PendingStatus>();
 
 
     public HitData(float baseDamage, AttackType attackType, bool isPlayerAttack)
@@ -107,8 +104,8 @@ public class HitData
 
     public void AddStatus(StatusEffectData data, object source, bool appliedByPlayer, int stacks = 1)
     {
-        statusQueue ??= new();
-        statusQueue.Add(new PendingStatus(data, source, appliedByPlayer, stacks));
+        pendingStatusEffects ??= new();
+        pendingStatusEffects.Add(new PendingStatus(data, source, appliedByPlayer, stacks));
     }
 
     public float Resolve()
@@ -144,7 +141,27 @@ public class HitData
         return _finalDamage;
     }
 
+    public HitData Clone()
+    {
+        var clone = new HitData(BaseDamage, attackType, isPlayerAttack)
+        {
+            sourcePos = sourcePos,
+            knockbackDirection = knockbackDirection,
+            knockbackForce = knockbackForce,
+            hitstopTime = hitstopTime,
+            hitstunTime = hitstunTime,
+            isParryable = isParryable,
+            isBlockable = isBlockable
+        };
 
+        foreach (var mod in modifiers)
+            clone.AddModifier(mod);
+
+        foreach (var pending in PendingStatusEffects)
+            clone.AddStatus(pending.data, pending.source, pending.appliedByPlayer, pending.stacks);
+
+        return clone;
+    }
 
 }
 

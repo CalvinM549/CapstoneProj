@@ -449,14 +449,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00c3f9da1d064a74f938237045019226, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Doorway
-  triggerVolume: {fileID: 2271630991269795481}
+  triggerZone: {fileID: 0}
+  blockingCollider: {fileID: 0}
   doorVisual: {fileID: 7916919902793324090}
+  sealedVisual: {fileID: 0}
+  entryMask: {fileID: 0}
   animator: {fileID: 0}
   previewUI: {fileID: 0}
   indicatorIcon: {fileID: 0}
   indicatorPos: {fileID: 0}
   entryPoint: {fileID: 8805080461067878991}
-  direction: 2
+  exitPoint: {fileID: 0}
+  exitDirection: 0
 --- !u!212 &7916919902793324090
 SpriteRenderer:
   serializedVersion: 2
@@ -608,14 +612,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00c3f9da1d064a74f938237045019226, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Doorway
-  triggerVolume: {fileID: 6066514161126408997}
+  triggerZone: {fileID: 0}
+  blockingCollider: {fileID: 0}
   doorVisual: {fileID: 6932567646712661582}
+  sealedVisual: {fileID: 0}
+  entryMask: {fileID: 0}
   animator: {fileID: 0}
   previewUI: {fileID: 0}
   indicatorIcon: {fileID: 0}
   indicatorPos: {fileID: 0}
   entryPoint: {fileID: 3617976182438262150}
-  direction: 1
+  exitPoint: {fileID: 0}
+  exitDirection: 0
 --- !u!212 &6932567646712661582
 SpriteRenderer:
   serializedVersion: 2
@@ -9807,7 +9815,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7124e38a97a015c4b83c71edd0fd05fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomManager
-  doorways:
+  entryDoor: {fileID: 0}
+  exitDoors:
   - {fileID: 7924119539597299592}
   - {fileID: 329167734511156411}
   - {fileID: 2468142913136760936}
@@ -15688,14 +15697,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00c3f9da1d064a74f938237045019226, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Doorway
-  triggerVolume: {fileID: 7904603886751996139}
+  triggerZone: {fileID: 0}
+  blockingCollider: {fileID: 0}
   doorVisual: {fileID: 8472771630473674250}
+  sealedVisual: {fileID: 0}
+  entryMask: {fileID: 0}
   animator: {fileID: 0}
   previewUI: {fileID: 0}
   indicatorIcon: {fileID: 0}
   indicatorPos: {fileID: 0}
   entryPoint: {fileID: 4188502451230594614}
-  direction: 0
+  exitPoint: {fileID: 0}
+  exitDirection: 0
 --- !u!212 &8472771630473674250
 SpriteRenderer:
   serializedVersion: 2

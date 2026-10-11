@@ -13,7 +13,7 @@ public class Projectile : MonoBehaviour
 
     private bool hitTarget;
 
-    private HitData hitData;
+    protected HitData hitData;
 
     private Action<Projectile> returnToPool;
 
@@ -57,25 +57,36 @@ public class Projectile : MonoBehaviour
         returnToPool?.Invoke(this);
     }
 
-    protected void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (hitTarget) return;
 
         if (collision.CompareTag("Wall"))
+        {
             OnExpire();
-
-        if (playerProjectile && (collision.CompareTag("Player") || collision.CompareTag("PlayerHurtbox")))
             return;
+        }
 
-        if (!playerProjectile && (collision.CompareTag("Enemy") || collision.CompareTag("Hurtbox")))
-            return;
-
-        IDamageable target = collision.GetComponent<IDamageable>();
-        if (target == null || !target.IsAlive) 
-            return;
+        IDamageable target = GetValidTarget(collision);
+        if(target == null) return;
 
         hitTarget = true;
         HandleHit(target);
+    }
+
+    protected IDamageable GetValidTarget(Collider2D collision)
+    {
+        if (playerProjectile && (collision.CompareTag("Player") || collision.CompareTag("PlayerHurtbox")))
+            return null;
+
+        if (!playerProjectile && (collision.CompareTag("Enemy") || collision.CompareTag("Hurtbox")))
+            return null;
+
+        IDamageable target = collision.GetComponent<IDamageable>();
+        if (target == null || !target.IsAlive)
+            return null;
+
+        return target;
     }
 
     protected virtual void HandleHit(IDamageable target)

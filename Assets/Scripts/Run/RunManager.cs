@@ -81,6 +81,8 @@ public class RunManager : MonoBehaviour
             loot = new LootService(db),
             currency = new CurrencyDropService(currencyPickupPrefab, currencyContainer)
         };
+
+        GameEvents.OnEnemyKilled += runServices.currency.HandleEnemyKilled;
     }
 
     private void OnEnable()
@@ -91,6 +93,7 @@ public class RunManager : MonoBehaviour
     private void OnDestroy()
     {
         GameEvents.OnRunEnded -= HandleRunEnd;
+        GameEvents.OnEnemyKilled -= runServices.currency.HandleEnemyKilled;
     }
 
     private void Update()
@@ -124,22 +127,12 @@ public class RunManager : MonoBehaviour
         }
 
         SetupPlayer();
-
         activePlayer.SetupNew(config.loadout);
         activePlayer.SetPlayerCanAct(true);
 
         currentRun = new(config.map, activePlayer);
 
         EnterNode(currentRun.map.entryNode);
-    }
-
-    private void SetupPlayer()
-    {
-        activePlayer = Instantiate(playerPrefab, playerContainer);
-        AIManager.Instance.Initialize(activePlayer);
-
-        activePlayerUI = Instantiate(playerUIPrefab, playerUIContainer);
-        activePlayerUI.Initialize(activePlayer);
     }
 
     public void ResumeSavedRun()
@@ -175,6 +168,14 @@ public class RunManager : MonoBehaviour
         EnterNode(node, resuming: true);
     }
 
+    private void SetupPlayer()
+    {
+        activePlayer = Instantiate(playerPrefab, playerContainer);
+        AIManager.Instance.Initialize(activePlayer);
+
+        activePlayerUI = Instantiate(playerUIPrefab, playerUIContainer);
+        activePlayerUI.Initialize(activePlayer);
+    }
     #endregion
 
     private void HandleRunEnd(bool victory)
@@ -183,10 +184,17 @@ public class RunManager : MonoBehaviour
         runEnded = true;
         transitioning = true;
 
+        runServices.currency.ForceCollectAll();
+
         activePlayerUI.SetUIAlpha(0f);
         activePlayer.SetPlayerCanAct(false);
         activePlayer.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
 
+        if (!victory)
+        {
+            ScreenGlitch.Instance.SetBaseline(0.2f);
+
+        }
 
         // Update profile based on run results
 
@@ -203,26 +211,16 @@ public class RunManager : MonoBehaviour
             : "failureScreen";
 
         UIManager.Instance.OpenScreen(screenTag, currentRun);
+    }
 
-        //runEndOverlay.Display(victory, currentRun);
+    public void ReturnToHub()
+    {
+        ScreenGlitch.Instance.SetBaseline(0f);
+        SceneLoader.Instance.LoadHub();
     }
 
     #region Room Transitions
-
-    private void ReleaseActiveRoom()
-    {
-        if(activeRoom == null) return;
-
-        activeRoom.OnCleared -= HandleRoomCleared;
-        activeRoom.OnFailure -= HandleRoomFailed;
-
-        activeRoom.OnExitChosen -= HandleExitChosen;
-
-        roomService.Release(activeRoom);
-        activeRoom = null;
-    }
-
-    private void EnterNode(MapNode newNode, bool resuming = false)
+    private void EnterNode(MapNode newNode, bool arriving = false, bool resuming = false)
     {
         // Remove Current Room
         runServices.currency.ForceCollectAll();
@@ -237,18 +235,41 @@ public class RunManager : MonoBehaviour
         activeRoom.OnExitChosen += HandleExitChosen;
 
         // Setup Player
-        GameEvents.PlayerTransitionTeleport(activeRoom.EntryPoint);
-        activePlayer.transform.position = activeRoom.EntryPoint;
+        var entryDoor = arriving ? activeRoom.EntryDoor : null;
+        Vector2 startPos = entryDoor != null ? entryDoor.EntryPos : activeRoom.EntryPoint;
 
+        GameEvents.PlayerTransitionTeleport(activeRoom.EntryPoint);
         activePlayer.PrepareForRoomChange();
+        activePlayer.transform.position = startPos;
 
         activePlayerUI.ToggleUI(true);
 
         OnPlayerRoomChanged?.Invoke(newNode.coordinates);
 
         SaveCurrentRun();
+
         activeRoom.Activate();
+
+        if (entryDoor != null)
+            StartCoroutine(ArrivalRoutine(entryDoor));
+        else
+            activePlayer.Animator.SetMaskInteraction(SpriteMaskInteraction.None);
     }
+
+    private void ReleaseActiveRoom()
+    {
+        if(activeRoom == null) return;
+
+        activeRoom.OnCleared -= HandleRoomCleared;
+        activeRoom.OnFailure -= HandleRoomFailed;
+
+        activeRoom.OnExitChosen -= HandleExitChosen;
+
+        roomService.Release(activeRoom);
+        activeRoom = null;
+    }
+
+
 
     private void HandleRoomCleared(RoomManager room)
     {
@@ -265,18 +286,20 @@ public class RunManager : MonoBehaviour
     private void HandleExitChosen(Doorway door)
     {
         if (transitioning) return;
-
-        StartCoroutine(TransitionRoutine(door.Destination, door.exitDirection));
+        StartCoroutine(TransitionRoutine(door));
     }
 
-    private IEnumerator TransitionRoutine(MapNode nextNode, Direction dir)
+    private IEnumerator TransitionRoutine(Doorway door)
     {
         transitioning = true;
+        var nextNode = door.Destination;
 
         try
         {
             DoTransitionFade(true);
-            activePlayer.Movement.StartDoorwayMovement(dir);
+            activePlayer.Movement.StartDoorwayMovement(door.exitDirection);
+            activePlayer.Animator.SetMaskInteraction(SpriteMaskInteraction.VisibleOutsideMask);
+
 
             yield return new WaitForSeconds(fadeTime);
 
@@ -294,6 +317,16 @@ public class RunManager : MonoBehaviour
         }
     }
 
+    private IEnumerator ArrivalRoutine(Doorway door)
+    {
+        door.SetMask(true);
+        activePlayer.Animator.SetMaskInteraction(SpriteMaskInteraction.VisibleOutsideMask);
+
+        yield return new WaitForSeconds(0.3f);
+
+        activePlayer.Animator.SetMaskInteraction(SpriteMaskInteraction.None);
+    }
+
     private void DoTransitionFade(bool enable)
     {
         if (fadeOverlay == null) return;
@@ -308,10 +341,9 @@ public class RunManager : MonoBehaviour
 
     private void UpdateRunTick()
     {
-        if (currentRun == null) return;
         if (TimescaleManager.IsPaused) return;
+        if (currentRun == null || runEnded) return;
 
-        if(runEnded) return;
         if (activeRoom == null) return;
 
         switch (activeRoom.State)

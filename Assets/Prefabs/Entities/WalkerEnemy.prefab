@@ -5191,7 +5191,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!95 &4995681751137658953
 Animator:
   serializedVersion: 7
@@ -5486,15 +5486,13 @@ MonoBehaviour:
   - {fileID: 245196786240200423}
   - {fileID: 5690652633924857973}
   - {fileID: 3921943643914501270}
-  telegraphPrefab: {fileID: 218590311699264157, guid: 5d196bc5d7140714bbdedb4febf859c8, type: 3}
+  strikePrefab: {fileID: 3431567392742283916, guid: 21b2cc144add4244086275f01352506a, type: 3}
   missileCount: 4
   missileScatter: 5
   missileInterval: 0.1
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  projectiles:
-  - {fileID: 11400000, guid: 378de1946b275b34aba2e663469c276a, type: 2}
 --- !u!114 &715829674793934083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5512,7 +5510,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   attackOrigin: {fileID: 3202860152183538786}
-  telegraphPrefab: {fileID: 4164846819808491511, guid: 8cb12ae45e7ef5640b7cf3bd0361bcce, type: 3}
+  telegraphPrefab: {fileID: 3090680852656712758, guid: b2973a27ac3c7f749af385001f1f338e, type: 3}
   executeParticles:
   - {fileID: 2707162284073612371}
   - {fileID: 4665202619155518899}

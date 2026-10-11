@@ -36,6 +36,12 @@ public class RadialAmmoUI : MonoBehaviour
     private void OnDisable()
     {
         playerUI.Initialized -= HandleUIReady;
+        if (player != null)
+        {
+            player.Combat.OnAmmoChanged -= HandleAmmoChanged;
+            player.Combat.OnWeaponChanged -= HandleMaxAmmoChanged;
+        }
+
         GameEvents.OnAmmoUsedEmpty -= HandleAmmoUseFailed;
     }
 
@@ -43,7 +49,7 @@ public class RadialAmmoUI : MonoBehaviour
     {
         player = p;
         player.Combat.OnAmmoChanged += HandleAmmoChanged;
-        //player.Combat.OnWeaponChanged += HandleMaxAmmoChanged;
+        player.Combat.OnWeaponChanged += HandleMaxAmmoChanged;
         GameEvents.OnAmmoUsedEmpty += HandleAmmoUseFailed;
     }
 
@@ -63,8 +69,6 @@ public class RadialAmmoUI : MonoBehaviour
 
     private void BuildPips(int count)
     {
-        Debug.Log("building pips");
-
         foreach (var p in pips)
         {
             p.visual.DOKill();

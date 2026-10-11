@@ -3,8 +3,13 @@ using UnityEngine;
 
 public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
 {
+    private const int maxTargetAttempts = 30;
+
+    private readonly int FireReadyHash = Animator.StringToHash("FireReady");
+    private readonly int IsFiringHash = Animator.StringToHash("IsFiring");
+
     [SerializeField] private Transform[] firePoints;
-    [SerializeField] private GameObject telegraphPrefab;
+    [SerializeField] private MissileStrike strikePrefab;
 
     [SerializeField] private int missileCount;
     [SerializeField] private float missileScatter;
@@ -12,28 +17,18 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
 
     [SerializeField] private LayerMask groundLayer;
 
-    [SerializeField] protected ProjectileData[] projectiles;
     public ProjectileData[] Projectiles => new[] { attackData.projectile };
-
-
     public bool IsPlayerProjectile => false;
-
     public bool PoolRequested { get; set; }
 
-    private void OnEnable()
-    {
-        ProjectilePools.RequestPool(this);
-    }
+    private void OnEnable() => ProjectilePools.RequestPool(this);
 
-    private void OnDisable()
-    {
-        ProjectilePools.ReleasePool(this);
-    }
+    private void OnDisable() => ProjectilePools.ReleasePool(this);
 
     public override void BeginTelegraph(EnemyAIController ai)
     {
-        animator.Play("FireReady");
-        animator.SetBool("IsFiring", true);
+        animator.Play(FireReadyHash);
+        animator.SetBool(IsFiringHash, true);
 
         HasExecuted = false;
     }
@@ -48,62 +43,87 @@ public class VLSAttackExecutor : AttackExecutorBase, IProjectileEmitter
         StartCoroutine(BarrageRoutine(ai));
     }
 
+    public override void Interrupt(EnemyAIController ai)
+    {
+        StopAllCoroutines();
+        StopFiring();
+    }
+
     private IEnumerator BarrageRoutine(EnemyAIController ai)
     {
-        Vector2[] targetPositions = new Vector2[missileCount];
+        Vector2[] targetPositions = GetTargets(ai.context.target.position);
+        var wait = new WaitForSeconds(missileInterval);
        
         for (int i = 0; i < missileCount; i++)
         {
-            bool targetFound = false;
-            while (!targetFound)
-            {
-                Vector2 targetPos = (Random.insideUnitCircle * missileScatter) + (Vector2)ai.context.target.position;
-                targetFound = Physics2D.OverlapPoint(targetPos, groundLayer) != null; 
+            Vector2 firePos = firePoints[i % firePoints.Length].position;
+            FireSingle(firePos, targetPositions[i]);
 
-                if (targetFound)
-                {
-                    targetPositions[i] = targetPos;
-                }
-            }
+            yield return wait;
         }
 
-        for (int i = 0; i < missileCount; i++)
-        {
-            var projectile = projectiles[0];
-            var firePos = firePoints[i].position;
-            var targetPos = targetPositions[i];
-
-            FireSingle(projectile, firePos, targetPos);
-
-            yield return new WaitForSeconds(missileInterval);
-        }
-
-        animator.SetBool("IsFiring", false);
-
-
-        if (attackData.hasHyperarmour)
-            controller.SetHyperArmour(false);
+        StopFiring();
 
         Executing = false;
         HasExecuted = true;
     }
 
-    protected void FireSingle(ProjectileData projectile, Vector2 firePos, Vector2 targetPos)
+    protected void FireSingle(Vector2 firePos, Vector2 targetPos)
     {
-        var missile = ProjectileManager.Instance.FireProjectile(projectile, null, firePos, Vector2.up);
+        var projectile = attackData.projectile;
 
-        if (missile is MissileProjectile mp)
+        var hitData = new HitData(projectile.damage, AttackType.Projectile, isPlayerAttack: true)
         {
-            mp.InitializeAsMissile(targetPos, telegraphPrefab);
-        }
+            sourcePos = firePos,
+            knockbackForce = projectile.knockback,
+
+            hitstopTime = projectile.hitstopDuration,
+            hitstunTime = projectile.hitstunTime,
+
+            isParryable = projectile.isParryable,
+            isBlockable = projectile.isBlockable
+        };
+
+        hitData.AddModifier(controller.Stats.Get(StatRef.EnemyOutgoingDamageMult) - 1f, StatModType.PercentAdd, controller);
+
+        var missile = ProjectileManager.Instance.FireProjectile(attackData.projectile, hitData, firePos, Vector2.up);
+
+        if (missile is VLSProjectile mp)
+            mp.InitializeAsMissile(targetPos, strikePrefab);
     }
 
-    public override void Interrupt(EnemyAIController ai)
+    private Vector2[] GetTargets(Vector2 center)
+    {
+        var targets = new Vector2[missileCount];
+
+        for (int i = 0; i < missileCount; i++)
+            targets[i] = FindGroundPoint(center);
+
+        return targets;
+    }
+
+    private Vector2 FindGroundPoint(Vector2 center)
+    {
+        int currentAttempt = 0;
+        while (currentAttempt < maxTargetAttempts)
+        {
+            currentAttempt++;
+
+            Vector2 candidate = center + Random.insideUnitCircle * missileScatter;
+
+            if (Physics2D.OverlapPoint(candidate, groundLayer) != null)
+                return candidate;
+        }
+
+        return center;
+    }
+
+    private void StopFiring()
     {
         if (attackData.hasHyperarmour)
             controller.SetHyperArmour(false);
 
-        animator.SetBool("IsFiring", false);
-        StopAllCoroutines();
+        animator.SetBool(IsFiringHash, false);
     }
+
 }

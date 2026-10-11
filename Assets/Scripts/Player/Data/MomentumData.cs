@@ -14,15 +14,12 @@ public class MomentumData : ScriptableObject
     [Header("Gain Values")]
     public float lightAttackGain;
     public float heavyAttackGain;
-    public float dashAttackGain;
-    public float dashCancelGain;
     public float killGain;
     // Any more
 
     [Header("Drain Values")]
     public float hitTakenDrain;
     public float lightWhiffDrain;
-    public float dashWhiffDrain;
     public float heavyWhiffDrain;
 
     [Header("Speed Multipliers")]

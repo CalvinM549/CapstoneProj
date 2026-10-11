@@ -199,37 +199,40 @@ public class RewardSaveData
 [Serializable]
 public class PlayerSaveData
 {
-    public int activeSegmentIndex = 0;
-    public List<SegmentSave> segments = new();
+    public PlayerHealthSave healthSave;
+    public PlayerEquipmentSave equipmentSave;
+    public PlayerUpgradeSave upgradeSave;
 
     public float currentMomentum = 0f;
-
-    public string equippedTool = "";
-    public string equippedWeapon = "";
-
-    public PlayerUpgradeSave upgradeSave;
 }
 
 [Serializable]
-public class SegmentSave
+public class PlayerHealthSave
 {
-    public float currentHealth;
-    public float maxHealth;
-    public bool isActive;
-    public bool isDestroyed;
+    public List<float> segmentHealth = new();
+    public int activeSegmentIndex = 0;
+}
+
+[Serializable]
+public class PlayerEquipmentSave
+{
+    public string equippedTool;
+    public string equippedWeapon;
+    public int currentAmmo;
 }
 
 [Serializable]
 public class PlayerUpgradeSave
 {
-    // Each slot stores the ID of the equipped Perk
-    public string majorFrame = "";
-    public string majorWeapons = "";
-    public string majorPropulsion = "";
+    public List<string> majorUpgrades = new();
+    public List<AuxUpgradeSave> auxUpgrades = new();
+}
 
-    public List<string> subUpgradeIDs;
-
-    public List<string> auxUpgradeIDs;
+[Serializable]
+public class AuxUpgradeSave
+{
+    public string id;
+    public int stacks;
 }
 
 #endregion

@@ -44,9 +44,37 @@ public class PlayerUpgrades : MonoBehaviour
         }
     }
 
-    public void RestoreFromSave(PlayerUpgradeSave save)
+    public void RestoreFromSave(PlayerUpgradeSave save, GameDatabase db)
     {
+        foreach (var major in save.majorUpgrades)
+            GrantMajor((MajorUpgrade)db.upgrades.Get(major));
 
+        foreach (var aux in save.auxUpgrades)
+        {
+            for (int i = 0; i < aux.stacks; i++)
+            {
+                GrantAux((AuxUpgrade)db.upgrades.Get(aux.id));
+            }
+        }
+    }
+
+    public PlayerUpgradeSave ToSave()
+    {
+        PlayerUpgradeSave save = new()
+        {
+            majorUpgrades = majorSlots.Values.Select(u => u.Id).ToList()
+        };
+
+        foreach (var upgrade in auxUpgrades)
+        {
+            save.auxUpgrades.Add(new AuxUpgradeSave()
+            {
+                id = upgrade.Key.Id,
+                stacks = upgrade.Value
+            });
+        }
+
+        return save;
     }
 
     public MajorUpgrade GetMajor(UpgradeSlot slot) => 

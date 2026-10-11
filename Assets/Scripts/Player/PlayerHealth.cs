@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class  PlayerHealth : MonoBehaviour, IDamageable
@@ -14,47 +13,25 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
     private StatValue structureHealth;
 
     private Player p;
-
     private StatusEffectController statusController;
 
-    public List<HealthSegment> healthSegments;
+    public List<HealthSegment> healthSegments = new();
     private int activeHealthIndex;
 
     public HealthSegment ActiveSegment => healthSegments[activeHealthIndex];
     public int ActiveHealthIndex => activeHealthIndex;
 
     public bool IsAlive { get; set; }
-    public bool IsIframe => isIframe;
-    public bool IsHitstunned { get; private set; }
+    public bool IsIframe => !IsAlive || Time.time < iFrameEndTime;
+    public bool IsHitstunned => Time.time < hitStunEndTime;
 
-    private bool isIframe = false;
 
-    private Coroutine hitStunRoutine;
-    private Coroutine iFrameRoutine;
+    private float iFrameEndTime;
+    private float hitStunEndTime;
 
-    public void Initialize()
-    {
-        structureHealth = p.Stats.GetStatValue(StatRef.PlayerBaseStructureHealth);
-        structureHealth.OnChanged += HandleStructureHealthChanged;
-        structureCount = p.Stats.GetStatValue(StatRef.PlayerStructureCount);
+    private bool initialized;
+    private bool subscribed;
 
-        p.Stats.Subscribe(StatRef.PlayerStructureCount, HandleStructureCountStatChanged);
-
-        SetSegmentCount(structureCount.ValueInt);
-    }
-
-    public void RestoreFromSave(int activeIndex, List<SegmentSave> savedSegments)
-    {
-        SetSegmentCount(savedSegments.Count);
-        activeHealthIndex = Mathf.Clamp(activeIndex, 0, healthSegments.Count - 1);
-
-        for (int i = 0; i < healthSegments.Count && i < savedSegments.Count; i++)
-        {
-            healthSegments[i].RestoreFromSave(savedSegments[i]);
-        }
-
-        GameEvents.PlayerHealthChanged(healthSegments);
-    }
 
     private void Awake()
     {
@@ -66,18 +43,76 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
     private void OnEnable()
     {
-        
+        if (initialized) Subscribe();
     }
 
     private void OnDisable()
     {
-        structureHealth.OnChanged -= HandleStructureHealthChanged;
-        p.Stats.Unsubscribe(StatRef.PlayerStructureCount, HandleStructureCountStatChanged);
+        Unsubscribe();
     }
 
+    public void Initialize()
+    {
+        structureHealth = p.Stats.GetStatValue(StatRef.PlayerBaseStructureHealth);
+        structureCount = p.Stats.GetStatValue(StatRef.PlayerStructureCount);
+        initialized = true;
+
+        Subscribe();
+        SetSegmentCount(structureCount.ValueInt);
+    }
+
+    private void Subscribe()
+    {
+        if (subscribed) return;
+
+        structureHealth.OnChanged += HandleStructureHealthChanged;
+        p.Stats.Subscribe(StatRef.PlayerStructureCount, HandleStructureCountStatChanged);
+
+        subscribed = true;
+
+    }
+
+    private void Unsubscribe()
+    {
+        if (!subscribed) return;
+
+        structureHealth.OnChanged -= HandleStructureHealthChanged;
+        p.Stats.Unsubscribe(StatRef.PlayerStructureCount, HandleStructureCountStatChanged);
+
+        subscribed = false;
+    }
+
+    public void RestoreFromSave(PlayerHealthSave save)
+    {
+        SetSegmentCount(save.segmentHealth.Count);
+        activeHealthIndex = Mathf.Clamp(save.activeSegmentIndex, 0, healthSegments.Count - 1);
+
+        for (int i = 0; i < healthSegments.Count && i < save.segmentHealth.Count; i++)
+            healthSegments[i].currentHealth = save.segmentHealth[i];
+
+        SyncActiveFlags();
+        GameEvents.PlayerHealthChanged(healthSegments);
+    }
+
+    public PlayerHealthSave ToSave()
+    {
+        PlayerHealthSave save = new()
+        {
+            activeSegmentIndex = activeHealthIndex,
+        };
+
+        for (int i = 0; i < healthSegments.Count; i++)
+        {
+            var segment = healthSegments[i];
+            save.segmentHealth.Add(segment.currentHealth);
+        }
+
+        return save;
+    }
+
+#if UNITY_EDITOR
     private void Update()
     {
-#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.J))
         {
             RestoreSegments(2);
@@ -88,8 +123,10 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
             var structureCountBuff = new StatModifier(1, StatModType.Flat);
             structureCount.AddStatModifier(structureCountBuff);
         }
-#endif
     }
+#endif
+
+    #region Segment Count
 
     private void HandleStructureCountStatChanged()
     {
@@ -103,30 +140,24 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         if (oldCount == newCount) return;
 
         if (newCount > oldCount)
-        {
             GrantSegments(newCount);
-        }
+
         else
-        {
             LoseSegments(newCount);
-        }
 
         GameEvents.PlayerHealthChanged(healthSegments);
     }
 
     private void GrantSegments(int newCount)
     {
-        if (healthSegments.Count > 0)
-            ActiveSegment.IsActive = false;
-
+        bool wasEmpty = healthSegments.Count == 0;
         int toAdd = newCount - healthSegments.Count;
+        
         for (int i = 0; i < toAdd; i++)
-        {
-            healthSegments.Insert(0, new HealthSegment(structureHealth.Value, false));
-        }
+            healthSegments.Insert(0, new HealthSegment(structureHealth.Value));
 
-        activeHealthIndex = healthSegments.Count - 1;
-        ActiveSegment.IsActive = true;
+        activeHealthIndex = wasEmpty ? healthSegments.Count - 1 : activeHealthIndex + toAdd;
+        SyncActiveFlags();
     }
 
     private void LoseSegments(int newCount)
@@ -135,30 +166,36 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
             healthSegments.RemoveAt(healthSegments.Count - 1);
 
         while (healthSegments.Count > newCount && healthSegments.Count > 0)
-        {
             healthSegments.RemoveAt(healthSegments.Count - 1);
-            activeHealthIndex = Mathf.Min(activeHealthIndex, healthSegments.Count - 1);
-        }
 
         if (healthSegments.Count > 0)
-            ActiveSegment.IsActive = true;
+            SyncActiveFlags();
         else
             Die();
     }
 
     private void HandleStructureHealthChanged()
     {
+        float newMax = structureHealth.Value;
+
         foreach (var segment in healthSegments)
         {
-            float newMax = structureHealth.Value;
-
-            if (segment.currentHealth == segment.maxHealth)
-            {
+            if (Mathf.Approximately(segment.currentHealth, segment.maxHealth))
                 segment.currentHealth = newMax;
-            }
+
             segment.maxHealth = newMax;
         }
+
+        GameEvents.PlayerHealthChanged(healthSegments);
     }
+
+    private void SyncActiveFlags()
+    {
+        for (int i = 0; i < healthSegments.Count; i++)
+            healthSegments[i].IsActive = (i == activeHealthIndex);
+    }
+
+    #endregion
 
     #region Recieving Damage
 
@@ -172,50 +209,60 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         p.Upgrades.ModifyIncomingHit(hit);
         GameEvents.PlayerRecievedHit(hit);
 
-        ApplyDamage(hit);
+        if(!ApplyDamage(hit)) return;
+
         ApplyStatuses(hit);
-        ApplyKnockback(hit);
-        ApplyHitStun(hit);
+
+        if (hit.attackType != AttackType.DamageOverTime)
+        {
+            ApplyKnockback(hit);
+            ApplyHitStun(hit);
+            ScreenGlitch.Instance.Pulse(hit.hitstopTime, 0.4f);
+        }
     }
 
-    private void ApplyDamage(HitData hit)
+    private bool ApplyDamage(HitData hit)
     {
         float defenceMult = p.Stats.Get(StatRef.PlayerIncomingDamageMult);
         hit.AddModifier(defenceMult - 1, StatModType.PercentAdd, this);
 
-        HealthSegment segment = ActiveSegment;
+        float remaining = hit.FinalDamage;
+        int spillsLeft = structurePierce ? Mathf.Max(0, 999) : 0;
 
-        float overflow = segment.ReduceHealth(hit.FinalDamage); // overflow value unused atm
-
-        if (segment.IsDestroyed)
+        while (true)
         {
-            activeHealthIndex--;
-            segment.IsActive = false;
-            
-            if (activeHealthIndex < 0)
-            {
-                Die();
-                return;
-            }
-            else
-            {
-                healthSegments[activeHealthIndex].IsActive = true;
-            }
-        }
-        
-        GameEvents.PlayerTookDamage(hit);
+            HealthSegment segment = ActiveSegment;
+            remaining = segment.ReduceHealth(remaining);
 
+            if (!segment.IsDestroyed) break;
+
+            if (activeHealthIndex == 0)
+            {
+                SyncActiveFlags();
+                Die();
+                return false;
+            }
+
+            activeHealthIndex--;
+
+            if (remaining <= 0 || spillsLeft <= 0 || activeHealthIndex == 0)
+                break;
+
+            spillsLeft--;
+        }
+
+        SyncActiveFlags();
+
+        GameEvents.PlayerTookDamage(hit);
         GameEvents.PlayerHealthChanged(healthSegments);
 
-        //GrantIFrames(data.hitIFrameDuration);
+        return true;
     }
 
     private void ApplyStatuses(HitData hit)
     {
         foreach (var pending in hit.PendingStatusEffects)
-        {
             statusController?.ApplyEffects(pending.data, pending.source, pending.appliedByPlayer, pending.stacks);
-        }
     }
 
     private void ApplyKnockback(HitData hit)
@@ -225,38 +272,12 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
     private void ApplyHitStun(HitData hit)
     {
-        if(hitStunRoutine != null)
-            StopCoroutine(hitStunRoutine);
-
-        hitStunRoutine = StartCoroutine(HitStunRoutine(hit.hitstunTime));
+        hitStunEndTime = Time.time + hit.hitstunTime;
     }
 
     public void GrantIFrames(float duration)
     {
-        if (iFrameRoutine != null)
-            StopCoroutine(iFrameRoutine);
-
-        // Fire event?
-
-        iFrameRoutine = StartCoroutine(IFrameRoutine(duration));
-    }
-
-    private IEnumerator IFrameRoutine(float duration)
-    {
-        isIframe = true;
-
-        yield return new WaitForSeconds(duration);
-
-        isIframe = false;
-    }
-
-    private IEnumerator HitStunRoutine(float duration)
-    {
-        IsHitstunned = true;
-
-        yield return new WaitForSeconds(duration);
-
-        IsHitstunned = false;
+        iFrameEndTime = Mathf.Max(iFrameEndTime, Time.time + duration);
     }
 
     #endregion
@@ -276,19 +297,17 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
     public void RestoreSegments(int count)
     {
-        if (count <= 0) return;
-
+        if (count <= 0 || healthSegments.Count == 0) return;
         int healed = 0;
 
-        for (int index = healthSegments.Count - 1; index >= 0 && healed < count; index--)
+        while (healed < count && activeHealthIndex < healthSegments.Count - 1)
         {
-            HealthSegment currentSegment = healthSegments[index];
-            if (!currentSegment.IsDestroyed) continue;
+            int last = healthSegments.Count - 1;
+            HealthSegment segment = healthSegments[last];
 
-            currentSegment.RestoreSegment();
-
-            healthSegments.RemoveAt(index);
-            healthSegments.Insert(0, currentSegment);
+            healthSegments.RemoveAt(last);
+            segment.RestoreSegment();
+            healthSegments.Insert(0, segment);
 
             activeHealthIndex++;
             healed++;
@@ -296,8 +315,6 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
 
         if(healed < count)
             RestoreCurrentSegment();
-
-        //Debug.Log($"[PlayerHealth] toHeal: {count} | healed: {healed}");
 
         if(healed > 0)
             GameEvents.PlayerHealthChanged(healthSegments);
@@ -308,8 +325,9 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
     private void Die()
     {
         GameEvents.PlayerHealthChanged(healthSegments);
+        VFXManager.Instance.PlayVFX(VFXType.ExplosionComplex, transform.position);
+
         IsAlive = false;
-        isIframe = true;
 
         StopAllCoroutines();
 

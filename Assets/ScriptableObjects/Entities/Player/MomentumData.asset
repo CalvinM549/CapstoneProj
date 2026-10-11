@@ -13,20 +13,17 @@ MonoBehaviour:
   m_Name: MomentumData
   m_EditorClassIdentifier: Assembly-CSharp::MomentumData
   capacity: 100
-  timeUntilDrain: 3
-  drainSpeed: 5
+  timeUntilDrain: 5
+  drainSpeed: 7
   emptyThreshold: 0.3
   lowThreshold: 0.01
   highThreshold: 0.7
-  lightAttackGain: 6
-  heavyAttackGain: 14
-  dashAttackGain: 20
-  dashCancelGain: 0
-  killGain: 12
+  lightAttackGain: 2
+  heavyAttackGain: 5
+  killGain: 15
   hitTakenDrain: 20
   lightWhiffDrain: 3
-  dashWhiffDrain: 5
-  heavyWhiffDrain: 12
+  heavyWhiffDrain: 6
   lowSpeedMult: 0.9
   midSpeedMult: 1
   highSpeedMult: 1.2

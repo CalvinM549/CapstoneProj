@@ -51,7 +51,10 @@ public class HubManager : MonoBehaviour
         if (Instance == null)
             Instance = this;
         else
+        {
             Destroy(gameObject);
+            return;
+        }
 
         if (DebugManager.GodMode)
             defaultWeapon = DebugManager.GodWeapon;
@@ -59,23 +62,21 @@ public class HubManager : MonoBehaviour
         loadingToRun = false;
     }
 
-    private void Start()
-    {
-        GenerateNewMap();
-    }
-
     public void InitializeHub()
     {
-        RefreshSavedRun();
+        CheckSavedRun();
 
         mapGeneration = new(db.rooms, db.roomTypes, config);
 
         pendingLoadout = BuildDefaultLoadout();
 
         AudioManager.Instance.PlayMusicTrack("MenuMusic01", true);
+
+
+        GenerateNewMap();
     }
 
-    public void RefreshSavedRun()
+    public void CheckSavedRun()
     {
         var profile = GameManager.Instance.ActiveProfile;
         if (profile == null || !RunSaveSystem.TryLoad(profile, out pendingSave))
@@ -155,9 +156,7 @@ public class HubManager : MonoBehaviour
         Debug.Log("Attempting to load saved run");
 
         if (loadingToRun) return;
-        Debug.Log(1);
         if (!HasSavedRun) return;
-        Debug.Log(2);
 
         GameManager.Instance.SaveActiveProfile();
         loadingToRun = true;

@@ -9,8 +9,11 @@ public class HandcannonWeapon : PlayerWeapon
         CameraManager.Instance.CameraShake(1f);
         TimescaleManager.Instance.RequestTimeSlow(0.2f);
 
+
         p.Movement.PushPlayer(-direction, 15, 0.25f, true);
 
         FireSingle(Projectiles[0], direction, firePoint, useAmmo: true);
+
+
     }
 }

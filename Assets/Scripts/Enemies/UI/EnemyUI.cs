@@ -31,12 +31,16 @@ public class EnemyUI : MonoBehaviour
     private void OnEnable()
     {
         owner.onLockChange += HandleLockChange;
+        owner.OnHit += HandleHit;
     }
 
     private void OnDisable()
     {
-        if(owner != null)
+        if (owner != null)
+        {
             owner.onLockChange -= HandleLockChange;
+            owner.OnHit -= HandleHit;
+        }
     }
 
     private void Update()
@@ -90,6 +94,14 @@ public class EnemyUI : MonoBehaviour
     #endregion
 
     private void HandleLockChange(bool locked)
+    {
+        if (!isVisible)
+            ShowUI();
+
+        hideTimer = hideDelay;
+    }
+
+    private void HandleHit(float currentHealth, float maxHealth, HitData hit)
     {
         if (!isVisible)
             ShowUI();

@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PlayerCombat : MonoBehaviour
 {
@@ -46,23 +44,23 @@ public class PlayerCombat : MonoBehaviour
     private DroneWeaponCarrier activeDrone;
 
     public PlayerWeapon EquippedWeapon { get; private set; }
-    public bool RangedWeaponEquipped => EquippedWeapon != null;
+    public bool HasWeaponEquipped => EquippedWeapon != null;
 
     private float rangedCooldownTimer;
 
-    public float rangedCooldownPercent => RangedWeaponEquipped && EquippedWeapon.cooldown > 0f
+    public float rangedCooldownPercent => HasWeaponEquipped && EquippedWeapon.cooldown > 0f
         ? Mathf.Clamp01(rangedCooldownTimer / EquippedWeapon.cooldown) : 0f;
 
     private bool dashCancelWindow;
     private Coroutine dashCancelRoutine;
 
-    public int CurrentAmmo => EquippedWeapon.currentAmmo;
-    private int currentAmmo;
+    public int CurrentAmmo => HasWeaponEquipped ? EquippedWeapon.currentAmmo : 0;
+
     public event Action<int> OnAmmoChanged;
     public event Action<int> OnWeaponChanged;
     public event Action<float> OnReloadChanged;
 
-    public void Initialize(PlayerWeapon weapon)
+    public void Initialize(PlayerWeapon weapon = null)
     {
         // Gather statsValue refs
         globalDamage = p.Stats.GetStatValue(StatRef.PlayerOutgoingDamageMult);
@@ -75,13 +73,12 @@ public class PlayerCombat : MonoBehaviour
 
         // move to equip
 
-        activeDrone = Instantiate(dronePrefab, transform.parent);
-        activeDrone.player = p;
     }
 
-    public void RestoreFromSave()
+    public void RestoreFromSave(PlayerEquipmentSave save, GameDatabase db)
     {
-
+        Initialize();
+        EquipRangedWeapon(db.weapons.Get(save.equippedWeapon), save.currentAmmo);
     }
 
     private void Awake()
@@ -127,7 +124,7 @@ public class PlayerCombat : MonoBehaviour
 
         GameEvents.OnPlayerDashStart -= HandleDashStart;
 
-        if (RangedWeaponEquipped) ProjectilePools.ReleasePool(EquippedWeapon);
+        if (HasWeaponEquipped) ProjectilePools.ReleasePool(EquippedWeapon);
     }
 
     private void Update()
@@ -247,7 +244,7 @@ public class PlayerCombat : MonoBehaviour
     private bool CanRangedAttack()
     {
         return (
-            RangedWeaponEquipped 
+            HasWeaponEquipped 
             && rangedCooldownTimer <= 0f 
             && RangedAttackCheck() 
             && EquippedWeapon.CanFire());
@@ -468,37 +465,40 @@ public class PlayerCombat : MonoBehaviour
 
     }
 
-    public void EquipRangedWeapon(PlayerWeapon weapon)
+    public void EquipRangedWeapon(PlayerWeapon weapon, int ammoOverride = -1)
     {
         if (weapon == EquippedWeapon) return;
 
-        if (RangedWeaponEquipped) // Clean up old weapon
+        if (HasWeaponEquipped) // Clean up old weapon
         {
             EquippedWeapon.OnUnequip();
             ProjectilePools.ReleasePool(weapon);
         }
 
         EquippedWeapon = weapon;
-        currentAmmo = 0;
         rangedCooldownTimer = 0f;
 
         if (weapon != null) // Setup new weapon
         {
-            currentAmmo = weapon.baseAmmo;
+            if (activeDrone == null)
+            {
+                activeDrone = Instantiate(dronePrefab, transform.parent);
+                activeDrone.player = p;
+            }
 
             ProjectilePools.RequestPool(weapon);
-            weapon.OnEquip(p, OnAmmoChanged);
+            weapon.OnEquip(p, OnAmmoChanged, ammoOverride);
         }
 
-        OnWeaponChanged?.Invoke(currentAmmo);
-        OnAmmoChanged?.Invoke(currentAmmo);
+        OnWeaponChanged?.Invoke(CurrentAmmo);
+        OnAmmoChanged?.Invoke(CurrentAmmo);
     }
 
     public void UnequipRangedWeapon() => EquipRangedWeapon(null);
 
     public void RestoreAmmo(int amount)
     {
-        if (!RangedWeaponEquipped) return;
+        if (!HasWeaponEquipped) return;
 
         var weapon = EquippedWeapon;
 
@@ -533,7 +533,7 @@ public class PlayerCombat : MonoBehaviour
         if (rangedCooldownTimer > 0f)
         {
             rangedCooldownTimer -= Time.deltaTime;
-            if(RangedWeaponEquipped)
+            if(HasWeaponEquipped)
                 OnReloadChanged?.Invoke(rangedCooldownTimer / EquippedWeapon.cooldown);
         }
     }
