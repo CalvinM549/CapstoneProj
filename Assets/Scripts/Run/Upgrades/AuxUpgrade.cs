@@ -10,6 +10,18 @@ public class AuxUpgrade : UpgradeBase
         slot = UpgradeSlot.None;
     }
 
+    public override void Apply(Player player)
+    {
+        base.Apply(player);
+        currentStacks = 1;
+    }
+
+    public override void Remove(Player player)
+    {
+        base.Remove(player);
+        currentStacks = 0;
+    }
+
     public virtual void OnStack() 
     {
         currentStacks++;

@@ -14,7 +14,11 @@ public static class ProjectilePools
     public static void RequestPool(IProjectileEmitter emitter)
     {
         if (emitter.PoolRequested) return;
-        if (ProjectileManager.Instance == null) return;
+        if (ProjectileManager.Instance == null)
+        {
+            Debug.LogError("[ProjectilePools] No ProjectileManager initialized");
+            return;
+        }
 
         foreach (var projectile in emitter.Projectiles)
             ProjectileManager.Instance.RequestPool(projectile);

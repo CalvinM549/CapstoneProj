@@ -69,10 +69,6 @@ public class PlayerCombat : MonoBehaviour
 
         if(weapon != null)
             EquipRangedWeapon(weapon);
-
-
-        // move to equip
-
     }
 
     public void RestoreFromSave(PlayerEquipmentSave save, GameDatabase db)

@@ -26,6 +26,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     protected SpriteRenderer sr;
     protected Animator animator;
     protected Rigidbody2D rb;
+    protected GlitchEffect glitch;
     
     public bool hasPlayerLock { get; private set;  }
     public event Action<bool> onLockChange;
@@ -59,6 +60,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         ui = GetComponentInChildren<EnemyUI>();
 
         sr = animator.GetComponent<SpriteRenderer>();
+        glitch = animator.GetComponent<GlitchEffect>();
 
         rb = GetComponent<Rigidbody2D>();
 
@@ -123,11 +125,14 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         ai.ResetController(data.aiProfile);
         ai.enabled = true;
+
+        //glitch.Pulse(0.5f);
     }
 
     public virtual void OnDespawn()
     {
         AIManager.Instance.UnregisterEnemy(ai);
+        statusController.ClearAll();
         ai.ExitStates();
         ai.enabled = false;
         StopAllCoroutines();

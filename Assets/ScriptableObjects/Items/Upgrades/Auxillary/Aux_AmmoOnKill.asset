@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d09f700e10e054b9accb1bf525dcab, type: 3}
+  m_Name: Aux_AmmoOnKill
+  m_EditorClassIdentifier: Assembly-CSharp::Aux_AmmoOnKill
+  id: 2c1d6eab-bb37-4432-ac93-23bb91759f9d
+  upgradeName: Ammo Fabricator
+  flavourText: 
+  effectText: 50% chance to restore 1 ammo on killing an enemy
+  icon: {fileID: -3922644079085162824, guid: 46c124cbb521d03409906ff9b733ff6d, type: 3}
+  slot: 4
+  baseDropRate: 1
+  synergyTags: []
+  spawnInShops: 1
+  shopPrice: 50
+  maxStacks: 2
+  statModifiers: []
+  chanceForAmoPerStack: 0.5

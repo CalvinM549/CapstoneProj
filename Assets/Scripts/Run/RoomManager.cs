@@ -157,6 +157,24 @@ public class RoomManager : MonoBehaviour
         return validPoints[UnityEngine.Random.Range(0, validPoints.Count)].transform;
     }
 
+    public Vector2 GetEnemySpawnPosition(SpawnTag tag, float spread = 0f)
+    {
+        Transform spawnTransform = GetEnemySpawnPoint(tag);
+        if(spawnTransform == null)
+            return Vector2.zero;
+
+        for (int i = 0; i < 10; i++)
+        {
+            Vector2 candidate = (Vector2)spawnTransform.position + UnityEngine.Random.insideUnitCircle * spread;
+
+            if (Physics2D.OverlapPoint(candidate, GameManager.GroundLayer) != null)
+                return candidate;
+        
+        }
+
+        return spawnTransform.position;
+    }
+
 
     #region editor util
 

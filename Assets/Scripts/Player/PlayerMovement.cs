@@ -459,6 +459,11 @@ public class PlayerMovement : MonoBehaviour
 
     public void StartDoorwayMovement(Direction exitDir)
     {
+        if (exitDir == Direction.North || exitDir == Direction.South)
+            rb.linearVelocityX = 0f;
+        else
+            rb.linearVelocityY = 0f;
+
         PushPlayer(exitDir.ToGridOffset(), 20, 0.4f, false);
 
         isOverrideMovement = true;

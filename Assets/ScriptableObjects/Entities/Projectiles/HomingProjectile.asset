@@ -22,5 +22,6 @@ MonoBehaviour:
   hitstunTime: 0.1
   hitstopDuration: 0.1
   isParryable: 1
-  impactVFXPrefab: {fileID: 0}
+  isBlockable: 1
+  impactVFXPrefab: {fileID: 533581620762249183, guid: 45dbaa8fa637e39498312b384884d02a, type: 3}
   expireVFXPrefab: {fileID: 0}

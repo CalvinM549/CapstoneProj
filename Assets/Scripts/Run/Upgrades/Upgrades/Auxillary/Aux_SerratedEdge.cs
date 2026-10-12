@@ -11,7 +11,7 @@ public class Aux_SerratedEdge : AuxUpgrade
 
         if (hit.attackType == AttackType.Light || hit.attackType == AttackType.Heavy)
         {
-            hit.AddStatus(statusData, this, true, bleedStacksPerHit);
+            hit.AddStatus(statusData, this, true, (bleedStacksPerHit * currentStacks));
         }
     }
 

@@ -5108,6 +5108,7 @@ GameObject:
   - component: {fileID: 8665980670424489819}
   - component: {fileID: 4995681751137658953}
   - component: {fileID: 6579591357732448031}
+  - component: {fileID: 7794547372406198614}
   m_Layer: 8
   m_Name: Sprite
   m_TagString: Untagged
@@ -5266,6 +5267,43 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+--- !u!114 &7794547372406198614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4210835604444822184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ac6538307a22644a9116fb97420f854, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GlitchEffect
+  glitchMaterial: {fileID: 2100000, guid: c2cc40be56e29c3478e71c926bfdc204, type: 2}
+  defaultCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &4700250292383784216
 GameObject:
   m_ObjectHideFlags: 0

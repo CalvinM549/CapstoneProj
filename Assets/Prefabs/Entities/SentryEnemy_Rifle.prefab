@@ -178,7 +178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 825e247ddb29a9d418b78cb58b5ad400, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  data: {fileID: 11400000, guid: 7d3de8bc9675fbd4c99dbe75663d82dd, type: 2}
+  data: {fileID: 11400000, guid: a9e2bba306b6ac041b12f09013ab92b9, type: 2}
   IsIFrame: 0
 --- !u!114 &3108158908165989089
 MonoBehaviour:
@@ -325,6 +325,7 @@ GameObject:
   - component: {fileID: 6904775094899813571}
   - component: {fileID: 8229824324368798782}
   - component: {fileID: 6000218572545630239}
+  - component: {fileID: 1182874702939416626}
   m_Layer: 8
   m_Name: Sprite
   m_TagString: Untagged
@@ -429,6 +430,43 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1182874702939416626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4390446601515591003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ac6538307a22644a9116fb97420f854, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GlitchEffect
+  glitchMaterial: {fileID: 2100000, guid: c2cc40be56e29c3478e71c926bfdc204, type: 2}
+  defaultCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &4904134401546706942
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f987a325026d9a9409f36e8c0b5325cc, type: 3}
+  m_Name: Major_DashCharge
+  m_EditorClassIdentifier: Assembly-CSharp::MajorUpgrade
+  id: ec051170-9fc0-484d-8d54-c605f134d63a
+  upgradeName: Scavenged Repulsors
+  flavourText: 
+  effectText: Gain an additional Dash Charge
+  icon: {fileID: 21300000, guid: 8cec7e3329421174eba24490796d7a11, type: 3}
+  slot: 3
+  baseDropRate: 1
+  synergyTags: []
+  spawnInShops: 1
+  shopPrice: 50
+  maxStacks: 1
+  statModifiers:
+  - statID: player.movement.dashCharges
+    value: 1
+    modifierType: 100
+  isTemplate: 0

@@ -191,7 +191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ebd5697cce27754889fc1facb39af08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAIController
-  stateDisplay: {fileID: 4483524127957271949}
+  stateDisplay: {fileID: 0}
   context:
     target: {fileID: 0}
     targetLastKnownPos: {x: 0, y: 0}
@@ -249,6 +249,7 @@ MonoBehaviour:
   shootFlashFX: 5
   sightStartOffset: 0
   laser: {fileID: 6782208966874941408}
+  applyStatusOnHit: {fileID: 0}
 --- !u!50 &6567632816481895069
 Rigidbody2D:
   serializedVersion: 5
@@ -323,6 +324,7 @@ GameObject:
   - component: {fileID: 6904775094899813571}
   - component: {fileID: 8229824324368798782}
   - component: {fileID: 6000218572545630239}
+  - component: {fileID: 7996736370856776869}
   m_Layer: 8
   m_Name: Sprite
   m_TagString: Untagged
@@ -427,6 +429,43 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7996736370856776869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4390446601515591003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ac6538307a22644a9116fb97420f854, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GlitchEffect
+  glitchMaterial: {fileID: 2100000, guid: c2cc40be56e29c3478e71c926bfdc204, type: 2}
+  defaultCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &5270292517665099372
 GameObject:
   m_ObjectHideFlags: 0
@@ -665,17 +704,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbef4ead8d9f9aa42b4e94eff00c96d1, type: 3}
---- !u!114 &4483524127957271949 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5784464708694721080, guid: dbef4ead8d9f9aa42b4e94eff00c96d1, type: 3}
-  m_PrefabInstance: {fileID: 7961837964164663221}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!224 &4818193178025972998 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3216564484339651251, guid: dbef4ead8d9f9aa42b4e94eff00c96d1, type: 3}

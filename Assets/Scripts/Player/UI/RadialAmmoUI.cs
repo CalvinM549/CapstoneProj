@@ -106,8 +106,8 @@ public class RadialAmmoUI : MonoBehaviour
 
             var p = pips[i];
 
-            p.visual.DOKill();
-            p.visual.transform.DOKill();
+            p.visual?.DOKill();
+            p.visual.transform?.DOKill();
             if (slotLoaded && !p.loaded)
             {
                 p.visual.color = Color.green;

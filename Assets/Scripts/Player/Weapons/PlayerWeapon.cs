@@ -115,7 +115,6 @@ public abstract class PlayerWeapon : DatabaseEntry, ILootEntry, IProjectileEmitt
 
     protected virtual void FireSingle(ProjectileData projectile, Vector2 direction, Vector2 firePoint, bool useAmmo = true)
     {
-
         var hitData = BuildOutgoingHit(projectile, direction, firePoint);
 
         ProjectilePools.FireProjectile(this, projectile, hitData, firePoint, direction);

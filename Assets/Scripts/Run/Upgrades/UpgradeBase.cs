@@ -51,14 +51,14 @@ public class UpgradeBase : DatabaseEntry, ICategorizedEntry<UpgradeSlot>, ILootE
     public List<UpgradeStatModifierEntry> statModifiers = new();
 
 
-    public void Apply(Player player)
+    public virtual void Apply(Player player)
     {
         this.player = player;
         ApplyStatModifiers(player.Stats);
         OnApply(player);
     }
 
-    public void Remove(Player player)
+    public virtual void Remove(Player player)
     {
         RemoveStatModifiers(player.Stats);
         OnRemove(player);
