@@ -107,7 +107,7 @@ public class CameraManager : MonoBehaviour
 
     public void CameraShake(float magnitude)
     {
-        if (impulseSource == null) return;
+        if (impulseSource == null || magnitude <= 0f) return;
 
         impulseSource.GenerateImpulse(magnitude);
     }

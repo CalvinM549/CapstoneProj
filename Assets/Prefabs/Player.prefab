@@ -5626,7 +5626,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f0effa4e934e4f42944a82e02f40c56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTargeting
-  lockRange: 15
+  lockRange: 10
   lockAcquireArea: 5
   enemyLayer:
     serializedVersion: 2

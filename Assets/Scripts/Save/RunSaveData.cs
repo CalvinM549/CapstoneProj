@@ -217,6 +217,8 @@ public class PlayerHealthSave
 public class PlayerEquipmentSave
 {
     public string equippedTool;
+    public int toolCharges;
+
     public string equippedWeapon;
     public int currentAmmo;
 }

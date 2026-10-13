@@ -67,18 +67,6 @@ public class EnemyController : MonoBehaviour, IDamageable
         baseMaterial = sr.material;
     }
 
-    private void OnEnable()
-    {
-        GameEvents.OnLockAcquired += HandleLockAcquired;
-        GameEvents.OnLockDropped += HandleLockDropped;
-    }
-
-    private void OnDisable()
-    {
-        GameEvents.OnLockAcquired -= HandleLockAcquired;
-        GameEvents.OnLockDropped -= HandleLockDropped;
-    }
-
     private void Update()
     {
         if (!IsIFrame)
@@ -145,20 +133,12 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     #endregion
 
-    private void HandleLockAcquired(EnemyController enemy)
+    public void SetLocked(bool active)
     {
-        if (enemy != this) return;
+        if(hasPlayerLock == active) return;
 
-        hasPlayerLock = true;
-        onLockChange?.Invoke(true);
-    }
-
-    private void HandleLockDropped()
-    {
-        if (!hasPlayerLock) return;
-
-        hasPlayerLock = false;
-        onLockChange?.Invoke(false);
+        hasPlayerLock = active;
+        onLockChange?.Invoke(active);
     }
 
     public void SetHyperArmour(bool active)

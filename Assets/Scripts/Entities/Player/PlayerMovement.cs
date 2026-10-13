@@ -52,7 +52,6 @@ public class PlayerMovement : MonoBehaviour
     private float[] dashRechargePercentages;
 
     private bool isDashing;
-    // Sliding?
     private bool isForcedPush;
     private bool isSelfPush;
 
@@ -143,7 +142,7 @@ public class PlayerMovement : MonoBehaviour
 
         if(CanMove())  
             ApplyMovement();
-        else if(!p.Health.IsAlive)
+        else if(!p.Health.IsAlive || isUsingTool)
             DecelerateToZero();
     }
 
@@ -477,6 +476,7 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Meta Utility
+    public void SetToolLock(bool locked) => isUsingTool = locked;
 
     public void MoveToPosition(Vector2 targetPos)
     {

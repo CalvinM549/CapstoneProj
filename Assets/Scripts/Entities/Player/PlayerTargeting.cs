@@ -52,11 +52,10 @@ public class PlayerTargeting : MonoBehaviour
     {
         if (lockedTarget == enemy) return;
 
-        if(lockedTarget != null)
-            DropLock();
+        lockedTarget?.SetLocked(false);
         
         lockedTarget = enemy;
-        GameEvents.LockAcquired(enemy);
+        enemy.SetLocked(true);
     }
 
     private void AcquireLock()
@@ -65,24 +64,24 @@ public class PlayerTargeting : MonoBehaviour
         if (nearest == null) return;
 
         lockedTarget = nearest;
-        GameEvents.LockAcquired(lockedTarget);
+        nearest.SetLocked(true);
     }
 
     private void CycleLock()
     {
         EnemyController next = FindNearestEnemyExcluding(lockedTarget);
-        DropLock();
+        lockedTarget.SetLocked(false);
 
         lockedTarget = next;
 
         if(next != null)
-            GameEvents.LockAcquired(lockedTarget);
+            next.SetLocked(true);
     }
 
     public void DropLock()
     {
+        lockedTarget?.SetLocked(false);
         lockedTarget = null;
-        GameEvents.LockDropped();
     }
 
     private void ValidateLock()

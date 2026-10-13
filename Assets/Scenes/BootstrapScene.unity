@@ -476,7 +476,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d11333b4910c93e4fbaba502b721da9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  sfxLibrary: []
+  sfxLibrary:
+  - soundName: UItick
+    clip: {fileID: 8300000, guid: ec7cbc9a27f27fd468922fee1ed9ac20, type: 3}
+    volume: 1
+    loop: 0
+    doPitchVariation: 0
+    pitchVariationAmount: 0
   musicLibrary:
   - soundName: MenuMusic01
     clip: {fileID: 8300000, guid: d7414263b309ae04eaed4b4cc3dff0b0, type: 3}

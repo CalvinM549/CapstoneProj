@@ -1,10 +1,16 @@
+using DG.Tweening;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class RewardSelectionScreen : UIScreen
 {
+    [Header("Config")]
+    [SerializeField] private float timeBetweenCards = 0.15f;
+
+    [Header("References")]
     [SerializeField] private Transform optionContainer;
     [SerializeField] private TextMeshProUGUI promptText;
 
@@ -28,8 +34,23 @@ public class RewardSelectionScreen : UIScreen
         {
             var button = Instantiate(cardPrefab, optionContainer);
             button.Setup(option, () => HandleSelected(option));
+            button.cg.alpha = 0f;
             activeCards.Add(button);
         }
+
+        StartCoroutine(SpawnCards());
+    }
+
+    private IEnumerator SpawnCards()
+    {
+        var wait = new WaitForSecondsRealtime(timeBetweenCards);
+
+        for (int i = 0; i < activeCards.Count; i++)
+        {
+            yield return wait;
+            activeCards[i].cg.alpha = 1f;
+        }
+
     }
 
     private void HandleSelected(LootResult selected)

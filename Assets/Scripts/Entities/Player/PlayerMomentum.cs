@@ -24,6 +24,7 @@ public class PlayerMomentum : MonoBehaviour
     private float momentumTimer;
     private bool passiveDrainActive = false;
 
+    public float Capacity => data.capacity;
     public float CurrentMomentum => currentMomentum;
     public float PercentMomentum => currentMomentum / data.capacity;
     public MomentumZone CurrentZone => currentZone;
@@ -107,26 +108,16 @@ public class PlayerMomentum : MonoBehaviour
         GameEvents.MomentumChange(PercentMomentum);
     }
 
-    public float DrainAsBuffer(float momentumCost)
+    public void SpendMomentumPercent(float percent)
     {
-        if (momentumCost <= 0) return 1.0f;
+        if (percent <= 0f) return;
 
-        if (currentMomentum >= momentumCost)
-        {
-            DrainMomentum(momentumCost);
-            return 0.0f;
-        }
-        else if (currentMomentum > 0f)
-        {
-            float absorbed = currentMomentum / momentumCost;
-            float bleedThrough = 1f - absorbed;
-            DrainMomentum(currentMomentum);
-            return bleedThrough;
-        }
-        else
-            return 1.0f;
+        currentMomentum = Mathf.Max(0f, currentMomentum - percent * data.capacity);
 
+        CheckZoneTransition();
+        GameEvents.MomentumChange(PercentMomentum);
     }
+
 
     private void UpdatePassiveDrain()
     {
@@ -142,7 +133,8 @@ public class PlayerMomentum : MonoBehaviour
 
         if (passiveDrainActive && currentMomentum > 0)
         {
-            currentMomentum -= data.drainSpeed * Time.deltaTime;
+            currentMomentum = Mathf.Max(0f, currentMomentum - (data.drainSpeed * Time.deltaTime));
+
             CheckZoneTransition();
             GameEvents.MomentumChange(PercentMomentum);
         }

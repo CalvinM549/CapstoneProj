@@ -26,6 +26,8 @@ public class ActiveStatusEffect
     public float remainingDuration;
     public float tickTimer;
 
+    public float PercentDuration => Mathf.Clamp01(data.duration / remainingDuration);
+
     public ActiveStatusEffect(StatusEffectData data, object applier, bool appliedByPlayer)
     {
         this.data = data;
@@ -36,7 +38,6 @@ public class ActiveStatusEffect
         tickTimer = data.tickInterval;
     }
 
-    public float GetPercentDuration() => Mathf.Clamp01(data.duration / remainingDuration);
 }
 
 public abstract class StatusEffectData : ScriptableObject

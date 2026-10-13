@@ -7,7 +7,7 @@ using UnityEngine;
 public class RunState
 {
     public SectorMap map;
-    private Player player;
+    public Player player;
     public RewardContext rewardContext;
 
 

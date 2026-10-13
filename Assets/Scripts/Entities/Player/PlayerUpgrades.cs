@@ -12,7 +12,7 @@ public class PlayerUpgrades : MonoBehaviour
     [SerializeField] private MajorUpgrade PropulsionTemplate;
     [SerializeField] private MajorUpgrade BrainTemplate;
 
-    public Dictionary<UpgradeSlot, MajorUpgrade> majorSlots = new();
+    public Dictionary<UpgradeSlot, MajorUpgrade> majorUpgrades = new();
 
     private readonly Dictionary<AuxUpgrade, int> auxUpgrades = new();
 
@@ -25,6 +25,11 @@ public class PlayerUpgrades : MonoBehaviour
     private void Awake()
     {
         p = GetComponent<Player>();
+    }
+
+    private void OnDestroy()
+    {
+
     }
 
     #endregion
@@ -62,7 +67,7 @@ public class PlayerUpgrades : MonoBehaviour
     {
         PlayerUpgradeSave save = new()
         {
-            majorUpgrades = majorSlots.Values.Select(u => u.Id).ToList()
+            majorUpgrades = majorUpgrades.Values.Select(u => u.Id).ToList()
         };
 
         foreach (var upgrade in auxUpgrades)
@@ -78,13 +83,13 @@ public class PlayerUpgrades : MonoBehaviour
     }
 
     public MajorUpgrade GetMajor(UpgradeSlot slot) => 
-        majorSlots.TryGetValue(slot, out var upgrade) ? upgrade : null;
+        majorUpgrades.TryGetValue(slot, out var upgrade) ? upgrade : null;
 
     public int GetAuxStacks(AuxUpgrade upgrade) => 
         auxUpgrades.TryGetValue(upgrade, out var amount) ? amount : 0;
 
     public IEnumerable<UpgradeBase> AllActiveUpgrades =>
-        majorSlots.Values
+        majorUpgrades.Values
             .Where(m => m != null && !m.isTemplate)
             .Cast<UpgradeBase>()
             .Concat(auxUpgrades.Keys);
@@ -102,10 +107,10 @@ public class PlayerUpgrades : MonoBehaviour
             return false;
         }
 
-        if (majorSlots.TryGetValue(upgrade.slot, out MajorUpgrade existing) && existing != null)
+        if (majorUpgrades.TryGetValue(upgrade.slot, out MajorUpgrade existing) && existing != null)
             RemoveMajorInternal(existing);
 
-        majorSlots[upgrade.slot] = upgrade;
+        majorUpgrades[upgrade.slot] = upgrade;
         upgrade.Apply(p);
 
         // Fire event
@@ -136,14 +141,14 @@ public class PlayerUpgrades : MonoBehaviour
 
     public void RemoveMajor(UpgradeSlot slot)
     {
-        if(majorSlots.TryGetValue(slot, out MajorUpgrade upgrade) && upgrade != null)
+        if(majorUpgrades.TryGetValue(slot, out MajorUpgrade upgrade) && upgrade != null)
             RemoveMajorInternal(upgrade);
     }
 
     private void RemoveMajorInternal(MajorUpgrade upgrade)
     {
         upgrade.Remove(p);
-        majorSlots[upgrade.slot] = null;
+        majorUpgrades[upgrade.slot] = null;
 
         // Fire event
     }
@@ -155,6 +160,18 @@ public class PlayerUpgrades : MonoBehaviour
         upgrade.Remove(p);
         auxUpgrades.Remove(upgrade);
         // Fire event
+    }
+
+    public void RemoveAll()
+    {
+        foreach(var major in majorUpgrades.Values.Where(m => m.slot != UpgradeSlot.None))
+            major.Remove(p);
+
+        foreach(var aux in auxUpgrades.Keys.ToList())
+            aux.Remove(p);
+
+        majorUpgrades.Clear();
+        auxUpgrades.Clear();
     }
 
     #endregion

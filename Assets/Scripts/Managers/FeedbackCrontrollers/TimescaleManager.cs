@@ -14,6 +14,7 @@ public class TimescaleManager : MonoBehaviour
     private Coroutine currentHitstopRoutine;
     private float hitstopTimeElapsed;
 
+    private float hitstopEndUnscaled;
 
 
     [SerializeField] private float hitstopTimeScale = 0.05f;
@@ -81,25 +82,28 @@ public class TimescaleManager : MonoBehaviour
 
     private void HandleHitstop(HitData hit)
     {
-        RequestTimeSlow(hit.hitstopTime);
+        RequestHitStop(hit.hitstopTime);
     }
 
     private void HandlePlayerDeath()
     {
-        RequestTimeSlow(2.5f);
+        RequestHitStop(2.5f);
     }
 
-    public void RequestTimeSlow(float duration)
+    public void RequestHitStop(float duration)
     {
-        if (currentHitstopRoutine != null)
-        {
-            StopCoroutine(currentHitstopRoutine);
-        }
+        if(duration <= 0f) return;
 
-        currentHitstopRoutine = StartCoroutine(TimeSlowRoutine(duration));
+        float end = Time.unscaledTime + duration;
+        if (end <= hitstopEndUnscaled) return;
+
+        hitstopEndUnscaled = end;
+
+        if (currentHitstopRoutine == null)
+            currentHitstopRoutine = StartCoroutine(HitstopRoutine());
     }
 
-    public void KillAllTimeSlows()
+    public void KillAllHitstops()
     {
         if (currentHitstopRoutine != null)
         {
@@ -113,22 +117,20 @@ public class TimescaleManager : MonoBehaviour
 
             lastTimeScale = 1.0f;
         }
+
+        hitstopEndUnscaled = 0f;
+        currentHitstopRoutine = null;
     }
 
-    private IEnumerator TimeSlowRoutine(float duration)
+    private IEnumerator HitstopRoutine()
     {
-        hitstopTimeElapsed = 0f;
+        if (!IsPaused) Time.timeScale = hitstopTimeScale;
 
-        Time.timeScale = hitstopTimeScale;
-
-        while (hitstopTimeElapsed < duration && !IsPaused)
-        {
-            hitstopTimeElapsed += Time.unscaledDeltaTime;
+        while (Time.unscaledTime < hitstopEndUnscaled || IsPaused)
             yield return null;
-        }
 
-        if(!IsPaused)
-            Time.timeScale = 1.0f;
+        Time.timeScale = 1f;
+        currentHitstopRoutine = null;
     }
 
 }

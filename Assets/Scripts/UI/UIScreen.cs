@@ -26,6 +26,8 @@ public class UIScreen : MonoBehaviour
     {
         if(cg == null) cg = GetComponent<CanvasGroup>();
 
+        rt = GetComponent<RectTransform>();
+
         cg.alpha = 0f;
         cg.interactable = false;
         cg.blocksRaycasts = false;
@@ -37,21 +39,39 @@ public class UIScreen : MonoBehaviour
     {
         gameObject.SetActive(true);
         OnBeforeOpen(payload);
-
         IsTransitioning = true;
 
         // Play transition, delay next
         cg.DOKill();
-        cg.DOFade(1f, 0.2f)
+        rt.DOKill();
+
+        cg.alpha = 0f;
+        rt.localScale = new Vector3(1.04f, 0.02f, 1f);
+
+        DOTween.Sequence()
+            .Append(cg.DOFade(1f, 0.06f))
+            .Join(rt.DOScaleY(1f, 0.16f).SetEase(Ease.OutExpo))
+            .Join(rt.DOScaleX(1f, 0.2f).SetEase(Ease.OutQuad))
             .SetUpdate(true)
             .OnComplete(() =>
-        {
-            cg.interactable = true;
-            cg.blocksRaycasts = true;
-            IsTransitioning = false;
-            OnOpened();
-            OnOpen?.Invoke();
-        });
+            {
+                cg.interactable = true;
+                cg.blocksRaycasts = true;
+                IsTransitioning = false;
+                OnOpened();
+                OnOpen?.Invoke();
+            });
+
+        //cg.DOFade(1f, 0.2f)
+        //    .SetUpdate(true)
+        //    .OnComplete(() =>
+        //{
+        //    cg.interactable = true;
+        //    cg.blocksRaycasts = true;
+        //    IsTransitioning = false;
+        //    OnOpened();
+        //    OnOpen?.Invoke();
+        //});
     }
 
     public void Close()
@@ -60,17 +80,33 @@ public class UIScreen : MonoBehaviour
         cg.blocksRaycasts = false;
         IsTransitioning = true;
 
-        // Play transition, delay next
         cg.DOKill();
-        cg.DOFade(0f, 0.2f)
+        rt.DOKill();
+
+        DOTween.Sequence()
+            .Append(rt.DOScaleY(0.02f, 0.1f).SetEase(Ease.InQuad))
+            .Join(cg.DOFade(0f, 0.12f))
             .SetUpdate(true)
             .OnComplete(() =>
-        {
-            IsTransitioning = false;
-            OnClosed();
-            gameObject.SetActive(false);
-            OnClose?.Invoke();
-        });
+            {
+                IsTransitioning = false;
+                rt.localScale = Vector3.one;
+                OnClosed();
+                gameObject.SetActive(false);
+                OnClose?.Invoke();
+            });
+
+        // Play transition, delay next
+        //cg.DOKill();
+        //cg.DOFade(0f, 0.2f)
+        //    .SetUpdate(true)
+        //    .OnComplete(() =>
+        //{
+        //    IsTransitioning = false;
+        //    OnClosed();
+        //    gameObject.SetActive(false);
+        //    OnClose?.Invoke();
+        //});
     }
 
     public virtual void HandleCancel()

@@ -20,6 +20,7 @@ public class GameplayInputReader
     public event Action TargetPressed;
 
     public event Action ToolPressed;
+    public event Action ToolCanceled;
 
     public event Action InventoryPressed;
     public event Action InventoryCanceled;
@@ -47,7 +48,10 @@ public class GameplayInputReader
         actions.Gameplay.RangedAttack.performed += OnRangedPerformed;
         actions.Gameplay.RangedAttack.canceled += OnRangedCanceled;
 
-        actions.Gameplay.UseTool.performed += OnUseToolPerformed;
+        actions.Gameplay.UseTool.performed += OnToolPerformed;
+        actions.Gameplay.UseTool.canceled += OnToolCanceled;
+
+
         actions.Gameplay.LockOn.performed += OnTargetPerformed;
 
         actions.Gameplay.Interact.performed += OnInteractPerformed;
@@ -71,7 +75,7 @@ public class GameplayInputReader
         actions.Gameplay.RangedAttack.performed -= OnRangedPerformed;
         actions.Gameplay.RangedAttack.canceled -= OnRangedCanceled;
 
-        actions.Gameplay.UseTool.performed -= OnUseToolPerformed;
+        actions.Gameplay.UseTool.performed -= OnToolPerformed;
         actions.Gameplay.LockOn.performed -= OnTargetPerformed;
 
         actions.Gameplay.Interact.performed -= OnInteractPerformed;
@@ -125,10 +129,16 @@ public class GameplayInputReader
         RangedCanceled?.Invoke();
     }
 
-    private void OnUseToolPerformed(InputAction.CallbackContext ctx)
+    private void OnToolPerformed(InputAction.CallbackContext ctx)
     {
         ToolPressed?.Invoke();
     }
+
+    private void OnToolCanceled(InputAction.CallbackContext ctx)
+    {
+        ToolCanceled?.Invoke();
+    }
+
 
     private void OnTargetPerformed(InputAction.CallbackContext ctx)
     {

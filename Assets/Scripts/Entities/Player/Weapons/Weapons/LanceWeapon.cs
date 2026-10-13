@@ -9,13 +9,13 @@ public class LanceWeapon : PlayerWeapon
 
     [SerializeField] private LaserBeamVisual visualPrefab;
 
-    public override void Fire(Vector2 direction, Vector2 firePoint)
+    public override void Fire(ActiveWeapon instance, Vector2 direction, Vector2 firePoint)
     {
         // Fire effects
         VFXManager.Instance.PlayVFX(VFXType.ShootIntense, firePoint, direction);
-        TimescaleManager.Instance.RequestTimeSlow(0.2f);
+        TimescaleManager.Instance.RequestHitStop(0.2f);
 
-        HitData hitData = BuildOutgoingHit(Projectiles[0], direction, firePoint);
+        HitData hitData = BuildOutgoingHit(instance, projectiles[0], direction, firePoint);
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         Vector2 boxSize = new(beamWidth, beamWidth);
@@ -49,8 +49,7 @@ public class LanceWeapon : PlayerWeapon
 
         VFXManager.Instance.PlayVFX(VFXType.ShootIntense, endPoint, -direction);
 
-        currentAmmo--;
-        ammoUsedEvent?.Invoke(currentAmmo);
+        instance.SpendAmmo();
     }
 
     private void SpawnVisual(Vector2 start, Vector2 end)
@@ -59,6 +58,5 @@ public class LanceWeapon : PlayerWeapon
 
         LaserBeamVisual visual = Instantiate(visualPrefab);
         visual.Play(start, end);
-
     }
 }

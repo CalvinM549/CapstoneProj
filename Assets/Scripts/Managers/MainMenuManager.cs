@@ -31,6 +31,8 @@ public class MainMenuManager : MonoBehaviour
 
     public void InitializeMenu()
     {
+        return;
+
         baseGroup.alpha = 1f;
 
         profilesGroup.gameObject.SetActive(false);
@@ -85,8 +87,8 @@ public class MainMenuManager : MonoBehaviour
         if (existing == null)
         {
             // Show UI for setting profile's name
-            string enteredName = "";
-            var profile = new PlayerProfile(slot, enteredName);
+            string profileName = $"UNIT_{slot+1}";
+            var profile = new PlayerProfile(slot, profileName);
             ProfileSaveSystem.Save(profile);
             EnterHubWithProfile(profile);
             return;

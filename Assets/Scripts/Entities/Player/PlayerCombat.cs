@@ -43,18 +43,19 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private DroneWeaponCarrier dronePrefab;
     private DroneWeaponCarrier activeDrone;
 
-    public PlayerWeapon EquippedWeapon { get; private set; }
+    public ActiveWeapon EquippedWeapon { get; private set; }
     public bool HasWeaponEquipped => EquippedWeapon != null;
 
     private float rangedCooldownTimer;
 
-    public float rangedCooldownPercent => HasWeaponEquipped && EquippedWeapon.cooldown > 0f
-        ? Mathf.Clamp01(rangedCooldownTimer / EquippedWeapon.cooldown) : 0f;
+    public float rangedCooldownPercent => HasWeaponEquipped && EquippedWeapon.data.cooldown > 0f
+        ? Mathf.Clamp01(rangedCooldownTimer / EquippedWeapon.data.cooldown) : 0f;
 
     private bool dashCancelWindow;
     private Coroutine dashCancelRoutine;
 
-    public int CurrentAmmo => HasWeaponEquipped ? EquippedWeapon.currentAmmo : 0;
+    public int CurrentAmmo => HasWeaponEquipped ? EquippedWeapon.ammo : 0;
+    public int MaxAmmo => HasWeaponEquipped ? EquippedWeapon.MaxAmmo : 0;
 
     public event Action<int> OnAmmoChanged;
     public event Action<int> OnWeaponChanged;
@@ -74,6 +75,8 @@ public class PlayerCombat : MonoBehaviour
     public void RestoreFromSave(PlayerEquipmentSave save, GameDatabase db)
     {
         Initialize();
+
+        if (string.IsNullOrEmpty(save.equippedWeapon)) return;
         EquipRangedWeapon(db.weapons.Get(save.equippedWeapon), save.currentAmmo);
     }
 
@@ -83,11 +86,6 @@ public class PlayerCombat : MonoBehaviour
 
         meleeBuffer = new InputBuffer(0.1f);
         rangedBuffer = new InputBuffer(0.1f);
-    }
-
-    private void Start()
-    {
-
     }
 
     private void OnEnable()
@@ -104,6 +102,8 @@ public class PlayerCombat : MonoBehaviour
         hitboxes.OnPlayerHitboxContact += HandleHitDetection;
 
         GameEvents.OnPlayerDashStart += HandleDashStart;
+
+        if (HasWeaponEquipped) ProjectilePools.RequestPool(EquippedWeapon);
     }
 
     private void OnDisable()
@@ -223,32 +223,29 @@ public class PlayerCombat : MonoBehaviour
 
     private bool CanAttack()
     {
-        return (
-            !TimescaleManager.IsPaused
+        return !TimescaleManager.IsPaused
             && p.CanAct
             && p.Health.IsAlive
-            && !p.Health.IsHitstunned);
+            && !p.Health.IsHitstunned;
     }
 
     private bool CanMeleeAttack()
     {
-        return (
-            comboCooldownTimer <= 0f 
-            && CurrentState is CombatState.Idle or CombatState.Recovery);
+        return comboCooldownTimer <= 0f 
+            && CurrentState is CombatState.Idle or CombatState.Recovery;
     }
 
     private bool CanRangedAttack()
     {
-        return (
-            HasWeaponEquipped 
+        return HasWeaponEquipped 
             && rangedCooldownTimer <= 0f 
             && RangedAttackCheck() 
-            && EquippedWeapon.CanFire());
+            && EquippedWeapon.data.CanFire(EquippedWeapon);
     }
 
     private bool RangedAttackCheck()
     {
-        return EquippedWeapon.fireType switch
+        return EquippedWeapon.data.fireType switch
         {
             FireType.Linked => currentState is not (CombatState.Startup or CombatState.Active),
             FireType.Blocked => currentState is CombatState.Idle,
@@ -395,7 +392,8 @@ public class PlayerCombat : MonoBehaviour
         VFXManager.Instance.PlayVFX(VFXType.HitCross, hit.transform.position);
 
         // Lock to melee targets
-        p.Targeting.SetLock(hit.GetComponent<EnemyController>());
+        if(!p.Targeting.HasTarget)
+            p.Targeting.SetLock(hit.GetComponent<EnemyController>());
 
         target.RecieveHit(hitData);
     }
@@ -406,34 +404,36 @@ public class PlayerCombat : MonoBehaviour
 
     private void FireRangedWeapon()
     {
+        var weapon = EquippedWeapon;
+
         if (dashCancelWindow)
             p.Movement.InterruptDash();
 
-        if (currentState == CombatState.Recovery && EquippedWeapon.fireType == FireType.Linked)
+        if (currentState == CombatState.Recovery && weapon.data.fireType == FireType.Linked)
             InterruptRecovery();
 
-        rangedCooldownTimer = EquippedWeapon.cooldown;
+        rangedCooldownTimer = weapon.data.cooldown;
 
-        if (EquippedWeapon.fireType == FireType.Independent)
+        if (weapon.data.fireType == FireType.Independent)
         {
-            EquippedWeapon.Fire(GetAttackDirection(AttackType.Projectile), activeDrone.FireOrigin);
+            weapon.data.Fire(weapon, GetAttackDirection(AttackType.Projectile), activeDrone.FireOrigin);
             return;
         }
 
         if (currentRangedRoutine != null)
             StopCoroutine(currentRangedRoutine);
 
-        currentRangedRoutine = StartCoroutine(RangedAttackRoutine(EquippedWeapon));
+        currentRangedRoutine = StartCoroutine(RangedAttackRoutine(weapon));
     }
 
-    private IEnumerator RangedAttackRoutine(PlayerWeapon weapon)
+    private IEnumerator RangedAttackRoutine(ActiveWeapon weapon)
     {
         // STARTUP
         currentState = CombatState.Startup;
 
         GameEvents.AttackStarted(AttackType.Projectile, GetAttackDirection(AttackType.Projectile));
 
-        yield return new WaitForSeconds(weapon.windupTime);
+        yield return new WaitForSeconds(weapon.data.windupTime);
 
         if (EquippedWeapon != weapon)
         {
@@ -445,14 +445,14 @@ public class PlayerCombat : MonoBehaviour
         // ACTIVE
         currentState = CombatState.Active;
         Vector2 direction = GetAttackDirection(AttackType.Projectile);
-        weapon.Fire(direction, activeDrone.FireOrigin);
+        weapon.data.Fire(weapon, direction, activeDrone.FireOrigin);
 
-        yield return new WaitForSeconds(weapon.activeTime);
+        yield return new WaitForSeconds(weapon.data.activeTime);
 
         // RECOVERY
         currentState = CombatState.Recovery;
 
-        yield return new WaitForSeconds(weapon.recoveryTime);
+        yield return new WaitForSeconds(weapon.data.recoveryTime);
 
         if(currentState == CombatState.Recovery)
             currentState = CombatState.Idle;
@@ -463,18 +463,21 @@ public class PlayerCombat : MonoBehaviour
 
     public void EquipRangedWeapon(PlayerWeapon weapon, int ammoOverride = -1)
     {
-        if (weapon == EquippedWeapon) return;
+        if (weapon == EquippedWeapon?.data) return;
 
         if (HasWeaponEquipped) // Clean up old weapon
         {
-            EquippedWeapon.OnUnequip();
-            ProjectilePools.ReleasePool(weapon);
+            var old = EquippedWeapon;
+
+            old.AmmoChanged -= HandleWeaponAmmoChanged;
+            old.data.OnUnequip(old);
+            ProjectilePools.ReleasePool(old);
         }
 
-        EquippedWeapon = weapon;
+        EquippedWeapon = weapon != null ? new ActiveWeapon(weapon, p, ammoOverride) : null;
         rangedCooldownTimer = 0f;
 
-        if (weapon != null) // Setup new weapon
+        if (HasWeaponEquipped) // Setup new weapon
         {
             if (activeDrone == null)
             {
@@ -482,8 +485,9 @@ public class PlayerCombat : MonoBehaviour
                 activeDrone.player = p;
             }
 
-            ProjectilePools.RequestPool(weapon);
-            weapon.OnEquip(p, OnAmmoChanged, ammoOverride);
+            ProjectilePools.RequestPool(EquippedWeapon);
+            EquippedWeapon.AmmoChanged += HandleWeaponAmmoChanged;
+            weapon.OnEquip(EquippedWeapon);
         }
 
         OnWeaponChanged?.Invoke(CurrentAmmo);
@@ -496,11 +500,10 @@ public class PlayerCombat : MonoBehaviour
     {
         if (!HasWeaponEquipped) return;
 
-        var weapon = EquippedWeapon;
-
-        weapon.currentAmmo = Mathf.Min(weapon.currentAmmo + amount, weapon.baseAmmo);
-        OnAmmoChanged.Invoke(weapon.currentAmmo);
+        EquippedWeapon.AddAmmo(amount);
     }
+
+    private void HandleWeaponAmmoChanged(int ammo) => OnAmmoChanged?.Invoke(ammo);
 
     #endregion
 
@@ -530,7 +533,7 @@ public class PlayerCombat : MonoBehaviour
         {
             rangedCooldownTimer -= Time.deltaTime;
             if(HasWeaponEquipped)
-                OnReloadChanged?.Invoke(rangedCooldownTimer / EquippedWeapon.cooldown);
+                OnReloadChanged?.Invoke(rangedCooldownTimer / EquippedWeapon.data.cooldown);
         }
     }
 

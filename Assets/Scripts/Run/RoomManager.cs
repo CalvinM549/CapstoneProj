@@ -154,7 +154,9 @@ public class RoomManager : MonoBehaviour
 
         List<SpawnPoint> validPoints = spawnPoints.Where(s => s.Accepts(tag)).ToList();
 
-        return validPoints[UnityEngine.Random.Range(0, validPoints.Count)].transform;
+        Transform selectedPoint = validPoints[UnityEngine.Random.Range(0, validPoints.Count)].transform;
+
+        return selectedPoint != null ? selectedPoint : transform;
     }
 
     public Vector2 GetEnemySpawnPosition(SpawnTag tag, float spread = 0f)

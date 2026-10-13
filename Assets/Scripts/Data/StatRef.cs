@@ -18,7 +18,7 @@ public static class StatRef
 
     // Health
     public static string PlayerStructureCount = "player.health.structureCount";
-    public static string PlayerBaseStructureHealth = "player_baseStructureHealth";
+    public static string PlayerBaseStructureHealth = "player.health.baseStructureHealth";
 
     // Momentum
     public static string PlayerMomentumGainMult = "player.momentum.gainMult";

@@ -103,8 +103,8 @@ public class Player : MonoBehaviour
 
             equipmentSave = new PlayerEquipmentSave()
             {
-                equippedTool = Tools.HasToolEquipped ? Tools.EquippedTool.Id : null,
-                equippedWeapon = Combat.HasWeaponEquipped ? Combat.EquippedWeapon.Id : null,
+                equippedTool = Tools.HasToolEquipped ? Tools.EquippedTool.data.Id : null,
+                equippedWeapon = Combat.HasWeaponEquipped ? Combat.EquippedWeapon.data.Id : null,
                 currentAmmo = Combat.CurrentAmmo
             },
 

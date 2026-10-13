@@ -95,7 +95,10 @@ public class AudioManager : MonoBehaviour
     {
         AudioEntry sound = Array.Find(sfxLibrary, sound => sound.soundName == name);
         if (sound == null)
+        {
             Debug.LogError($"[AudioManager] No SFX with name: {name}");
+            return;
+        }
 
         float adjustedVolume = globalVolume * sfxVolume * sound.volume;
 

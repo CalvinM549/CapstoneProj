@@ -125,4 +125,13 @@ public static class GameEvents
     // Draft
 
     // Upgrades
+
+    // Editor cleanup
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        foreach(var f in typeof(GameEvents).GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic))
+            if(typeof(Delegate).IsAssignableFrom(f.FieldType))
+                f.SetValue(null, null);
+    }
 }

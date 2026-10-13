@@ -62,7 +62,7 @@ public class UpgradeBase : DatabaseEntry, ICategorizedEntry<UpgradeSlot>, ILootE
     {
         RemoveStatModifiers(player.Stats);
         OnRemove(player);
-        player = null;
+        this.player = null;
     }
 
     // Inheritance Things

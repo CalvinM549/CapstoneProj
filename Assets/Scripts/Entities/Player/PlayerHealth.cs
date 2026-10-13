@@ -51,6 +51,25 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         Unsubscribe();
     }
 
+
+#if UNITY_EDITOR
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            RestoreSegments(2);
+        }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            var structureCountBuff = new StatModifier(1, StatModType.Flat);
+            structureCount.AddStatModifier(structureCountBuff);
+        }
+    }
+#endif
+
+    #region Setup
+
     public void Initialize()
     {
         structureHealth = p.Stats.GetStatValue(StatRef.PlayerBaseStructureHealth);
@@ -110,21 +129,16 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         return save;
     }
 
-#if UNITY_EDITOR
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            RestoreSegments(2);
-        }
+    #endregion
 
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            var structureCountBuff = new StatModifier(1, StatModType.Flat);
-            structureCount.AddStatModifier(structureCountBuff);
-        }
-    }
-#endif
+
+    #region Helpers
+
+    public float SetHitstum(float duration) => hitStunEndTime = Mathf.Max(Time.time + duration, duration);
+
+    #endregion
+
+    #region Segments
 
     #region Segment Count
 
@@ -203,6 +217,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
     {
         if (DebugManager.GodMode) return;
 
+        if (IsIframe) return;
         if (!IsAlive) return;
         if (p.Tools.TryInterceptWithTool(hit)) return; // For parry tools etc
 
@@ -334,4 +349,6 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         GameEvents.PlayerDeath();
         GameEvents.RunEnded(false);
     }
+
+    #endregion
 }

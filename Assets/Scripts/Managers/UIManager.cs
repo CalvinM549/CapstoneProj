@@ -12,8 +12,8 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private UIScreen[] screenRefs;
 
-    private Dictionary<string, UIScreen> screens = new();
-    private List<UIScreen> stack = new();
+    private readonly Dictionary<string, UIScreen> screens = new();
+    private readonly List<UIScreen> stack = new();
     
     public UIScreen Current => stack.Count > 0 ? stack[^1] : null;
     public bool ScreenOpen => stack.Count > 0;

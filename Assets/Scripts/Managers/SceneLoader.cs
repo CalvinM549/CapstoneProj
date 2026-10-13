@@ -94,7 +94,7 @@ public class SceneLoader : MonoBehaviour
         onSceneLoaded?.Invoke(sceneName);
         onLoad?.Invoke();
 
-        TimescaleManager.Instance.KillAllTimeSlows();
+        TimescaleManager.Instance.KillAllHitstops();
 
         if(TimescaleManager.IsPaused)
             TimescaleManager.Instance.ForceUnpause();

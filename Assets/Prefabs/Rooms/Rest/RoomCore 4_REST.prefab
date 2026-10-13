@@ -11246,6 +11246,7 @@ GameObject:
   - component: {fileID: 6074118564554837086}
   - component: {fileID: 4417298621136182847}
   - component: {fileID: 282493145676989811}
+  - component: {fileID: 2303509788622725702}
   m_Layer: 0
   m_Name: RoomCore 4_REST
   m_TagString: Untagged
@@ -11341,6 +11342,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7afa820ae687bed47bf6bff44e8ac2b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveObjectiveHandler
+--- !u!114 &2303509788622725702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4334108840461421973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7e062fafd6800f4188328fd1a9c9d75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomVariation
+  theme: {fileID: 11400000, guid: f30031fcfcab6f24fab4042d738debaa, type: 2}
+  floor: {fileID: 7405843413277622633}
+  walls: {fileID: 653400015625362630}
+  edgeSource: {fileID: 3867392307945486807}
+  accentLights: []
+  doors:
+  - {fileID: 5008568076838270757}
+  - {fileID: 7048941372870446392}
+  - {fileID: 334063328321656558}
+  ambient:
+    target: {fileID: 0}
+    chance: 0
 --- !u!1 &5010685373632627703
 GameObject:
   m_ObjectHideFlags: 0
