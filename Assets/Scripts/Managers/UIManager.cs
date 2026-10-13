@@ -8,6 +8,8 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }
 
+    [SerializeField] private bool cursorVisibleByDefault;
+
     [SerializeField] private Transform screenParent;
 
     [SerializeField] private UIScreen[] screenRefs;
@@ -66,23 +68,24 @@ public class UIManager : MonoBehaviour
 
     public UIScreen OpenScreen(string id, object payload = null)
     {
-        if (screens.TryGetValue(id, out var screen))
-        {
-            stack.Add(screen);
-            screen.transform.SetAsLastSibling();
 
-            if(screen.pausesGame) TimescaleManager.Instance.PauseGame(screen);
-            if (screen.showCursor) GameManager.Instance.SetCursorActive(true);
-
-            screen.Open(payload);
-            return screen;
-
-        }
-        else
+        if (!screens.TryGetValue(id, out var screen))
         {
             Debug.LogWarning($"[UIManager] id: {id} does not exist / is not active");
             return null;
         }
+
+        if(stack.Contains(screen)) return screen;
+
+        Current?.SetFocused(false);
+        stack.Add(screen);
+        screen.transform.SetAsLastSibling();
+
+        if(screen.pausesGame) TimescaleManager.Instance.PauseGame(screen);
+        RefreshCursor();
+
+        screen.Open(payload);
+        return screen;
     }
 
     public void CloseTop()
@@ -93,9 +96,11 @@ public class UIManager : MonoBehaviour
         stack.RemoveAt(stack.Count - 1);
 
         if(top.pausesGame) TimescaleManager.Instance.UnpauseGame(top);
-        if(top.showCursor) GameManager.Instance.SetCursorActive(false);
 
         top.Close();
+
+        Current?.SetFocused(true);
+        RefreshCursor();
     }
 
     public void CloseAll()
@@ -107,6 +112,12 @@ public class UIManager : MonoBehaviour
     {
         CloseAll();
         OpenScreen(id, payload);
+    }
+
+    private void RefreshCursor()
+    {
+        bool show = cursorVisibleByDefault || stack.Exists(s => s.showCursor);
+        GameManager.Instance.SetCursorActive(show);
     }
 
 }

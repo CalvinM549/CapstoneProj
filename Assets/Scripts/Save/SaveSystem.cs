@@ -175,7 +175,7 @@ public static class RunSaveSystem
 
 public static class ProfileSaveSystem
 {
-    private const int MaxSlots = 4;
+    public const int MaxSlots = 4;
 
     private static string FolderPath => Path.Combine(Application.persistentDataPath, "Profiles");
     private static string PathForSlot(int slot) => Path.Combine(FolderPath, $"profile_{slot}.json");

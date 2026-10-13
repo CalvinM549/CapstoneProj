@@ -105,6 +105,8 @@ public class RunManager : MonoBehaviour
 
     public void InitializeRun()
     {
+        AudioManager.Instance.PlayMusicTrack("ActionMusicMedium", true);
+
         if (RunDataCarrier.IsNewRun)
         {
             BeginNewRun();

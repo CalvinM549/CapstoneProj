@@ -111,7 +111,7 @@ public class StatusEffectController : MonoBehaviour
         stats?.RemoveModifiersFromSource(instance);
         data.OnExpire(instance, gameObject);
 
-        activeEffects.Remove(data);
+        activeEffects.Remove(data); 
         OnEffectsChanged?.Invoke();
     }
 

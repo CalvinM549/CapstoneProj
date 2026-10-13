@@ -3,18 +3,12 @@ using UnityEngine;
 
 public class RandomFlicker : MonoBehaviour
 {
-    private SpriteRenderer sr;
+    [SerializeField] private GameObject target;
 
     [SerializeField] private float minTime;
     [SerializeField] private float maxTime;
 
     public bool doFlicker;
-
-
-    private void Awake()
-    {
-        sr = GetComponent<SpriteRenderer>();    
-    }
 
     private void OnEnable()
     {
@@ -26,9 +20,9 @@ public class RandomFlicker : MonoBehaviour
 
     private IEnumerator FlickerRoutine()
     {
-        while (enabled)
+        while (true)
         {
-            sr.enabled = !sr.enabled;
+            target.SetActive(!target.activeInHierarchy);
             float waitTime = Random.Range(minTime, maxTime);
             yield return new WaitForSeconds(waitTime);
         }

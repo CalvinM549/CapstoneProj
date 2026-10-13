@@ -1,16 +1,22 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 [RequireComponent (typeof(UnityEngine.UI.Selectable))]
 public class TerminalButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
     [SerializeField] private TextMeshProUGUI label;
+    [SerializeField] private Selectable selectable;
+
     [SerializeField] private Color idleColour = new(0.75f, 0.85f, 0.8f);
+    [SerializeField] private Color disabledColour = new(0.35f, 0.4f, 0.38f);
     [SerializeField] private Color hoverColour = Color.white;
 
     [SerializeField] private string hoverSfx = "UItick";
     [SerializeField] private float blinkRate = 0.45f;
+
+    private bool lastInteractable = true;
 
     private string baseText;
     private bool hovered;
@@ -30,6 +36,12 @@ public class TerminalButton : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void Update()
     {
+        if (selectable.interactable != lastInteractable)
+        {
+            lastInteractable = selectable.interactable;
+            SetHover(false);
+        }
+
         if (!hovered) return;
 
         blinkTimer += Time.unscaledDeltaTime;
@@ -58,6 +70,14 @@ public class TerminalButton : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void SetHover(bool value, bool playSound = false)
     {
+        if (!selectable.interactable)
+        {
+            hovered = false;
+            label.color = disabledColour;
+            label.text = $" {baseText}";
+            return;
+        }
+
         hovered = value;
         blinkTimer = 0;
         cursorOn = true;

@@ -2,14 +2,16 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class GameSettings : MonoBehaviour
+public class GameSettings
 {
-    public float gameVolume;
-    public float sfxVolume;
-    public float musicVolume;
+    public float masterVolume = 0.8f;
+    public float sfxVolume = 0.7f;
+    public float musicVolume = 0.8f;
 
-    public int qualityPreset = 1;
+    public bool vsync = true;
     public bool fullscreen = true;
+
+    public int qualityPreset = -1;
 
     public string inputBindingsJson;
 }

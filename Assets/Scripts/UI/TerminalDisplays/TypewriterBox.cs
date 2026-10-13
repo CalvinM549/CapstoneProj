@@ -56,6 +56,9 @@ public class TypewriterBox : MonoBehaviour
             textBox.maxVisibleCharacters = counter;
 
             char c = charInfo.character;
+
+            AudioManager.Instance.PlaySFX("TypeTick", Vector3.zero);
+
             if (c == '\n' || c == '\r')
             {
                 yield return new WaitForSeconds(lineDelay);

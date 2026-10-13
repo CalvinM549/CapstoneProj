@@ -11,6 +11,8 @@ public class UIScreen : MonoBehaviour
     public bool blockUIInput;
     public bool showCursor;
 
+    [SerializeField] private bool isRoot;
+
     public bool isVisible {  get; protected set; }
 
     public event Action OnOpen;
@@ -111,9 +113,21 @@ public class UIScreen : MonoBehaviour
 
     public virtual void HandleCancel()
     {
-        // Depends on the screen, default to close
+        if (isRoot) return;
         UIManager.Instance.CloseTop();
     }
+
+    public void SetFocused(bool focused)
+    {
+        if (!gameObject.activeSelf || IsTransitioning) return;
+
+        cg.interactable = focused;
+        cg.blocksRaycasts = focused;
+
+        if (focused) OnFocusRegained();
+    }
+
+    protected virtual void OnFocusRegained() { }
 
     protected virtual void OnBeforeOpen(object payload) { }
     protected virtual void OnOpened() { }

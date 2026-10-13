@@ -70,7 +70,6 @@ public class HubManager : MonoBehaviour
 
         pendingLoadout = BuildDefaultLoadout();
 
-        AudioManager.Instance.PlayMusicTrack("MenuMusic01", true);
 
 
         GenerateNewMap();
