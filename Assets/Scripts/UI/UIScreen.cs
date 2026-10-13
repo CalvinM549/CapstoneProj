@@ -7,13 +7,16 @@ public class UIScreen : MonoBehaviour
     public string screenName;
 
     public bool pausesGame;
+    public bool hidesBelow;
     public bool blockPlayerInput;
     public bool blockUIInput;
     public bool showCursor;
+    public bool isRoot;
 
-    [SerializeField] private bool isRoot;
-
+    public bool isHidden {  get; private set; }
     public bool isVisible {  get; protected set; }
+    public bool IsTransitioning { get; private set; }
+
 
     public event Action OnOpen;
     public event Action OnClose;
@@ -22,7 +25,7 @@ public class UIScreen : MonoBehaviour
     private Animator animator;
     private RectTransform rt;
 
-    public bool IsTransitioning {  get; private set; }
+    private Sequence transition;
 
     private void Awake()
     {
@@ -39,76 +42,64 @@ public class UIScreen : MonoBehaviour
 
     public void Open(object payload)
     {
+        isHidden = false;
         gameObject.SetActive(true);
         OnBeforeOpen(payload);
-        IsTransitioning = true;
 
-        // Play transition, delay next
-        cg.DOKill();
-        rt.DOKill();
-
-        cg.alpha = 0f;
-        rt.localScale = new Vector3(1.04f, 0.02f, 1f);
-
-        DOTween.Sequence()
-            .Append(cg.DOFade(1f, 0.06f))
-            .Join(rt.DOScaleY(1f, 0.16f).SetEase(Ease.OutExpo))
-            .Join(rt.DOScaleX(1f, 0.2f).SetEase(Ease.OutQuad))
-            .SetUpdate(true)
-            .OnComplete(() =>
-            {
-                cg.interactable = true;
-                cg.blocksRaycasts = true;
-                IsTransitioning = false;
-                OnOpened();
-                OnOpen?.Invoke();
-            });
-
-        //cg.DOFade(1f, 0.2f)
-        //    .SetUpdate(true)
-        //    .OnComplete(() =>
-        //{
-        //    cg.interactable = true;
-        //    cg.blocksRaycasts = true;
-        //    IsTransitioning = false;
-        //    OnOpened();
-        //    OnOpen?.Invoke();
-        //});
+        PlayIn(() =>
+        {
+            OnOpened();
+            OnOpen?.Invoke();
+        });
     }
 
-    public void Close()
+    public void Close(Action onComplete = null)
     {
+        PlayOut(() =>
+        {
+            isHidden = false;
+            OnClosed();
+            gameObject.SetActive(false);
+            OnClose?.Invoke();
+            onComplete?.Invoke();
+        });
+    }
+
+    public void Hide(Action onComplete = null)
+    {
+        isHidden = true;
+
+        PlayOut(() =>
+        {
+            gameObject.SetActive(false);
+            OnHidden();
+            onComplete?.Invoke();
+        });
+    }
+
+    public void Show()
+    {
+        isHidden = false;
+        gameObject.SetActive(true);
+        PlayIn(OnFocusRegained);
+    }
+
+    public void CloseImmediate()
+    {
+        transition.Kill();
+        transition = null;
+
+        cg.alpha = 0f;
         cg.interactable = false;
         cg.blocksRaycasts = false;
-        IsTransitioning = true;
+        rt.localScale = Vector3.one;
 
-        cg.DOKill();
-        rt.DOKill();
+        IsTransitioning = false;
+        isHidden = false;
 
-        DOTween.Sequence()
-            .Append(rt.DOScaleY(0.02f, 0.1f).SetEase(Ease.InQuad))
-            .Join(cg.DOFade(0f, 0.12f))
-            .SetUpdate(true)
-            .OnComplete(() =>
-            {
-                IsTransitioning = false;
-                rt.localScale = Vector3.one;
-                OnClosed();
-                gameObject.SetActive(false);
-                OnClose?.Invoke();
-            });
-
-        // Play transition, delay next
-        //cg.DOKill();
-        //cg.DOFade(0f, 0.2f)
-        //    .SetUpdate(true)
-        //    .OnComplete(() =>
-        //{
-        //    IsTransitioning = false;
-        //    OnClosed();
-        //    gameObject.SetActive(false);
-        //    OnClose?.Invoke();
-        //});
+        OnClosed();
+        gameObject.SetActive(false);
+        OnClose?.Invoke();
     }
 
     public virtual void HandleCancel()
@@ -121,6 +112,7 @@ public class UIScreen : MonoBehaviour
     {
         if (!gameObject.activeSelf || IsTransitioning) return;
 
+        
         cg.interactable = focused;
         cg.blocksRaycasts = focused;
 
@@ -132,4 +124,54 @@ public class UIScreen : MonoBehaviour
     protected virtual void OnBeforeOpen(object payload) { }
     protected virtual void OnOpened() { }
     protected virtual void OnClosed() { }
+    protected virtual void OnHidden() { }
+
+    private void PlayIn(Action onComplete)
+    {
+        transition?.Kill();
+        IsTransitioning = true;
+
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
+        cg.alpha = 0f;
+        rt.localScale = new Vector3(1.04f, 0.02f, 1f);
+
+        transition = DOTween.Sequence()
+            .Append(cg.DOFade(1f, 0.06f))
+            .Join(rt.DOScaleY(1f, 0.16f).SetEase(Ease.OutExpo))
+            .Join(rt.DOScaleX(1f, 0.2f).SetEase(Ease.OutQuad))
+            .SetUpdate(true)
+            .SetLink(gameObject)
+            .OnComplete(() =>
+            {
+                transition = null;
+                cg.interactable = true;
+                cg.blocksRaycasts = true;
+                IsTransitioning = false;
+                onComplete?.Invoke();
+            });
+    }
+
+    private void PlayOut(Action onComplete)
+    {
+        transition?.Kill();
+        IsTransitioning = true;
+
+        cg.interactable = false;
+        cg.blocksRaycasts = false;
+
+        transition = DOTween.Sequence()
+            .Append(rt.DOScaleY(0.02f, 0.1f).SetEase(Ease.InQuad))
+            .Join(cg.DOFade(0f, 0.12f))
+            .SetUpdate(true)
+            .SetLink(gameObject)
+            .OnComplete(() =>
+            {
+                transition = null;
+                IsTransitioning = false;
+                rt.localScale = Vector3.one;
+                onComplete?.Invoke();
+            });
+    }
+
 }

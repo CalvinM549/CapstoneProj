@@ -5,14 +5,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum HubState
-{
-    Main,
-    RunPrep,
-    Loadout,
-    Archive
-}
-
 public class HubManager : MonoBehaviour
 {
     public static HubManager Instance;
@@ -21,9 +13,6 @@ public class HubManager : MonoBehaviour
     [SerializeField] private MapGenerationConfig config;
 
     private bool loadingToRun = false;
-
-    private readonly Dictionary<HubState, HubScreen> screens = new();
-    private HubScreen activeScreen;
 
     // Services
     private MapGenerationService mapGeneration;
@@ -38,6 +27,15 @@ public class HubManager : MonoBehaviour
     public event Action<int> OnPendingSeedChanged;
     public event Action<SectorMap> OnPendingMapChanged;
     public event Action<RunLoadout> OnPendingLoadoutChanged;
+    public event Action<bool> OnSavedRunChanged;
+
+    public int PendingSeed => pendingSeed;
+    public SectorMap PendingMap => pendingMap;
+    public RunLoadout PendingLoadout => pendingLoadout;
+    public bool CanBeginRun => pendingMap != null && pendingLoadout?.weapon != null;
+
+
+
 
     [Header("Testing Values")]
 
@@ -69,10 +67,10 @@ public class HubManager : MonoBehaviour
         mapGeneration = new(db.rooms, db.roomTypes, config);
 
         pendingLoadout = BuildDefaultLoadout();
-
-
-
         GenerateNewMap();
+
+
+        UIManager.Instance.OpenScreen("baseScreen");
     }
 
     public void CheckSavedRun()
@@ -85,6 +83,47 @@ public class HubManager : MonoBehaviour
         }
 
         resumeButton.gameObject.SetActive(HasSavedRun);
+    }
+
+    //public void GenerateNewMap() => GenerateMap(UnityEngine.Random.Range(1, 100000));
+    //public void GenerateMapFromSeed(string seed) => GenerateMap(ParseSeed(seed));
+    //private void GenerateMap(int seed)
+    //{
+    //    RNGManager.Instance.InitRNG(seed);
+        
+    //    pendingSeed = seed;
+    //    OnPendingSeedChanged?.Invoke(pendingSeed);
+
+    //    pendingMap = mapGeneration.GenerateWithSeed(seed);
+    //    OnPendingMapChanged?.Invoke(pendingMap);
+    //}
+
+    private static int ParseSeed(string input)
+    {
+        if (int.TryParse(input, out int seed) && seed != 0) return seed;
+        
+        return 0;
+    }
+
+    public void SetLoadoutWeapon(PlayerWeapon weapon)
+    {
+        pendingLoadout.weapon = weapon;
+        OnPendingLoadoutChanged?.Invoke(pendingLoadout);
+    }
+
+    public void SetLoadoutTool(PlayerTool tool)
+    {
+        pendingLoadout.tool = tool;
+        OnPendingLoadoutChanged?.Invoke(pendingLoadout);
+    }
+
+    public void AbandonSavedRun()
+    {
+        var profile = GameManager.Instance.ActiveProfile;
+        if (profile != null) RunSaveSystem.DeleteForSlot(profile.slotIndex);
+
+        pendingSave = null;
+        OnSavedRunChanged?.Invoke(false);
     }
 
     private RunLoadout BuildDefaultLoadout()
@@ -118,7 +157,7 @@ public class HubManager : MonoBehaviour
 
         seedText.text = seed.ToString();
 
-        seedText.color = CanBeginRun() ? Color.green : Color.red;
+        seedText.color = CanBeginRun ? Color.green : Color.red;
     }
 
     public void GenerateNewMap()
@@ -131,12 +170,7 @@ public class HubManager : MonoBehaviour
 
         OnPendingMapChanged?.Invoke(pendingMap);
 
-        seedText.color = CanBeginRun() ? Color.green : Color.red;
-    }
-
-    private bool CanBeginRun()
-    {
-        return pendingMap != null && pendingLoadout != null && pendingSeed != 0;
+        seedText.color = CanBeginRun ? Color.green : Color.red;
     }
 
     public void BeginNewRunFromHub()
@@ -166,18 +200,4 @@ public class HubManager : MonoBehaviour
     #endregion
 
 
-    #region LoadoutHelpers
-
-    public void SetLoadoutSlot()
-    {
-        // metaprogresds slots
-    }
-
-    public void SetLoadoutWeapon(PlayerWeapon newWeapon)
-    {
-        pendingLoadout.weapon = newWeapon;
-        // Ping event for loadout change
-    }
-
-    #endregion
 }

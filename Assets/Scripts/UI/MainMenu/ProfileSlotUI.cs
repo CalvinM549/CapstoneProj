@@ -7,7 +7,7 @@ public class ProfileSlotUI : MonoBehaviour
 {
     [SerializeField] private Button selectButton;
     [SerializeField] private Button deleteButton;
-    [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private TerminalButton titleText;
     [SerializeField] private TextMeshProUGUI statsText;
     [SerializeField] private GameObject runInProgressTag;
 
@@ -15,7 +15,7 @@ public class ProfileSlotUI : MonoBehaviour
     {
         bool empty = profile == null;
 
-        titleText.text = empty ? $"[EMPTY SLOT {slot + 1:00}]" : profile.profileName;
+        titleText.SetLabel(empty ? $"[EMPTY SLOT {slot + 1:00}]" : profile.profileName);
         statsText.text = empty ? "> INITIALIZE NEW INSTANCE" : FormatStats(profile);
 
         deleteButton.gameObject.SetActive(!empty);
@@ -36,6 +36,6 @@ public class ProfileSlotUI : MonoBehaviour
             : "--:--";
 
         return $"RUNS {p.runsAttempted} // CLEARS {p.runVictoryCount} // BEST {best}\n" +
-            $"ARCHIVES {p.unlockedArchives.Count} // SCRAP {p.metaCurrency}";
+            $"ARCHIVES {p.unlockedArchives.Count} // SHARDS {p.metaCurrency}";
     }
 }

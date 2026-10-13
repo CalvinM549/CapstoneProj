@@ -129,7 +129,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProfileSlotUI
   selectButton: {fileID: 1922663327872148508}
   deleteButton: {fileID: 3522258773554949300}
-  titleText: {fileID: 6712533924464423302}
+  titleText: {fileID: 8670393246723440915}
   statsText: {fileID: 8299571348110182345}
   runInProgressTag: {fileID: 2715575751001331325}
 --- !u!1 &7402263260098190376
@@ -502,14 +502,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
---- !u!114 &6712533924464423302 stripped
+--- !u!114 &8670393246723440915 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4668646436426846326, guid: 41f81f3ec67be044a88384d654cef2af, type: 3}
+  m_CorrespondingSourceObject: {fileID: 7331446230361170147, guid: 41f81f3ec67be044a88384d654cef2af, type: 3}
   m_PrefabInstance: {fileID: 2156638426213409264}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Script: {fileID: 11500000, guid: 01be422dce5a7c949bc6bd12c24f8993, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_EditorClassIdentifier: Assembly-CSharp::TerminalButton

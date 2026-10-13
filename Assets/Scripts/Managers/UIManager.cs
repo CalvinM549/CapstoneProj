@@ -20,6 +20,8 @@ public class UIManager : MonoBehaviour
     public UIScreen Current => stack.Count > 0 ? stack[^1] : null;
     public bool ScreenOpen => stack.Count > 0;
 
+    private bool transitioning;
+
     private void Awake()
     {
         if (Instance == null)
@@ -56,18 +58,18 @@ public class UIManager : MonoBehaviour
 
     private void HandleExit()
     {
+        if (transitioning) return;
+
         if (Current != null && !Current.IsTransitioning)
-        {
             Current.HandleCancel();
-        }
+
         else if (!ScreenOpen)
-        {
             OpenScreen("pauseScreen");
-        }
     }
 
     public UIScreen OpenScreen(string id, object payload = null)
     {
+        if (transitioning) return null;
 
         if (!screens.TryGetValue(id, out var screen))
         {
@@ -77,35 +79,78 @@ public class UIManager : MonoBehaviour
 
         if(stack.Contains(screen)) return screen;
 
-        Current?.SetFocused(false);
+        UIScreen below = Current;
+
         stack.Add(screen);
         screen.transform.SetAsLastSibling();
 
         if(screen.pausesGame) TimescaleManager.Instance.PauseGame(screen);
         RefreshCursor();
 
-        screen.Open(payload);
+        if (below != null && screen.hidesBelow)
+        {
+            transitioning = true;
+            below.Hide(() =>
+            {
+                transitioning = false;
+                screen.Open(payload);
+            });
+        }
+        else
+        {
+            below?.SetFocused(false);
+            screen.Open(payload);
+        }
+
         return screen;
     }
 
     public void CloseTop()
     {
-        if (stack.Count <= 0) return;
+        if (transitioning || stack.Count <= 0) return;
 
         var top = stack[^1];
         stack.RemoveAt(stack.Count - 1);
 
         if(top.pausesGame) TimescaleManager.Instance.UnpauseGame(top);
 
-        top.Close();
+        UIScreen next = Current;
 
-        Current?.SetFocused(true);
+        if (next != null && next.isHidden)
+        {
+            transitioning = true;
+            top.Close(() =>
+            {
+                transitioning = false;
+                next.Show();
+            });
+        }
+        else
+        {
+            top.Close();
+            next?.SetFocused(true);
+        }
+
         RefreshCursor();
     }
 
     public void CloseAll()
     {
-        while(stack.Count > 0) CloseTop();
+        transitioning = false;
+
+        for (int i = stack.Count; i >= 0 ; i--)
+        {
+            var screen = stack[i];
+            if(screen.pausesGame) TimescaleManager.Instance.UnpauseGame(screen);
+
+            if (i == stack.Count - 1 && !screen.isHidden && !screen.IsTransitioning)
+                screen.Close();
+            else
+                screen.CloseImmediate();
+        }
+
+        stack.Clear();
+        RefreshCursor();
     }
 
     public void Replace(string id, object payload = null)

@@ -117,14 +117,6 @@ public static class ProfileService
         meta.lastActiveSlot = profile.slotIndex;
         MetaStateSaveSystem.Save(meta);
 
-        if (RunSaveSystem.TryLoad(profile, out var run))
-        {
-            RunDataCarrier.BuildSavedRun(run);
-            SceneLoader.Instance.LoadRun();
-        }
-        else
-        {
-            SceneLoader.Instance.LoadHub();
-        }
+        SceneLoader.Instance.LoadHub();
     }
 }

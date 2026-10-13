@@ -267,6 +267,8 @@ public class RunManager : MonoBehaviour
 
         activeRoom.OnExitChosen -= HandleExitChosen;
 
+        HUDIndicatorService.Instance.ClearAll();
+
         roomService.Release(activeRoom);
         activeRoom = null;
     }
