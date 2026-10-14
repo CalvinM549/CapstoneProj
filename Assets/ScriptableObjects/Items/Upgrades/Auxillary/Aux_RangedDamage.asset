@@ -19,7 +19,8 @@ MonoBehaviour:
   icon: {fileID: -377942992, guid: 883c59f3f0726ce47a73d4662aa837e5, type: 3}
   slot: 4
   baseDropRate: 1
-  synergyTags: []
+  synergyTags:
+  - ranged
   spawnInShops: 1
   shopPrice: 50
   maxStacks: 5

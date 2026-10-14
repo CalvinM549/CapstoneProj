@@ -16,17 +16,18 @@ MonoBehaviour:
   upgradeName: Shock Blade
   flavourText: Extra current running through blade creates a delayed shock, though
     reduces the usual damage
-  effectText: Apply shock on melee attacks
+  effectText: Apply shock on melee attacks, but reduces base damage
   icon: {fileID: -244606152550997219, guid: 7d0efe94e9a483a4aab1df291185753a, type: 3}
   slot: 4
   baseDropRate: 1
-  synergyTags: []
+  synergyTags:
+  - status
   spawnInShops: 1
   shopPrice: 50
   maxStacks: 1
   statModifiers:
   - statID: player.combat.meleeDamage
-    value: -0.8
+    value: -0.5
     modifierType: 200
   statusData: {fileID: 11400000, guid: 64a16057ddc7f33498d628eed0d1b15f, type: 2}
   bleedStacksPerHit: 1

@@ -77,7 +77,7 @@ public abstract class PlayerTool : DatabaseEntry, ILootEntry
 
     [Header("Effect")]
 
-    public ToolActivation activation => ToolActivation.Instant;
+    public ToolActivation activation = ToolActivation.Instant;
     public float duration;
     public bool canEndEarly;
     public bool lockMovement;

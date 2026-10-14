@@ -52,7 +52,7 @@ MonoBehaviour:
   minRowGap: 0
   guaranteedCount: 0
   guarenteedMinProgress: 0
-  encounterBudgetModifier: 1
+  encounterBudgetModifier: 0.6
   minWaves: 0
   maxWaves: 0
   rewards:

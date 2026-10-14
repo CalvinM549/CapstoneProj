@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class HubBaseScreen : UIScreen
 {
     [SerializeField] private Button resumeButton;
-    [SerializeField] private TextMeshProUGUI statusLine;
+    [SerializeField] private TypewriterBox statusLine;
 
     private GameDatabase db;
 
@@ -23,7 +23,7 @@ public class HubBaseScreen : UIScreen
 
         var profile = GameManager.Instance.ActiveProfile;
         if (profile != null && statusLine != null)
-            statusLine.text = $"{profile.profileName} // RUNS {profile.runsAttempted} // CLEARS {profile.runVictoryCount} // SHARDS {profile.metaCurrency}";
+            statusLine.DisplayText($"{profile.profileName} // RUNS {profile.runsAttempted} // CLEARS {profile.runVictoryCount} // SHARDS {profile.metaCurrency}");
     }
 
     public void OnContinueClicked()

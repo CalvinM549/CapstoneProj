@@ -39,9 +39,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private LayerMask playerLayer;
     public static LayerMask PlayerLayer => Instance.playerLayer;
 
-    private bool tutorialActive;
-
-
     private void Awake()
     {
         if (Instance == null)
@@ -55,9 +52,10 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+#if UNITY_EDITOR
         SetActiveProfile(new PlayerProfile(0, "TESTPROFILE"));
-
         ActiveProfile.profileID = "TEST01";
+#endif
     }
 
     private void OnEnable()
@@ -131,7 +129,11 @@ public class GameManager : MonoBehaviour
 
     public void ExitGame()
     {
-
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     #endregion

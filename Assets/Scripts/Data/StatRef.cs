@@ -16,6 +16,8 @@ public static class StatRef
     public static string PlayerOutgoingDamageMult = "player.combat.globalDamage";
     public static string PlayerIncomingDamageMult = "player.combat.incomingDamageMult";
 
+    public static string PlayerReloadSpeed = "player.combat.reloadSpeed";
+
     // Health
     public static string PlayerStructureCount = "player.health.structureCount";
     public static string PlayerBaseStructureHealth = "player.health.baseStructureHealth";

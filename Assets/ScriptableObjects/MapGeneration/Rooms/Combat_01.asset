@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 950ba027e6d6ada4a9c44e2a52e76001, type: 3}
-  m_Name: restTEST
+  m_Name: Combat_01
   m_EditorClassIdentifier: Assembly-CSharp::RoomData
-  id: rest_01
-  type: {fileID: 11400000, guid: 7f8d18f9a8de42e44a97ae46ea5341c7, type: 2}
+  id: combat_01
+  type: {fileID: 11400000, guid: bf240c2093e89744cb51240a50a23a6e, type: 2}
   difficultyCost: 0
-  roomPrefab: {fileID: 6074118564554837086, guid: 9b97fd0f6af8c6045b74d77fa63275dd, type: 3}
+  roomPrefab: {fileID: 3310053853735739365, guid: f1fb2de7d569a774b9f954081e77caa2, type: 3}
   minChapter: 0
   maxChapter: 99
   encounterWaves: []

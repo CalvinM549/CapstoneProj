@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73ec7338b4412a445b612a76a71c18e5, type: 3}
   m_Name: ToolDatabase
   m_EditorClassIdentifier: Assembly-CSharp::ToolDatabase
-  entries: []
+  entries:
+  - {fileID: 11400000, guid: d023ba7e2cf3e3943a189fe48622b43c, type: 2}

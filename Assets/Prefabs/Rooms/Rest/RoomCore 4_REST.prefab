@@ -11295,6 +11295,7 @@ MonoBehaviour:
   - {fileID: 5008568076838270757}
   - {fileID: 7048941372870446392}
   - {fileID: 334063328321656558}
+  playerSpawnPoint: {fileID: 0}
   fallbackEntryPoint: {x: 0, y: 0}
   spawnPoints:
   - {fileID: 1869192613839326046}

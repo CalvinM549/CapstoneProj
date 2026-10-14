@@ -347,8 +347,8 @@ MonoBehaviour:
   mainBarDuration: 0.08
   delayFillDelay: 0.5
   delayFillDuration: 1
-  hitPunchScale: 0.15
-  hitPunchDuration: 0.3
+  hitPunchScale: 1.15
+  hitPunchDuration: 0.2
 --- !u!114 &7725701863275697632
 MonoBehaviour:
   m_ObjectHideFlags: 0

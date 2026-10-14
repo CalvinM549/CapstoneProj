@@ -11,6 +11,7 @@ public class RewardSelectionScreen : UIScreen
     [SerializeField] private float timeBetweenCards = 0.15f;
 
     [Header("References")]
+    [SerializeField] private Transform optionPositionContainer;
     [SerializeField] private Transform optionContainer;
     [SerializeField] private TextMeshProUGUI promptText;
 
@@ -32,7 +33,13 @@ public class RewardSelectionScreen : UIScreen
 
         foreach (var option in data.options)
         {
-            var button = Instantiate(cardPrefab, optionContainer);
+            //var positionLock = new GameObject("optionPos", typeof(RectTransform));
+            //positionLock.transform.SetParent(optionPositionContainer);
+
+            var button = Instantiate(cardPrefab, optionPositionContainer);
+            //button.GetComponent<RectTransform>().pivot = positionLock.GetComponent<RectTransform>().pivot;
+            //button.GetComponent<RectTransform>().position = positionLock.GetComponent<RectTransform>().position ;
+
             button.Setup(option, () => HandleSelected(option));
             button.cg.alpha = 0f;
             activeCards.Add(button);

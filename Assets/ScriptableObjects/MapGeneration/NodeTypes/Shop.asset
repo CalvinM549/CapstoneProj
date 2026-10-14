@@ -72,9 +72,4 @@ MonoBehaviour:
         weight: 1
         weightPerDepth: 0
       count: 1
-    - categories:
-      - category: 3
-        weight: 1
-        weightPerDepth: 0
-      count: 1
     fallbackCurrency: 25

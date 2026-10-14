@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class StatusEffectController : MonoBehaviour
@@ -40,12 +41,12 @@ public class StatusEffectController : MonoBehaviour
         if (TimescaleManager.IsPaused) return;
         if(activeEffects.Count == 0) return;
 
-        keysSnapshot.Clear();
-        keysSnapshot.AddRange(activeEffects.Keys);
+        //keysSnapshot.Clear();
+        //keysSnapshot.AddRange(activeEffects.Keys);
 
         expiredThisFrame.Clear();
 
-        foreach (var data in keysSnapshot)
+        foreach (var data in activeEffects.Keys.ToList())
         {
             if (!activeEffects.TryGetValue(data, out var instance)) continue;
 
@@ -169,7 +170,6 @@ public class StatusEffectController : MonoBehaviour
             isParryable = false,
             isBlockable = false,
         };
-
 
         damageable.RecieveHit(hit);
     }

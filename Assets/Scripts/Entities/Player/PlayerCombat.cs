@@ -12,6 +12,8 @@ public class PlayerCombat : MonoBehaviour
     private StatValue meleeDamage;
     private StatValue rangedDamage;
 
+    private StatValue reloadSpeed;
+
     [SerializeField] private PlayerMeleeController hitboxes;
 
     private GameplayInputReader input;
@@ -67,6 +69,7 @@ public class PlayerCombat : MonoBehaviour
         globalDamage = p.Stats.GetStatValue(StatRef.PlayerOutgoingDamageMult);
         meleeDamage = p.Stats.GetStatValue(StatRef.PlayerMeleeDamageMult);
         rangedDamage = p.Stats.GetStatValue(StatRef.PlayerRangedDamageMult);
+        reloadSpeed = p.Stats.GetStatValue(StatRef.PlayerReloadSpeed);
 
         if(weapon != null)
             EquipRangedWeapon(weapon);
@@ -531,7 +534,7 @@ public class PlayerCombat : MonoBehaviour
     {
         if (rangedCooldownTimer > 0f)
         {
-            rangedCooldownTimer -= Time.deltaTime;
+            rangedCooldownTimer -= Time.deltaTime * reloadSpeed.Value;
             if(HasWeaponEquipped)
                 OnReloadChanged?.Invoke(rangedCooldownTimer / EquippedWeapon.data.cooldown);
         }

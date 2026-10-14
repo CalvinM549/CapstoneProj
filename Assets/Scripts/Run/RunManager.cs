@@ -237,8 +237,8 @@ public class RunManager : MonoBehaviour
         activeRoom.OnExitChosen += HandleExitChosen;
 
         // Setup Player
-        var entryDoor = arriving ? activeRoom.EntryDoor : null;
-        Vector2 startPos = entryDoor != null ? entryDoor.EntryPos : activeRoom.EntryPoint;
+        //var entryDoor = arriving ? activeRoom.EntryDoor : null;
+        Vector2 startPos = activeRoom.EntryPoint;
 
         GameEvents.PlayerTransitionTeleport(activeRoom.EntryPoint);
         activePlayer.PrepareForRoomChange();
@@ -252,10 +252,10 @@ public class RunManager : MonoBehaviour
 
         activeRoom.Activate();
 
-        if (entryDoor != null)
-            StartCoroutine(ArrivalRoutine(entryDoor));
-        else
-            activePlayer.Animator.SetMaskInteraction(SpriteMaskInteraction.None);
+        //if (entryDoor != null)
+        //    StartCoroutine(ArrivalRoutine(entryDoor));
+        //else
+        activePlayer.Animator.SetMaskInteraction(SpriteMaskInteraction.None);
     }
 
     private void ReleaseActiveRoom()
@@ -350,18 +350,21 @@ public class RunManager : MonoBehaviour
 
         if (activeRoom == null) return;
 
-        switch (activeRoom.State)
-        {
-            case RoomState.Active:
-                currentRun.Tick(Time.deltaTime);
-                break;
-            case RoomState.Idle:
-                currentRun.Tick(Time.deltaTime / 2);
-                break;
+        currentRun.Tick(Time.deltaTime);
 
-            default:
-                break;
-        }
+
+        //switch (activeRoom.State)
+        //{
+        //    case RoomState.Active:
+        //        currentRun.Tick(Time.deltaTime);
+        //        break;
+        //    case RoomState.Idle:
+        //        currentRun.Tick(Time.deltaTime / 2);
+        //        break;
+
+        //    default:
+        //        break;
+        //}
     }
 
     #region Run Counters

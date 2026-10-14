@@ -64,7 +64,7 @@ public class RunPrepScreen : UIScreen
         List<Vector2Int> list = new(map);
         for (int i = 0; i < list.Count; i++)
         {
-            SpawnTile(list[i], Color.Lerp(Color.green, Color.red, ((float)i / (float)(list.Count - 1))));
+            SpawnTile(list[i], Color.Lerp(Color.green, Color.green, ((float)i / (float)(list.Count - 1))));
             yield return new WaitForSeconds(delay);
         }
     }

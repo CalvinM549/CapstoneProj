@@ -39,6 +39,8 @@ public class PlayerStats : MonoBehaviour, IStatModifiable
         Register(StatRef.PlayerOutgoingDamageMult, 1f);
         Register(StatRef.PlayerIncomingDamageMult, 1f);
 
+        Register(StatRef.PlayerReloadSpeed, 1f);
+
         // Momentum
         Register(StatRef.PlayerMomentumGainMult, 1f);
         Register(StatRef.PlayerMomentumDrainMult, 1f);
@@ -46,8 +48,8 @@ public class PlayerStats : MonoBehaviour, IStatModifiable
         // Heat
 
 #if UNITY_EDITOR
-        if (DebugManager.GodMode)
-            ApplyStatModifier(StatRef.PlayerOutgoingDamageMult, new(99, StatModType.PercentMult));
+        //if (DebugManager.GodMode)
+        //    ApplyStatModifier(StatRef.PlayerOutgoingDamageMult, new(99, StatModType.PercentMult));
 #endif
     }
 

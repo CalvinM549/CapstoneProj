@@ -30,7 +30,9 @@ public class RoomManager : MonoBehaviour
 
     public Doorway EntryDoor => entryDoor;
     public int ExitCount => exitDoors.Length;
-    public Vector2 EntryPoint => fallbackEntryPoint;
+    public Vector2 EntryPoint => playerSpawnPoint != null ? playerSpawnPoint.position : fallbackEntryPoint;
+
+    [SerializeField] private Transform playerSpawnPoint;
 
     [SerializeField] private Vector2 fallbackEntryPoint;
 

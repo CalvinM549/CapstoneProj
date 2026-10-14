@@ -84,10 +84,11 @@ public class RadialEnemyHealthBar : MonoBehaviour
         fillTween?.Kill();
         fillTween = fillImage.DOFillAmount(targetFill, mainBarDuration).SetEase(Ease.OutQuart);
 
-        if (hit.attackType != AttackType.DamageOverTime)
+        if (hit.attackType != AttackType.DamageOverTime || hit.attackType != AttackType.Elemental)
         {
             punchTween?.Kill();
-            punchTween = barRoot.DOPunchScale(Vector3.one * hitPunchScale, hitPunchDuration, 5, 0.5f);
+            barRoot.localScale = Vector3.one * circleScale * hitPunchScale;
+            punchTween = barRoot.DOScale(Vector3.one * circleScale, hitPunchDuration);
         }
     }
 

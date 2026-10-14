@@ -4782,7 +4782,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4de9a2adc4d6efc4a9981a6490261d6a, type: 2}
+  - {fileID: -876546973899608171, guid: 8213904909560434c81fbe3fc1ab6bd6, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4899,7 +4899,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4de9a2adc4d6efc4a9981a6490261d6a, type: 2}
+  - {fileID: -876546973899608171, guid: 8213904909560434c81fbe3fc1ab6bd6, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4944,7 +4944,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 435d2f5a3ba50404abb727bffb28d8f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HomingProjectile
-  data: {fileID: 0}
   homingAccel: 80
   maxSpeed: 50
   armingDistance: 3

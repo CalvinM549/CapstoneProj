@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class EncounterService
@@ -26,16 +25,14 @@ public class EncounterService
             return Array.Empty<EnemyWave>();
         }
 
-        float totalBudget = Mathf.Max(config.baseBudget + (config.budgetPerDepth * run.currentDepth), 0);
-
-        float budget = (config.baseBudget + config.budgetPerDepth * node.depth + node.room.difficultyCost)
-            * node.type.encounterBudgetModifier;
+        float budget = Mathf.Max((config.baseBudget + config.budgetPerDepth * node.depth + node.room.difficultyCost)
+            * node.type.encounterBudgetModifier, 0f);
 
         int minWaves = node.type.minWaves > 0 ? node.type.minWaves : config.minWaves;
         int maxWaves = node.type.maxWaves > 0 ? node.type.maxWaves : config.maxWaves;
 
-        int waveCount = Mathf.Clamp(Mathf.RoundToInt(totalBudget / config.budgetPerWave), minWaves, maxWaves);
-        float perWaveBudget = totalBudget / waveCount;
+        int waveCount = Mathf.Clamp(Mathf.RoundToInt(budget / config.budgetPerWave), minWaves, maxWaves);
+        float perWaveBudget = budget / waveCount;
 
         // Get rng instance
         var rng = RNGManager.NodeRng(run.Seed, run.CurrentNode.coordinates);

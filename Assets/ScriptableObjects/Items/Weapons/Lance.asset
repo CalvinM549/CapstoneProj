@@ -17,7 +17,7 @@ MonoBehaviour:
   flavourText: "High powered lasers fry circutry and melt plating\t\t"
   effectText: Fires a long range, piercing beam
   icon: {fileID: 21300000, guid: 26817e353e74b044d892655bb0d02b03, type: 3}
-  cooldown: 1
+  cooldown: 2.5
   baseAmmo: 10
   fireType: 0
   automatic: 0

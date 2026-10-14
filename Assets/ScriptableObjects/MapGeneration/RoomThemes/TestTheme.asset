@@ -24,8 +24,8 @@ MonoBehaviour:
     to:
     - {fileID: 11400000, guid: 3b05f76e16f3f47409f9eb6f58571f6e, type: 2}
     - {fileID: 11400000, guid: 8122e01db2b744b48a8ed6809ccb226e, type: 2}
-    - {fileID: 11400000, guid: ec8719b724922bf4ba4dbec64ade4e00, type: 2}
-    chance: 0.1
+    - {fileID: 11400000, guid: cf8fb0877ee16a54e9d52b375d5e3480, type: 2}
+    chance: 0.07
   wallTints:
   - {r: 0.7643734, g: 0.8396226, b: 0.76939005, a: 1}
   - {r: 0.8396226, g: 0.81374747, b: 0.75645244, a: 1}

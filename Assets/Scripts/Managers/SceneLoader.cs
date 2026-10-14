@@ -50,7 +50,7 @@ public class SceneLoader : MonoBehaviour
         }
 
 #else
-        LoadScene(HUB);
+        LoadScene(MAINMENU);
 #endif
     }
 
