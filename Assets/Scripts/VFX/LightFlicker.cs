@@ -35,10 +35,6 @@ public class FlickerProfile
     public float humSpeed = 8f;
 }
 
-/// <summary>
-/// Faulty-light flicker: mostly stable, with clustered bursts of short blinks and occasional outages.
-/// Drives any mix of a GameObject toggle, a material property on sprites, and Light2D intensity.
-/// </summary>
 public class LightFlicker : MonoBehaviour
 {
     private enum Phase { Calm, BlinkOff, BlinkOn, Outage }

@@ -22,10 +22,10 @@ public class TypewriterBox : MonoBehaviour
     private void Start()
     {
         if (playOnStart)
-            DisplayText();
+            SetText();
     }
 
-    public void DisplayText(string text = null)
+    public void SetText(string text = null)
     {
         if (typeRoutine != null)
         {

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1da3063642f899243bb8bfed8c32253f, type: 3}
+  m_Name: Aux_BleedOnRanged
+  m_EditorClassIdentifier: Assembly-CSharp::Aux_StatusOnHit
+  id: 97055688-b635-4355-94b0-bee9a63bcc8b
+  upgradeName: Shredder Rounds
+  flavourText: 
+  effectText: 50% chance to bleed when hitting an enemy with a ranged attack
+  icon: {fileID: -389371109008627860, guid: a85029b4da19eb84d8e05a7749949aea, type: 3}
+  slot: 4
+  baseDropRate: 1
+  synergyTags: []
+  spawnInShops: 1
+  shopPrice: 50
+  maxStacks: 1
+  statModifiers: []
+  statusData: {fileID: 11400000, guid: 8fedeb4ba8d97014f9a77c1e71d82e90, type: 2}
+  procChance: 0.5
+  stacksPerHitPerStack: 1
+  applierTypes: 02000000

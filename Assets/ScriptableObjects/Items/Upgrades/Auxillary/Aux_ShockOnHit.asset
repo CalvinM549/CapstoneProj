@@ -30,4 +30,6 @@ MonoBehaviour:
     value: -0.5
     modifierType: 200
   statusData: {fileID: 11400000, guid: 64a16057ddc7f33498d628eed0d1b15f, type: 2}
-  bleedStacksPerHit: 1
+  procChance: 1
+  stacksPerHitPerStack: 1
+  applierTypes: 0000000001000000

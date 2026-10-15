@@ -9,6 +9,7 @@ public class MapGenerationService
     private const int SaltTypes = 0x7E57;
     private const int SaltRooms = 0x2007;
     private const int SaltRewards = 0x5EED;
+    private const int SaltShard = 0xAC23;
     private const int SaltCode = 0xC0DE;
 
     private const string CodeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -295,18 +296,6 @@ public class MapGenerationService
     #endregion
 
     #region Assign Rewards
-
-    private void AssignRewards(List<List<MapNode>> rows, int seed)
-    {
-
-        foreach (var row in rows)
-            foreach (var node in row)
-            {
-                var rng = new System.Random(seed ^ 0x5EED);
-                node.offers = node.type.rewards.Resolve(node.depth, rng);
-            }
-    }
-
     private void AssignOffers(List<List<MapNode>> rows, int seed)
     {
         foreach(var row in rows)
@@ -319,7 +308,15 @@ public class MapGenerationService
 
                 var codeRng = RNGManager.NodeRng(seed, node.coordinates, SaltCode);
                 node.sectorCode = MakeCode(codeRng, codeRng.Next(3, 7));
+
+                var shardRng = RNGManager.NodeRng(seed, node.coordinates, SaltShard);
+                node.grantShard = AssignShards(shardRng, node.depth);
             }
+    }
+
+    private bool AssignShards(System.Random rng, int depth)
+    {
+        return rng.NextDouble() > config.shardBaseChance + (config.shardChancePerDepth * depth); 
     }
 
     private static string MakeCode(System.Random rng, int length)
@@ -390,6 +387,7 @@ public class MapGenerationService
             throw new InvalidOperationException($"[MapGen] Unreachable nodes (seed {map.seed})");
     }
 
+    #endregion
     private static T WeightedPick<T>(IReadOnlyList<(T item, float weight)> entries, System.Random rng)
     {
         if (entries.Count == 1) return entries[0].item;
@@ -402,12 +400,11 @@ public class MapGenerationService
         for (int i = 0; i < entries.Count; i++)
         {
             roll -= entries[i].weight;
-            if(roll <= 0f) 
+            if (roll <= 0f)
                 return entries[i].item;
         }
 
         return entries[^1].item;
     }
 
-    #endregion
 }

@@ -3,9 +3,19 @@ using UnityEngine;
 public class ProfilesScreen : UIScreen
 {
     [SerializeField] private ProfileSlotUI[] slots;
+    [SerializeField] private LightFlicker flicker;
 
-    protected override void OnBeforeOpen(object payload) => Refresh();
+    protected override void OnBeforeOpen(object payload)
+    {
+        flicker.SetReaching();
+        Refresh();
+    }
     protected override void OnFocusRegained() => Refresh();
+
+    protected override void OnClosed()
+    {
+        flicker.SetDormant();
+    }
 
     private void Refresh()
     {

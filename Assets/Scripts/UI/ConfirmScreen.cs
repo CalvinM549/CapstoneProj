@@ -20,16 +20,18 @@ public class ConfirmRequest
 
 public class ConfirmScreen : UIScreen
 {
-    [SerializeField] private TextMeshProUGUI messageText;
+    [SerializeField] private TypewriterBox messageText;
     [SerializeField] private TerminalButton confirmButton;
+    [SerializeField] private TerminalButton cancelButton;
 
     private ConfirmRequest request;
 
     protected override void OnBeforeOpen(object payload)
     {
         request = (ConfirmRequest)payload;
-        messageText.text = request?.message ?? "CONFIRM?";
+        messageText.SetText(request?.message ?? "CONFIRM?"); 
         confirmButton.SetLabel(request?.confirmLabel ?? "CONFIRM");
+        cancelButton.SetLabel("CANCEL");
     }
 
     public void OnConfirmClicked()

@@ -333,7 +333,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4210835604444822184}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
   m_Name: 
@@ -727,6 +727,7 @@ MonoBehaviour:
   shootFlashFX: 0
   sightStartOffset: 0
   laser: {fileID: 3424086160838113460}
+  applyStatusOnHit: {fileID: 0}
 --- !u!50 &-7337528523074580318
 Rigidbody2D:
   serializedVersion: 5

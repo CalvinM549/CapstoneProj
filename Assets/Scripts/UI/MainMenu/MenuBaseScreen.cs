@@ -40,7 +40,18 @@ public class MenuBaseScreen : UIScreen
 
     public void OnExitClicked()
     {
-        GameManager.Instance.ExitGame();
+        UIManager.Instance.OpenScreen("confirmScreen", new ConfirmRequest(
+        "EXIT GAME?",
+        () =>
+        {
+            GameManager.Instance.ExitGame(); ;
+        },
+        "EXIT"));
+    }
+
+    public override void HandleCancel()
+    {
+        OnExitClicked();
     }
 
 }

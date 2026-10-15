@@ -15,5 +15,6 @@ public class MapNode
     public List<MapNode> exits = new();
 
     public ResolvedOffer[] offers;
+    public bool grantShard = false;
     public string sectorCode;
 }

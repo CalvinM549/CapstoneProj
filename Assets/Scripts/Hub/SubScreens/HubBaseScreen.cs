@@ -15,7 +15,7 @@ public class HubBaseScreen : UIScreen
     }
 
     protected override void OnBeforeOpen(object payload) => Refresh();
-    protected override void OnFocusRegained() => Refresh();
+    protected override void OnFocusRegained() { }
 
     private void Refresh()
     {
@@ -23,7 +23,7 @@ public class HubBaseScreen : UIScreen
 
         var profile = GameManager.Instance.ActiveProfile;
         if (profile != null && statusLine != null)
-            statusLine.DisplayText($"{profile.profileName} // RUNS {profile.runsAttempted} // CLEARS {profile.runVictoryCount} // SHARDS {profile.metaCurrency}");
+            statusLine.SetText($"{profile.profileName} // RUNS {profile.runsAttempted} // CLEARS {profile.runVictoryCount} // SHARDS {profile.metaCurrency}");
     }
 
     public void OnContinueClicked()
@@ -55,7 +55,7 @@ public class HubBaseScreen : UIScreen
     public void OnDisconnectClicked()
     {
         UIManager.Instance.OpenScreen("confirmScreen", new ConfirmRequest(
-            "DISCONNECT FROM CORE?",
+            $"DISCONNECT FROM {GameManager.Instance.ActiveProfile.profileName}?",
             () =>
             {
                 GameManager.Instance.SaveActiveProfile();

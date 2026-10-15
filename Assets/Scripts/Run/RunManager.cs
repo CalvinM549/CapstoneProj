@@ -180,26 +180,15 @@ public class RunManager : MonoBehaviour
     }
     #endregion
 
+    #region Ending Runs
+
     private void HandleRunEnd(bool victory)
     {
         if (runEnded) return;
         runEnded = true;
         transitioning = true;
 
-        runServices.currency.ForceCollectAll();
-
-        activePlayerUI.SetUIAlpha(0f);
-        activePlayer.SetPlayerCanAct(false);
-        activePlayer.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
-
-        if (!victory)
-        {
-            ScreenGlitch.Instance.SetBaseline(0.2f);
-
-        }
-
         // Update profile based on run results
-
         var profile = GameManager.Instance.ActiveProfile;
         if (profile != null)
         {
@@ -207,6 +196,22 @@ public class RunManager : MonoBehaviour
             profile.RegisterRunResult(victory, currentRun.runDurationTimer);
             GameManager.Instance.SaveActiveProfile();
         }
+
+        StartCoroutine(RunEndRoutine(victory));
+    }
+
+    private IEnumerator RunEndRoutine(bool victory)
+    {
+        runServices.currency.ForceCollectAll();
+
+        activePlayerUI.SetUIAlpha(0f);
+        activePlayer.SetPlayerCanAct(false);
+        activePlayer.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
+
+        if (!victory)
+            ScreenGlitch.Instance.SetBaseline(0.2f);
+
+        yield return new WaitForSeconds(1.0f);
 
         string screenTag = victory
             ? "victoryScreen"
@@ -220,6 +225,8 @@ public class RunManager : MonoBehaviour
         ScreenGlitch.Instance.SetBaseline(0f);
         SceneLoader.Instance.LoadHub();
     }
+
+    #endregion
 
     #region Room Transitions
     private void EnterNode(MapNode newNode, bool arriving = false, bool resuming = false)
@@ -346,33 +353,14 @@ public class RunManager : MonoBehaviour
     private void UpdateRunTick()
     {
         if (TimescaleManager.IsPaused) return;
-        if (currentRun == null || runEnded) return;
-
+        if (runEnded) return;
+        if (currentRun == null) return;
         if (activeRoom == null) return;
 
         currentRun.Tick(Time.deltaTime);
-
-
-        //switch (activeRoom.State)
-        //{
-        //    case RoomState.Active:
-        //        currentRun.Tick(Time.deltaTime);
-        //        break;
-        //    case RoomState.Idle:
-        //        currentRun.Tick(Time.deltaTime / 2);
-        //        break;
-
-        //    default:
-        //        break;
-        //}
     }
 
     #region Run Counters
-
-    private void HandleEnemyDeath()
-    {
-
-    }
 
     #endregion
 

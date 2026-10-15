@@ -15,7 +15,7 @@ public class RunVictoryUI : UIScreen
     protected override void OnOpened()
     {
 
-        statsBox.DisplayText();
+        statsBox.SetText();
     }
 
     public void ReturnToHub()

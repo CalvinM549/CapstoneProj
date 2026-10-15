@@ -53,6 +53,7 @@ public class MapSaveData
                 typeId = node.type.Id,
                 roomId = node.room.Id,
                 sectorCode = node.sectorCode,
+                hasShard = node.grantShard
             };
 
             foreach(var offer in node.offers)
@@ -118,6 +119,7 @@ public class MapSaveData
                 type = type,
                 room = room,
                 sectorCode = savedNode.sectorCode,
+                grantShard = savedNode.hasShard,
                 offers = offers
             };
 
@@ -174,6 +176,7 @@ public class SavedNode
     public string typeId;
     public string roomId;
     public string sectorCode;
+    public bool hasShard;
     public List<SavedOffer> offers = new();
     public List<string> exits = new();
 }
