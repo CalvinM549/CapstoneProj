@@ -5938,7 +5938,7 @@ GameObject:
   - component: {fileID: 541640046}
   - component: {fileID: 541640047}
   - component: {fileID: 541640048}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: RunScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6680,7 +6680,7 @@ GameObject:
   m_Component:
   - component: {fileID: 825545294}
   - component: {fileID: 825545293}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UIManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7262,7 +7262,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1013202608}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: SettingsScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7437,7 +7437,6 @@ GameObject:
   - component: {fileID: 1229318664}
   - component: {fileID: 1229318663}
   - component: {fileID: 1229318666}
-  - component: {fileID: 1229318667}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -7563,30 +7562,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &1229318667
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1229318662}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.PixelPerfectCamera
-  m_ComponentVersion: 1
-  m_AssetsPPU: 16
-  m_RefResolutionX: 480
-  m_RefResolutionY: 270
-  m_CropFrame: 0
-  m_GridSnapping: 2
-  m_FilterMode: 0
-  m_UpscaleRT: 0
-  m_PixelSnapping: 0
-  m_CropFrameX: 0
-  m_CropFrameY: 0
-  m_StretchFill: 0
 --- !u!1 &1253698363
 GameObject:
   m_ObjectHideFlags: 0
@@ -7961,7 +7936,7 @@ GameObject:
   - component: {fileID: 1289917056}
   - component: {fileID: 1289917055}
   - component: {fileID: 1289917054}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8185,7 +8160,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1392013035}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ArchiveScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8292,8 +8267,8 @@ MonoBehaviour:
 
     RMB - Ranged Attack'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3f377b322220fb4488e4281bac69437b, type: 2}
-  m_sharedMaterial: {fileID: -5492826108559218408, guid: 3f377b322220fb4488e4281bac69437b, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0194c39aa7b999f45ac7b69b3efc0486, type: 2}
+  m_sharedMaterial: {fileID: 769845779282155400, guid: 0194c39aa7b999f45ac7b69b3efc0486, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -8317,8 +8292,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 12
-  m_fontSizeBase: 12
+  m_fontSize: 16
+  m_fontSizeBase: 16
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -8396,7 +8371,7 @@ GameObject:
   - component: {fileID: 1541210669}
   - component: {fileID: 1541210671}
   - component: {fileID: 1541210670}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9590,7 +9565,7 @@ GameObject:
   - component: {fileID: 2141913219}
   - component: {fileID: 2141913220}
   - component: {fileID: 2141913221}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: BaseScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}

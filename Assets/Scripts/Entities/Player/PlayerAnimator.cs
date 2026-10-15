@@ -121,9 +121,9 @@ public class PlayerAnimator : MonoBehaviour
     {
         IsFacingRight = !IsFacingRight;
 
-        Vector3 scaler = sr.transform.localScale;
-        scaler.x *= -1;
-        sr.transform.localScale = scaler;
+        Vector3 scale = sr.transform.localScale;
+        scale.x *= -1;
+        sr.transform.localScale = scale;
     }
 
     #endregion

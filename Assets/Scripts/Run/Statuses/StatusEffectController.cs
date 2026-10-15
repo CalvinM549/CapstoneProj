@@ -22,12 +22,10 @@ public class StatusEffectController : MonoBehaviour
         stats = GetComponent<IStatModifiable>();
 
         if (stats == null)
-            Debug.LogWarning($"[StatusEffectController] No IStatModifiable found on '{name}' — " +
-                              "stat-modifying effects applied here will silently skip their stat changes.");
+            Debug.LogWarning($"[StatusEffectController] No IStatModifiable found on '{name}'");
 
         if (damageable == null)
-            Debug.LogWarning($"[StatusEffectController] No IDamageable found on '{name}' — " +
-                              "damage/heal-over-time effects applied here will silently skip ticking.");
+            Debug.LogWarning($"[StatusEffectController] No IDamageable found on '{name}'");
 
     }
 
@@ -107,12 +105,11 @@ public class StatusEffectController : MonoBehaviour
 
     public void RemoveEffect(StatusEffectData data)
     {
-        if (!activeEffects.TryGetValue(data, out var instance)) return;
+        if (!activeEffects.Remove(data, out var instance)) return;
 
         stats?.RemoveModifiersFromSource(instance);
         data.OnExpire(instance, gameObject);
 
-        activeEffects.Remove(data); 
         OnEffectsChanged?.Invoke();
     }
 

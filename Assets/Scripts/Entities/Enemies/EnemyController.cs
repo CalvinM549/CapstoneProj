@@ -207,8 +207,10 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     protected virtual void Die()
     {
-        OnDespawn();
+        if (!IsAlive) return;
         IsAlive = false;
+
+        OnDespawn();
 
         VFXManager.Instance.PlayVFX(VFXType.ExplosionComplex, transform.position);
         //RunManager.Instance.currencyDropService.DropBurst(transform.position, data.baseCurrencyDrop, 4);
