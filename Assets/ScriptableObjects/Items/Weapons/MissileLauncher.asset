@@ -31,7 +31,9 @@ MonoBehaviour:
   synergyTags: []
   spawnInShops: 1
   shopPrice: 50
-  currentAmmo: 11
+  unlockedByDefault: 0
+  listInUnlocks: 1
+  unlockCost: 250
   burstCount: 4
   burstSpread: 0
   burstDelay: 0.1

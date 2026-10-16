@@ -7,29 +7,67 @@ public struct ArchiveScreenPayload
     public List<string> UnlockedIDs;
 }
 
-public class ArchiveScreen : UIScreen
+// Recovered lore logs. Locked entries are listed but unreadable.
+public class ArchiveScreen : ListDetailScreen
 {
+    [Header("Archive")]
     [SerializeField] private Transform container;
-    [SerializeField] private ArchiveEntryUI entryPrefab;
 
-    private readonly List<ArchiveEntryUI> spawned = new();
+    [SerializeField] private string lockedLabelFormat = "??? // LOG {0:00}";
+    [SerializeField] private string lockedTitle = "[DATA CORRUPTED]";
+    [SerializeField] [TextArea] private string lockedBody = "> SIGNAL FRAGMENT UNRECOVERABLE\n> RECOVER THIS LOG IN THE FIELD";
+    [SerializeField] private string emptyLabel = "NO LOGS INDEXED";
+
+    private ArchiveScreenPayload data;
 
     protected override void OnBeforeOpen(object payload)
     {
-        var data = (ArchiveScreenPayload)payload;
+        data = payload is ArchiveScreenPayload p && p.AllEntries != null
+            ? p
+            : new ArchiveScreenPayload
+            {
+                AllEntries = GameManager.Database.archives.All,
+                UnlockedIDs = GameManager.Instance.ActiveProfile?.unlockedArchives ?? new List<string>()
+            };
 
-        foreach (var instance in spawned)
-            Destroy(instance.gameObject);
+        base.OnBeforeOpen(payload);
+    }
 
-        spawned.Clear();
+    protected override void Rebuild()
+    {
+        ClearItems();
 
-        foreach (var entry in data.AllEntries)
+        int unlockedCount = 0;
+
+        for (int i = 0; i < data.AllEntries.Count; i++)
         {
-            bool unlocked = data.UnlockedIDs.Contains(entry.Id);
+            var entry = data.AllEntries[i];
+            if (entry == null) continue;
 
-            var tile = Instantiate(entryPrefab, container);
-            tile.Setup(entry, unlocked);
-            spawned.Add(tile);
+            bool unlocked = data.UnlockedIDs.Contains(entry.Id);
+            if (unlocked) unlockedCount++;
+
+            string label = unlocked ? entry.Title.ToUpperInvariant() : string.Format(lockedLabelFormat, i + 1);
+
+            AddItem(container).Setup(
+                label,
+                onHover: () => ShowEntry(entry, unlocked),
+                data: entry);
         }
+
+        if (items.Count == 0)
+            AddItem(container).Setup(emptyLabel, interactable: false);
+
+        SetHeaderInfo($"LOGS RECOVERED {unlockedCount}/{data.AllEntries.Count}");
+    }
+
+    private void ShowEntry(ArchiveData entry, bool unlocked)
+    {
+        if (detail == null) return;
+
+        if (unlocked)
+            detail.Show(entry.Title.ToUpperInvariant(), entry.Text);
+        else
+            detail.Show(lockedTitle, lockedBody);
     }
 }

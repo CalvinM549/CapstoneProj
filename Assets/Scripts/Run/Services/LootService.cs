@@ -36,19 +36,37 @@ public class LootService
         this.db = db;
     }
 
-    public List<LootResult> RollSlot(MapNode node, RunState run, int slot)
+    // rerollIndex 0 is the original offer. Each reroll gets its own seeded stream, so reroll N at a node
+    // is identical for the same seed. 'exclude' keeps the cards currently on screen out of the new roll where possible.
+    public List<LootResult> RollSlot(MapNode node, RunState run, int slot, int rerollIndex = 0, ICollection<string> exclude = null)
     {
         if(slot < 0 || slot >= node.offers.Length) return new List<LootResult>();
 
         var offer = node.offers[slot];
-        var rng = RNGManager.NodeRng(run.map.seed, node.coordinates, salt: slot + 1);
+        int salt = rerollIndex == 0 ? slot + 1 : (slot + 1) + rerollIndex * 7919;
+        var rng = RNGManager.NodeRng(run.map.seed, node.coordinates, salt);
 
-        return Roll(new LootRequest
+        var request = new LootRequest
         {
             category = offer.category,
             count = offer.count,
             isShop = node.type.isShop
-        }, run.rewardContext, rng, node.depth);
+        };
+
+        var result = Roll(request, run.rewardContext, rng, node.depth, exclude);
+
+        // Not enough fresh items left: keep the fresh ones, then fill the gap with repeats
+        if (exclude != null && exclude.Count > 0 && result.Count < offer.count)
+        {
+            var taken = new HashSet<string>();
+            foreach (var r in result) taken.Add(r.Item.Id);
+
+            var fill = request;
+            fill.count = offer.count - result.Count;
+            result.AddRange(Roll(fill, run.rewardContext, rng, node.depth, taken));
+        }
+
+        return result;
     }
 
     public List<LootResult> RollAll(MapNode node, RunState run)
@@ -61,9 +79,19 @@ public class LootService
         return all;
     }
 
-    public List<LootResult> Roll(LootRequest request, RewardContext ctx, System.Random rng, int depth)
+    public List<LootResult> Roll(LootRequest request, RewardContext ctx, System.Random rng, int depth, ICollection<string> exclude = null)
     {
         BuildPool(request, ctx);
+
+        if (exclude != null && exclude.Count > 0)
+        {
+            for (int i = lootPool.Count - 1; i >= 0; i--)
+            {
+                if (!exclude.Contains(lootPool[i].Id)) continue;
+                lootPool.RemoveAt(i);
+                weights.RemoveAt(i);
+            }
+        }
 
         var result = new List<LootResult>(request.count);
 

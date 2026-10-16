@@ -15,9 +15,11 @@ public class MenuBaseScreen : UIScreen
     private void RefreshContinue()
     {
         bool hasProfile = ProfileService.TryGetContinueProfile(out continueProfile);
-        continueButton.interactable = hasProfile;
 
         if (continueButton != null)
+            continueButton.interactable = hasProfile;
+
+        if (continueDetail != null)
         {
             continueDetail.text = !hasProfile
                 ? "NO ACTIVE INSTANCE"

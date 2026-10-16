@@ -7,14 +7,14 @@ public class ProfilesScreen : UIScreen
 
     protected override void OnBeforeOpen(object payload)
     {
-        flicker.SetReaching();
+        if (flicker != null) flicker.SetReaching();
         Refresh();
     }
     protected override void OnFocusRegained() => Refresh();
 
     protected override void OnClosed()
     {
-        flicker.SetDormant();
+        if (flicker != null) flicker.SetDormant();
     }
 
     private void Refresh()
@@ -38,7 +38,15 @@ public class ProfilesScreen : UIScreen
 
     private void HandleDelete(int slot, PlayerProfile profile)
     {
-        ProfileService.DeleteProfile(slot);
-        Refresh();
+        string name = profile != null ? profile.profileName : $"SLOT {slot + 1:00}";
+
+        UIManager.Instance.OpenScreen("confirmScreen", new ConfirmRequest(
+            $"PURGE {name}?\nTHIS CANNOT BE UNDONE.",
+            () =>
+            {
+                ProfileService.DeleteProfile(slot);
+                Refresh();
+            },
+            "PURGE"));
     }
 }

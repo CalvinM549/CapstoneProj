@@ -30,6 +30,9 @@ MonoBehaviour:
   synergyTags: []
   spawnInShops: 1
   shopPrice: 50
+  unlockedByDefault: 0
+  listInUnlocks: 1
+  unlockCost: 200
   beamLength: 50
   beamWidth: 1
   visualPrefab: {fileID: 5217887362385346083, guid: 153a8f68c9a4c3e49aa20ce569d6472d, type: 3}

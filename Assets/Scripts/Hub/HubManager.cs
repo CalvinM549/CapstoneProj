@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class HubManager : MonoBehaviour
 {
@@ -34,15 +31,9 @@ public class HubManager : MonoBehaviour
     public RunLoadout PendingLoadout => pendingLoadout;
     public bool CanBeginRun => pendingMap != null && pendingLoadout?.weapon != null;
 
-
-
-
-    [Header("Testing Values")]
-
+    [Header("Fallbacks")]
+    [Tooltip("Used only if the profile has no unlocked weapon at all (mark a weapon 'Unlocked By Default' instead).")]
     [SerializeField] private PlayerWeapon defaultWeapon;
-
-    [SerializeField] private TextMeshProUGUI seedText;
-    [SerializeField] private Button resumeButton;
 
     private void Awake()
     {
@@ -54,21 +45,17 @@ public class HubManager : MonoBehaviour
             return;
         }
 
-        if (DebugManager.GodMode)
-            defaultWeapon = DebugManager.GodWeapon;
-
         loadingToRun = false;
     }
 
     public void InitializeHub()
     {
-        CheckSavedRun();
-
         mapGeneration = new(db.rooms, db.roomTypes, config);
 
-        pendingLoadout = BuildDefaultLoadout();
-        GenerateNewMap();
+        CheckSavedRun();
 
+        pendingLoadout = BuildStartingLoadout();
+        RerollSeed();
 
         UIManager.Instance.OpenScreen("baseScreen");
     }
@@ -82,39 +69,7 @@ public class HubManager : MonoBehaviour
             Debug.Log("No pending save found");
         }
 
-        resumeButton.gameObject.SetActive(HasSavedRun);
-    }
-
-    //public void GenerateNewMap() => GenerateMap(UnityEngine.Random.Range(1, 100000));
-    //public void GenerateMapFromSeed(string seed) => GenerateMap(ParseSeed(seed));
-    //private void GenerateMap(int seed)
-    //{
-    //    RNGManager.Instance.InitRNG(seed);
-        
-    //    pendingSeed = seed;
-    //    OnPendingSeedChanged?.Invoke(pendingSeed);
-
-    //    pendingMap = mapGeneration.GenerateWithSeed(seed);
-    //    OnPendingMapChanged?.Invoke(pendingMap);
-    //}
-
-    private static int ParseSeed(string input)
-    {
-        if (int.TryParse(input, out int seed) && seed != 0) return seed;
-        
-        return 0;
-    }
-
-    public void SetLoadoutWeapon(PlayerWeapon weapon)
-    {
-        pendingLoadout.weapon = weapon;
-        OnPendingLoadoutChanged?.Invoke(pendingLoadout);
-    }
-
-    public void SetLoadoutTool(PlayerTool tool)
-    {
-        pendingLoadout.tool = tool;
-        OnPendingLoadoutChanged?.Invoke(pendingLoadout);
+        OnSavedRunChanged?.Invoke(HasSavedRun);
     }
 
     public void AbandonSavedRun()
@@ -126,57 +81,116 @@ public class HubManager : MonoBehaviour
         OnSavedRunChanged?.Invoke(false);
     }
 
-    private RunLoadout BuildDefaultLoadout()
-    {
-        RunLoadout loadout = new RunLoadout()
-        {
-            tool = null,
-            weapon = defaultWeapon
-        };
+    #region Loadout
 
-        return loadout;
+    public void SetLoadoutWeapon(PlayerWeapon weapon)
+    {
+        pendingLoadout.weapon = weapon;
+        RememberLoadout();
+        OnPendingLoadoutChanged?.Invoke(pendingLoadout);
     }
+
+    public void SetLoadoutTool(PlayerTool tool)
+    {
+        pendingLoadout.tool = tool;
+        RememberLoadout();
+        OnPendingLoadoutChanged?.Invoke(pendingLoadout);
+    }
+
+    // Restores the profile's last loadout if still unlocked, otherwise the first unlocked weapon
+    private RunLoadout BuildStartingLoadout()
+    {
+        var meta = GameManager.Instance.Meta;
+        var last = GameManager.Instance.ActiveProfile?.lastLoadout;
+
+        PlayerWeapon weapon = null;
+        PlayerTool tool = null;
+
+        if (last != null && meta != null)
+        {
+            if (!string.IsNullOrEmpty(last.weaponID))
+            {
+                var w = db.weapons.Get(last.weaponID);
+                if (w != null && meta.IsUnlocked(w)) weapon = w;
+            }
+
+            if (!string.IsNullOrEmpty(last.toolID))
+            {
+                var t = db.tools.Get(last.toolID);
+                if (t != null && meta.IsUnlocked(t)) tool = t;
+            }
+        }
+
+        if (weapon == null && meta != null)
+            weapon = db.weapons.All.FirstOrDefault(w => w != null && meta.IsUnlocked(w));
+
+        if (weapon == null && defaultWeapon != null)
+            weapon = defaultWeapon;
+
+        if (DebugManager.Instance != null && DebugManager.GodMode && DebugManager.GodWeapon != null)
+            weapon = DebugManager.GodWeapon;
+
+        return new RunLoadout { weapon = weapon, tool = tool };
+    }
+
+    private void RememberLoadout()
+    {
+        var profile = GameManager.Instance.ActiveProfile;
+        if (profile == null) return;
+
+        profile.lastLoadout ??= new SavedLoadoutPreset();
+        profile.lastLoadout.weaponID = pendingLoadout.weapon != null ? pendingLoadout.weapon.Id : null;
+        profile.lastLoadout.toolID = pendingLoadout.tool != null ? pendingLoadout.tool.Id : null;
+    }
+
+    #endregion
 
     #region Run Generation
 
-    public void InitializeNewRNG()
+    public void RerollSeed() => GenerateMap(UnityEngine.Random.Range(1, 100000));
+
+    public void SetCustomSeed(string input) => GenerateMap(ParseSeed(input));
+
+    // Kept for existing button bindings
+    public void GenerateNewMap() => RerollSeed();
+    public void InitializeSetSeed(string input) => SetCustomSeed(input);
+
+    public void GenerateMap(int seed)
     {
-        int seed = Mathf.RoundToInt(UnityEngine.Random.Range(0, 100000));
+        // Map generation still pulls some values from the global RNG, so seed it first to keep seeds reproducible
         RNGManager.Instance.InitRNG(seed);
-        pendingSeed = seed;
 
-        seedText.text = seed.ToString();
+        pendingMap = mapGeneration.GenerateWithSeed(seed);
+        pendingSeed = pendingMap.seed; // generation may bump the seed on retry
 
-    }
-
-    public void InitializeSetSeed(string inputSeed)
-    {
-        int seed = inputSeed.GetHashCode();
-        RNGManager.Instance.InitRNG(seed);
-        pendingSeed = seed;
-
-        seedText.text = seed.ToString();
-
-        seedText.color = CanBeginRun ? Color.green : Color.red;
-    }
-
-    public void GenerateNewMap()
-    {
-        InitializeNewRNG();
-
-        //pendingMap = mapGeneration.GenerateMapWithSeed(pendingSeed, 0);
-        
-        pendingMap = mapGeneration.GenerateWithSeed(pendingSeed);
-
+        OnPendingSeedChanged?.Invoke(pendingSeed);
         OnPendingMapChanged?.Invoke(pendingMap);
+    }
 
-        seedText.color = CanBeginRun ? Color.green : Color.red;
+    // Numbers are used as-is; any other text is hashed (stable across sessions, unlike string.GetHashCode)
+    public static int ParseSeed(string input)
+    {
+        input = input?.Trim();
+        if (string.IsNullOrEmpty(input)) return UnityEngine.Random.Range(1, 100000);
+
+        if (int.TryParse(input, out int number))
+            return number == int.MinValue ? int.MaxValue : Mathf.Abs(number);
+
+        unchecked
+        {
+            uint hash = 2166136261;
+            foreach (char c in input.ToUpperInvariant())
+                hash = (hash ^ c) * 16777619;
+
+            return (int)(hash & 0x7FFFFFFF);
+        }
     }
 
     public void BeginNewRunFromHub()
     {
-        if (loadingToRun) return;
+        if (loadingToRun || !CanBeginRun) return;
 
+        RememberLoadout();
         GameManager.Instance.SaveActiveProfile();
 
         loadingToRun = true;
@@ -198,6 +212,4 @@ public class HubManager : MonoBehaviour
     }
 
     #endregion
-
-
 }

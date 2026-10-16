@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     private GameState currentState;
 
     public PlayerProfile ActiveProfile { get; private set; }
+    public MetaProgressionService Meta => metaProgression;
     private MetaProgressionService metaProgression;
 
     [SerializeField] private LayerMask groundLayer;

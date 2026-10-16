@@ -11,12 +11,15 @@ public class TypewriterBox : MonoBehaviour
 
     [SerializeField] private float lineDelay = 0.2f;
 
+    [Tooltip("Characters revealed per tick. Raise for long read-outs so they don't take ages.")]
+    [SerializeField] [Min(1)] private int charsPerTick = 1;
+
     private TextMeshProUGUI textBox;
     private Coroutine typeRoutine;
 
     private void Awake()
     {
-        textBox = GetComponent<TextMeshProUGUI>();   
+        textBox = GetComponent<TextMeshProUGUI>();
     }
 
     private void Start()
@@ -51,24 +54,26 @@ public class TypewriterBox : MonoBehaviour
 
         while (counter < totalVisibleCharacters)
         {
-            var charInfo = textBox.textInfo.characterInfo[counter];
+            bool hitNewLine = false;
+
+            for (int i = 0; i < charsPerTick && counter < totalVisibleCharacters; i++)
+            {
+                char c = textBox.textInfo.characterInfo[counter].character;
+                counter++;
+
+                if (c == '\n' || c == '\r')
+                {
+                    hitNewLine = true;
+                    break;
+                }
+            }
 
             textBox.maxVisibleCharacters = counter;
 
-            char c = charInfo.character;
-
             AudioManager.Instance.PlaySFX("TypeTick", Vector3.zero);
 
-            if (c == '\n' || c == '\r')
-            {
-                yield return new WaitForSeconds(lineDelay);
-            }
-            else
-            {
-                yield return new WaitForSeconds(typewriterCharDelay);
-            }
-            
-            counter++;
+            // Realtime so text still types on screens that pause the game
+            yield return new WaitForSecondsRealtime(hitNewLine ? lineDelay : typewriterCharDelay);
         }
 
         textBox.maxVisibleCharacters = textBox.textInfo.characterCount;

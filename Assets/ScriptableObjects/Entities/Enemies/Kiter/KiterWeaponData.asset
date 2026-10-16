@@ -15,7 +15,9 @@ MonoBehaviour:
   priority: 0
   role: 0
   attackRange: 7
-  telegraphDuration: 0.7
+  approachSpeedMult: 1
+  patienceDuration: -1
+  telegraphDuration: 0.8
   winddownDuration: 0.3
   hasHyperarmour: 0
   windupTrigger: 

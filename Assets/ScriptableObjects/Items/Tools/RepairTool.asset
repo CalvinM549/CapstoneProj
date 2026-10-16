@@ -21,6 +21,9 @@ MonoBehaviour:
   synergyTags: []
   spawnInShops: 1
   shopPrice: 50
+  unlockedByDefault: 0
+  listInUnlocks: 1
+  unlockCost: 100
   activation: 2
   duration: 1.2
   canEndEarly: 0

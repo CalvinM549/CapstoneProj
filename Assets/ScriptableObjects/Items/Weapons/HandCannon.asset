@@ -30,3 +30,6 @@ MonoBehaviour:
   synergyTags: []
   spawnInShops: 1
   shopPrice: 50
+  unlockedByDefault: 1
+  listInUnlocks: 1
+  unlockCost: 0

@@ -54,7 +54,9 @@ public class ScreenGlitch : MonoBehaviour
             else pulse = pulseCurve.Evaluate(t) * pulsePeak;
         }
 
-        Shader.SetGlobalFloat(IntensityID, Mathf.Max(baseline, pulse));
+        float userScale = SettingsManager.Instance != null ? SettingsManager.Instance.Current.glitchIntensity : 1f;
+
+        Shader.SetGlobalFloat(IntensityID, Mathf.Max(baseline, pulse) * userScale);
         Shader.SetGlobalFloat(TimeID, Time.unscaledTime);
     }
 }

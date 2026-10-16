@@ -49,7 +49,7 @@ public class ActiveTool
     }
 }
 
-public abstract class PlayerTool : DatabaseEntry, ILootEntry
+public abstract class PlayerTool : DatabaseEntry, IUnlockable
 {
     [Header("Display")]
     public string toolName = "New Tool";
@@ -74,6 +74,15 @@ public abstract class PlayerTool : DatabaseEntry, ILootEntry
 
     public float BaseDropWeight => baseDropWeight;
     public IReadOnlyList<string> SynergyTags => synergyTags;
+
+    [Header("Meta Unlock")]
+    public bool unlockedByDefault = false;
+    public bool listInUnlocks = true; // false hides it from the hub Unlocks screen
+    public int unlockCost = 100;
+
+    public bool UnlockedByDefault => unlockedByDefault;
+    public bool ListInUnlocks => listInUnlocks;
+    public int UnlockCost => unlockCost;
 
     [Header("Effect")]
 

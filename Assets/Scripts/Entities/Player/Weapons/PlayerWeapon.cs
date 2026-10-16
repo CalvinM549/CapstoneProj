@@ -46,7 +46,7 @@ public class ActiveWeapon : IProjectileEmitter
     }
 }
 
-public abstract class PlayerWeapon : DatabaseEntry, ILootEntry
+public abstract class PlayerWeapon : DatabaseEntry, IUnlockable
 {
     [Header("Display")]
     public string weaponName = "New Weapon";
@@ -86,6 +86,15 @@ public abstract class PlayerWeapon : DatabaseEntry, ILootEntry
 
     public float BaseDropWeight => baseDropRate;
     public IReadOnlyList<string> SynergyTags => synergyTags;
+
+    [Header("Meta Unlock")]
+    public bool unlockedByDefault = false;
+    public bool listInUnlocks = true; // false hides it from the hub Unlocks screen (e.g. debug weapons)
+    public int unlockCost = 100;
+
+    public bool UnlockedByDefault => unlockedByDefault;
+    public bool ListInUnlocks => listInUnlocks;
+    public int UnlockCost => unlockCost;
 
     public virtual void OnEquip(ActiveWeapon instance) { }
     public virtual void OnUnequip(ActiveWeapon instance) { }

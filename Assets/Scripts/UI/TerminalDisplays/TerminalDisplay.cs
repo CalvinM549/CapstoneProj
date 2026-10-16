@@ -73,6 +73,28 @@ public class TerminalDisplay : MonoBehaviour
         sequenceCoroutine = null;
     }
 
+    public bool IsPlaying => sequenceCoroutine != null;
+
+    // Skip the typing: show every line in its final state and fire onSequenceComplete
+    public void Complete()
+    {
+        if (sequenceData == null || !IsPlaying) return;
+
+        Stop();
+
+        var sb = new System.Text.StringBuilder();
+        foreach (var line in sequenceData.lines)
+        {
+            if (sb.Length > 0) sb.Append('\n');
+            sb.Append(line.text);
+            if (line.lineType == TerminalLineType.Loading) sb.Append(line.loadingResultSuffix);
+        }
+
+        commitedText = sb.ToString();
+        label.text = commitedText;
+        onSequenceComplete?.Invoke();
+    }
+
     public void Clear()
     {
         Stop();
@@ -85,7 +107,7 @@ public class TerminalDisplay : MonoBehaviour
     private IEnumerator RunSequence()
     {
         if (sequenceData.startDelay > 0f)
-            yield return new WaitForSeconds(sequenceData.startDelay);
+            yield return new WaitForSecondsRealtime(sequenceData.startDelay);
 
         foreach (TerminalLine line in sequenceData.lines)
         {
@@ -96,7 +118,7 @@ public class TerminalDisplay : MonoBehaviour
                 : sequenceData.defaultLineDelay;
 
             if (delay > 0f)
-                yield return new WaitForSeconds(delay);
+                yield return new WaitForSecondsRealtime(delay);
         }
 
         sequenceCoroutine = null;
@@ -145,7 +167,7 @@ public class TerminalDisplay : MonoBehaviour
                 : baseText + "\n" + partial;
 
             RedrawWithCursor();
-            yield return new WaitForSeconds(typewriterCharDelay);
+            yield return new WaitForSecondsRealtime(typewriterCharDelay);
         }
 
         StopCursor();
@@ -167,7 +189,7 @@ public class TerminalDisplay : MonoBehaviour
                 : baseText + "\n" + partial;
 
             RedrawWithCursor();
-            yield return new WaitForSeconds(typewriterCharDelay);
+            yield return new WaitForSecondsRealtime(typewriterCharDelay);
         }
 
         float elapsed = 0f;
@@ -178,8 +200,8 @@ public class TerminalDisplay : MonoBehaviour
 
         while (elapsed < line.loadingDuration)
         {
-            dotTimer += Time.deltaTime;
-            elapsed += Time.deltaTime;
+            dotTimer += Time.unscaledDeltaTime;
+            elapsed += Time.unscaledDeltaTime;
 
             if (dotTimer >= line.dotCycleSpeed)
             {
@@ -233,7 +255,7 @@ public class TerminalDisplay : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(cursorBlinkRate);
+            yield return new WaitForSecondsRealtime(cursorBlinkRate);
             cursorVisible = !cursorVisible;
             RedrawWithCursor();
         }

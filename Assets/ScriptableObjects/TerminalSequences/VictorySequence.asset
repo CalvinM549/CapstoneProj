@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79cc4064bf7acfe4d978cef7e119bd39, type: 3}
+  m_Name: VictorySequence
+  m_EditorClassIdentifier: Assembly-CSharp::TerminalSequenceData
+  startDelay: 0.4
+  defaultLineDelay: 0.35
+  lines:
+  - text: ///
+    lineType: 0
+    delayOverride: -1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: DONE
+  - text: <SECTOR TERMINUS REACHED>
+    lineType: 1
+    delayOverride: -1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: DONE
+  - text: <SEALING SECTOR ACCESS
+    lineType: 2
+    delayOverride: -1
+    loadingDuration: 1.2
+    dotCycleSpeed: 0.3
+    loadingResultSuffix: ' SEALED>'
+  - text: <FRAME INTEGRITY HOLDING>
+    lineType: 1
+    delayOverride: -1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: DONE
+  - text: <UPLINKING TO CORE
+    lineType: 2
+    delayOverride: -1
+    loadingDuration: 1.4
+    dotCycleSpeed: 0.3
+    loadingResultSuffix: ' ESTABLISHED>'
+  - text: <VAGRANT RECALL AUTHORISED>
+    lineType: 1
+    delayOverride: -1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: DONE
+  - text: AWAITING CONFIRMATION
+    lineType: 1
+    delayOverride: -1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: DONE
+  - text: ///
+    lineType: 0
+    delayOverride: -1
+    loadingDuration: 2
+    dotCycleSpeed: 0.35
+    loadingResultSuffix: DONE

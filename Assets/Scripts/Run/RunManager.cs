@@ -88,11 +88,15 @@ public class RunManager : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.OnRunEnded += HandleRunEnd;
+        GameEvents.OnEnemyKilled += HandleEnemyKilled;
+        GameEvents.OnPlayerTookDamage += HandlePlayerTookDamage;
     }
 
     private void OnDestroy()
     {
         GameEvents.OnRunEnded -= HandleRunEnd;
+        GameEvents.OnEnemyKilled -= HandleEnemyKilled;
+        GameEvents.OnPlayerTookDamage -= HandlePlayerTookDamage;
         GameEvents.OnEnemyKilled -= runServices.currency.HandleEnemyKilled;
     }
 
@@ -193,7 +197,7 @@ public class RunManager : MonoBehaviour
         if (profile != null)
         {
             RunSaveSystem.DeleteForSlot(profile.slotIndex);
-            profile.RegisterRunResult(victory, currentRun.runDurationTimer);
+            profile.RegisterRunResult(victory, currentRun.runDurationTimer, currentRun.EnemiesKilled, currentRun.currentDepth);
             GameManager.Instance.SaveActiveProfile();
         }
 
@@ -361,6 +365,18 @@ public class RunManager : MonoBehaviour
     }
 
     #region Run Counters
+
+    private void HandleEnemyKilled(EnemyController enemy)
+    {
+        if (currentRun == null || runEnded) return;
+        currentRun.EnemiesKilled++;
+    }
+
+    private void HandlePlayerTookDamage(HitData hit)
+    {
+        if (currentRun == null || runEnded) return;
+        currentRun.DamageTaken += Mathf.RoundToInt(hit.FinalDamage);
+    }
 
     #endregion
 

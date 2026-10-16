@@ -19,7 +19,12 @@ public class PlayerProfile
     public int runsAttempted;
     public int runVictoryCount;
     public int runFailureCount;
-    
+
+    // Lifetime Stats
+    public int totalEnemiesKilled;
+    public int deepestDepth;
+    public float totalTimeDeployed;
+
     // Unlocks
     public List<string> unlockedArchives = new();
 
@@ -27,6 +32,7 @@ public class PlayerProfile
     public List<string> unlockedWeapons = new();
 
     public List<SavedLoadoutPreset> savedPresets = new();
+    public SavedLoadoutPreset lastLoadout = new();
 
     // Story Flags
     public bool tutorialSeen;
@@ -50,6 +56,8 @@ public class PlayerProfile
         unlockedArchives ??= new List<string>();
         unlockedTools ??= new List<string>();
         unlockedWeapons ??= new List<string>();
+        savedPresets ??= new List<SavedLoadoutPreset>();
+        lastLoadout ??= new SavedLoadoutPreset();
 
         if(string.IsNullOrEmpty(profileID))
             profileID = Guid.NewGuid().ToString();
@@ -57,9 +65,13 @@ public class PlayerProfile
         version = CurrentVersion;
     }
 
-    public void RegisterRunResult(bool victory, float runTime)
+    public void RegisterRunResult(bool victory, float runTime, int enemiesKilled = 0, int depthReached = 0)
     {
         runsAttempted++;
+
+        totalTimeDeployed += Mathf.Max(0f, runTime);
+        totalEnemiesKilled += Mathf.Max(0, enemiesKilled);
+        deepestDepth = Mathf.Max(deepestDepth, depthReached);
 
         if (victory)
         {

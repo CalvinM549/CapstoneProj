@@ -109,6 +109,11 @@ public class CameraManager : MonoBehaviour
     {
         if (impulseSource == null || magnitude <= 0f) return;
 
+        if (SettingsManager.Instance != null)
+            magnitude *= SettingsManager.Instance.Current.screenShake;
+
+        if (magnitude <= 0f) return;
+
         impulseSource.GenerateImpulse(magnitude);
     }
 

@@ -14,10 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   id: enemy_elite
   enemyName: Elite
+  uiScaleMult: 1
   basePoolSize: 2
   prefab: {fileID: 5348890688463699792, guid: b70f9d1a1fe7bc94a98935fdc921818e, type: 3}
   aiProfile: {fileID: 11400000, guid: b832233b45d0e4646b98350b08eda44c, type: 2}
-  baseHealth: 200
+  baseHealth: 100
   moveSpeed: 5
   baseDamageMult: 1
   baseResistanceMult: 1

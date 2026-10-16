@@ -15,11 +15,12 @@ public class HubBaseScreen : UIScreen
     }
 
     protected override void OnBeforeOpen(object payload) => Refresh();
-    protected override void OnFocusRegained() { }
+    protected override void OnFocusRegained() => Refresh(); // shards / saved run may have changed in a sub screen
 
     private void Refresh()
     {
-        resumeButton.gameObject.SetActive(HubManager.Instance.HasSavedRun);
+        if (resumeButton != null)
+            resumeButton.gameObject.SetActive(HubManager.Instance.HasSavedRun);
 
         var profile = GameManager.Instance.ActiveProfile;
         if (profile != null && statusLine != null)
@@ -32,14 +33,9 @@ public class HubBaseScreen : UIScreen
         HubManager.Instance.BeginSavedRunFromHub();
     }
 
-    public void OnDeployClicked()
-    {
-        //UIManager.Instance.OpenScreen("runScreen");
-
-        SetFocused(false);
-        HubManager.Instance.BeginNewRunFromHub();
-    }
+    public void OnDeployClicked() => UIManager.Instance.OpenScreen("runScreen");
     public void OnLoadoutClicked() => UIManager.Instance.OpenScreen("loadoutScreen");
+    public void OnUnlocksClicked() => UIManager.Instance.OpenScreen("unlocksScreen");
     public void OnRecordsClicked() => UIManager.Instance.OpenScreen("recordsScreen");
     public void OnSettingsClicked() => UIManager.Instance.OpenScreen("settingsScreen");
 

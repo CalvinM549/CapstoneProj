@@ -18,7 +18,7 @@ public class ArchiveEntryUI : MonoBehaviour
         if (unlocked)
         {
             nameText.text = entry.Title;
-            nameText.text = entry.Text;
+            descriptionText.text = entry.Text;
         }
         else
         {

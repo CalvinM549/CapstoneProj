@@ -1,89 +1,159 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
+// Pre-delve briefing: sector map preview, seed control, loadout summary, deploy.
 public class RunPrepScreen : UIScreen
 {
-    private int tempSeed; // Generated seed (can be overriden)
+    [Header("Map")]
+    [SerializeField] private SectorMapView mapView;
+    [SerializeField] private TextMeshProUGUI mapSummaryText;
+    [SerializeField] private TextMeshProUGUI nodeInfoText;
+    [SerializeField] private string nodeInfoIdle = "> HOVER A NODE TO SCAN";
 
-    [SerializeField] private Transform mapOrigin;
-    
-    [SerializeField] private GameObject tilePrefab;
-    [SerializeField] private float delay;
-    private Coroutine walkRoutine;
+    [Header("Seed")]
+    [SerializeField] private TextMeshProUGUI seedText;
+    [SerializeField] private TMP_InputField seedInput;
 
-    private List<GameObject> spawnedTiles = new();
+    [Header("Loadout")]
+    [SerializeField] private TextMeshProUGUI loadoutText;
 
+    [Header("Actions")]
+    [SerializeField] private Button deployButton;
 
     public override void Initialize()
     {
         base.Initialize();
 
-        HubManager.Instance.OnPendingMapChanged += HandleMapGenerated;
-    }
+        HubManager.Instance.OnPendingMapChanged += HandleMapChanged;
+        HubManager.Instance.OnPendingLoadoutChanged += HandleLoadoutChanged;
 
-    private void OnDisable()
-    {
-        if (HubManager.Instance != null)
-            HubManager.Instance.OnPendingMapChanged -= HandleMapGenerated;
-    }
-
-    public void RegenMap()
-    {
-        ClearCurrent();
-
-        HubManager.Instance.GenerateNewMap();
-    }
-
-    private void ClearCurrent()
-    {
-        if (walkRoutine != null)
-            StopCoroutine(walkRoutine);
-
-
-        foreach (var tile in spawnedTiles)
-            Destroy(tile);
-
-        spawnedTiles.Clear();
-    }
-
-    private void HandleMapGenerated(SectorMap map)
-    {
-        ClearCurrent();
-
-        List<Vector2Int> tiles = map.nodes.Select(n => n.coordinates).ToList();
-
-        walkRoutine = StartCoroutine(AnimateWalk(tiles));
-    }
-
-    private IEnumerator AnimateWalk(List<Vector2Int> map)
-    {
-        if (tilePrefab == null) yield break;
-
-        List<Vector2Int> list = new(map);
-        for (int i = 0; i < list.Count; i++)
+        if (mapView != null)
         {
-            SpawnTile(list[i], Color.Lerp(Color.green, Color.green, ((float)i / (float)(list.Count - 1))));
-            yield return new WaitForSeconds(delay);
+            mapView.OnNodeHovered += ShowNodeInfo;
+            mapView.OnNodeUnhovered += _ => SetNodeInfo(nodeInfoIdle);
         }
+
+        if (seedInput != null)
+            seedInput.onSubmit.AddListener(OnSeedSubmitted);
     }
 
-    private void SpawnTile(Vector2Int gridPos, Color colour)
+    // Screens are disabled while closed, so unsubscribe on destroy rather than OnDisable
+    private void OnDestroy()
     {
-        Vector2 spawnWorldPos = new Vector2(gridPos.x, gridPos.y);
-        GameObject newTile = Instantiate(tilePrefab, mapOrigin);
-        spawnedTiles.Add(newTile);
+        if (HubManager.Instance == null) return;
 
-        newTile.transform.localPosition = spawnWorldPos;
-        newTile.GetComponent<SpriteRenderer>().color = colour;
-        newTile.transform.localScale = new Vector2(0.75f, 1f);
-        newTile.transform.parent = this.transform;
+        HubManager.Instance.OnPendingMapChanged -= HandleMapChanged;
+        HubManager.Instance.OnPendingLoadoutChanged -= HandleLoadoutChanged;
     }
 
-    #region Button functions
+    protected override void OnBeforeOpen(object payload)
+    {
+        SetNodeInfo(nodeInfoIdle);
+        RefreshMap(animate: true);
+        RefreshLoadout();
+    }
 
+    // Returning from the loadout screen
+    protected override void OnFocusRegained() => RefreshLoadout();
 
+    #region Buttons
+
+    public void OnRerollClicked() => HubManager.Instance.RerollSeed();
+
+    public void OnApplySeedClicked()
+    {
+        if (seedInput != null) OnSeedSubmitted(seedInput.text);
+    }
+
+    public void OnLoadoutClicked() => UIManager.Instance.OpenScreen("loadoutScreen");
+
+    public void OnDeployClicked()
+    {
+        if (!HubManager.Instance.CanBeginRun) return;
+
+        SetFocused(false);
+        HubManager.Instance.BeginNewRunFromHub();
+    }
+
+    public void OnBackClicked() => UIManager.Instance.CloseTop();
 
     #endregion
+
+    private void OnSeedSubmitted(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input)) return;
+
+        HubManager.Instance.SetCustomSeed(input);
+        seedInput.text = string.Empty;
+        seedInput.DeactivateInputField();
+    }
+
+    private void HandleMapChanged(SectorMap map)
+    {
+        if (gameObject.activeInHierarchy) RefreshMap(animate: true);
+    }
+
+    private void HandleLoadoutChanged(RunLoadout loadout)
+    {
+        if (gameObject.activeInHierarchy) RefreshLoadout();
+    }
+
+    private void RefreshMap(bool animate)
+    {
+        var hub = HubManager.Instance;
+        var map = hub.PendingMap;
+
+        if (seedText != null) seedText.text = $"SEED // {hub.PendingSeed}";
+        if (mapView != null) mapView.Build(map, animate);
+        if (mapSummaryText != null) mapSummaryText.text = BuildSummary(map);
+
+        RefreshDeploy();
+    }
+
+    private void RefreshLoadout()
+    {
+        var loadout = HubManager.Instance.PendingLoadout;
+
+        if (loadoutText != null)
+        {
+            string weapon = loadout?.weapon != null ? loadout.weapon.Name.ToUpperInvariant() : "<NONE>";
+            string tool = loadout?.tool != null ? loadout.tool.Name.ToUpperInvariant() : "NONE";
+            loadoutText.text = $"WEAPON // {weapon}\nTOOL   // {tool}";
+        }
+
+        RefreshDeploy();
+    }
+
+    private void RefreshDeploy()
+    {
+        if (deployButton != null) deployButton.interactable = HubManager.Instance.CanBeginRun;
+    }
+
+    private void ShowNodeInfo(MapNode node)
+    {
+        string type = node.type != null ? node.type.displayName.ToUpperInvariant() : "UNKNOWN";
+        string code = string.IsNullOrEmpty(node.sectorCode) ? "" : $" // {node.sectorCode.ToUpperInvariant()}";
+        SetNodeInfo($"> DEPTH {node.depth:00} // {type}{code}");
+    }
+
+    private void SetNodeInfo(string text)
+    {
+        if (nodeInfoText != null) nodeInfoText.text = text;
+    }
+
+    // "18 NODES // DEPTH 9" + a per-type breakdown using the map's glyphs, e.g. "C6 E2 $1 +1"
+    private string BuildSummary(SectorMap map)
+    {
+        if (map == null) return "NO SECTOR DATA";
+
+        var breakdown = map.nodes
+            .Where(n => n.type != null && !n.type.isStart && !n.type.isEnd)
+            .GroupBy(n => n.type)
+            .OrderByDescending(g => g.Count())
+            .Select(g => $"{(mapView != null ? mapView.GlyphFor(g.Key) : g.Key.displayName)}{g.Count()}");
+
+        return $"{map.totalNodes} NODES // DEPTH {map.rowCount}\n{string.Join("  ", breakdown)}";
+    }
 }

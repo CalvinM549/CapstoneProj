@@ -28,7 +28,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3f95f2f91692c5243a1e7c4fe29c075e, type: 2}
   baseDropRate: 1
   synergyTags: []
-  currentAmmo: 17
+  spawnInShops: 1
+  shopPrice: 50
+  unlockedByDefault: 0
+  listInUnlocks: 0
+  unlockCost: 0
   burstCount: 1
   burstSpread: 0
   burstDelay: 0.1
