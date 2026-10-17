@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1da3063642f899243bb8bfed8c32253f, type: 3}
+  m_Name: Aux_Sunder
+  m_EditorClassIdentifier: Assembly-CSharp::Aux_StatusOnHit
+  id: aux_sunder
+  upgradeName: Sunder
+  flavourText: Crack the casing. The rest follows.
+  effectText: Heavy attacks apply 2 Corrode (+6% damage taken per stack)
+  icon: {fileID: 0}
+  slot: 4
+  baseDropRate: 1
+  synergyTags:
+  - breacher
+  - conductor
+  spawnInShops: 1
+  shopPrice: 50
+  maxStacks: 2
+  statModifiers: []
+  statusData: {fileID: 11400000, guid: 0b71503ec15b78f4db073a57885b2ef3, type: 2}
+  procChance: 1
+  stacksPerHitPerStack: 2
+  applierTypes: 01000000

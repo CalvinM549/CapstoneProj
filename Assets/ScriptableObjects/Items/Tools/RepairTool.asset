@@ -18,7 +18,8 @@ MonoBehaviour:
   effectText: 
   icon: {fileID: 0}
   baseDropWeight: 1
-  synergyTags: []
+  synergyTags:
+  - salvage
   spawnInShops: 1
   shopPrice: 50
   unlockedByDefault: 0

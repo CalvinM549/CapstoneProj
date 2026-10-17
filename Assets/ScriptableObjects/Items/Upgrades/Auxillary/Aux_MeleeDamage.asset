@@ -19,7 +19,8 @@ MonoBehaviour:
   icon: {fileID: -994475685264314214, guid: af35adfea2cc2684d9f035bab2acd226, type: 3}
   slot: 4
   baseDropRate: 1
-  synergyTags: []
+  synergyTags:
+  - breacher
   spawnInShops: 1
   shopPrice: 50
   maxStacks: 5

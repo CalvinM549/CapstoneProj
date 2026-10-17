@@ -12,7 +12,5 @@ public class HandcannonWeapon : PlayerWeapon
         instance.player.Movement.PushPlayer(-direction, 15, 0.25f, true);
 
         FireSingle(instance, projectiles[0], direction, firePoint, useAmmo: true);
-
-
     }
 }

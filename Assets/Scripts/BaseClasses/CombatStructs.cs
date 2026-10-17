@@ -57,6 +57,9 @@ public class HitData
     public bool isParryable;
     public bool isBlockable;
 
+    // Set on damage-over-time ticks so effects can tell Bleed from Burn etc.
+    public StatusEffectData sourceStatus;
+
     public float BaseDamage { get; }
     public bool IsResolved { get; private set; }
     public float FinalDamage
@@ -151,7 +154,8 @@ public class HitData
             hitstopTime = hitstopTime,
             hitstunTime = hitstunTime,
             isParryable = isParryable,
-            isBlockable = isBlockable
+            isBlockable = isBlockable,
+            sourceStatus = sourceStatus
         };
 
         foreach (var mod in modifiers)

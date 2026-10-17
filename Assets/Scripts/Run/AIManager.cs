@@ -55,6 +55,45 @@ public class AIManager : MonoBehaviour
         }
     }
 
+    // Closest registered (living) enemy within range of 'from', optionally ignoring one
+    public bool TryGetNearestEnemy(Vector2 from, float maxRange, out Transform nearest, Transform exclude = null)
+    {
+        nearest = null;
+        float best = maxRange * maxRange;
+
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            var ai = activeEnemies[i];
+            if (ai == null || !ai.isActiveAndEnabled) continue;
+            if (exclude != null && ai.Self == exclude) continue;
+
+            float d = ((Vector2)ai.Self.position - from).sqrMagnitude;
+            if (d > best) continue;
+
+            best = d;
+            nearest = ai.Self;
+        }
+
+        return nearest != null;
+    }
+
+    // All living enemies within radius of 'center' (results cleared first)
+    public void GetEnemiesInRadius(Vector2 center, float radius, List<EnemyController> results)
+    {
+        results.Clear();
+        float r2 = radius * radius;
+
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            var ai = activeEnemies[i];
+            if (ai == null || !ai.isActiveAndEnabled) continue;
+            if (((Vector2)ai.Self.position - center).sqrMagnitude > r2) continue;
+
+            var enemy = ai.GetComponent<EnemyController>();
+            if (enemy != null && enemy.IsAlive) results.Add(enemy);
+        }
+    }
+
     private readonly RaycastHit2D[] losHitBuffer = new RaycastHit2D[1];
 
     public bool TryFindTarget(EnemyAIController ai, out Transform target)

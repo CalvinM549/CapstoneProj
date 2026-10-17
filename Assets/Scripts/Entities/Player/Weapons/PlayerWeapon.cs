@@ -15,7 +15,7 @@ public class ActiveWeapon : IProjectileEmitter
     public readonly Player player;
 
     public int ammo;
-    public int MaxAmmo => data.baseAmmo;
+    public int MaxAmmo => data.baseAmmo + (player != null ? Mathf.Max(0, player.Stats.GetInt(StatRef.PlayerMaxAmmoBonus)) : 0);
     public bool HasAmmo => ammo > 0;
 
     public event Action<int> AmmoChanged;
@@ -30,7 +30,7 @@ public class ActiveWeapon : IProjectileEmitter
         this.data = data;
         this.player = player;
 
-        ammo = ammoOverride >= 0 ? ammoOverride : data.baseAmmo;
+        ammo = ammoOverride >= 0 ? ammoOverride : MaxAmmo;
     }
 
     public void SpendAmmo(int used = 1)
@@ -108,6 +108,19 @@ public abstract class PlayerWeapon : DatabaseEntry, IUnlockable
         return false;
     }
     public abstract void Fire(ActiveWeapon instance, Vector2 direction, Vector2 firePoint);
+
+    // Free extra shot for upgrades/effects: no ammo, no cooldown, fires this weapon's first projectile type.
+    public void FireBonusShot(ActiveWeapon instance, Vector2 direction, Vector2 firePoint, float damageMultiplier = 1f)
+    {
+        if (projectiles == null || projectiles.Length == 0) return;
+
+        var projectile = projectiles[0];
+        var hit = BuildOutgoingHit(instance, projectile, direction, firePoint);
+        if (!Mathf.Approximately(damageMultiplier, 1f))
+            hit.AddModifier(damageMultiplier - 1f, StatModType.PercentAdd, this);
+
+        ProjectilePools.FireProjectile(instance, projectile, hit, firePoint, direction);
+    }
 
     protected virtual HitData BuildOutgoingHit(ActiveWeapon instance, ProjectileData projectile,
         Vector2 direction, Vector2 firePoint)

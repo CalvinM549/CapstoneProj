@@ -33,8 +33,12 @@ public class PlayerMovement : MonoBehaviour
     private StatValue baseSpeed;
     private StatValue dashCharges;
     private StatValue dashRechargeRate;
+    private StatValue dashSpeedRetention;
 
     private float speedBonus;
+
+    // 0..1 how much of the max dash-chain speed bonus is currently built up
+    public float SpeedBonusNormalized => data.maxSpeedBonus > 0f ? Mathf.Clamp01(speedBonus / data.maxSpeedBonus) : 0f;
 
     private GameplayInputReader input;
     private Rigidbody2D rb;
@@ -79,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
         baseSpeed = p.Stats.GetStatValue(StatRef.PlayerBaseSpeed);
         dashCharges = p.Stats.GetStatValue(StatRef.PlayerDashCharges);
         dashRechargeRate = p.Stats.GetStatValue(StatRef.PlayerDashRecharge);
+        dashSpeedRetention = p.Stats.GetStatValue(StatRef.PlayerDashSpeedRetention);
 
         p.Stats.Subscribe(StatRef.PlayerDashCharges, HandleDashChargeStatChanged);
         SetDashCharges(dashCharges.ValueInt);
@@ -313,7 +318,8 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = exitDir * exitSpeed;
 
         float overBase = Mathf.Max(0f, exitSpeed - baseSpeed.Value);
-        speedBonus = Mathf.Min(speedBonus + overBase * data.dashSpeedRetention, data.maxSpeedBonus);
+        float retention = data.dashSpeedRetention * (dashSpeedRetention != null ? dashSpeedRetention.Value : 1f);
+        speedBonus = Mathf.Min(speedBonus + overBase * retention, data.maxSpeedBonus);
 
         Physics2D.IgnoreLayerCollision(playerLayerIndex, enemyLayerIndex, false);
         Physics2D.IgnoreLayerCollision(playerLayerIndex, environmentLayerIndex, false);
@@ -371,9 +377,24 @@ public class PlayerMovement : MonoBehaviour
         GameEvents.DashChargeChange(dashRechargePercentages);
     }
 
-    public void RestoreDashCharge()
+    // Instantly finishes one recharging dash charge. Returns false if all charges were already full.
+    public bool RestoreDashCharge()
     {
+        if (dashRechargeTimers == null) return false;
 
+        for (int i = 0; i < dashRechargeTimers.Length; i++)
+        {
+            if (dashRechargeTimers[i] <= 0f) continue;
+
+            dashRechargeTimers[i] = 0f;
+            dashRechargePercentages[i] = 1f;
+            currentDashCharges = Mathf.Min(currentDashCharges + 1, dashRechargeTimers.Length);
+
+            GameEvents.DashChargeChange(dashRechargePercentages);
+            return true;
+        }
+
+        return false;
     }
 
     private void HandleDashChargeStatChanged()

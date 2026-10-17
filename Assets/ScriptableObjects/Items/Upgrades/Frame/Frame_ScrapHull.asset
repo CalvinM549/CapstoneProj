@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc6452f1d6717e54bb0acdff6cf85a9c, type: 3}
+  m_Name: Frame_ScrapHull
+  m_EditorClassIdentifier: Assembly-CSharp::Frame_ScrapHull
+  id: major_scrapHull
+  upgradeName: Scrap Hull
+  flavourText: Why carry scrap when you can wear it?
+  effectText: Each currency pickup repairs 5% of your active structure segment
+  icon: {fileID: 0}
+  slot: 0
+  baseDropRate: 1
+  synergyTags:
+  - salvage
+  spawnInShops: 1
+  shopPrice: 100
+  maxStacks: 1
+  statModifiers: []
+  isTemplate: 0
+  repairPerPickup: 0.05

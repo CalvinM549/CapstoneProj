@@ -16,6 +16,9 @@ public class TimescaleManager : MonoBehaviour
 
     private float hitstopEndUnscaled;
 
+    private float slowEndUnscaled;
+    private float slowScale = 1f;
+
 
     [SerializeField] private float hitstopTimeScale = 0.05f;
 
@@ -98,7 +101,21 @@ public class TimescaleManager : MonoBehaviour
         if (end <= hitstopEndUnscaled) return;
 
         hitstopEndUnscaled = end;
+        EnsureTimeRoutine();
+    }
 
+    // Softer than hitstop: runs the game at 'scale' for 'duration' real seconds. Hitstop takes priority while active.
+    public void RequestSlowMotion(float duration, float scale)
+    {
+        if (duration <= 0f) return;
+
+        slowEndUnscaled = Mathf.Max(slowEndUnscaled, Time.unscaledTime + duration);
+        slowScale = Mathf.Clamp(scale, 0.01f, 1f);
+        EnsureTimeRoutine();
+    }
+
+    private void EnsureTimeRoutine()
+    {
         if (currentHitstopRoutine == null)
             currentHitstopRoutine = StartCoroutine(HitstopRoutine());
     }
@@ -119,15 +136,25 @@ public class TimescaleManager : MonoBehaviour
         }
 
         hitstopEndUnscaled = 0f;
+        slowEndUnscaled = 0f;
         currentHitstopRoutine = null;
     }
 
     private IEnumerator HitstopRoutine()
     {
-        if (!IsPaused) Time.timeScale = hitstopTimeScale;
+        while (true)
+        {
+            float now = Time.unscaledTime;
+            bool hitstop = now < hitstopEndUnscaled;
+            bool slow = now < slowEndUnscaled;
 
-        while (Time.unscaledTime < hitstopEndUnscaled || IsPaused)
+            if (!hitstop && !slow && !IsPaused) break;
+
+            if (!IsPaused)
+                Time.timeScale = hitstop ? hitstopTimeScale : slowScale;
+
             yield return null;
+        }
 
         Time.timeScale = 1f;
         currentHitstopRoutine = null;

@@ -39,7 +39,6 @@ public class RadialAmmoUI : MonoBehaviour
         if (player != null)
         {
             player.Combat.OnAmmoChanged -= HandleAmmoChanged;
-            player.Combat.OnWeaponChanged -= HandleMaxAmmoChanged;
         }
 
         GameEvents.OnAmmoUsedEmpty -= HandleAmmoUseFailed;
@@ -49,13 +48,10 @@ public class RadialAmmoUI : MonoBehaviour
     {
         player = p;
         player.Combat.OnAmmoChanged += HandleAmmoChanged;
-        player.Combat.OnWeaponChanged += HandleMaxAmmoChanged;
         GameEvents.OnAmmoUsedEmpty += HandleAmmoUseFailed;
     }
 
-    private void HandleAmmoChanged(int currentAmmo) => UpdatePips(currentAmmo);
-
-    private void HandleMaxAmmoChanged(int maxAmmo) => BuildPips(maxAmmo);
+    private void HandleAmmoChanged(int currentAmmo, int maxAmmo) => UpdatePips(currentAmmo, maxAmmo);
 
     private void HandleAmmoUseFailed()
     {
@@ -93,10 +89,10 @@ public class RadialAmmoUI : MonoBehaviour
         }
     }
 
-    private void UpdatePips(int currentAmmo)
+    private void UpdatePips(int currentAmmo, int maxAmmo)
     {
-        if (pips.Count <= 0)
-            BuildPips(currentAmmo);
+        if (pips.Count != maxAmmo)
+            BuildPips(maxAmmo);
 
         for (int i = 0; i < pips.Count; i++)
         {
@@ -118,6 +114,8 @@ public class RadialAmmoUI : MonoBehaviour
             }
             else
             {
+                p.visual.transform.localScale = Vector2.one * pipSizeMult;
+
                 p.visual.DOColor(targetColour, 0.2f);
             }
 

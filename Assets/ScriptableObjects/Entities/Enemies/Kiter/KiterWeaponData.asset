@@ -26,7 +26,7 @@ MonoBehaviour:
   projectile: {fileID: 11400000, guid: b27227462d064504fb686097a5a40093, type: 2}
   projectileCount: 10
   spreadAngle: 10
-  shotInterval: 0.1
+  shotInterval: 0.11
   attackType: 1
   baseDamage: 0
   knockbackForce: 0

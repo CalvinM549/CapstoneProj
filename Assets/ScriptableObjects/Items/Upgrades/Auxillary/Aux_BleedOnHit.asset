@@ -20,7 +20,7 @@ MonoBehaviour:
   slot: 4
   baseDropRate: 1
   synergyTags:
-  - status
+  - conductor
   spawnInShops: 1
   shopPrice: 50
   maxStacks: 3

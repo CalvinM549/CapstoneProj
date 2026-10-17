@@ -14,6 +14,8 @@ public class PlayerCombat : MonoBehaviour
 
     private StatValue reloadSpeed;
 
+    private StatValue ammoBonus;
+
     [SerializeField] private PlayerMeleeController hitboxes;
 
     private GameplayInputReader input;
@@ -56,11 +58,13 @@ public class PlayerCombat : MonoBehaviour
     private bool dashCancelWindow;
     private Coroutine dashCancelRoutine;
 
-    public int CurrentAmmo => HasWeaponEquipped ? EquippedWeapon.ammo : 0;
-    public int MaxAmmo => HasWeaponEquipped ? EquippedWeapon.MaxAmmo : 0;
+    public Vector2 DroneFireOrigin => activeDrone != null ? activeDrone.FireOrigin : (Vector2)transform.position;
 
-    public event Action<int> OnAmmoChanged;
-    public event Action<int> OnWeaponChanged;
+    public int CurrentAmmo => HasWeaponEquipped ? EquippedWeapon.ammo : 0;
+    public int MaxAmmo => HasWeaponEquipped ? EquippedWeapon.MaxAmmo + ammoBonus.ValueInt : 0;
+
+
+    public event Action<int, int> OnAmmoChanged;
     public event Action<float> OnReloadChanged;
 
     public void Initialize(PlayerWeapon weapon = null)
@@ -70,9 +74,18 @@ public class PlayerCombat : MonoBehaviour
         meleeDamage = p.Stats.GetStatValue(StatRef.PlayerMeleeDamageMult);
         rangedDamage = p.Stats.GetStatValue(StatRef.PlayerRangedDamageMult);
         reloadSpeed = p.Stats.GetStatValue(StatRef.PlayerReloadSpeed);
+        ammoBonus = p.Stats.GetStatValue(StatRef.PlayerMaxAmmoBonus);
+
+        p.Stats.Unsubscribe(StatRef.PlayerMaxAmmoBonus, HandleMaxAmmoChanged);
+        p.Stats.Subscribe(StatRef.PlayerMaxAmmoBonus, HandleMaxAmmoChanged);
 
         if(weapon != null)
             EquipRangedWeapon(weapon);
+    }
+
+    private void HandleMaxAmmoChanged()
+    {
+        OnAmmoChanged?.Invoke(CurrentAmmo, MaxAmmo);
     }
 
     public void RestoreFromSave(PlayerEquipmentSave save, GameDatabase db)
@@ -419,7 +432,9 @@ public class PlayerCombat : MonoBehaviour
 
         if (weapon.data.fireType == FireType.Independent)
         {
-            weapon.data.Fire(weapon, GetAttackDirection(AttackType.Projectile), activeDrone.FireOrigin);
+            Vector2 dir = GetAttackDirection(AttackType.Projectile);
+            weapon.data.Fire(weapon, dir, activeDrone.FireOrigin);
+            GameEvents.PlayerWeaponFired(weapon, dir, activeDrone.FireOrigin);
             return;
         }
 
@@ -449,6 +464,7 @@ public class PlayerCombat : MonoBehaviour
         currentState = CombatState.Active;
         Vector2 direction = GetAttackDirection(AttackType.Projectile);
         weapon.data.Fire(weapon, direction, activeDrone.FireOrigin);
+        GameEvents.PlayerWeaponFired(weapon, direction, activeDrone.FireOrigin);
 
         yield return new WaitForSeconds(weapon.data.activeTime);
 
@@ -493,8 +509,7 @@ public class PlayerCombat : MonoBehaviour
             weapon.OnEquip(EquippedWeapon);
         }
 
-        OnWeaponChanged?.Invoke(CurrentAmmo);
-        OnAmmoChanged?.Invoke(CurrentAmmo);
+        OnAmmoChanged?.Invoke(CurrentAmmo, MaxAmmo);
     }
 
     public void UnequipRangedWeapon() => EquipRangedWeapon(null);
@@ -506,7 +521,7 @@ public class PlayerCombat : MonoBehaviour
         EquippedWeapon.AddAmmo(amount);
     }
 
-    private void HandleWeaponAmmoChanged(int ammo) => OnAmmoChanged?.Invoke(ammo);
+    private void HandleWeaponAmmoChanged(int ammo) => OnAmmoChanged?.Invoke(ammo, MaxAmmo);
 
     #endregion
 

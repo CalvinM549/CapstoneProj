@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+// Upgrades are granted as runtime copies (Instantiate) of their assets, so any state an upgrade keeps
+// (player ref, stacks, timers, event subscriptions) lives on the copy and is thrown away with the run.
+// Lookups are by asset Id, so callers can keep passing the original asset.
 public class PlayerUpgrades : MonoBehaviour
 {
     private Player p;
@@ -12,9 +15,12 @@ public class PlayerUpgrades : MonoBehaviour
     [SerializeField] private MajorUpgrade PropulsionTemplate;
     [SerializeField] private MajorUpgrade BrainTemplate;
 
-    public Dictionary<UpgradeSlot, MajorUpgrade> majorUpgrades = new();
+    private readonly Dictionary<UpgradeSlot, MajorUpgrade> majorUpgrades = new();
 
-    private readonly Dictionary<AuxUpgrade, int> auxUpgrades = new();
+    private readonly Dictionary<string, AuxUpgrade> auxInstances = new();
+    private readonly Dictionary<string, int> auxStacks = new();
+
+    public event Action OnUpgradesChanged;
 
     [Header("Testing")]
 
@@ -27,9 +33,19 @@ public class PlayerUpgrades : MonoBehaviour
         p = GetComponent<Player>();
     }
 
+    private void OnEnable()
+    {
+        GameEvents.OnPlayerHitLanding += ModifyHitOnTarget;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.OnPlayerHitLanding -= ModifyHitOnTarget;
+    }
+
     private void OnDestroy()
     {
-
+        RemoveAll();
     }
 
     #endregion
@@ -51,15 +67,22 @@ public class PlayerUpgrades : MonoBehaviour
 
     public void RestoreFromSave(PlayerUpgradeSave save, GameDatabase db)
     {
-        foreach (var major in save.majorUpgrades)
-            GrantMajor((MajorUpgrade)db.upgrades.Get(major));
+        foreach (var majorId in save.majorUpgrades)
+        {
+            if (db.upgrades.Get(majorId) is MajorUpgrade major) GrantMajor(major);
+            else Debug.LogWarning($"[PlayerUpgrades] Saved major '{majorId}' no longer exists");
+        }
 
         foreach (var aux in save.auxUpgrades)
         {
-            for (int i = 0; i < aux.stacks; i++)
+            if (db.upgrades.Get(aux.id) is not AuxUpgrade auxAsset)
             {
-                GrantAux((AuxUpgrade)db.upgrades.Get(aux.id));
+                Debug.LogWarning($"[PlayerUpgrades] Saved aux '{aux.id}' no longer exists");
+                continue;
             }
+
+            for (int i = 0; i < aux.stacks; i++)
+                GrantAux(auxAsset);
         }
     }
 
@@ -67,32 +90,32 @@ public class PlayerUpgrades : MonoBehaviour
     {
         PlayerUpgradeSave save = new()
         {
-            majorUpgrades = majorUpgrades.Values.Select(u => u.Id).ToList()
+            majorUpgrades = majorUpgrades.Values.Where(u => u != null).Select(u => u.Id).ToList()
         };
 
-        foreach (var upgrade in auxUpgrades)
+        foreach (var pair in auxStacks)
         {
             save.auxUpgrades.Add(new AuxUpgradeSave()
             {
-                id = upgrade.Key.Id,
-                stacks = upgrade.Value
+                id = pair.Key,
+                stacks = pair.Value
             });
         }
 
         return save;
     }
 
-    public MajorUpgrade GetMajor(UpgradeSlot slot) => 
+    public MajorUpgrade GetMajor(UpgradeSlot slot) =>
         majorUpgrades.TryGetValue(slot, out var upgrade) ? upgrade : null;
 
-    public int GetAuxStacks(AuxUpgrade upgrade) => 
-        auxUpgrades.TryGetValue(upgrade, out var amount) ? amount : 0;
+    public int GetAuxStacks(AuxUpgrade upgrade) =>
+        upgrade != null && auxStacks.TryGetValue(upgrade.Id, out var amount) ? amount : 0;
 
     public IEnumerable<UpgradeBase> AllActiveUpgrades =>
         majorUpgrades.Values
             .Where(m => m != null && !m.isTemplate)
             .Cast<UpgradeBase>()
-            .Concat(auxUpgrades.Keys);
+            .Concat(auxInstances.Values);
 
     #endregion
 
@@ -101,6 +124,8 @@ public class PlayerUpgrades : MonoBehaviour
 
     public bool GrantMajor(MajorUpgrade upgrade)
     {
+        if (upgrade == null) return false;
+
         if (upgrade.slot == UpgradeSlot.None)
         {
             Debug.LogWarning($"[PlayerUpgrades] MajorUpgrade '{upgrade.upgradeName}' has slot=None");
@@ -110,15 +135,20 @@ public class PlayerUpgrades : MonoBehaviour
         if (majorUpgrades.TryGetValue(upgrade.slot, out MajorUpgrade existing) && existing != null)
             RemoveMajorInternal(existing);
 
-        majorUpgrades[upgrade.slot] = upgrade;
-        upgrade.Apply(p);
+        var instance = Instantiate(upgrade);
+        instance.name = upgrade.name;
 
-        // Fire event
+        majorUpgrades[upgrade.slot] = instance;
+        instance.Apply(p);
+
+        OnUpgradesChanged?.Invoke();
         return true;
     }
 
     public bool GrantAux(AuxUpgrade upgrade)
     {
+        if (upgrade == null) return false;
+
         int current = GetAuxStacks(upgrade);
         if (current >= upgrade.maxStacks)
         {
@@ -126,13 +156,19 @@ public class PlayerUpgrades : MonoBehaviour
             return false;
         }
 
-        auxUpgrades[upgrade] = current + 1;
+        auxStacks[upgrade.Id] = current + 1;
 
         if (current == 0)
-            upgrade.Apply(p);
+        {
+            var instance = Instantiate(upgrade);
+            instance.name = upgrade.name;
+            auxInstances[upgrade.Id] = instance;
+            instance.Apply(p);
+        }
         else
-            upgrade.OnStack();
+            auxInstances[upgrade.Id].OnStack();
 
+        OnUpgradesChanged?.Invoke();
         return true;
     }
 
@@ -143,35 +179,46 @@ public class PlayerUpgrades : MonoBehaviour
     {
         if(majorUpgrades.TryGetValue(slot, out MajorUpgrade upgrade) && upgrade != null)
             RemoveMajorInternal(upgrade);
+
+        OnUpgradesChanged?.Invoke();
     }
 
-    private void RemoveMajorInternal(MajorUpgrade upgrade)
+    private void RemoveMajorInternal(MajorUpgrade instance)
     {
-        upgrade.Remove(p);
-        majorUpgrades[upgrade.slot] = null;
-
-        // Fire event
+        instance.Remove(p);
+        majorUpgrades.Remove(instance.slot);
+        Destroy(instance);
     }
 
     public void RemoveAllAuxStacks(AuxUpgrade upgrade)
     {
-        if (!auxUpgrades.ContainsKey(upgrade)) return;
+        if (upgrade == null || !auxInstances.TryGetValue(upgrade.Id, out var instance)) return;
 
-        upgrade.Remove(p);
-        auxUpgrades.Remove(upgrade);
-        // Fire event
+        instance.Remove(p);
+        auxInstances.Remove(upgrade.Id);
+        auxStacks.Remove(upgrade.Id);
+        Destroy(instance);
+
+        OnUpgradesChanged?.Invoke();
     }
 
     public void RemoveAll()
     {
-        foreach(var major in majorUpgrades.Values.Where(m => m.slot != UpgradeSlot.None))
+        foreach (var major in majorUpgrades.Values.Where(m => m != null).ToList())
+        {
             major.Remove(p);
+            Destroy(major);
+        }
 
-        foreach(var aux in auxUpgrades.Keys.ToList())
+        foreach (var aux in auxInstances.Values.ToList())
+        {
             aux.Remove(p);
+            Destroy(aux);
+        }
 
         majorUpgrades.Clear();
-        auxUpgrades.Clear();
+        auxInstances.Clear();
+        auxStacks.Clear();
     }
 
     #endregion
@@ -184,6 +231,8 @@ public class PlayerUpgrades : MonoBehaviour
         if (PropulsionTemplate != null) GrantMajor(PropulsionTemplate);
         if (BrainTemplate != null)      GrantMajor(BrainTemplate);
     }
+
+    #region Hit Hooks
 
     public void ModifyOutgoingHit(HitData hit)
     {
@@ -200,4 +249,17 @@ public class PlayerUpgrades : MonoBehaviour
             upgrade.ModifyIncomingHit(hit);
         }
     }
+
+    // Called as a player hit lands on an enemy (melee or projectile), for target-dependent effects
+    private void ModifyHitOnTarget(HitData hit, EnemyController target)
+    {
+        if (hit.IsResolved) return; // already applied to an earlier target (AOE etc)
+
+        foreach (var upgrade in AllActiveUpgrades)
+            upgrade.ModifyHitOnTarget(hit, target);
+    }
+
+    public bool PreventsWhiffDrain(AttackType type) => AllActiveUpgrades.Any(u => u.PreventsWhiffDrain(type));
+
+    #endregion
 }

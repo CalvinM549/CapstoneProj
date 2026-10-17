@@ -182,6 +182,9 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
         while (healthSegments.Count > newCount && healthSegments.Count > 0)
             healthSegments.RemoveAt(healthSegments.Count - 1);
 
+        // The active segment may have been removed above; fall back to the new top segment
+        activeHealthIndex = Mathf.Clamp(activeHealthIndex, 0, Mathf.Max(0, healthSegments.Count - 1));
+
         if (healthSegments.Count > 0)
             SyncActiveFlags();
         else
@@ -259,6 +262,7 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
             }
 
             activeHealthIndex--;
+            GameEvents.PlayerSegmentBroken();
 
             if (remaining <= 0 || spillsLeft <= 0 || activeHealthIndex == 0)
                 break;
@@ -307,6 +311,18 @@ public class  PlayerHealth : MonoBehaviour, IDamageable
             return;
         }
         ActiveSegment.RestoreSegment();
+        GameEvents.PlayerHealthChanged(healthSegments);
+    }
+
+    // Partial repair of the active segment, as a fraction of its max (0..1)
+    public void RestoreActiveSegmentFraction(float fraction)
+    {
+        if (!IsAlive || healthSegments.Count == 0 || fraction <= 0f) return;
+
+        var segment = ActiveSegment;
+        if (segment.currentHealth >= segment.maxHealth) return;
+
+        segment.RestoreHealth(segment.maxHealth * fraction);
         GameEvents.PlayerHealthChanged(healthSegments);
     }
 

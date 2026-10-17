@@ -27,7 +27,9 @@ MonoBehaviour:
   projectiles:
   - {fileID: 11400000, guid: cb94a93db10f3e5489a16ae3984886ef, type: 2}
   baseDropRate: 1
-  synergyTags: []
+  synergyTags:
+  - breacher
+  - arsenal
   spawnInShops: 1
   shopPrice: 50
   unlockedByDefault: 0

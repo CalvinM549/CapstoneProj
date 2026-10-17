@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6614b9ee6449bb64d9c8ff6bfddd805c, type: 3}
-  m_Name: FrameRegen
+  m_Name: Major_Recursive
   m_EditorClassIdentifier: Assembly-CSharp::Frame_01
   id: 101bc2a4-949d-4510-9d33-34da0489e756
   upgradeName: Recursive Plating
@@ -18,9 +18,12 @@ MonoBehaviour:
   effectText: Regenerate 1 structure upon completing a room
   icon: {fileID: 3389911732521518902, guid: e5a42e43f2430bb4d931ad8ef9bd048c, type: 3}
   slot: 0
-  maxStacks: 1
   baseDropRate: 1
-  synergyTags: []
+  synergyTags:
+  - salvage
+  spawnInShops: 1
+  shopPrice: 50
+  maxStacks: 1
   statModifiers: []
   isTemplate: 0
   structureHealed: 1

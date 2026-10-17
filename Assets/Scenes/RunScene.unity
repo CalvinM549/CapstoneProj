@@ -2735,7 +2735,7 @@ MonoBehaviour:
   m_RendererIndex: -1
   m_VolumeLayerMask:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 2048
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 1
@@ -9072,6 +9072,7 @@ Transform:
   - {fileID: 1994511518}
   - {fileID: 281054892}
   - {fileID: 1990445777}
+  - {fileID: 1975102264}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1449824187
@@ -14954,6 +14955,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 271695721}
     m_Modifications:
+    - target: {fileID: 1998423933788571054, guid: 2ab3a70459ecdd044a21d480b7902bbd, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
     - target: {fileID: 2547187613648861356, guid: 2ab3a70459ecdd044a21d480b7902bbd, type: 3}
       propertyPath: m_Name
       value: RewardSelectScreen
@@ -15041,6 +15046,18 @@ PrefabInstance:
     - target: {fileID: 3625164072563774850, guid: 2ab3a70459ecdd044a21d480b7902bbd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4322147892176839733, guid: 2ab3a70459ecdd044a21d480b7902bbd, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 7034257151130576169, guid: 2ab3a70459ecdd044a21d480b7902bbd, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4286743170
+      objectReference: {fileID: 0}
+    - target: {fileID: 7034257151130576169, guid: 2ab3a70459ecdd044a21d480b7902bbd, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15611,6 +15628,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1970111650}
   m_CullTransparentMesh: 1
+--- !u!1 &1975102263
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1975102264}
+  - component: {fileID: 1975102265}
+  m_Layer: 11
+  m_Name: UIVolume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1975102264
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975102263}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1423779379}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1975102265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975102263}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 5a598926e9caa784fbda37b9fa3a496b, type: 2}
 --- !u!1 &1983677752
 GameObject:
   m_ObjectHideFlags: 0

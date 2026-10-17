@@ -8,6 +8,7 @@ public static class StatRef
     public static string PlayerBaseSpeed = "player.movement.baseSpeed";
     public static string PlayerDashCharges = "player.movement.dashCharges";
     public static string PlayerDashRecharge = "player.movement.dashRechargeRate";
+    public static string PlayerDashSpeedRetention = "player.movement.dashSpeedRetention"; // multiplier on MovementData.dashSpeedRetention
 
     // Combat
     public static string PlayerMeleeDamageMult = "player.combat.meleeDamage";
@@ -17,6 +18,12 @@ public static class StatRef
     public static string PlayerIncomingDamageMult = "player.combat.incomingDamageMult";
 
     public static string PlayerReloadSpeed = "player.combat.reloadSpeed";
+    public static string PlayerMaxAmmoBonus = "player.combat.maxAmmoBonus"; // flat, added to the weapon's base ammo
+
+    // Economy
+    public static string PlayerCurrencyGainMult = "player.economy.currencyGainMult";
+    public static string PlayerRerollDiscount = "player.economy.rerollDiscount";  // flat currency off each reroll
+    public static string PlayerFreeRerolls = "player.economy.freeRerolls";        // free rerolls per reward station
 
     // Health
     public static string PlayerStructureCount = "player.health.structureCount";

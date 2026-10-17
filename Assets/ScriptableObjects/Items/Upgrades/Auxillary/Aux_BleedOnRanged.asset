@@ -19,7 +19,9 @@ MonoBehaviour:
   icon: {fileID: -389371109008627860, guid: a85029b4da19eb84d8e05a7749949aea, type: 3}
   slot: 4
   baseDropRate: 1
-  synergyTags: []
+  synergyTags:
+  - conductor
+  - arsenal
   spawnInShops: 1
   shopPrice: 50
   maxStacks: 1

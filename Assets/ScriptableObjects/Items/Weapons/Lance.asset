@@ -27,7 +27,8 @@ MonoBehaviour:
   projectiles:
   - {fileID: 11400000, guid: 6fe67ef6f404ff243b7d7bd3efaa01b8, type: 2}
   baseDropRate: 1
-  synergyTags: []
+  synergyTags:
+  - arsenal
   spawnInShops: 1
   shopPrice: 50
   unlockedByDefault: 0

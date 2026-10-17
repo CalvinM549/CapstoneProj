@@ -172,6 +172,8 @@ public class PlayerMomentum : MonoBehaviour
 
     private void HandleAttackWhiff(AttackType type)
     {
+        if (p.Upgrades != null && p.Upgrades.PreventsWhiffDrain(type)) return;
+
         float drainAmount = type switch
         {
             AttackType.Light => data.lightWhiffDrain, 

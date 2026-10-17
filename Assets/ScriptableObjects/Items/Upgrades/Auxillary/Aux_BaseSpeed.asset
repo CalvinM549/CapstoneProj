@@ -19,7 +19,8 @@ MonoBehaviour:
   icon: {fileID: 4066830363745794116, guid: df393a1c4f8a5ac4ba2113d56c4718ee, type: 3}
   slot: 4
   baseDropRate: 1
-  synergyTags: []
+  synergyTags:
+  - kinetic
   spawnInShops: 1
   shopPrice: 50
   maxStacks: 5

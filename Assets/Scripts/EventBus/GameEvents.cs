@@ -17,6 +17,10 @@ public static class GameEvents
     public static event Action<int> OnCurrencyChanged;
     public static void CurrencyChanged(int newValue) => OnCurrencyChanged?.Invoke(newValue);
 
+    // A currency pickup reached the player (amount after multipliers). Not fired for spending.
+    public static event Action<int> OnCurrencyCollected;
+    public static void CurrencyCollected(int amount) => OnCurrencyCollected?.Invoke(amount);
+
     #endregion
 
     #region Inputs
@@ -68,6 +72,14 @@ public static class GameEvents
     public static event Action OnAmmoUsedEmpty;
     public static void AmmoUsedEmpty() => OnAmmoUsedEmpty?.Invoke();
 
+    // The player's weapon fired a normal shot (not upgrade bonus shots)
+    public static event Action<ActiveWeapon, Vector2, Vector2> OnPlayerWeaponFired; // weapon, direction, origin
+    public static void PlayerWeaponFired(ActiveWeapon weapon, Vector2 direction, Vector2 origin) => OnPlayerWeaponFired?.Invoke(weapon, direction, origin);
+
+    // A structure segment was destroyed but the player survived
+    public static event Action OnPlayerSegmentBroken;
+    public static void PlayerSegmentBroken() => OnPlayerSegmentBroken?.Invoke();
+
     #region Player
     public static event Action<HitData> OnPlayerTookDamage;
     public static void PlayerTookDamage(HitData hit) => OnPlayerTookDamage?.Invoke(hit);
@@ -109,6 +121,10 @@ public static class GameEvents
     public static event Action<EnemyController> OnEnemyKilled;
 
     public static void EnemyHit(EnemyController enemy, HitData hit) => OnEnemyHit?.Invoke(enemy, hit);
+
+    // Fired just before a player hit is applied to an enemy, so target-dependent effects can still add modifiers
+    public static event Action<HitData, EnemyController> OnPlayerHitLanding;
+    public static void PlayerHitLanding(HitData hit, EnemyController target) => OnPlayerHitLanding?.Invoke(hit, target);
     public static void EnemyKilled(EnemyController enemy) => OnEnemyKilled?.Invoke(enemy);
 
     #endregion

@@ -95,6 +95,8 @@ public class StatusEffectController : MonoBehaviour
         }
 
         var instance = new ActiveStatusEffect(data, applier, appliedByPlayer);
+        if (data.stackMode == StatusStackMode.Intensity)
+            instance.stacks = Mathf.Clamp(stacksToAdd, 1, Mathf.Max(1, data.maxStacks));
         activeEffects[data] = instance;
 
         ApplyStatModifierStacks(data, instance, instance.stacks);
@@ -166,6 +168,7 @@ public class StatusEffectController : MonoBehaviour
             sourcePos = transform.position,
             isParryable = false,
             isBlockable = false,
+            sourceStatus = data,
         };
 
         damageable.RecieveHit(hit);

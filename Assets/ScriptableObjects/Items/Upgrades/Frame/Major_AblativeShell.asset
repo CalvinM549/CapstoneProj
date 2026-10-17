@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f987a325026d9a9409f36e8c0b5325cc, type: 3}
+  m_Name: Major_AblativeShell
+  m_EditorClassIdentifier: Assembly-CSharp::MajorUpgrade
+  id: major_ablativeShell
+  upgradeName: Ablative Shell
+  flavourText: Layered scrap plating, each sheet built to be torn away.
+  effectText: +2 structure segments, but every segment has 35% less integrity
+  icon: {fileID: 0}
+  slot: 0
+  baseDropRate: 1
+  synergyTags:
+  - salvage
+  - overclock
+  spawnInShops: 1
+  shopPrice: 100
+  maxStacks: 1
+  statModifiers:
+  - statID: player.health.structureCount
+    value: 2
+    modifierType: 100
+  - statID: player.health.baseStructureHealth
+    value: -0.35
+    modifierType: 200
+  isTemplate: 0

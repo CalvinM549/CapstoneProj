@@ -110,7 +110,12 @@ public class CurrencyPickup : MonoBehaviour
         state = State.Collected;
         transform.DOKill();
 
-        RunManager.Instance.currentRun.GrantCurrency(Value);
+        var run = RunManager.Instance.currentRun;
+        float mult = run.player != null ? run.player.Stats.Get(StatRef.PlayerCurrencyGainMult) : 1f;
+        int amount = Mathf.Max(1, Mathf.RoundToInt(Value * (mult > 0f ? mult : 1f)));
+
+        run.GrantCurrency(amount);
+        GameEvents.CurrencyCollected(amount);
         returnToPool?.Invoke(this);
     }
 }

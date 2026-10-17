@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d62eca14ac381324d8545a7bb0f57ee0, type: 3}
+  m_Name: Brain_CorruptedDirective
+  m_EditorClassIdentifier: Assembly-CSharp::Brain_CorruptedDirective
+  id: major_corruptedDirective
+  upgradeName: Corrupted Directive
+  flavourText: COMBAT INTELLIGENCE [CORRUPTED]. Proceeding anyway.
+  effectText: -1 structure segment. +40% damage while on your last segment
+  icon: {fileID: 0}
+  slot: 2
+  baseDropRate: 1
+  synergyTags:
+  - overclock
+  spawnInShops: 1
+  shopPrice: 100
+  maxStacks: 1
+  statModifiers:
+  - statID: player.health.structureCount
+    value: -1
+    modifierType: 100
+  isTemplate: 0
+  lastSegmentDamageBonus: 0.4

@@ -38,6 +38,7 @@ public class RunState
         this.map = map;
         this.player = player;
         rewardContext = new(player.Upgrades);
+        rewardContext.RefreshSynergyTags(player);
     }
 
     public static RunState FromSave(RunSaveData save, SectorMap map, Player player)
@@ -54,6 +55,7 @@ public class RunState
 
         run.pathTaken.AddRange(save.pathTaken);
         run.rewardContext.FromSave(save.rewards);
+        run.rewardContext.RefreshSynergyTags(player);
 
         return run;
     }
@@ -124,6 +126,7 @@ public class RunState
         }
 
         rewardContext.SeenItemIdsThisRun.Add(result.Item.Id);
+        rewardContext.RefreshSynergyTags(player);
     }
 
     #endregion

@@ -43,6 +43,13 @@ public class PlayerUI : MonoBehaviour
         mouseWorldPos = new Vector3(pos.x, pos.y, 0f);
     }
 
+
+    private void FixedUpdate()
+    {
+
+        UpdatePosition();
+    }
+
     private void LateUpdate()
     {
         UpdateCustomMouse();
@@ -84,13 +91,13 @@ public class PlayerUI : MonoBehaviour
         cg.DOFade(alpha, 1f);
     }
 
-    private void FixedUpdate()
+    private void UpdatePosition()
     {
         if (playerPos == null) return;
 
         transform.localPosition = Vector3.Lerp(
-            transform.localPosition, 
-            playerPos.position, 
+            transform.localPosition,
+            playerPos.position,
             lagValue * Time.deltaTime);
     }
 

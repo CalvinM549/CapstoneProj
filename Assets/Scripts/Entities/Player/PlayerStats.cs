@@ -26,6 +26,7 @@ public class PlayerStats : MonoBehaviour, IStatModifiable
         Register(StatRef.PlayerBaseSpeed, movementData.baseSpeed);
         Register(StatRef.PlayerDashCharges, movementData.maxDashCharges);
         Register(StatRef.PlayerDashRecharge, 1f);
+        Register(StatRef.PlayerDashSpeedRetention, 1f);
 
 
         // Health
@@ -40,6 +41,12 @@ public class PlayerStats : MonoBehaviour, IStatModifiable
         Register(StatRef.PlayerIncomingDamageMult, 1f);
 
         Register(StatRef.PlayerReloadSpeed, 1f);
+        Register(StatRef.PlayerMaxAmmoBonus, 0f);
+
+        // Economy
+        Register(StatRef.PlayerCurrencyGainMult, 1f);
+        Register(StatRef.PlayerRerollDiscount, 0f);
+        Register(StatRef.PlayerFreeRerolls, 0f);
 
         // Momentum
         Register(StatRef.PlayerMomentumGainMult, 1f);

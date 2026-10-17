@@ -26,6 +26,13 @@ public enum RarityTier
 
 public class LootService
 {
+    // Weight tuning
+    private const float PityWeightPerStep = 0.15f;
+    private const float SynergyWeightPerPoint = 0.25f;  // per point of SynergyScore
+    private const float MaxSynergyBonus = 1f;           // synergy can at most double an item's weight
+    private const float UnseenBonus = 1.2f;
+    private const int DominantTagMinCount = 2;          // build must own this many of a tag before variety kicks in
+
     private GameDatabase db;
 
     private List<ILootEntry> lootPool = new();
@@ -95,8 +102,17 @@ public class LootService
 
         var result = new List<LootResult>(request.count);
 
+        // Variety guarantee: in offers of 3+, at most count-1 cards may share the build's dominant tag,
+        // so there is always at least one option pulling somewhere else.
+        string dominant = ctx.DominantTag(DominantTagMinCount);
+        int maxDominant = request.count >= 3 ? request.count - 1 : request.count;
+        int dominantPicked = 0;
+
         for (int i = 0; i < request.count && lootPool.Count > 0; i++)
         {
+            if (dominant != null && dominantPicked >= maxDominant)
+                SuppressTag(dominant);
+
             float total = 0f;
             for (int j = 0; j < weights.Count; j++)
                 total += weights[j];
@@ -120,6 +136,9 @@ public class LootService
                 Item = lootPool[pick],
                 Rarity = RollRarity(depth, rng)
             });
+
+            if (dominant != null && HasTag(lootPool[pick], dominant)) dominantPicked++;
+
             lootPool.RemoveAt(pick);
             weights.RemoveAt(pick);
 
@@ -176,15 +195,37 @@ public class LootService
         float weight = item.BaseDropWeight;
 
         int pity = ctx.GetPity(category);
-        weight *= 1f + (pity * 0.15f); // tune
+        weight *= 1f + (pity * PityWeightPerStep);
 
-        if (item.SynergyTags.Any(tag => ctx.ActiveSynergyTags.Contains(tag)))
-            weight *= 1.5f;
+        // Soft pull towards the build: scales with how invested the build is in this item's tags
+        int synergy = ctx.SynergyScore(item);
+        if (synergy > 0)
+            weight *= 1f + Mathf.Min(synergy * SynergyWeightPerPoint, MaxSynergyBonus);
 
         if (!ctx.SeenItemIdsThisRun.Contains(item.Id))
-            weight *= 1.2f;
+            weight *= UnseenBonus;
 
         return weight;
+    }
+
+    private static bool HasTag(ILootEntry item, string tag)
+    {
+        foreach (var t in item.SynergyTags)
+            if (t == tag) return true;
+        return false;
+    }
+
+    // Zero the weight of items carrying 'tag', unless that would leave nothing to pick
+    private void SuppressTag(string tag)
+    {
+        bool anyOther = false;
+        for (int j = 0; j < lootPool.Count; j++)
+            if (weights[j] > 0f && !HasTag(lootPool[j], tag)) { anyOther = true; break; }
+
+        if (!anyOther) return;
+
+        for (int j = 0; j < lootPool.Count; j++)
+            if (HasTag(lootPool[j], tag)) weights[j] = 0f;
     }
 
     private RarityTier RollRarity(int runDepth, System.Random rng)

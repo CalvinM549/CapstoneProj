@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5064e4fb7b11be40af6ab109cffd00f, type: 3}
+  m_Name: Aux_ExtendedMagazine
+  m_EditorClassIdentifier: Assembly-CSharp::AuxUpgrade
+  id: aux_extendedMagazine
+  upgradeName: Extended Magazine
+  flavourText: Welded-on capacity.
+  effectText: +2 max ammo
+  icon: {fileID: 0}
+  slot: 4
+  baseDropRate: 1
+  synergyTags:
+  - arsenal
+  spawnInShops: 1
+  shopPrice: 50
+  maxStacks: 3
+  statModifiers:
+  - statID: player.combat.maxAmmoBonus
+    value: 2
+    modifierType: 100

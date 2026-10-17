@@ -17,7 +17,18 @@ public class RewardStation : StationBase, IInteractable, IRerollSource
     private List<LootResult> offer;
     private int rerollsUsed;
 
-    public int RerollCost => baseRerollCost + rerollCostStep * rerollsUsed;
+    // Player stats can discount rerolls or grant free ones (e.g. Black-Market Firmware)
+    public int RerollCost
+    {
+        get
+        {
+            var stats = run?.player != null ? run.player.Stats : null;
+            if (stats != null && rerollsUsed < stats.GetInt(StatRef.PlayerFreeRerolls)) return 0;
+
+            int discount = stats != null ? stats.GetInt(StatRef.PlayerRerollDiscount) : 0;
+            return Mathf.Max(0, baseRerollCost + rerollCostStep * rerollsUsed - discount);
+        }
+    }
     public int RerollsUsed => rerollsUsed;
     public bool HasRerollsLeft => allowReroll && (maxRerolls < 0 || rerollsUsed < maxRerolls);
     public bool CanAffordReroll => run != null && run.currency >= RerollCost;

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8deed77bcbe3b244ba4cbe023e9b7451, type: 3}
+  m_Name: Brain_ForkProcess
+  m_EditorClassIdentifier: Assembly-CSharp::Brain_ForkProcess
+  id: major_forkProcess
+  upgradeName: Fork Process
+  flavourText: Spare cycles, spent on violence.
+  effectText: Kills make your drone fire a free shot at the nearest enemy
+  icon: {fileID: 0}
+  slot: 2
+  baseDropRate: 1
+  synergyTags:
+  - arsenal
+  - overclock
+  spawnInShops: 1
+  shopPrice: 100
+  maxStacks: 1
+  statModifiers: []
+  isTemplate: 0
+  damageMultiplier: 0.75
+  searchRange: 10
+  internalCooldown: 0.2

@@ -20,7 +20,7 @@ MonoBehaviour:
   slot: 4
   baseDropRate: 1
   synergyTags:
-  - ranged
+  - arsenal
   spawnInShops: 1
   shopPrice: 50
   maxStacks: 5

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum EnemyState
@@ -32,7 +33,25 @@ public class EnemyController : MonoBehaviour, IDamageable
     public event Action<bool> onLockChange;
 
     protected float currentHealth;
-    public float PercentHealth => currentHealth / data.baseHealth;
+    // Uses the live max-health stat (so scaled/elite enemies report correctly), falling back to the data value
+    public float PercentHealth
+    {
+        get
+        {
+            float max = stats != null ? stats.Get(StatRef.EnemyMaxHealth) : 0f;
+            if (max <= 0f) max = data.baseHealth;
+            return max > 0f ? currentHealth / max : 0f;
+        }
+    }
+
+    public StatusEffectController Statuses => statusController;
+
+    // Type of the most recent player hit (lets kill effects know whether the killing blow was melee, ranged, DoT...)
+    public AttackType LastHitType { get; private set; }
+
+    // Statuses the enemy had when it died (they are cleared during despawn, before OnEnemyKilled fires)
+    private readonly List<ActiveStatusEffect> statusesAtDeath = new();
+    public IReadOnlyList<ActiveStatusEffect> StatusesAtDeath => statusesAtDeath;
 
     public event Action<float, float, HitData> OnHit;
 
@@ -154,6 +173,9 @@ public class EnemyController : MonoBehaviour, IDamageable
         //if (IsIFrame) return;
         if (!hit.isPlayerAttack) return;
 
+        LastHitType = hit.attackType;
+        GameEvents.PlayerHitLanding(hit, this);
+
         ApplyDamage(hit);
         ApplyStatuses(hit);
 
@@ -209,6 +231,9 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         if (!IsAlive) return;
         IsAlive = false;
+
+        statusesAtDeath.Clear();
+        if (statusController != null) statusesAtDeath.AddRange(statusController.AllActiveEffects);
 
         OnDespawn();
 
