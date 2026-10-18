@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -22,6 +23,11 @@ public class PixelCameraRig : MonoBehaviour
     [SerializeField] private UpscaleMode upscaleMode = UpscaleMode.IntegerLetterbox;
     [SerializeField] private bool subPixelSmoothing = true;
 
+    [Tooltip("Render texels per art pixel. 1 = strict pixel grid (moving sprites step a whole art pixel). " +
+             "2 or 4 let moving sprites sit between art pixels, removing step jitter on followed objects, " +
+             "while sprites still draw with chunky point-sampled pixels.")]
+    [SerializeField, Range(1, 4)] private int positionPrecision = 1;
+
     // Extra texels around the edge so the sub-pixel shift never samples outside the image
     private const int Margin = 1;
 
@@ -29,12 +35,28 @@ public class PixelCameraRig : MonoBehaviour
     private Vector3 smoothPos;
     private bool snapped;
     private int lastScreenW, lastScreenH;
+    private int builtPrecision;
+
+    /// Fired once per frame after both cameras are in their final positions for rendering.
+    /// Anything that converts screen to world (custom cursors etc.) should update here.
+    public static event Action CamerasPositioned;
 
     public RenderTexture GameTexture => renderTexture;
     public float PixelScale { get; private set; }
+    public Camera GameCamera => gameCamera;
+    public Camera ScreenCamera => screenCamera;
+
+    private int TexelsPerUnit => pixelsPerUnit * builtPrecision;
 
     private void OnEnable()
     {
+        if (gameCamera == null || screenCamera == null || presentImage == null)
+        {
+            Debug.LogError($"{nameof(PixelCameraRig)} on {name} is missing a camera or present image reference.", this);
+            enabled = false;
+            return;
+        }
+
         CreateRenderTexture();
         lastScreenW = lastScreenH = -1;
 
@@ -46,22 +68,17 @@ public class PixelCameraRig : MonoBehaviour
     {
         Canvas.preWillRenderCanvases -= OnPreRenderCanvases;
         RenderPipelineManager.endContextRendering -= OnEndFrame;
-
-        if (gameCamera != null) gameCamera.targetTexture = null;
-        if (renderTexture != null)
-        {
-            renderTexture.Release();
-            Destroy(renderTexture);
-            renderTexture = null;
-        }
+        ReleaseRenderTexture();
     }
 
     private void CreateRenderTexture()
     {
+        builtPrecision = Mathf.Clamp(positionPrecision, 1, 4);
+
         renderTexture = new RenderTexture(
-            virtualWidth + Margin * 2,
-            virtualHeight + Margin * 2,
-            24, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default)
+            (virtualWidth + Margin * 2) * builtPrecision,
+            (virtualHeight + Margin * 2) * builtPrecision,
+            24, RenderTextureFormat.RGB111110Float, RenderTextureReadWrite.Default)
         {
             name = "PixelGameRT",
             filterMode = FilterMode.Point,
@@ -73,6 +90,17 @@ public class PixelCameraRig : MonoBehaviour
 
         gameCamera.targetTexture = renderTexture;
         presentImage.texture = renderTexture;
+    }
+
+    private void ReleaseRenderTexture()
+    {
+        if (gameCamera != null) gameCamera.targetTexture = null;
+        if (renderTexture != null)
+        {
+            renderTexture.Release();
+            Destroy(renderTexture);
+            renderTexture = null;
+        }
     }
 
     private void UpdateLayout()
@@ -95,6 +123,13 @@ public class PixelCameraRig : MonoBehaviour
     // Runs after Cinemachine's LateUpdate and before UI meshes are rebuilt
     private void OnPreRenderCanvases()
     {
+        // Allow changing precision from the inspector at runtime
+        if (builtPrecision != Mathf.Clamp(positionPrecision, 1, 4))
+        {
+            ReleaseRenderTexture();
+            CreateRenderTexture();
+        }
+
         if (Screen.width != lastScreenW || Screen.height != lastScreenH)
             UpdateLayout();
 
@@ -102,12 +137,13 @@ public class PixelCameraRig : MonoBehaviour
         smoothPos = gt.position;
 
         // Snap the game camera to the texel grid
-        float px = smoothPos.x * pixelsPerUnit;
-        float py = smoothPos.y * pixelsPerUnit;
+        float tpu = TexelsPerUnit;
+        float px = smoothPos.x * tpu;
+        float py = smoothPos.y * tpu;
         float sx = Mathf.Round(px);
         float sy = Mathf.Round(py);
 
-        gt.position = new Vector3(sx / pixelsPerUnit, sy / pixelsPerUnit, smoothPos.z);
+        gt.position = new Vector3(sx / tpu, sy / tpu, smoothPos.z);
         gameCamera.orthographicSize = (virtualHeight + Margin * 2) * 0.5f / pixelsPerUnit;
         snapped = true;
 
@@ -116,12 +152,15 @@ public class PixelCameraRig : MonoBehaviour
         float fy = subPixelSmoothing ? py - sy : 0f;
         float rw = renderTexture.width;
         float rh = renderTexture.height;
+        float margin = Margin * builtPrecision;
         presentImage.uvRect = new Rect(
-            (Margin + fx) / rw, (Margin + fy) / rh,
-            virtualWidth / rw, virtualHeight / rh);
+            (margin + fx) / rw, (margin + fy) / rh,
+            virtualWidth * builtPrecision / rw, virtualHeight * builtPrecision / rh);
 
         // Screen camera sees the smooth, unsnapped view
         screenCamera.transform.SetPositionAndRotation(smoothPos, gt.rotation);
+
+        CamerasPositioned?.Invoke();
     }
 
     // Put the smooth position back so gameplay code never sees the snapped one

@@ -20,6 +20,7 @@ public class PlayerReloadUI : MonoBehaviour
     private void OnEnable()
     {
         playerUI.Initialized += HandleUIReady;
+        playerUI.CursorUpdated += UpdateReloadPosition;
 
         if(playerUI.player != null) HandleUIReady(playerUI.player);
     }
@@ -27,16 +28,12 @@ public class PlayerReloadUI : MonoBehaviour
     private void OnDisable()
     {
         playerUI.Initialized -= HandleUIReady;
+        playerUI.CursorUpdated -= UpdateReloadPosition;
 
         if (player != null)
         {
             player.Combat.OnReloadChanged -= HandleReloadChanged;
         }
-    }
-
-    private void Update()
-    {
-        UpdateReloadPosition();
     }
 
     private void HandleUIReady(Player p)

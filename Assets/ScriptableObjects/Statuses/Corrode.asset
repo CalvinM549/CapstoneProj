@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 275db74dec296e74ea353f92fd4311aa, type: 3}
   m_Name: Corrode
   m_EditorClassIdentifier: Assembly-CSharp::BasicStatusEffect
-  statusName: CORRODE
+  statusName: Corrode
   icon: {fileID: 0}
   type: 1
   duration: 6

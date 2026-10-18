@@ -267,7 +267,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 752d7d56c3eda364b81a0be89764d966, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SettingsManager
-  mixer: {fileID: 0}
+  mixer: {fileID: 24100000, guid: 8de53d10e3f869f46ad71ff574f56e38, type: 2}
   masterParam: MasterVolume
   musicParam: MusicVolume
   sfxParam: SFXVolume

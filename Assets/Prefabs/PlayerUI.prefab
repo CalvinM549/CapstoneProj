@@ -558,7 +558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fd880b1259cee34f9776dabfa3d01c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerUI
-  lagValue: 20
+  lagValue: 25
   cg: {fileID: 5098035817483669377}
   cursorPos: {fileID: 7005813111030992635}
   cursorPos2: {fileID: 7768976831216244863}

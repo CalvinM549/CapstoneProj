@@ -19,6 +19,7 @@ public class PlayerUI : MonoBehaviour
     public Vector3 mouseWorldPos;
 
     public event Action<Player> Initialized;
+    public event Action CursorUpdated;
 
     public bool Visible {  get; private set; }
 
@@ -30,34 +31,13 @@ public class PlayerUI : MonoBehaviour
     private void OnEnable()
     {
         GameEvents.OnPlayerTransitionTeleport += HandleTransitionTeleport;
+        PixelCameraRig.CamerasPositioned += HandleCamerasPositioned;
     }
 
     private void OnDisable()
     {
         GameEvents.OnPlayerTransitionTeleport -= HandleTransitionTeleport;
-    }
-
-    private void Update()
-    {
-        var pos = mainCam.ScreenToWorldPoint(InputManager.Instance.GetMousePosition());
-        mouseWorldPos = new Vector3(pos.x, pos.y, 0f);
-    }
-
-
-    private void FixedUpdate()
-    {
-
-        UpdatePosition();
-    }
-
-    private void LateUpdate()
-    {
-        UpdateCustomMouse();
-    }
-
-    private void HandleTransitionTeleport(Vector3 newPos)
-    {
-        transform.position = newPos;
+        PixelCameraRig.CamerasPositioned -= HandleCamerasPositioned;
     }
 
     public void Initialize(Player p)
@@ -72,6 +52,40 @@ public class PlayerUI : MonoBehaviour
 
         Initialized?.Invoke(p);
     }
+
+    private void Update()
+    {
+        UpdateMouseWorldPos();
+    }
+
+    private void LateUpdate()
+    {
+        UpdatePosition();
+    }
+
+    private void HandleCamerasPositioned()
+    {
+        if (playerPos == null) return;
+
+        UpdateMouseWorldPos();
+        UpdateCustomMouse();
+    }
+
+    private void UpdateMouseWorldPos()
+    {
+        if (mainCam == null) mainCam = Camera.main;
+        if (mainCam == null) return;
+
+        var pos = mainCam.ScreenToWorldPoint(InputManager.Instance.GetMousePosition());
+        mouseWorldPos = new Vector3(pos.x, pos.y, 0f);
+    }
+
+    private void HandleTransitionTeleport(Vector3 newPos)
+    {
+        transform.position = newPos;
+    }
+
+
 
     public void ToggleUI(bool show)
     {
@@ -95,10 +109,8 @@ public class PlayerUI : MonoBehaviour
     {
         if (playerPos == null) return;
 
-        transform.localPosition = Vector3.Lerp(
-            transform.localPosition,
-            playerPos.position,
-            lagValue * Time.deltaTime);
+        float t = 1f - Mathf.Exp(-lagValue * Time.deltaTime);
+        transform.localPosition = Vector3.Lerp(transform.localPosition, playerPos.position, t);
     }
 
     private void UpdateCustomMouse()
@@ -107,5 +119,7 @@ public class PlayerUI : MonoBehaviour
 
         cursorPos2.transform.position = Vector3.Lerp(playerPos.position, mouseWorldPos, 0.33f);
         cursorPos3.transform.position = Vector3.Lerp(playerPos.position, mouseWorldPos, 0.66f);
+
+        CursorUpdated?.Invoke();
     }
 }

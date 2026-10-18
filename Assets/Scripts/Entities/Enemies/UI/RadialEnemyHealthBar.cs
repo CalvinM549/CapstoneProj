@@ -1,23 +1,22 @@
 using DG.Tweening;
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class RadialEnemyHealthBar : MonoBehaviour
 {
-    [SerializeField] private Image fillImage;
-    [SerializeField] private Image delayFillImage;
+    [SerializeField] private Image mainFillBar;
+    [SerializeField] private Image backFillBar;
 
     [SerializeField] private RectTransform barRoot;
 
     [Header("Config")]
 
-    [SerializeField] private float circleScale = 1f;
+    [SerializeField] private float circleScaleAdjustment = 1f;
 
-    [SerializeField] private float mainBarDuration;
-
-    [SerializeField] private float delayFillDelay;
-    [SerializeField] private float delayFillDuration;
+    [SerializeField] private float backFillDelay;
+    [SerializeField] private float backFillSpeed;
 
     [SerializeField] private float hitPunchScale;
     [SerializeField] private float hitPunchDuration;
@@ -26,13 +25,11 @@ public class RadialEnemyHealthBar : MonoBehaviour
     private CanvasGroup canvasGroup;
 
     private float targetFill = 1f;
-    private float delayFillTimer;
 
-    private bool delayDrainPending;
-
-    private Tween fillTween;
-    private Tween delayFillTween;
     private Tween punchTween;
+
+    private float delayFillTarget;
+    private Coroutine activeDrainRoutine;
 
     private void Awake()
     {
@@ -50,66 +47,67 @@ public class RadialEnemyHealthBar : MonoBehaviour
     {
         owner.OnHit -= HandleHit;
 
-        fillTween?.Kill();
-        delayFillTween?.Kill();
         punchTween?.Kill();
     }
 
     private void Update()
     {
-        UpdateDelayDrainTimer();
+        //UpdateDelayDrainTimer();
     }
 
     public void Initialize()
     {
-        fillTween?.Kill();
-        delayFillTween?.Kill();
         punchTween?.Kill();
 
-        fillImage.fillAmount = 1f;
-        delayFillImage.fillAmount = 1f;
+        mainFillBar.fillAmount = 1f;
+        backFillBar.fillAmount = 1f;
 
         canvasGroup.alpha = 1f;
-        barRoot.localScale = Vector3.one * circleScale;
+        barRoot.localScale = Vector3.one * circleScaleAdjustment;
     }
 
     private void HandleHit(float currentHealth, float maxHealth, HitData hit)
     {
-        float previousFill = fillImage.fillAmount;
+        float previousFill = mainFillBar.fillAmount;
         targetFill = Mathf.Clamp01(currentHealth / maxHealth);
 
-        delayFillTimer = delayFillDelay;
-        delayDrainPending = true;
+        SetInstant(targetFill);
+        StartCoroutine(QueueDelayedFill(targetFill));
 
-        fillTween?.Kill();
-        fillTween = fillImage.DOFillAmount(targetFill, mainBarDuration).SetEase(Ease.OutQuart);
-
-        if (hit.attackType != AttackType.DamageOverTime && hit.attackType != AttackType.Elemental)
+        if (hit.attackType != AttackType.DamageOverTime)
         {
             punchTween?.Kill();
-            barRoot.localScale = Vector3.one * circleScale * hitPunchScale;
-            punchTween = barRoot.DOScale(Vector3.one * circleScale, hitPunchDuration);
+            barRoot.localScale = Vector3.one * circleScaleAdjustment * hitPunchScale;
+            punchTween = barRoot.DOScale(Vector3.one * circleScaleAdjustment, hitPunchDuration);
         }
     }
 
-    private void UpdateDelayDrainTimer()
+    private void SetInstant(float targetFill)
     {
-        if(!delayDrainPending) return;
+        mainFillBar.fillAmount = targetFill;
+    }
 
-        delayFillTimer -= Time.deltaTime;
-        if (delayFillTimer <= 0f)
+    private IEnumerator QueueDelayedFill(float targetFill)
+    {
+        yield return new WaitForSeconds(backFillDelay);
+
+        delayFillTarget = Mathf.Max(mainFillBar.fillAmount, targetFill);
+
+        if (activeDrainRoutine == null)
+            activeDrainRoutine = StartCoroutine(DelayFillRoutine());
+    }
+
+    private IEnumerator DelayFillRoutine()
+    {
+        while (backFillBar.fillAmount > delayFillTarget)
         {
-            delayDrainPending = false;
-            AnimateFill();
+            backFillBar.fillAmount = Mathf.MoveTowards(backFillBar.fillAmount, delayFillTarget, backFillSpeed * Time.deltaTime);
+
+            yield return null;
         }
+
+        backFillBar.fillAmount = delayFillTarget;
+        activeDrainRoutine = null;
     }
 
-    private void AnimateFill()
-    {
-        fillTween?.Kill();
-
-        fillTween = delayFillImage
-            .DOFillAmount(targetFill, delayFillDuration)
-            .SetEase(Ease.OutCubic);
-    }
 }

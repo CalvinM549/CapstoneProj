@@ -340,13 +340,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a28529bb84145bf4fb6b969200b9cf9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RadialEnemyHealthBar
-  fillImage: {fileID: 296547906527890333}
-  delayFillImage: {fileID: 5259461305785990698}
+  mainFillBar: {fileID: 296547906527890333}
+  backFillBar: {fileID: 5259461305785990698}
   barRoot: {fileID: 7103652747329759412}
-  circleScale: 1.3
-  mainBarDuration: 0.08
-  delayFillDelay: 0.5
-  delayFillDuration: 1
+  circleScaleAdjustment: 1.3
+  backFillDelay: 0.5
+  backFillSpeed: 0.5
   hitPunchScale: 1.15
   hitPunchDuration: 0.2
 --- !u!114 &7725701863275697632
