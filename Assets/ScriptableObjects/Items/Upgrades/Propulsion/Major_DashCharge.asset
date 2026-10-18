@@ -15,7 +15,7 @@ MonoBehaviour:
   id: ec051170-9fc0-484d-8d54-c605f134d63a
   upgradeName: Scavenged Repulsors
   flavourText: 
-  effectText: Gain an additional Dash Charge
+  effectText: <style="val">+1 dash charge</style>.
   icon: {fileID: 21300000, guid: 8cec7e3329421174eba24490796d7a11, type: 3}
   slot: 3
   baseDropRate: 1

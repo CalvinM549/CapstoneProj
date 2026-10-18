@@ -15,7 +15,9 @@ MonoBehaviour:
   id: major_twinLink
   upgradeName: Twin-Link Protocol
   flavourText: Two barrels. One intent.
-  effectText: Every weapon shot fires a 40% damage echo shot a moment later
+  effectText: 'Every shot fires an echo a moment later for <style="val">40% damage</style>.
+
+'
   icon: {fileID: 0}
   slot: 1
   baseDropRate: 1

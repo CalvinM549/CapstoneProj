@@ -7,9 +7,9 @@ public class SettingsManager : MonoBehaviour
     public static SettingsManager Instance {  get; private set; }
 
     [SerializeField] private AudioMixer mixer;
-    [SerializeField] private string masterParam = "MasterVolume";
-    [SerializeField] private string musicParam = "MusicVolume";
-    [SerializeField] private string sfxParam = "SFXVolume";
+    private const string masterParam = "MasterVolume";
+    private const string musicParam = "MusicVolume";
+    private const string sfxParam = "SFXVolume";
 
     public GameSettings Current {  get; private set; }
     public event Action<GameSettings> OnSettingsChanged;

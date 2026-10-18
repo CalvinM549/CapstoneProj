@@ -15,7 +15,7 @@ MonoBehaviour:
   id: aux_followThrough
   upgradeName: Follow-Through
   flavourText: Never stop moving.
-  effectText: Cancelling an attack's recovery refunds 5% momentum
+  effectText: Cancelling an attack's recovery refunds <style="val">5% momentum</style>.
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

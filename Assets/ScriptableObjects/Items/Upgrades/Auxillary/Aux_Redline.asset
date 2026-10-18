@@ -15,7 +15,7 @@ MonoBehaviour:
   id: aux_redline
   upgradeName: Redline
   flavourText: Thermal limits are a suggestion.
-  effectText: +15% damage dealt, +15% damage taken
+  effectText: <style="val">+15% damage dealt</style>. <style="bad">+15% damage taken</style>.
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

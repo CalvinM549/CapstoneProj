@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HandcannonWeapon
   id: weapon_handCannon
   weaponName: HandCannon
-  flavourText: 
-  effectText: Fires individual, high-powered shots that push you backwards
+  flavourText: Hallam-Kess auxillary kinetic driver, low-profile high-impact
+  effectText: 'Fires single, heavy shots that <style="key">knock you back</style>.
+
+'
   icon: {fileID: 0}
   cooldown: 3
   baseAmmo: 10

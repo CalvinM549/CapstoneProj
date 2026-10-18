@@ -15,7 +15,9 @@ MonoBehaviour:
   id: aux_inertialEdge
   upgradeName: Inertial Edge
   flavourText: Speed, converted to impact.
-  effectText: Melee deals +2% damage per 10% momentum
+  effectText: 'Melee deals <style="val">+2% damage</style> per <style="val">10% momentum</style>.
+
+'
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

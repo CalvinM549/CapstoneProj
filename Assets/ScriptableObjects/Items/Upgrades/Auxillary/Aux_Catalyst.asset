@@ -15,7 +15,10 @@ MonoBehaviour:
   id: aux_catalyst
   upgradeName: Catalyst
   flavourText: Compound failure.
-  effectText: Enemies with 2+ different statuses take 15% more damage
+  effectText: 'Enemies with <style="val">2+</style> different statuses take <style="val">+15%
+    damage</style>.
+
+'
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

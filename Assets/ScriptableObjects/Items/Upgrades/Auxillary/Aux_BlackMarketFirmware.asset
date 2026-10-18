@@ -15,7 +15,10 @@ MonoBehaviour:
   id: aux_blackMarketFirmware
   upgradeName: Black-Market Firmware
   flavourText: Unlicensed. Unsupported. Unbeatable.
-  effectText: Rerolls cost $5 less, and your first reroll at each station is free
+  effectText: 'Rerolls cost <style="val">$5 less</style>. Your first reroll at each
+    station is <style="val">free</style>.
+
+'
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

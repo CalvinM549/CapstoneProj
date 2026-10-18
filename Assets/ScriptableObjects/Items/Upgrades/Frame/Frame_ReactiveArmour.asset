@@ -15,8 +15,10 @@ MonoBehaviour:
   id: major_reactiveArmour
   upgradeName: Reactive Armour
   flavourText: Explosive plating. Every breach fights back.
-  effectText: When a structure segment breaks, release a shockwave that knocks back
-    and staggers nearby enemies
+  effectText: 'When a <style="key">structure segment</style> breaks, release a shockwave
+    that deals <style="val">15 damage</style> and knocks enemies back.
+
+'
   icon: {fileID: 0}
   slot: 0
   baseDropRate: 1

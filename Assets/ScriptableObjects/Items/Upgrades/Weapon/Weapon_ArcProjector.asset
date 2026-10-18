@@ -15,7 +15,10 @@ MonoBehaviour:
   id: major_arcProjector
   upgradeName: Arc Projector
   flavourText: Give the current somewhere to go.
-  effectText: Ranged hits on Shocked enemies arc Shock to the nearest other enemy
+  effectText: 'Ranged hits on <style="key">Shocked</style> enemies arc <style="val">1</style>
+    <style="key">Shock</style> to the nearest other enemy.
+
+'
   icon: {fileID: 0}
   slot: 1
   baseDropRate: 1

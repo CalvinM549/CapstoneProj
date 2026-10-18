@@ -15,7 +15,10 @@ MonoBehaviour:
   id: major_bypassedLimiter
   upgradeName: Bypassed Limiter
   flavourText: 'SAFETY LIMITER: [REMOVED]'
-  effectText: Dashes recharge 40% faster, but each dash costs 8% momentum
+  effectText: 'Dashes recharge <style="val">40% faster</style>, but each dash costs
+    <style="bad">8% momentum</style>.
+
+'
   icon: {fileID: 0}
   slot: 3
   baseDropRate: 1

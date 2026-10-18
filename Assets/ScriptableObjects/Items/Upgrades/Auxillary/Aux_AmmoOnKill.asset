@@ -15,7 +15,10 @@ MonoBehaviour:
   id: 2c1d6eab-bb37-4432-ac93-23bb91759f9d
   upgradeName: Ammo Fabricator
   flavourText: 
-  effectText: 50% chance to restore 1 ammo on killing an enemy
+  effectText: 'Kills have a <style="val">50%</style> chance to restore <style="val">1
+    ammo</style>.
+
+'
   icon: {fileID: -3922644079085162824, guid: 46c124cbb521d03409906ff9b733ff6d, type: 3}
   slot: 4
   baseDropRate: 1

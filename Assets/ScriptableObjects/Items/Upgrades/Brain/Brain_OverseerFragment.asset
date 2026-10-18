@@ -15,7 +15,10 @@ MonoBehaviour:
   id: major_overseerFragment
   upgradeName: Overseer Fragment
   flavourText: A shard of the network that once gave you orders.
-  effectText: Reaching High momentum briefly slows time and restores a dash charge
+  effectText: 'Reaching <style="key">High momentum</style> briefly slows time and
+    restores <style="val">1 dash charge</style>.
+
+'
   icon: {fileID: 0}
   slot: 2
   baseDropRate: 1

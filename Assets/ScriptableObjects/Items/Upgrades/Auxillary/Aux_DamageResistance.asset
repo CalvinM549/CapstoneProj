@@ -15,7 +15,9 @@ MonoBehaviour:
   id: 427d2adb-9d39-44f4-a3ed-acbfef360478
   upgradeName: Sloped Armour
   flavourText: Articulating plating can reduce the impact of incoming damage
-  effectText: Reduced damage taken by 10%
+  effectText: 'Take <style="val">10% less damage</style>.
+
+'
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

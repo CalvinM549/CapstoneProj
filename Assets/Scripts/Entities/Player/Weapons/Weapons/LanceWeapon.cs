@@ -31,7 +31,7 @@ public class LanceWeapon : PlayerWeapon
         foreach (var hit in hits)
         {
             bool isWall = ((1 << hit.collider.gameObject.layer) & GameManager.WallLayer) != 0;
-            if (isWall)
+            if (isWall && hit.distance > 0.5f)
             {
                 visualLength = hit.distance;
                 break;

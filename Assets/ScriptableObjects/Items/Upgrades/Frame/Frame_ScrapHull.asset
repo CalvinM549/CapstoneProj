@@ -15,7 +15,10 @@ MonoBehaviour:
   id: major_scrapHull
   upgradeName: Scrap Hull
   flavourText: Why carry scrap when you can wear it?
-  effectText: Each currency pickup repairs 5% of your active structure segment
+  effectText: 'Each currency pickup repairs <style="val">5%</style> of your active
+    segment.
+
+'
   icon: {fileID: 0}
   slot: 0
   baseDropRate: 1

@@ -15,7 +15,8 @@ MonoBehaviour:
   id: aux_hollowpoint
   upgradeName: Hollowpoint
   flavourText: Make the first impression count.
-  effectText: +25% ranged damage against enemies above 75% health
+  effectText: <style="val">+25% ranged damage</style> against enemies above <style="val">75%
+    health</style>.
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - Wall
   - PlayerHurtbox
+  - Pit
   layers:
   - Default
   - TransparentFX
@@ -21,7 +22,7 @@ TagManager:
   - Particles
   - Environment
   - UIVolume
-  - 
+  - Pits
   - 
   - 
   - 

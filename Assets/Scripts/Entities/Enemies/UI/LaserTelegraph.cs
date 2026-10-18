@@ -74,15 +74,15 @@ public class LaserTelegraph : MonoBehaviour
                 Vector2 direction2 = toTarget2 / distance2;
 
 
-                int hits1 = Physics2D.RaycastNonAlloc(origin, direction1, laserHitBuffer, distance1, aiController.profile.obstacleLayer);
+                int hits1 = Physics2D.RaycastNonAlloc(origin, direction1, laserHitBuffer, distance1, aiController.profile.SightMask);
 
                 if (hits1 > 0)
                     endPoint1 = laserHitBuffer[0].point;
 
-                int hits2 = Physics2D.RaycastNonAlloc(origin, direction2, laserHitBuffer, distance2, aiController.profile.obstacleLayer);
+                int hits2 = Physics2D.RaycastNonAlloc(origin, direction2, laserHitBuffer, distance2, aiController.profile.SightMask);
 
                 if (hits2 > 0)
-                    endPoint1 = laserHitBuffer[0].point;
+                    endPoint2 = laserHitBuffer[0].point;
             }
 
             line.SetPosition(0, endPoint1);

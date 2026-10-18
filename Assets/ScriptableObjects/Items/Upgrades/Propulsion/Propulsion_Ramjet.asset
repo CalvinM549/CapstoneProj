@@ -15,7 +15,10 @@ MonoBehaviour:
   id: major_ramjet
   upgradeName: Ramjet
   flavourText: The fastest route is through.
-  effectText: Dashing through enemies rams them for damage and stagger
+  effectText: 'Dashing through enemies rams them for <style="val">12 damage</style>
+    and stagger. Counts as a <style="key">Heavy attack</style>.
+
+'
   icon: {fileID: 0}
   slot: 3
   baseDropRate: 1

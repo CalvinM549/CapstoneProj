@@ -15,7 +15,10 @@ MonoBehaviour:
   id: aux_slipstream
   upgradeName: Slipstream
   flavourText: Ride the wake.
-  effectText: The first hit within 0.5s of a dash grants 8% momentum
+  effectText: 'Your first hit within <style="val">0.5s</style> of a dash grants <style="val">8%
+    momentum</style>.
+
+'
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

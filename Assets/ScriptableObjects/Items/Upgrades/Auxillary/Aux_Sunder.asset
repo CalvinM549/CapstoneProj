@@ -15,7 +15,8 @@ MonoBehaviour:
   id: aux_sunder
   upgradeName: Sunder
   flavourText: Crack the casing. The rest follows.
-  effectText: Heavy attacks apply 2 Corrode (+6% damage taken per stack)
+  effectText: '<style="key">Heavy attacks</style> apply <style="val">2</style> <style="key">Corrode</style>.
+    Each stack: <style="val">+6% damage taken</style>.'
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

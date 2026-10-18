@@ -14,8 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LanceWeapon
   id: 783ec49b-97c7-4206-8575-b9dcf0cce24c
   weaponName: Lance
-  flavourText: "High powered lasers fry circutry and melt plating\t\t"
-  effectText: Fires a long range, piercing beam
+  flavourText: Veyra seam-cutter, useable for both welding and slicing
+  effectText: 'Fires a long-range beam that <style="key">pierces</style> every enemy
+    in its path.
+
+'
   icon: {fileID: 21300000, guid: 26817e353e74b044d892655bb0d02b03, type: 3}
   cooldown: 2.5
   baseAmmo: 10

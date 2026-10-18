@@ -15,7 +15,8 @@ MonoBehaviour:
   id: major_ablativeShell
   upgradeName: Ablative Shell
   flavourText: Layered scrap plating, each sheet built to be torn away.
-  effectText: +2 structure segments, but every segment has 35% less integrity
+  effectText: <style="val">+2 structure segments</style>, but every segment has <style="bad">35%
+    less integrity</style>.
   icon: {fileID: 0}
   slot: 0
   baseDropRate: 1

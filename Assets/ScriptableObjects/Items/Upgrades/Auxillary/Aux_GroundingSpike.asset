@@ -15,7 +15,10 @@ MonoBehaviour:
   id: aux_groundingSpike
   upgradeName: Grounding Spike
   flavourText: Earth the charge. Through them.
-  effectText: Killing a Shocked enemy spreads its Shock to enemies nearby
+  effectText: 'Killing a <style="key">Shocked</style> enemy spreads its <style="key">Shock</style>
+    to nearby enemies.
+
+'
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

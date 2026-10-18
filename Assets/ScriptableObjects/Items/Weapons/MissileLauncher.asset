@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MissileWeapon
   id: weapon_missileLauncher
   weaponName: Missiles
-  flavourText: 
-  effectText: Fires a burst of homing rockets, requres a lock to accurately hit a
-    target
+  flavourText: Re-fitted parcel rockets, heavy kinetic impacts supported by small
+    charges
+  effectText: 'Fires a burst of homing rockets at your <style="key">locked target</style>.
+    Without a lock, they fly blind.
+
+'
   icon: {fileID: 4314053223094014057, guid: c1e6bc857b1dac5439f8a9d9d71f4ce7, type: 3}
   cooldown: 5
   baseAmmo: 20

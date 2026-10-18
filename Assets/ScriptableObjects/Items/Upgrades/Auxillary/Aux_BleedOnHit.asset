@@ -15,7 +15,9 @@ MonoBehaviour:
   id: aux_ShockBlade
   upgradeName: Serrated Edge
   flavourText: Ripping edge causes fluid leaks throughout a struck target
-  effectText: Apply bleed on melee attacks
+  effectText: 'Melee attacks apply <style="key">Bleed</style>.
+
+'
   icon: {fileID: -244606152550997219, guid: 7d0efe94e9a483a4aab1df291185753a, type: 3}
   slot: 4
   baseDropRate: 1

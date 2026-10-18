@@ -15,7 +15,9 @@ MonoBehaviour:
   id: 101bc2a4-949d-4510-9d33-34da0489e756
   upgradeName: Recursive Plating
   flavourText: '[]'
-  effectText: Regenerate 1 structure upon completing a room
+  effectText: 'Repair <style="val">1 structure</style> after clearing a room.
+
+'
   icon: {fileID: 3389911732521518902, guid: e5a42e43f2430bb4d931ad8ef9bd048c, type: 3}
   slot: 0
   baseDropRate: 1

@@ -15,8 +15,10 @@ MonoBehaviour:
   id: major_vectorThrust
   upgradeName: Vector Thrust
   flavourText: Momentum is just mass waiting to arrive.
-  effectText: Keep twice as much speed from chained dashes. Melee damage scales with
-    your speed bonus (up to +50%)
+  effectText: 'Keep <style="val">2x speed</style> from chained dashes. Melee deals
+    up to <style="val">+50% damage</style> based on your speed.
+
+'
   icon: {fileID: 0}
   slot: 3
   baseDropRate: 1

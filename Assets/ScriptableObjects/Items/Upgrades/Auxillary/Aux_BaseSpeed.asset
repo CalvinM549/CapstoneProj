@@ -15,7 +15,9 @@ MonoBehaviour:
   id: d5fc505f-7c4d-4b6e-b8d4-2997d5a9b278
   upgradeName: Jet Tuning
   flavourText: 
-  effectText: Increase Speed by 5%
+  effectText: '<style="val">+5% move speed</style>.
+
+'
   icon: {fileID: 4066830363745794116, guid: df393a1c4f8a5ac4ba2113d56c4718ee, type: 3}
   slot: 4
   baseDropRate: 1

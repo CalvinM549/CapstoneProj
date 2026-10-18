@@ -15,7 +15,7 @@ MonoBehaviour:
   id: cba4ee39-8d75-4624-b329-0b2943f515b4
   upgradeName: Refurbished Capacitors
   flavourText: 
-  effectText: Increase ranged damage by 10%
+  effectText: <style="val">+10% ranged damage</style>.
   icon: {fileID: -377942992, guid: 883c59f3f0726ce47a73d4662aa837e5, type: 3}
   slot: 4
   baseDropRate: 1

@@ -15,11 +15,15 @@ MonoBehaviour:
   aggroRange: 17
   obstacleLayer:
     serializedVersion: 2
+    m_Bits: 4160
+  sightBlockLayer:
+    serializedVersion: 2
     m_Bits: 64
   requireLineOfSight: 1
-  moveSpeed: 3
+  agentRadius: 0.3
   repositionDuration: 1
   repositionSpeedMult: 0
+  repositionAwayFromTarget: 0
   attackPattern: 
   targetLayer:
     serializedVersion: 2

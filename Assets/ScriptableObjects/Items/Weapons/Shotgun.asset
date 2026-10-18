@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShotgunWeapon
   id: weapon_shotgun
   weaponName: Shotgun
-  flavourText: 
-  effectText: Fires a short-ranged burst of pellets
+  flavourText: HK-10 flechette rounds tear through light targets with ease
+  effectText: Fires a short-range spread of pellets.
   icon: {fileID: 0}
   cooldown: 3
   baseAmmo: 10

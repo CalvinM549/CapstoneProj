@@ -15,7 +15,7 @@ MonoBehaviour:
   id: 6a46f52e-df5c-44cd-9f47-828b24d8382e
   upgradeName: Windup
   flavourText: 
-  effectText: Increase momentum gain by 25%
+  effectText: <style="val">+25% momentum gain</style>.
   icon: {fileID: 21300000, guid: fd132963cab32c74d901e7f81165205c, type: 3}
   slot: 4
   baseDropRate: 1

@@ -15,7 +15,7 @@ MonoBehaviour:
   id: 522e3a51-a83d-443c-bc44-1c8b99261d21
   upgradeName: Belt Loaders
   flavourText: 
-  effectText: 10% increased reload rate
+  effectText: <style="val">+10% reload speed</style>.
   icon: {fileID: 7973964909796086101, guid: a85029b4da19eb84d8e05a7749949aea, type: 3}
   slot: 4
   baseDropRate: 1

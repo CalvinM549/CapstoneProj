@@ -15,7 +15,8 @@ MonoBehaviour:
   id: major_corruptedDirective
   upgradeName: Corrupted Directive
   flavourText: COMBAT INTELLIGENCE [CORRUPTED]. Proceeding anyway.
-  effectText: -1 structure segment. +40% damage while on your last segment
+  effectText: <style="bad">-1 structure segment</style>. Deal <style="val">+40% damage</style>
+    while on your last segment.
   icon: {fileID: 0}
   slot: 2
   baseDropRate: 1

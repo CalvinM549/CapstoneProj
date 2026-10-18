@@ -15,7 +15,9 @@ MonoBehaviour:
   id: aux_scrapMagnet
   upgradeName: Scrap Magnet
   flavourText: Everything is worth something.
-  effectText: Currency pickups are worth 15% more
+  effectText: 'Currency pickups are worth <style="val">15% more</style>.
+
+'
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

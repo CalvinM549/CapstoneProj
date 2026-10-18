@@ -15,7 +15,9 @@ MonoBehaviour:
   id: major_forkProcess
   upgradeName: Fork Process
   flavourText: Spare cycles, spent on violence.
-  effectText: Kills make your drone fire a free shot at the nearest enemy
+  effectText: 'Kills make your drone fire a free shot at the nearest enemy.
+
+'
   icon: {fileID: 0}
   slot: 2
   baseDropRate: 1

@@ -16,7 +16,10 @@ MonoBehaviour:
   upgradeName: Shock Blade
   flavourText: Extra current running through blade creates a delayed shock, though
     reduces the usual damage
-  effectText: Apply shock on melee attacks, but reduces base damage
+  effectText: 'Melee attacks apply <style="key">Shock</style>, but deal <style="bad">less
+    base damage</style>.
+
+'
   icon: {fileID: -244606152550997219, guid: 7d0efe94e9a483a4aab1df291185753a, type: 3}
   slot: 4
   baseDropRate: 1

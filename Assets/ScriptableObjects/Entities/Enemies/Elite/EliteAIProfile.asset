@@ -15,6 +15,9 @@ MonoBehaviour:
   aggroRange: 13
   obstacleLayer:
     serializedVersion: 2
+    m_Bits: 4160
+  sightBlockLayer:
+    serializedVersion: 2
     m_Bits: 64
   requireLineOfSight: 1
   agentRadius: 0.3

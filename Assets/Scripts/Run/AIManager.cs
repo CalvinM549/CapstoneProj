@@ -111,7 +111,7 @@ public class AIManager : MonoBehaviour
             return true;
 
         Vector2 dir = (target.position - ai.Self.position).normalized;
-        int hits = Physics2D.RaycastNonAlloc(ai.Self.position, dir, losHitBuffer, dist, ai.profile.obstacleLayer);
+        int hits = Physics2D.RaycastNonAlloc(ai.Self.position, dir, losHitBuffer, dist, ai.profile.SightMask);
         return hits == 0;
     }
 

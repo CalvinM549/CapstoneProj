@@ -15,7 +15,7 @@ MonoBehaviour:
   id: ada900af-806e-408c-b779-8db569cbfbe5
   upgradeName: Honed Edge
   flavourText: 
-  effectText: Increase melee damage by 10%
+  effectText: <style="val">+10% melee damage</style>.
   icon: {fileID: -994475685264314214, guid: af35adfea2cc2684d9f035bab2acd226, type: 3}
   slot: 4
   baseDropRate: 1

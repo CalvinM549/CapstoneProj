@@ -15,7 +15,8 @@ MonoBehaviour:
   id: aux_haemorrhage
   upgradeName: Haemorrhage
   flavourText: Once it starts, it doesn't stop.
-  effectText: Bleed deals double damage to enemies below 30% health
+  effectText: <style="key">Bleed</style> deals <style="val">double damage</style>
+    to enemies below <style="val">30% health</style>.
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

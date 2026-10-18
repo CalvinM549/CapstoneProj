@@ -15,7 +15,9 @@ MonoBehaviour:
   id: major_killFeedLoader
   upgradeName: Kill-Feed Loader
   flavourText: Strip them for rounds.
-  effectText: Melee kills restore 1 ammo
+  effectText: 'Melee kills restore <style="val">1 ammo</style>.
+
+'
   icon: {fileID: 0}
   slot: 1
   baseDropRate: 1

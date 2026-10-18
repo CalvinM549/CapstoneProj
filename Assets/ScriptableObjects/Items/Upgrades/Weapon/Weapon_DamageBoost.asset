@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: Weapon_DamageBoost
   m_EditorClassIdentifier: Assembly-CSharp::MajorUpgrade
   id: 2e0cb5fc-af6b-4261-a5e8-f477af41eef0
-  upgradeName: Lethality
+  upgradeName: Focus Lensing
   flavourText: '[]'
-  effectText: +50% damage against your locked target
+  effectText: 'Deal <style="val">+50% damage</style> to your <style="key">locked
+    target</style>.
+
+'
   icon: {fileID: 7327918497195353323, guid: 7dad683fcc225e94283d985a27d6d8f4, type: 3}
   slot: 1
   baseDropRate: 1

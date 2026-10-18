@@ -15,8 +15,10 @@ MonoBehaviour:
   id: major_predictiveRoutines
   upgradeName: Predictive Routines
   flavourText: It knows where they will be. It always did.
-  effectText: Attacks started just after a dash deal +60% damage and never drain
-    momentum on a miss
+  effectText: 'Attacks started just after a dash deal <style="val">+60% damage</style>
+    and never drain momentum.
+
+'
   icon: {fileID: 0}
   slot: 2
   baseDropRate: 1

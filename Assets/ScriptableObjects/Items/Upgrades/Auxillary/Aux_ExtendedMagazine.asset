@@ -15,7 +15,7 @@ MonoBehaviour:
   id: aux_extendedMagazine
   upgradeName: Extended Magazine
   flavourText: Welded-on capacity.
-  effectText: +2 max ammo
+  effectText: <style="val">+2 max ammo</style>.
   icon: {fileID: 0}
   slot: 4
   baseDropRate: 1

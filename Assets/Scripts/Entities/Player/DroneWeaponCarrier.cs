@@ -30,6 +30,12 @@ public class DroneWeaponCarrier : MonoBehaviour
     [Tooltip("Clamp on how fast the body can move, so it doesn't overshoot wildly on big snaps.")]
     [SerializeField] private float bodyMaxSpeed = 25f;
 
+    [Header("Wall Avoidance")]
+    [Tooltip("Layers the fire point is kept out of. Leave empty to use GameManager's wall layer (pits are not walls, so the drone can hover over them).")]
+    [SerializeField] private LayerMask blockingLayers;
+    [Tooltip("Clearance kept between the fire point and walls, roughly a projectile's radius.")]
+    [SerializeField] private float wallClearance = 0.2f;
+
     [Header("Rotation")]
     [SerializeField] private float maxRotationSpeed = 480f;
 
@@ -66,6 +72,15 @@ public class DroneWeaponCarrier : MonoBehaviour
             currentDistance, targetDistance, ref distanceVelocity, distanceSmoothTime);
 
         Vector2 playerPos = player.transform.position;
+
+        // Pull in toward the player rather than poke through a wall; SmoothDamp eases it back out
+        float allowedDistance = ClampToWalls(playerPos, currentAimDir, currentDistance);
+        if (allowedDistance < currentDistance)
+        {
+            currentDistance = allowedDistance;
+            distanceVelocity = 0f;
+        }
+
         Vector2 exactFirePos = playerPos + currentAimDir * currentDistance;
 
         if (firePoint != null)
@@ -97,6 +112,16 @@ public class DroneWeaponCarrier : MonoBehaviour
                 turret.eulerAngles.z, targetAngle, maxRotationSpeed * Time.deltaTime);
             turret.rotation = Quaternion.Euler(0f, 0f, newAngle);
         }
+    }
+
+    private float ClampToWalls(Vector2 origin, Vector2 dir, float distance)
+    {
+        int mask = blockingLayers.value;
+        if (mask == 0 && GameManager.Instance != null) mask = GameManager.WallLayer.value;
+        if (mask == 0 || distance <= 0f) return distance;
+
+        RaycastHit2D hit = Physics2D.CircleCast(origin, wallClearance, dir, distance, mask);
+        return hit.collider != null ? hit.distance : distance;
     }
 
     public Vector2 AimDirection => currentAimDir;
