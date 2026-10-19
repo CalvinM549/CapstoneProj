@@ -43,6 +43,13 @@ public class RunManager : MonoBehaviour
 
     [Header("Run Config")]
 
+    [Header("Shards (meta currency)")]
+    [Tooltip("Banked for clearing a combat sector flagged with a shard cache on the map.")]
+    [SerializeField] private int shardsPerCache = 10;
+    [Tooltip("Paid at the end of the run per depth reached, win or lose.")]
+    [SerializeField] private int shardsPerDepth = 5;
+    [SerializeField] private int victoryShardBonus = 40;
+
     private RunServices runServices;
 
     public RoomPoolService roomService; // Pools rooms, holds useful values etc
@@ -138,6 +145,10 @@ public class RunManager : MonoBehaviour
 
         currentRun = new(config.map, activePlayer);
 
+        var modifier = config.loadout?.modifier;
+        if (modifier != null && modifier.startingCurrency > 0)
+            currentRun.GrantCurrency(modifier.startingCurrency);
+
         EnterNode(currentRun.map.entryNode);
     }
 
@@ -198,6 +209,10 @@ public class RunManager : MonoBehaviour
         {
             RunSaveSystem.DeleteForSlot(profile.slotIndex);
             profile.RegisterRunResult(victory, currentRun.runDurationTimer, currentRun.EnemiesKilled, currentRun.currentDepth);
+
+            currentRun.shardsFromPayout = currentRun.currentDepth * shardsPerDepth + (victory ? victoryShardBonus : 0);
+            GameManager.Instance.Meta?.GrantCurrency(currentRun.ShardsEarned);
+
             GameManager.Instance.SaveActiveProfile();
         }
 
@@ -289,6 +304,14 @@ public class RunManager : MonoBehaviour
     private void HandleRoomCleared(RoomManager room)
     {
         activePlayerUI.ToggleUI(false);
+
+        // Claimed once; the flag is saved with the map, so resuming before leaving re-offers it but the bank resets with it
+        var node = currentRun.CurrentNode;
+        if (node != null && node.grantShard)
+        {
+            node.grantShard = false;
+            currentRun.EarnSectorShards(shardsPerCache);
+        }
 
         if (currentRun.CurrentNode.type.isEnd) HandleRunEnd(true);
     }

@@ -6,6 +6,7 @@ public class GameDatabase : ScriptableObject
     public ToolDatabase tools;
     public WeaponDatabase weapons;
     public UpgradeDatabase upgrades;
+    public RunModifierDatabase runModifiers;
 
     public RoomTypeDatabase roomTypes;
     public RoomDatabase rooms;

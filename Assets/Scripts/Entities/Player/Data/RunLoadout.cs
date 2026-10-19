@@ -4,4 +4,5 @@ public class RunLoadout
 {
     public PlayerTool tool;
     public PlayerWeapon weapon;
+    public RunModifier modifier;
 }

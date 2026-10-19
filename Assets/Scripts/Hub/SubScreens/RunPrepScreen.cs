@@ -119,8 +119,8 @@ public class RunPrepScreen : UIScreen
         if (loadoutText != null)
         {
             string weapon = loadout?.weapon != null ? loadout.weapon.Name.ToUpperInvariant() : "<NONE>";
-            string tool = loadout?.tool != null ? loadout.tool.Name.ToUpperInvariant() : "NONE";
-            loadoutText.text = $"WEAPON // {weapon}\nTOOL   // {tool}";
+            string protocol = loadout?.modifier != null ? loadout.modifier.Name.ToUpperInvariant() : "NONE";
+            loadoutText.text = $"WEAPON   // {weapon}\nPROTOCOL // {protocol}";
         }
 
         RefreshDeploy();
@@ -135,7 +135,8 @@ public class RunPrepScreen : UIScreen
     {
         string type = node.type != null ? node.type.displayName.ToUpperInvariant() : "UNKNOWN";
         string code = string.IsNullOrEmpty(node.sectorCode) ? "" : $" // {node.sectorCode.ToUpperInvariant()}";
-        SetNodeInfo($"> DEPTH {node.depth:00} // {type}{code}");
+        string shard = node.grantShard ? " // SHARD CACHE" : "";
+        SetNodeInfo($"> DEPTH {node.depth:00} // {type}{code}{shard}");
     }
 
     private void SetNodeInfo(string text)

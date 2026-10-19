@@ -35,4 +35,4 @@ MonoBehaviour:
   shopPrice: 50
   unlockedByDefault: 0
   listInUnlocks: 1
-  unlockCost: 0
+  unlockCost: 150

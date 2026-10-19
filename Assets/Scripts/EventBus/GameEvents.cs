@@ -17,6 +17,10 @@ public static class GameEvents
     public static event Action<int> OnCurrencyChanged;
     public static void CurrencyChanged(int newValue) => OnCurrencyChanged?.Invoke(newValue);
 
+    // Shards banked this run changed (total for the run so far)
+    public static event Action<int> OnShardsChanged;
+    public static void ShardsChanged(int runTotal) => OnShardsChanged?.Invoke(runTotal);
+
     // A currency pickup reached the player (amount after multipliers). Not fired for spending.
     public static event Action<int> OnCurrencyCollected;
     public static void CurrencyCollected(int amount) => OnCurrencyCollected?.Invoke(amount);

@@ -24,6 +24,7 @@ public class RunSaveData
     public float runDuration;
     public int enemiesKilled;
     public int damageTaken;
+    public int shardsEarned;
 
     public RewardSaveData rewards = new();
 
@@ -207,6 +208,7 @@ public class PlayerSaveData
     public PlayerUpgradeSave upgradeSave;
 
     public float currentMomentum = 0f;
+    public string runModifierId;
 }
 
 [Serializable]

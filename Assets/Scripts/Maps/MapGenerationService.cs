@@ -310,13 +310,15 @@ public class MapGenerationService
                 node.sectorCode = MakeCode(codeRng, codeRng.Next(3, 7));
 
                 var shardRng = RNGManager.NodeRng(seed, node.coordinates, SaltShard);
-                node.grantShard = AssignShards(shardRng, node.depth);
+                node.grantShard = AssignShards(shardRng, node);
             }
     }
 
-    private bool AssignShards(System.Random rng, int depth)
+    // Only combat sectors hold shard caches (they're claimed on clear); the chance rises with depth
+    private bool AssignShards(System.Random rng, MapNode node)
     {
-        return rng.NextDouble() > config.shardBaseChance + (config.shardChancePerDepth * depth); 
+        if (node.type == null || !node.type.isCombat || node.type.isEnd || node.depth <= 0) return false;
+        return rng.NextDouble() < config.shardBaseChance + (config.shardChancePerDepth * node.depth);
     }
 
     private static string MakeCode(System.Random rng, int length)

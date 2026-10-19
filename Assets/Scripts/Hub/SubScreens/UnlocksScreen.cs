@@ -1,10 +1,12 @@
 using UnityEngine;
 
-// Spend shards (profile.metaCurrency) on permanent weapon/tool unlocks.
+// Spend shards (profile.metaCurrency) on permanent weapon / protocol / tool unlocks.
+// Any container left empty hides that section (tools are hidden in the demo).
 public class UnlocksScreen : ListDetailScreen
 {
     [Header("Unlocks")]
     [SerializeField] private Transform weaponContainer;
+    [SerializeField] private Transform modifierContainer;
     [SerializeField] private Transform toolContainer;
 
     [SerializeField] private string currencyName = "SHARDS";
@@ -20,11 +22,17 @@ public class UnlocksScreen : ListDetailScreen
 
         var db = GameManager.Database;
 
-        foreach (var weapon in db.weapons.All)
-            AddEntry(weaponContainer, weapon);
+        if (weaponContainer != null)
+            foreach (var weapon in db.weapons.All)
+                AddEntry(weaponContainer, weapon);
 
-        foreach (var tool in db.tools.All)
-            AddEntry(toolContainer, tool);
+        if (modifierContainer != null && db.runModifiers != null)
+            foreach (var modifier in db.runModifiers.All)
+                AddEntry(modifierContainer, modifier);
+
+        if (toolContainer != null)
+            foreach (var tool in db.tools.All)
+                AddEntry(toolContainer, tool);
 
         SetHeaderInfo($"{currencyName} {GameManager.Instance.Meta.Currency}");
     }

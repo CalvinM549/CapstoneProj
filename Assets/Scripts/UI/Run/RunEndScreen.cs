@@ -128,6 +128,9 @@ public class RunEndScreen : UIScreen
         Stat("HOSTILES DESTROYED", r.EnemiesKilled.ToString());
         Stat("DAMAGE TAKEN", r.DamageTaken.ToString());
         Stat("FUNDS HELD", TerminalFormat.Currency(r.currency));
+        Stat("SHARD CACHES", $"+{r.shardsFromSectors}");
+        Stat("RECOVERY PAYOUT", $"+{r.shardsFromPayout}");
+        Stat("SHARDS BANKED", r.ShardsEarned.ToString());
 
         if (player != null)
         {

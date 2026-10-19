@@ -56,6 +56,7 @@ public class Player : MonoBehaviour
 
         // Initialize Each section
         Stats.Initialize();
+        ApplyRunModifier(loadout.modifier); // before the rest so stat changes (ammo, structure...) are picked up
 
         Movement.Initialize();
         Health.Initialize();
@@ -79,6 +80,7 @@ public class Player : MonoBehaviour
 
         // Unchanged
         Stats.Initialize();
+        ApplyRunModifier(!string.IsNullOrEmpty(save.runModifierId) && db.runModifiers != null ? db.runModifiers.Get(save.runModifierId) : null);
         Health.Initialize();
         Movement.Initialize();
 
@@ -108,10 +110,19 @@ public class Player : MonoBehaviour
                 currentAmmo = Combat.CurrentAmmo
             },
 
-            currentMomentum = Momentum.CurrentMomentum
+            currentMomentum = Momentum.CurrentMomentum,
+            runModifierId = ActiveModifier != null ? ActiveModifier.Id : null
         };
 
         return save;
+    }
+
+    public RunModifier ActiveModifier { get; private set; }
+
+    private void ApplyRunModifier(RunModifier modifier)
+    {
+        ActiveModifier = modifier;
+        if (modifier != null) modifier.Apply(this);
     }
 
     public void ResetPlayerState()

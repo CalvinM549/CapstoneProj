@@ -29,6 +29,7 @@ public class MetaProgressionService
         {
             PlayerWeapon w => profile.unlockedWeapons.Contains(w.Id),
             PlayerTool t => profile.unlockedTools.Contains(t.Id),
+            RunModifier m => profile.unlockedModifiers.Contains(m.Id),
             _ => false
         };
     }
@@ -68,12 +69,22 @@ public class MetaProgressionService
         OnChanged?.Invoke();
     }
 
+    public void GrantModifierUnlock(string id)
+    {
+        var entry = db.runModifiers != null ? db.runModifiers.Get(id) : null;
+        if (entry == null || profile.unlockedModifiers.Contains(entry.Id)) return;
+
+        profile.unlockedModifiers.Add(entry.Id);
+        OnChanged?.Invoke();
+    }
+
     public void GrantUnlock(IUnlockable item)
     {
         switch (item)
         {
             case PlayerWeapon w: GrantWeaponUnlock(w.Id); break;
             case PlayerTool t: GrantToolUnlock(t.Id); break;
+            case RunModifier m: GrantModifierUnlock(m.Id); break;
             default: Debug.LogWarning($"[MetaProgressionService] No unlock storage for {item?.GetType().Name}"); break;
         }
     }

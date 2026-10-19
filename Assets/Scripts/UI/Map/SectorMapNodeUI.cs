@@ -10,6 +10,8 @@ public class SectorMapNodeUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
     [SerializeField] private Image background;
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI glyph;
+    [Tooltip("Optional badge shown on sectors holding a shard cache.")]
+    [SerializeField] private GameObject shardMarker;
 
     [SerializeField] private float hoverScale = 1.4f;
 
@@ -27,6 +29,8 @@ public class SectorMapNodeUI : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
         Rect.sizeDelta = new Vector2(size, size);
         transform.localScale = Vector3.one;
+
+        if (shardMarker != null) shardMarker.SetActive(node != null && node.grantShard);
 
         bool useIcon = icon != null && iconSprite != null;
 

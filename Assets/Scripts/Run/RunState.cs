@@ -31,6 +31,11 @@ public class RunState
     public int EnemiesKilled;
     public int DamageTaken;
 
+    // Meta currency banked this run, paid into the profile when the run ends (win or lose)
+    public int shardsFromSectors;
+    public int shardsFromPayout;
+    public int ShardsEarned => shardsFromSectors + shardsFromPayout;
+
     #region Creation / Loading
 
     public RunState(SectorMap map, Player player)
@@ -50,7 +55,8 @@ public class RunState
             runDurationTimer = save.runDuration,
 
             EnemiesKilled = save.enemiesKilled,
-            DamageTaken = save.damageTaken
+            DamageTaken = save.damageTaken,
+            shardsFromSectors = save.shardsEarned
         };
 
         run.pathTaken.AddRange(save.pathTaken);
@@ -74,6 +80,7 @@ public class RunState
             runDuration = runDurationTimer,
             enemiesKilled = EnemiesKilled,
             damageTaken = DamageTaken,
+            shardsEarned = shardsFromSectors,
 
             rewards = rewardContext.ToSave(),
             player = player.PackPlayerState()
@@ -148,6 +155,13 @@ public class RunState
         currency = Math.Min(currency + amount, 9999);
 
         GameEvents.CurrencyChanged(currency);
+    }
+
+    public void EarnSectorShards(int amount)
+    {
+        if (amount <= 0) return;
+        shardsFromSectors += amount;
+        GameEvents.ShardsChanged(ShardsEarned);
     }
 
     public bool TryUseCurrency(int cost)

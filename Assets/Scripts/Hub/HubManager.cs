@@ -29,7 +29,8 @@ public class HubManager : MonoBehaviour
     public int PendingSeed => pendingSeed;
     public SectorMap PendingMap => pendingMap;
     public RunLoadout PendingLoadout => pendingLoadout;
-    public bool CanBeginRun => pendingMap != null && pendingLoadout?.weapon != null;
+    // A weapon is optional: without one the run starts melee-only until a weapon is found
+    public bool CanBeginRun => pendingMap != null && pendingLoadout != null;
 
     [Header("Fallbacks")]
     [Tooltip("Used only if the profile has no unlocked weapon at all (mark a weapon 'Unlocked By Default' instead).")]
@@ -97,6 +98,13 @@ public class HubManager : MonoBehaviour
         OnPendingLoadoutChanged?.Invoke(pendingLoadout);
     }
 
+    public void SetLoadoutModifier(RunModifier modifier)
+    {
+        pendingLoadout.modifier = modifier;
+        RememberLoadout();
+        OnPendingLoadoutChanged?.Invoke(pendingLoadout);
+    }
+
     // Restores the profile's last loadout if still unlocked, otherwise the first unlocked weapon
     private RunLoadout BuildStartingLoadout()
     {
@@ -105,6 +113,7 @@ public class HubManager : MonoBehaviour
 
         PlayerWeapon weapon = null;
         PlayerTool tool = null;
+        RunModifier modifier = null;
 
         if (last != null && meta != null)
         {
@@ -119,6 +128,12 @@ public class HubManager : MonoBehaviour
                 var t = db.tools.Get(last.toolID);
                 if (t != null && meta.IsUnlocked(t)) tool = t;
             }
+
+            if (!string.IsNullOrEmpty(last.modifierID) && db.runModifiers != null)
+            {
+                var m = db.runModifiers.Get(last.modifierID);
+                if (m != null && meta.IsUnlocked(m)) modifier = m;
+            }
         }
 
         if (weapon == null && meta != null)
@@ -130,7 +145,7 @@ public class HubManager : MonoBehaviour
         if (DebugManager.Instance != null && DebugManager.GodMode && DebugManager.GodWeapon != null)
             weapon = DebugManager.GodWeapon;
 
-        return new RunLoadout { weapon = weapon, tool = tool };
+        return new RunLoadout { weapon = weapon, tool = tool, modifier = modifier };
     }
 
     private void RememberLoadout()
@@ -141,6 +156,7 @@ public class HubManager : MonoBehaviour
         profile.lastLoadout ??= new SavedLoadoutPreset();
         profile.lastLoadout.weaponID = pendingLoadout.weapon != null ? pendingLoadout.weapon.Id : null;
         profile.lastLoadout.toolID = pendingLoadout.tool != null ? pendingLoadout.tool.Id : null;
+        profile.lastLoadout.modifierID = pendingLoadout.modifier != null ? pendingLoadout.modifier.Id : null;
     }
 
     #endregion

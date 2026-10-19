@@ -30,6 +30,7 @@ public class PlayerProfile
 
     public List<string> unlockedTools = new();
     public List<string> unlockedWeapons = new();
+    public List<string> unlockedModifiers = new();
 
     public List<SavedLoadoutPreset> savedPresets = new();
     public SavedLoadoutPreset lastLoadout = new();
@@ -56,6 +57,7 @@ public class PlayerProfile
         unlockedArchives ??= new List<string>();
         unlockedTools ??= new List<string>();
         unlockedWeapons ??= new List<string>();
+        unlockedModifiers ??= new List<string>();
         savedPresets ??= new List<SavedLoadoutPreset>();
         lastLoadout ??= new SavedLoadoutPreset();
 
@@ -91,6 +93,7 @@ public class SavedLoadoutPreset
 {
     public string weaponID;
     public string toolID;
+    public string modifierID;
 }
 
 public static class ProfileService

@@ -11,6 +11,11 @@ public class CurrencyUI : MonoBehaviour
     [SerializeField] private float timeToAdjust;
     [SerializeField] private float timeBeforeFade;
 
+    [Tooltip("Track shards banked this run instead of run currency.")]
+    [SerializeField] private bool trackShards;
+    [Tooltip("{0} is replaced with the value.")]
+    [SerializeField] private string format = "$[{0}]";
+
     private int currentCounter;
     private Coroutine tickRoutine;
 
@@ -25,11 +30,13 @@ public class CurrencyUI : MonoBehaviour
 
     private void OnEnable()
     {
-        GameEvents.OnCurrencyChanged += HandleCurrencyChange;
+        if (trackShards) GameEvents.OnShardsChanged += HandleCurrencyChange;
+        else GameEvents.OnCurrencyChanged += HandleCurrencyChange;
     }
 
     private void OnDisable()
     {
+        GameEvents.OnShardsChanged -= HandleCurrencyChange;
         GameEvents.OnCurrencyChanged -= HandleCurrencyChange;
         cg?.DOKill();
     }
@@ -93,12 +100,12 @@ public class CurrencyUI : MonoBehaviour
             int currentInt = Mathf.RoundToInt(currentFloat);
 
             currentCounter = currentInt;
-            currencyCounter.text = $"$[{currentInt.ToString()}]";
+            currencyCounter.text = string.Format(format, currentInt);
 
             yield return null;
         }
 
-        currencyCounter.text = $"$[{end.ToString()}]";
+        currencyCounter.text = string.Format(format, end);
 
         tickRoutine = null;
     }

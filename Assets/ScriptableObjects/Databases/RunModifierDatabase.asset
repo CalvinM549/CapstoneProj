@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 434f2c365d2ea854d93f7a7929c50c13, type: 3}
+  m_Name: RunModifierDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::RunModifierDatabase
+  entries:
+  - {fileID: 11400000, guid: a10f4288c5f74b64e9b5fd5573fd6a3c, type: 2}
+  - {fileID: 11400000, guid: 7f2b118d9d4cf894f8d7c693c2f7ca19, type: 2}
+  - {fileID: 11400000, guid: 8ac177f8d4ae048499f7b3ca784ee082, type: 2}
+  - {fileID: 11400000, guid: 21fedeb3cfed48742815378cb34d6e0e, type: 2}
+  - {fileID: 11400000, guid: ea24bfc3f7ab602489f30a0b800401ff, type: 2}
+  - {fileID: 11400000, guid: cce88f8997d82b446bea32c0b34ea692, type: 2}
+  - {fileID: 11400000, guid: 54f7be567dca75a49b288ea45d66c83c, type: 2}
+  - {fileID: 11400000, guid: bd4f147325b14e744b11f4fec9281eb6, type: 2}
+  - {fileID: 11400000, guid: ef075e6b1e3a08b4bb913f42ef2bea01, type: 2}

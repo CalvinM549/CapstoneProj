@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7904455e9742f41ab9dd2be65f5eb5, type: 3}
+  m_Name: Mod_ReinforcedChassis
+  m_EditorClassIdentifier: Assembly-CSharp::RunModifier
+  id: mod_reinforcedChassis
+  modifierName: Reinforced Chassis
+  flavourText: Hallam-Kess bracing kit. Fitted at the factory, never billed.
+  effectText: <style="val">+10% structure integrity</style>.
+  icon: {fileID: 0}
+  unlockedByDefault: 0
+  listInUnlocks: 1
+  unlockCost: 50
+  statModifiers:
+  - statID: player.health.baseStructureHealth
+    value: 0.1
+    modifierType: 200
+  startingCurrency: 0
