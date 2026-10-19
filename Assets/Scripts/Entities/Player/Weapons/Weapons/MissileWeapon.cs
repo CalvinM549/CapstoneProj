@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using static UnityEngine.Analytics.IAnalytic;
 
 [CreateAssetMenu(menuName = "Player/Weapon/MissileLauncher")]
 public class MissileWeapon : PlayerWeapon
@@ -15,6 +16,19 @@ public class MissileWeapon : PlayerWeapon
         Transform target = p.Targeting.HasTarget ? p.Targeting.LockedTarget : null;
         
         p.StartCoroutine(BurstRoutine(instance, firePoint, target));
+    }
+
+    public override void FireBonusShot(ActiveWeapon instance, Vector2 direction, Vector2 firePoint, float damageMultiplier = 1)
+    {
+        if (projectiles == null || projectiles.Length == 0) return;
+        Transform target = instance.player.Targeting.HasTarget ? instance.player.Targeting.LockedTarget : null;
+
+        var projectile = projectiles[0];
+        var hitData = BuildOutgoingHit(instance, projectile, direction, firePoint);
+        if (!Mathf.Approximately(damageMultiplier, 1f))
+            hitData.AddModifier(damageMultiplier - 1f, StatModType.PercentAdd, this);
+
+        ProjectilePools.FireHomingProjectile(instance, projectile, hitData, firePoint, direction, target);
     }
 
     private IEnumerator BurstRoutine(ActiveWeapon instance, Vector2 firePoint, Transform target)

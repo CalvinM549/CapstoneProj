@@ -76,6 +76,8 @@ public class AudioManager : MonoBehaviour
             );
     }
 
+    #region Music
+
     public void PlayMusicTrack(string name, bool doFade)
     {
         AudioEntry track = Array.Find(musicLibrary, sound => sound.soundName == name);
@@ -91,6 +93,27 @@ public class AudioManager : MonoBehaviour
         musicSourceA.Play();
     }
 
+    public void PlayMusic()
+    {
+
+    }
+
+    public void StopMusic(float fadeTime = 0f)
+    {
+
+    }
+
+    public void SetMusicIntensity(float intensity)
+    {
+
+    }
+
+
+
+    #endregion
+
+    #region SFX
+
     public void PlaySFX(string name, Vector3 position)
     {
         AudioEntry sound = Array.Find(sfxLibrary, sound => sound.soundName == name);
@@ -105,4 +128,6 @@ public class AudioManager : MonoBehaviour
         var avaliableSource = sfxSourcePool.Get();
         avaliableSource.Play(sound.clip, sfxSourcePool.ReturnToPool, position, adjustedVolume, 1f);
     }
+
+    #endregion
 }

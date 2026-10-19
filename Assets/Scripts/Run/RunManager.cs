@@ -213,7 +213,7 @@ public class RunManager : MonoBehaviour
         activePlayer.GetComponent<Rigidbody2D>().linearVelocity = Vector2.zero;
 
         if (!victory)
-            ScreenGlitch.Instance.SetBaseline(0.2f);
+            ScreenGlitch.Instance.SetBaseline(0.1f);
 
         yield return new WaitForSeconds(1.0f);
 

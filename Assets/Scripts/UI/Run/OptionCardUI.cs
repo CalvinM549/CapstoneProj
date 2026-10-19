@@ -88,9 +88,9 @@ public class OptionCardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
                 break;
         }
 
-        int rarity = Mathf.Clamp((int)option.Rarity, 0, rarityColours.Length - 1);
-        accent = rarityColours.Length > 0 ? rarityColours[rarity] : Color.white;
-        if (rarityText != null) rarityText.text = $"// {option.Rarity.ToString().ToUpperInvariant()}";
+        //int rarity = Mathf.Clamp((int)option.Rarity, 0, rarityColours.Length - 1);
+        //accent = rarityColours.Length > 0 ? rarityColours[rarity] : Color.white;
+        //if (rarityText != null) rarityText.text = $"// {option.Rarity.ToString().ToUpperInvariant()}";
 
         SetHover(false);
     }

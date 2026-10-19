@@ -110,7 +110,7 @@ public abstract class PlayerWeapon : DatabaseEntry, IUnlockable
     public abstract void Fire(ActiveWeapon instance, Vector2 direction, Vector2 firePoint);
 
     // Free extra shot for upgrades/effects: no ammo, no cooldown, fires this weapon's first projectile type.
-    public void FireBonusShot(ActiveWeapon instance, Vector2 direction, Vector2 firePoint, float damageMultiplier = 1f)
+    public virtual void FireBonusShot(ActiveWeapon instance, Vector2 direction, Vector2 firePoint, float damageMultiplier = 1f)
     {
         if (projectiles == null || projectiles.Length == 0) return;
 

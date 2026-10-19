@@ -6,6 +6,8 @@ using UnityEngine;
 public class AIManager : MonoBehaviour
 {
     public static AIManager Instance { get; private set; }
+    public int ActiveEnemyCount => activeEnemies.Count;
+
 
     private List<EnemyAIController> activeEnemies = new(16);
 

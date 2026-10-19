@@ -33,6 +33,6 @@ MonoBehaviour:
   - arsenal
   spawnInShops: 1
   shopPrice: 50
-  unlockedByDefault: 1
+  unlockedByDefault: 0
   listInUnlocks: 1
   unlockCost: 0
